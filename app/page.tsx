@@ -1,7 +1,11 @@
+import { Typography } from "@mui/material";
+
 export default function Home() {
   return (
     <main>
-      <h1>Scalonetapp</h1>
+      <Typography component="h1" variant="h4">
+        Scalonetapp
+      </Typography>
     </main>
   );
 }
