@@ -1,11 +1,11 @@
-import { Typography } from "@mui/material";
+"use client";
+
+import { Header } from "@/src/components/header";
 
 export default function Home() {
   return (
-    <main>
-      <Typography component="h1" variant="h4">
-        Scalonetapp
-      </Typography>
-    </main>
+    <>
+      <Header />
+    </>
   );
 }
