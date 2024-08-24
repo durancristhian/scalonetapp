@@ -14,13 +14,20 @@
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@hookform/resolvers": "^3.9.0",
+    "@types/lodash": "^4.17.7",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "beautiful-react-hooks": "^5.0.2",
+    "clsx": "^2.1.1",
     "eslint": "^8",
     "eslint-config-next": "14.2.6",
+    "lodash": "^4.17.21",
     "postcss": "^8.4.41",
+    "react-hook-form": "^7.53.0",
     "tailwindcss": "^3.4.10",
-    "typescript": "^5"
+    "typescript": "^5",
+    "zod": "^3.23.8"
   }
 }
