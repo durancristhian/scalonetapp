@@ -10,16 +10,14 @@ export default function Home() {
     <div className="flex flex-col min-h-screen">
       <Header />
       <div className="grow">
-        <div className="py-4">
-          <div className="container mx-auto">
-            <div className="flex flex-col gap-4">
-              <h2 className="font-semibold text-lg">Armador de equipos</h2>
-              <div>
-                <AddPlayer />
-              </div>
-              <div>
-                <PlayersList />
-              </div>
+        <div className="container mx-auto p-4">
+          <div className="flex flex-col gap-4">
+            <h2 className="font-semibold text-lg">Armador de equipos</h2>
+            <div>
+              <AddPlayer />
+            </div>
+            <div>
+              <PlayersList />
             </div>
           </div>
         </div>
