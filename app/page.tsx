@@ -1,5 +1,3 @@
-"use client";
-
 import { AddPlayer } from "@/app/match-creator/add-player";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";

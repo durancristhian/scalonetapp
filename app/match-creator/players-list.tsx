@@ -1,7 +1,7 @@
-import { Player } from "@/types/player";
+import { getMyPlayers } from "@/server/queries";
 
-export const PlayersList = () => {
-  const players: Player[] = [];
+export const PlayersList = async () => {
+  const players = await getMyPlayers();
 
   if (!players.length) {
     return (

@@ -1,10 +1,14 @@
+"use client";
+
 import { VALIDATION_MESSAGES } from "@/constants/validation-messages";
-import { Player } from "@/types/player";
+import { addPlayerAction } from "@/server/actions";
+import { PLAYER_SCHEMA } from "@/server/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Player } from "@prisma/client";
 import clsx from "clsx";
-import { useCallback } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import * as z from "zod";
+import { useRef } from "react";
+import { useFormState } from "react-dom";
+import { Controller, useForm } from "react-hook-form";
 
 export const AddPlayer = () => {
   return (
@@ -18,75 +22,79 @@ export const AddPlayer = () => {
   );
 };
 
-const PLAYER_SCHEMA = z.object({
-  name: z.string().min(1, { message: VALIDATION_MESSAGES.required }),
-});
+/* This sub-type contains only the player properties we want to use in the form */
+type UIPlayer = Pick<Player, "name">;
 
 const DEFAULT_VALUES = {
   name: "",
 };
 
 export const AddPlayerForm = () => {
+  const [actionState, formAction] = useFormState(addPlayerAction, {
+    message: null,
+  });
+  const formRef = useRef<HTMLFormElement>(null);
   const {
     control,
-    formState: { errors },
+    formState,
     handleSubmit,
-    reset,
+    /* TODO: how should we use these 2 methods? */
+    /* reset, */
     /* setError, */
-  } = useForm<Player>({
+  } = useForm<UIPlayer>({
     resolver: zodResolver(PLAYER_SCHEMA),
     defaultValues: DEFAULT_VALUES,
   });
 
-  const onSubmit: SubmitHandler<Player> = useCallback(
-    (data) => {
-      /* TODO: make a POST to the API */
-      /* setError("name", {
-        type: "validate",
-        message: '',
-      }); */
-
-      reset(DEFAULT_VALUES);
-    },
-    [reset]
-  );
-
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex gap-4">
-        <div className="grow">
-          <Controller
-            name="name"
-            control={control}
-            render={({ field }) => (
-              <>
-                <input
-                  {...field}
-                  className={clsx(
-                    "bg-zinc-100 rounded p-2 w-full",
-                    errors.name
-                      ? "border-2 border-red-800"
-                      : "border border-zinc-400"
-                  )}
-                  placeholder="Juan Román Riquelme"
-                />
-                {errors.name ? (
-                  <div className="mt-1 text-red-800">
-                    {errors.name?.message}
-                  </div>
-                ) : null}
-              </>
-            )}
-          />
+    <>
+      <form
+        ref={formRef}
+        action={formAction}
+        onSubmit={handleSubmit(() => {
+          formRef?.current?.submit();
+        })}
+      >
+        <div className="flex gap-4">
+          <div className="grow">
+            <Controller
+              name="name"
+              control={control}
+              render={({ field }) => (
+                <>
+                  <input
+                    {...field}
+                    className={clsx(
+                      "bg-zinc-100 rounded p-2 w-full",
+                      formState.errors.name
+                        ? "border-2 border-red-800"
+                        : "border border-zinc-400"
+                    )}
+                    placeholder="Juan Román Riquelme"
+                  />
+                </>
+              )}
+            />
+            {actionState.message ? (
+              <div className="mt-1 text-red-800">
+                {VALIDATION_MESSAGES[actionState.message]}
+              </div>
+            ) : null}
+          </div>
+          <div>
+            <input
+              type="submit"
+              value="Agregar"
+              className="bg-zinc-300 border border-zinc-400 rounded px-4 py-2"
+            />
+          </div>
         </div>
-        <div>
-          <input
-            type="submit"
-            value="Agregar"
-            className="bg-zinc-300 border border-zinc-400 rounded px-4 py-2"
-          />
+      </form>
+      {formState.errors.name ? (
+        <div className="mt-1 text-red-800">
+          {formState.errors.name?.message}
         </div>
-      </div>
-    </form>
+      ) : null}
+    </>
   );
 };
