@@ -1,9 +1,9 @@
 "use server";
 
+import { addPlayer as addPlayerQuery } from "@/server/queries";
+import { PLAYER_SCHEMA } from "@/utils/schemas";
+import { VALIDATION_MESSAGES } from "@/utils/validation-messages";
 import { revalidatePath } from "next/cache";
-import { addPlayer as addPlayerQuery } from "../queries";
-import { PLAYER_SCHEMA } from "../schemas";
-import { VALIDATION_MESSAGES } from "@/constants/validation-messages";
 
 type ActionState = {
   message: keyof typeof VALIDATION_MESSAGES | null;

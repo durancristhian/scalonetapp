@@ -1,4 +1,4 @@
-import { VALIDATION_MESSAGES } from "@/constants/validation-messages";
+import { VALIDATION_MESSAGES } from "@/utils/validation-messages";
 import * as z from "zod";
 
 export const PLAYER_SCHEMA = z.object({

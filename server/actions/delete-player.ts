@@ -1,7 +1,7 @@
 "use server";
 
+import { deletePlayer as deletePlayerQuery } from "@/server/queries";
 import { revalidatePath } from "next/cache";
-import { deletePlayer as deletePlayerQuery } from "../queries";
 
 type DeletePlayer = (id: number) => Promise<void>;
 

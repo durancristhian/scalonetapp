@@ -1,8 +1,8 @@
 "use client";
 
-import { VALIDATION_MESSAGES } from "@/constants/validation-messages";
 import { addPlayer } from "@/server/actions/add-player";
-import { PLAYER_SCHEMA } from "@/server/schemas";
+import { PLAYER_SCHEMA } from "@/utils/schemas";
+import { VALIDATION_MESSAGES } from "@/utils/validation-messages";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Player } from "@prisma/client";
 import clsx from "clsx";

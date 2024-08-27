@@ -1,6 +1,6 @@
 "use server";
 
-import prisma from "@/db/prisma";
+import prisma from "@/utils/prisma";
 import { Player } from "@prisma/client";
 
 export const getPlayers = async () => {

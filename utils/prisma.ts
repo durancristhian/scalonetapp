@@ -1,4 +1,4 @@
-/* This code has been stolen from https://www.prisma.io/docs/orm/more/help-and-troubleshooting/help-articles/nextjs-prisma-client-dev-practices */
+/* https://www.prisma.io/docs/orm/more/help-and-troubleshooting/help-articles/nextjs-prisma-client-dev-practices */
 
 import { PrismaClient } from "@prisma/client";
 
