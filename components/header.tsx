@@ -15,7 +15,7 @@ export const Header = () => {
             </SignInButton>
           </SignedOut>
           <SignedIn>
-            <UserButton showName />
+            <UserButton />
           </SignedIn>
         </div>
       </div>
