@@ -87,7 +87,7 @@ export const AddPlayerForm = () => {
             <input
               type="submit"
               value="Agregar"
-              className="bg-zinc-300 border border-zinc-400 rounded px-4 py-2"
+              className="bg-slate-100 border border-slate-300 px-4 py-2"
             />
           </div>
         </div>
