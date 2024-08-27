@@ -10,14 +10,15 @@
     "start": "next start"
   },
   "dependencies": {
-    "@prisma/client": "^5.18.0",
     "next": "14.2.6",
     "react": "^18",
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@clerk/nextjs": "^5.3.3",
     "@heroicons/react": "^2.1.5",
     "@hookform/resolvers": "^3.9.0",
+    "@prisma/client": "^5.18.0",
     "@types/lodash": "^4.17.7",
     "@types/node": "^20",
     "@types/react": "^18",

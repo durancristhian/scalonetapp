@@ -83,6 +83,7 @@ export const AddPlayerForm = () => {
             ) : null}
           </div>
           <div>
+            {/* TODO: use button component */}
             <input
               type="submit"
               value="Agregar"
