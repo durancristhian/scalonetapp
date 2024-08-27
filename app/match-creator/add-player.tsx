@@ -1,7 +1,7 @@
 "use client";
 
 import { VALIDATION_MESSAGES } from "@/constants/validation-messages";
-import { addPlayerAction } from "@/server/actions";
+import { addPlayer } from "@/server/actions/add-player";
 import { PLAYER_SCHEMA } from "@/server/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Player } from "@prisma/client";
@@ -30,7 +30,8 @@ const DEFAULT_VALUES = {
 };
 
 export const AddPlayerForm = () => {
-  const [actionState, formAction] = useFormState(addPlayerAction, {
+  /* TODO: avoid calling the action if we already reached the limit of players */
+  const [actionState, formAction] = useFormState(addPlayer, {
     message: null,
   });
   const formRef = useRef<HTMLFormElement>(null);
