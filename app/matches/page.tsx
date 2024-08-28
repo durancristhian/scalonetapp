@@ -6,9 +6,7 @@ export default function Page() {
       <div className="container mx-auto">
         <div className="flex flex-col gap-4">
           <h2 className="font-semibold text-2xl">Tus partidos</h2>
-          <div>
-            <MatchesList />
-          </div>
+          <MatchesList />
         </div>
       </div>
     </div>

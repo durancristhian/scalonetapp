@@ -2,6 +2,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { deleteMatch, getMatches } from "@/server/queries/matches";
 import { FaceFrownIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { revalidatePath } from "next/cache";
 import Link from "next/link";
 
 export const MatchesList = async () => {
@@ -12,7 +13,7 @@ export const MatchesList = async () => {
       <>
         <Alert>
           <FaceFrownIcon className="h-4 w-4" />
-          <AlertTitle>Todavía no creaste ningún partido.</AlertTitle>
+          <AlertTitle>Todavía no creaste ninguno.</AlertTitle>
           <AlertDescription>
             <div className="mt-2">
               <Button asChild>
@@ -26,30 +27,39 @@ export const MatchesList = async () => {
   }
 
   return (
-    <>
-      <div className="mt-4">
-        <ul className="flex flex-col gap-2">
-          {matches.map((match) => (
-            <li key={match.id} className="flex gap-2 items-center">
+    <ul className="flex flex-col gap-4">
+      {matches.map((match) => (
+        <li key={match.id}>
+          <div className="border border-slate-300 cursor-pointer flex hover:bg-slate-50 items-center gap-4 pl-4 pr-2 py-2 rounded-md">
+            <div className="grow">
+              <p className="font-semibold">{match.name}</p>
+              <p className="text-sm text-slate-700">
+                {match.players.length} personas
+              </p>
+            </div>
+            <div className="inline-flex">
               <form
                 action={async () => {
+                  /* TODO: can we move this to another file? */
+                  /* TODO: ask for confirmation before deleting */
+                  /* TODO: check if we can have a loading state and such */
+                  /* TODO: show toast when deleted */
                   "use server";
 
                   await deleteMatch(match.id);
+
+                  revalidatePath("/matches");
                 }}
                 className="inline-flex"
               >
-                <button type="submit">
-                  <TrashIcon className="h-4 text-zinc-500 w-4" />
-                </button>
+                <Button type="submit" variant="ghost" size="icon">
+                  <TrashIcon className="h-4 text-red-700 w-4" />
+                </Button>
               </form>
-              <div className="grow">
-                <p>{match.name}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </>
+            </div>
+          </div>
+        </li>
+      ))}
+    </ul>
   );
 };

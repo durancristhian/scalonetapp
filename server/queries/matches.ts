@@ -8,6 +8,9 @@ export const getMatches = async () => {
     orderBy: {
       createdAt: "desc",
     },
+    include: {
+      players: true,
+    },
   });
 };
 
