@@ -7,6 +7,7 @@
     "dev": "next dev",
     "lint": "next lint",
     "migrate": "tsx app/api/migrations.ts",
+    "postinstall": "prisma generate",
     "start": "next start"
   },
   "dependencies": {
