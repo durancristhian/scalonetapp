@@ -1,7 +1,7 @@
 "use client";
 
+import { Matches } from "@/app/dashboard/_components/matches";
 import { useUser } from "@clerk/nextjs";
-import { Matches } from "./_components/matches";
 
 export default function Page() {
   const { isLoaded, user } = useUser();
