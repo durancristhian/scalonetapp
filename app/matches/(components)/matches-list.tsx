@@ -1,10 +1,11 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { FaceFrownIcon } from "@heroicons/react/24/outline";
+import { deleteMatch, getMatches } from "@/server/queries/matches";
+import { FaceFrownIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
 export const MatchesList = async () => {
-  const matches = [];
+  const matches = await getMatches();
 
   if (!matches.length) {
     return (
@@ -28,7 +29,25 @@ export const MatchesList = async () => {
     <>
       <div className="mt-4">
         <ul className="flex flex-col gap-2">
-          <li className="flex gap-2 items-center"></li>
+          {matches.map((match) => (
+            <li key={match.id} className="flex gap-2 items-center">
+              <form
+                action={async () => {
+                  "use server";
+
+                  await deleteMatch(match.id);
+                }}
+                className="inline-flex"
+              >
+                <button type="submit">
+                  <TrashIcon className="h-4 text-zinc-500 w-4" />
+                </button>
+              </form>
+              <div className="grow">
+                <p>{match.name}</p>
+              </div>
+            </li>
+          ))}
         </ul>
       </div>
     </>
