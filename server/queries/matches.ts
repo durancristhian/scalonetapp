@@ -14,6 +14,19 @@ export const getMatches = async () => {
   });
 };
 
+export const getMatchById = async (id: number) => {
+  return await prisma.match.findFirst({
+    where: {
+      id: {
+        equals: id,
+      },
+    },
+    include: {
+      players: true,
+    },
+  });
+};
+
 export const addMatch = async (data: MatchSchema) => {
   return await prisma.match.create({
     data,

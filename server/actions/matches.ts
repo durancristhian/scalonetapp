@@ -1,6 +1,9 @@
 "use server";
 
-import { addMatch as addMatchQuery } from "@/server/queries/matches";
+import {
+  addMatch as addMatchQuery,
+  deleteMatch as deleteMatchQuery,
+} from "@/server/queries/matches";
 import { MatchSchema } from "@/server/schemas/match";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -12,4 +15,12 @@ export const addMatch: AddMatch = async (data) => {
 
   revalidatePath("/matches");
   redirect("/matches");
+};
+
+type DeleteMatch = (id: number) => Promise<void>;
+
+export const deleteMatch: DeleteMatch = async (id) => {
+  await deleteMatchQuery(id);
+
+  revalidatePath("/matches");
 };

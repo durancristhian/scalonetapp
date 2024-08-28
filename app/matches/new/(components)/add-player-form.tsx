@@ -14,6 +14,8 @@ import { PLAYER_SCHEMA, PlayerSchema } from "@/server/schemas/player";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
+/* TODO: Move this somewhere else */
+
 export const AddPlayerForm = () => {
   const form = useForm<PlayerSchema>({
     resolver: zodResolver(PLAYER_SCHEMA),
@@ -23,7 +25,7 @@ export const AddPlayerForm = () => {
   });
 
   const onSubmit: (values: PlayerSchema) => Promise<void> = async (values) => {
-    /* TODO: complete */
+    /* TODO: Complete */
   };
 
   return (
