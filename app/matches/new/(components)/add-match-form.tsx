@@ -10,10 +10,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { MATCH_SCHEMA } from "@/server/schemas/match";
+import { addMatch } from "@/server/actions/add-match";
+import { MATCH_SCHEMA, MatchSchema } from "@/server/schemas/match";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 const DAY_LABELS = [
   "Domingo",
@@ -26,16 +26,15 @@ const DAY_LABELS = [
 ];
 
 export const AddMatchForm = () => {
-  const form = useForm<z.infer<typeof MATCH_SCHEMA>>({
+  const form = useForm<MatchSchema>({
     resolver: zodResolver(MATCH_SCHEMA),
     defaultValues: {
       name: "",
     },
   });
 
-  const onSubmit: (values: z.infer<typeof MATCH_SCHEMA>) => void = (values) => {
-    /* TODO: implement */
-    console.log(values);
+  const onSubmit: (values: MatchSchema) => Promise<void> = async (values) => {
+    await addMatch(values);
   };
 
   return (

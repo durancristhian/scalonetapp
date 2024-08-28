@@ -1,7 +1,7 @@
 "use server";
 
+import { MatchSchema } from "@/server/schemas/match";
 import prisma from "@/utils/prisma";
-import { Match } from "@prisma/client";
 
 export const getMatches = async () => {
   return await prisma.match.findMany({
@@ -14,7 +14,7 @@ export const getMatches = async () => {
   });
 };
 
-export const addMatch = async (data: Omit<Match, "id">) => {
+export const addMatch = async (data: MatchSchema) => {
   return await prisma.match.create({
     data,
   });

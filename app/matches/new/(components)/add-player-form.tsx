@@ -10,24 +10,20 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { PLAYER_SCHEMA } from "@/server/schemas/player";
+import { PLAYER_SCHEMA, PlayerSchema } from "@/server/schemas/player";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 export const AddPlayerForm = () => {
-  const form = useForm<z.infer<typeof PLAYER_SCHEMA>>({
+  const form = useForm<PlayerSchema>({
     resolver: zodResolver(PLAYER_SCHEMA),
     defaultValues: {
       name: "",
     },
   });
 
-  const onSubmit: (values: z.infer<typeof PLAYER_SCHEMA>) => void = (
-    values
-  ) => {
-    /* TODO: implement */
-    console.log(values);
+  const onSubmit: (values: PlayerSchema) => Promise<void> = async (values) => {
+    /* TODO: complete */
   };
 
   return (
@@ -49,7 +45,7 @@ export const AddPlayerForm = () => {
             </FormItem>
           )}
         />
-        <Button type="submit">Agregar al partido</Button>
+        <Button type="submit">Agregar</Button>
       </form>
     </Form>
   );
