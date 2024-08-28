@@ -13,7 +13,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "scalonetapp",
-  /* TODO: update meta description */
+  /* TODO: Update meta description */
   description: "scalonetapp",
 };
 

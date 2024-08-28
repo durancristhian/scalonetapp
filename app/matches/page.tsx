@@ -1,5 +1,5 @@
+import { MatchesList } from "@/app/matches/(components)/matches-list";
 import { Button } from "@/components/ui/button";
-import { MatchesList } from "./(components)/matches-list";
 import Link from "next/link";
 
 export default function Page() {

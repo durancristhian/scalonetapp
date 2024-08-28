@@ -34,16 +34,18 @@ export const MatchesList = async () => {
             <div className="grow">
               <p className="font-semibold">{match.name}</p>
               <p className="text-sm text-slate-700">
-                {match.players.length} personas
+                {match.players.length
+                  ? `${match.players.length} personas`
+                  : "No hay personas anotadas"}
               </p>
             </div>
             <div className="inline-flex">
               <form
                 action={async () => {
-                  /* TODO: can we move this to another file? */
-                  /* TODO: ask for confirmation before deleting */
-                  /* TODO: check if we can have a loading state and such */
-                  /* TODO: show toast when deleted */
+                  /* TODO: Can we move this to another file? */
+                  /* TODO: Ask for confirmation before deleting */
+                  /* TODO: Check if we can have a loading state and such */
+                  /* TODO: Show toast when deleted */
                   "use server";
 
                   await deleteMatch(match.id);
