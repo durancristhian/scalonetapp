@@ -26,6 +26,17 @@ export const MatchesList = async () => {
     );
   }
 
+  const getMatchDescription: (players: number) => string = (players) => {
+    switch (players) {
+      case 0:
+        return "No hay personas anotadas";
+      case 1:
+        return "1 persona";
+      default:
+        return `${players} personas`;
+    }
+  };
+
   return (
     <ul className="flex flex-col gap-4">
       {matches.map((match) => (
@@ -34,9 +45,7 @@ export const MatchesList = async () => {
             <div className="grow">
               <p className="font-semibold">{match.name}</p>
               <p className="text-sm text-slate-700">
-                {match.players.length
-                  ? `${match.players.length} personas`
-                  : "No hay personas anotadas"}
+                {getMatchDescription(match.players.length)}
               </p>
             </div>
             <div className="inline-flex">
