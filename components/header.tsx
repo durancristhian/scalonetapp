@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 
 export const Header = () => {
@@ -8,10 +9,7 @@ export const Header = () => {
           <h1 className="font-semibold text-xl">scalonetapp</h1>
           <SignedOut>
             <SignInButton forceRedirectUrl="/dashboard">
-              {/* TODO: use button component */}
-              <button className="bg-slate-100 border border-slate-300 px-4 py-2">
-                Login
-              </button>
+              <Button>Login</Button>
             </SignInButton>
           </SignedOut>
           <SignedIn>

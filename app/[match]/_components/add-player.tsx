@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { addPlayer } from "@/server/actions/add-player";
 import { PLAYER_SCHEMA } from "@/utils/schemas";
 import { VALIDATION_MESSAGES } from "@/utils/validation-messages";
@@ -83,12 +84,7 @@ export const AddPlayerForm = () => {
             ) : null}
           </div>
           <div>
-            {/* TODO: use button component */}
-            <input
-              type="submit"
-              value="Agregar"
-              className="bg-slate-100 border border-slate-300 px-4 py-2"
-            />
+            <Button type="submit">Agregar</Button>
           </div>
         </div>
       </form>
