@@ -15,5 +15,5 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 Create an empty sqlite db by executing:
 
 ```bash
-sqlite3 scalonetapp.db "VACUUM;"`
+sqlite3 scalonetapp.db "VACUUM;"
 ```

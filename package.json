@@ -5,9 +5,9 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
+    "generate-prisma-prod-schema": "prisma generate --schema=./prisma/prod.schema.prisma",
     "lint": "next lint",
     "migrate": "tsx app/api/migrations.ts",
-    "postinstall": "prisma generate",
     "start": "next start"
   },
   "dependencies": {
