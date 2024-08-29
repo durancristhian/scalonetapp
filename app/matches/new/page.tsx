@@ -6,9 +6,7 @@ export default function Page() {
       <div className="container mx-auto">
         <div className="flex flex-col gap-4">
           <h2 className="font-semibold text-2xl">Creá un partido</h2>
-          <div className="max-w-lg">
-            <AddMatchForm />
-          </div>
+          <AddMatchForm />
         </div>
       </div>
     </div>

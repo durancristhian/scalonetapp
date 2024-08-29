@@ -43,67 +43,73 @@ export default async function Page({ params }: PageProps) {
                 <TabsTrigger value="teams">Equipos</TabsTrigger>
               </TabsList>
               <TabsContent value="players">
-                <div className="flex flex-col gap-4 md:flex-row">
-                  <div className="grow">
-                    <div className="flex flex-col gap-4">
-                      <h3 className="font-semibold text-xl">
-                        ¿Quienes juegan?
-                      </h3>
-                      {match.players.length ? (
-                        <ul className="flex flex-col gap-4">
-                          {match.players.map((player) => (
-                            <li key={player.id}>
-                              <div className="border border-slate-300 flex items-center gap-4 pl-4 pr-2 py-2 rounded-md">
-                                <div className="inline-flex">
-                                  <Avatar name={player.name} size={36} />
-                                </div>
-                                <div className="grow">
-                                  <p className="font-semibold">{player.name}</p>
-                                </div>
-                                <div className="inline-flex">
-                                  <form
-                                    action={async () => {
-                                      "use server";
+                <Card>
+                  <CardHeader>
+                    <CardTitle>¿Quienes juegan?</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex flex-col gap-4 md:flex-row">
+                      <div className="grow">
+                        <div className="flex flex-col gap-4">
+                          {match.players.length ? (
+                            <ul className="flex flex-col gap-4">
+                              {match.players.map((player) => (
+                                <li key={player.id}>
+                                  <div className="border border-slate-300 flex items-center gap-4 p-2 rounded-md">
+                                    <div className="inline-flex">
+                                      <Avatar name={player.name} size={36} />
+                                    </div>
+                                    <div className="grow">
+                                      <p className="font-semibold">
+                                        {player.name}
+                                      </p>
+                                    </div>
+                                    <div className="inline-flex">
+                                      <form
+                                        action={async () => {
+                                          "use server";
 
-                                      await deletePlayer(player.id);
-                                    }}
-                                    className="inline-flex"
-                                  >
-                                    <Button
-                                      type="submit"
-                                      variant="ghost"
-                                      size="icon"
-                                    >
-                                      <TrashIcon className="h-4 text-red-700 w-4" />
-                                    </Button>
-                                  </form>
-                                </div>
-                              </div>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p className="text-sm text-slate-700">
-                          ¿Viene floja la convocatoria?.
-                        </p>
-                      )}
+                                          await deletePlayer(player.id);
+                                        }}
+                                        className="inline-flex"
+                                      >
+                                        <Button
+                                          type="submit"
+                                          variant="ghost"
+                                          size="icon"
+                                        >
+                                          <TrashIcon className="h-4 text-red-700 w-4" />
+                                        </Button>
+                                      </form>
+                                    </div>
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <p className="text-sm text-slate-700">
+                              ¿Viene floja la convocatoria?.
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="max-w-lg">
+                        <Card className="bg-slate-50">
+                          <CardHeader>
+                            <CardTitle>¿Falta alguien?</CardTitle>
+                            <CardDescription>
+                              Agregalo en esta sección. Podés agregar la
+                              cantidad de personas que necesites.
+                            </CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <AddPlayerForm />
+                          </CardContent>
+                        </Card>
+                      </div>
                     </div>
-                  </div>
-                  <div className="max-w-lg">
-                    <Card className="bg-slate-100">
-                      <CardHeader>
-                        <CardTitle>¿Falta alguien?</CardTitle>
-                        <CardDescription>
-                          Agregalo en esta sección. Podés agregar la cantidad de
-                          personas que necesites.
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <AddPlayerForm />
-                      </CardContent>
-                    </Card>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               </TabsContent>
               <TabsContent value="teams"></TabsContent>
             </Tabs>

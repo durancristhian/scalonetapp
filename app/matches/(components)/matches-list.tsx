@@ -2,7 +2,11 @@ import { PlayersInMatchLabel } from "@/app/matches/(components)/players-in-match
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { deleteMatch, getMatches } from "@/server/queries/match";
-import { FaceFrownIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowRightIcon,
+  FaceFrownIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import Link from "next/link";
 
 export const MatchesList = async () => {
@@ -30,16 +34,7 @@ export const MatchesList = async () => {
     <ul className="flex flex-col gap-4">
       {matches.map((match) => (
         <li key={match.id}>
-          <div className="border border-slate-300 flex items-center gap-4 pl-4 pr-2 py-2 rounded-md">
-            <div className="grow">
-              <p className="font-semibold">{match.name}</p>
-              <PlayersInMatchLabel players={match.players.length} />
-            </div>
-            <div className="inline-flex">
-              <Link href={`/matches/${match.id}`}>
-                <Button variant="ghost">Ver detalles</Button>
-              </Link>
-            </div>
+          <div className="border border-slate-300 flex items-center gap-4 p-2 rounded-md">
             <div className="inline-flex">
               <form
                 /* TODO: Ask for confirmation before deleting */
@@ -56,6 +51,17 @@ export const MatchesList = async () => {
                   <TrashIcon className="h-4 text-red-700 w-4" />
                 </Button>
               </form>
+            </div>
+            <div className="grow">
+              <p className="font-semibold">{match.name}</p>
+              <PlayersInMatchLabel players={match.players.length} />
+            </div>
+            <div className="inline-flex">
+              <Link href={`/matches/${match.id}`}>
+                <Button variant="ghost" size="icon">
+                  <ArrowRightIcon className="h-4  w-4" />
+                </Button>
+              </Link>
             </div>
           </div>
         </li>
