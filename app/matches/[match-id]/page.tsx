@@ -24,7 +24,9 @@ export default async function Page({ params }: PageProps) {
         <div className="flex flex-col gap-4">
           <div>
             <h2 className="font-semibold text-2xl">{match.name}</h2>
-            <PlayersInMatchLabel players={match.players.length} />
+            <p className="text-sm text-slate-700">
+              <PlayersInMatchLabel players={match.players.length} />
+            </p>
           </div>
           <div>
             <Tabs defaultValue="players">

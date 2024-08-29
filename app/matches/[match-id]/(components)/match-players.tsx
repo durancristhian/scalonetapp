@@ -22,6 +22,10 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
     <Card>
       <CardHeader>
         <CardTitle>¿Quienes juegan?</CardTitle>
+        <CardDescription>
+          Estas personas se podrían quedar en su casa viendo la tele pero
+          deciden ir a jugar con vos, es para destacar.
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-4 md:flex-row">

@@ -50,7 +50,9 @@ export const MatchesList = async () => {
             </div>
             <div className="grow">
               <p className="font-semibold">{match.name}</p>
-              <PlayersInMatchLabel players={match.players.length} />
+              <p className="text-sm text-slate-700">
+                <PlayersInMatchLabel players={match.players.length} />
+              </p>
             </div>
             <div className="inline-flex">
               <Link href={`/matches/${match.id}`}>
