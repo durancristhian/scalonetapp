@@ -1,10 +1,12 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-/* IMPORTANT: We protect all routes in the application but the homepage. Instead of listing all potential routes/segments we specify the homepage as the protected route BUT we negate the if inside the clerkMiddleware */
-const isProtectedRoute = createRouteMatcher(["/(.*)"]);
+/* We protect all routes in the application but the homepage */
+const isProtectedRoute = createRouteMatcher((req) => {
+  return req.nextUrl.pathname !== "/";
+});
 
 export default clerkMiddleware((auth, req) => {
-  if (!isProtectedRoute(req)) {
+  if (isProtectedRoute(req)) {
     auth().protect();
   }
 });

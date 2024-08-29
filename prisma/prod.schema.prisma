@@ -27,6 +27,7 @@ model Match {
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  userId    String
 
   // Relationships
   players Player[]

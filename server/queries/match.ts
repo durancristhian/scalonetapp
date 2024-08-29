@@ -1,10 +1,20 @@
-"use server";
-
 import { MatchSchema } from "@/server/schemas/match";
 import prisma from "@/utils/prisma";
+import { ERROR_MESSAGES } from "@/utils/validation-messages";
+import { auth } from "@clerk/nextjs/server";
+import "server-only";
 
 export const getMatches = async () => {
+  const user = auth();
+
+  if (!user || !user.userId) {
+    throw new Error(ERROR_MESSAGES.unauthorized);
+  }
+
   return await prisma.match.findMany({
+    where: {
+      userId: user.userId,
+    },
     orderBy: {
       createdAt: "desc",
     },
@@ -15,10 +25,19 @@ export const getMatches = async () => {
 };
 
 export const getMatchById = async (id: number) => {
+  const user = auth();
+
+  if (!user || !user.userId) {
+    throw new Error(ERROR_MESSAGES.unauthorized);
+  }
+
   const match = await prisma.match.findFirst({
     where: {
       id: {
         equals: id,
+      },
+      userId: {
+        equals: user.userId,
       },
     },
     include: {
@@ -35,15 +54,33 @@ export const getMatchById = async (id: number) => {
 };
 
 export const addMatch = async (data: MatchSchema) => {
+  const user = auth();
+
+  if (!user || !user.userId) {
+    throw new Error(ERROR_MESSAGES.unauthorized);
+  }
+
+  const nextMatch = {
+    ...data,
+    userId: user.userId,
+  };
+
   return await prisma.match.create({
-    data,
+    data: nextMatch,
   });
 };
 
 export const deleteMatch = async (id: number) => {
+  const user = auth();
+
+  if (!user || !user.userId) {
+    throw new Error(ERROR_MESSAGES.unauthorized);
+  }
+
   return await prisma.match.delete({
     where: {
       id,
+      userId: user.userId,
     },
   });
 };
