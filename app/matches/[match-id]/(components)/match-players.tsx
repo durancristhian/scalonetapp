@@ -9,8 +9,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { deletePlayer } from "@/server/queries/player";
-import { TrashIcon } from "@heroicons/react/24/outline";
 import { Player } from "@prisma/client";
+import { TrashIcon } from "lucide-react";
 import { FC } from "react";
 
 type MatchPlayersProps = {

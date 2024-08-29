@@ -2,11 +2,7 @@ import { PlayersInMatchLabel } from "@/app/matches/(components)/players-in-match
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { deleteMatch, getMatches } from "@/server/queries/match";
-import {
-  ArrowRightIcon,
-  FaceFrownIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowRightIcon, FrownIcon, TrashIcon } from "lucide-react";
 import Link from "next/link";
 
 export const MatchesList = async () => {
@@ -16,7 +12,7 @@ export const MatchesList = async () => {
     return (
       <>
         <Alert>
-          <FaceFrownIcon className="h-4 w-4" />
+          <FrownIcon className="h-4 w-4" />
           <AlertTitle>Todavía no creaste ninguno.</AlertTitle>
           <AlertDescription>
             <div className="mt-2">

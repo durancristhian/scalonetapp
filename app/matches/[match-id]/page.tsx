@@ -1,5 +1,6 @@
 import { PlayersInMatchLabel } from "@/app/matches/(components)/players-in-match-label";
 import { MatchPlayers } from "@/app/matches/[match-id]/(components)/match-players";
+import { TeamsBuilder } from "@/app/matches/[match-id]/(components)/teams-builder";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getMatchById } from "@/server/queries/match";
 import { notFound } from "next/navigation";
@@ -34,7 +35,9 @@ export default async function Page({ params }: PageProps) {
               <TabsContent value="players">
                 <MatchPlayers players={match.players} />
               </TabsContent>
-              <TabsContent value="teams"></TabsContent>
+              <TabsContent value="teams">
+                <TeamsBuilder players={match.players} />
+              </TabsContent>
             </Tabs>
           </div>
         </div>

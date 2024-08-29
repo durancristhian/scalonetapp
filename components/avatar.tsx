@@ -7,7 +7,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { default as BoringAvatar } from "boring-avatars";
-import throttle from "lodash/throttle";
+import throttle from "lodash.throttle";
 import { FC, useState } from "react";
 
 const TOOLTIP_MESSAGES = [
