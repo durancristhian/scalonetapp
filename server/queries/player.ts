@@ -2,7 +2,7 @@
 
 import { PlayerSchema } from "@/server/schemas/player";
 import prisma from "@/utils/prisma";
-import { ERROR_MESSAGES } from "@/utils/validation-messages";
+import { VALIDATION_MESSAGES } from "@/utils/validation-messages";
 
 export const addPlayer = async (data: PlayerSchema, matchId: number) => {
   /* We check that we don't have a player named the same in the match already */
@@ -14,11 +14,7 @@ export const addPlayer = async (data: PlayerSchema, matchId: number) => {
   });
 
   if (exists) {
-    const errorCause: keyof typeof ERROR_MESSAGES = "player_repeated";
-
-    throw new Error(ERROR_MESSAGES[errorCause], {
-      cause: errorCause,
-    });
+    throw new Error(VALIDATION_MESSAGES.player_repeated);
   }
 
   const nextPlayer = {
