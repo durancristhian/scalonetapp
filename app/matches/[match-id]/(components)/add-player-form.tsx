@@ -1,5 +1,6 @@
 "use client";
 
+import { Avatar } from "@/components/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -10,11 +11,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { addPlayer } from "@/server/actions/player";
 import { PLAYER_SCHEMA, PlayerSchema } from "@/server/schemas/player";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 
-/* TODO: Move this somewhere else */
+const PLACEHOLDER = "Juan Roman Riquelme";
 
 export const AddPlayerForm = () => {
   const form = useForm<PlayerSchema>({
@@ -23,9 +26,14 @@ export const AddPlayerForm = () => {
       name: "",
     },
   });
+  const params = useParams();
 
   const onSubmit: (values: PlayerSchema) => Promise<void> = async (values) => {
-    /* TODO: Complete */
+    /* TODO: We should validate we don't have a player named like the one we're trying to add */
+    await addPlayer(values, Number(params["match-id"]));
+
+    form.reset();
+    form.setFocus("name");
   };
 
   return (
@@ -38,13 +46,20 @@ export const AddPlayerForm = () => {
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nombre</FormLabel>
-              <FormControl>
-                <Input placeholder="Juan Roman Riquelme" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+            <div className="flex gap-4 items-center">
+              <div>
+                <Avatar name={field.value || PLACEHOLDER} />
+              </div>
+              <div className="grow">
+                <FormItem>
+                  <FormLabel>Nombre</FormLabel>
+                  <FormControl>
+                    <Input placeholder={PLACEHOLDER} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </div>
+            </div>
           )}
         />
         <Button type="submit">Agregar</Button>

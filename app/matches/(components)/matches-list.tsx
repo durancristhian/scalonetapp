@@ -1,6 +1,7 @@
+import { PlayersInMatchLabel } from "@/app/matches/(components)/players-in-match-label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { deleteMatch, getMatches } from "@/server/queries/matches";
+import { deleteMatch, getMatches } from "@/server/queries/match";
 import { FaceFrownIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
@@ -25,17 +26,6 @@ export const MatchesList = async () => {
     );
   }
 
-  const getMatchDescription: (players: number) => string = (players) => {
-    switch (players) {
-      case 0:
-        return "No hay personas anotadas";
-      case 1:
-        return "1 persona";
-      default:
-        return `${players} personas`;
-    }
-  };
-
   return (
     <ul className="flex flex-col gap-4">
       {matches.map((match) => (
@@ -43,13 +33,11 @@ export const MatchesList = async () => {
           <div className="border border-slate-300 flex items-center gap-4 pl-4 pr-2 py-2 rounded-md">
             <div className="grow">
               <p className="font-semibold">{match.name}</p>
-              <p className="text-sm text-slate-700">
-                {getMatchDescription(match.players.length)}
-              </p>
+              <PlayersInMatchLabel players={match.players.length} />
             </div>
             <div className="inline-flex">
               <Link href={`/matches/${match.id}`}>
-                <Button>Ver detalle</Button>
+                <Button variant="ghost">Ver detalles</Button>
               </Link>
             </div>
             <div className="inline-flex">

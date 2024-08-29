@@ -15,7 +15,7 @@ export const getMatches = async () => {
 };
 
 export const getMatchById = async (id: number) => {
-  return await prisma.match.findFirst({
+  const match = await prisma.match.findFirst({
     where: {
       id: {
         equals: id,
@@ -25,6 +25,13 @@ export const getMatchById = async (id: number) => {
       players: true,
     },
   });
+
+  /* We sort players by name */
+  match?.players.sort((playerA, playerB) =>
+    playerA.name.localeCompare(playerB.name)
+  );
+
+  return match;
 };
 
 export const addMatch = async (data: MatchSchema) => {

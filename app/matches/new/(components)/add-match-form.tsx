@@ -10,7 +10,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { addMatch } from "@/server/actions/add-match";
+import { addMatch } from "@/server/actions/match";
 import { MATCH_SCHEMA, MatchSchema } from "@/server/schemas/match";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";

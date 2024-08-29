@@ -3,7 +3,7 @@
 import {
   addMatch as addMatchQuery,
   deleteMatch as deleteMatchQuery,
-} from "@/server/queries/matches";
+} from "@/server/queries/match";
 import { MatchSchema } from "@/server/schemas/match";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
