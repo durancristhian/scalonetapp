@@ -29,8 +29,18 @@ export const AddPlayerForm = () => {
   const params = useParams();
 
   const onSubmit: (values: PlayerSchema) => Promise<void> = async (values) => {
-    /* TODO: We should validate we don't have a player named like the one we're trying to add */
-    await addPlayer(values, Number(params["match-id"]));
+    try {
+      await addPlayer(values, Number(params["match-id"]));
+    } catch (error) {
+      if (error instanceof Error) {
+        form.setError("name", {
+          message: error.message,
+          type: "validate",
+        });
+      }
+
+      return;
+    }
 
     form.reset();
     form.setFocus("name");
