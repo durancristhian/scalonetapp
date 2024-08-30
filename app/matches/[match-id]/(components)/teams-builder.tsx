@@ -28,6 +28,7 @@ export const TeamsBuilder: FC<TeamsBuilderProps> = ({ players }) => {
     teams,
     togglePlayer,
     unselectedPlayers,
+    updateTeamName,
   } = useTeamsBuilderState(players);
 
   return (
@@ -54,6 +55,7 @@ export const TeamsBuilder: FC<TeamsBuilderProps> = ({ players }) => {
                   removePlayerFromTeam={removePlayerFromTeam}
                   removeTeam={removeTeam}
                   team={team}
+                  updateTeamName={updateTeamName}
                 />
               </div>
             ))}

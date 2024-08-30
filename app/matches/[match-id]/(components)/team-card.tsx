@@ -2,15 +2,10 @@ import { PlayersInMatchLabel } from "@/app/matches/(components)/players-in-match
 import { Team } from "@/app/matches/[match-id]/hooks/use-team-builder-state";
 import { Avatar } from "@/components/avatar";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { TrashIcon } from "lucide-react";
-import { FC } from "react";
+import { ChangeEventHandler, FC } from "react";
 
 type TeamCardProps = {
   assignSelectionToTeam: (teamId: string) => void;
@@ -18,6 +13,7 @@ type TeamCardProps = {
   removePlayerFromTeam: (playerId: number, teamId: string) => void;
   removeTeam: (teamId: string) => void;
   team: Team;
+  updateTeamName: (teamId: string, newName: string) => void;
 };
 
 export const TeamCard: FC<TeamCardProps> = ({
@@ -26,16 +22,23 @@ export const TeamCard: FC<TeamCardProps> = ({
   removePlayerFromTeam,
   removeTeam,
   team,
+  updateTeamName,
 }) => {
+  const onTeamNameChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    updateTeamName(team.id, event.target.value);
+  };
+
   return (
     <Card className="bg-slate-50">
-      <CardHeader>
-        <CardTitle>{team.name}</CardTitle>
-        <CardDescription>
-          <PlayersInMatchLabel players={team.players.length} />
-        </CardDescription>
-      </CardHeader>
       <CardContent>
+        <div className="py-6">
+          <div className="grid grid-rows-1 gap-2">
+            <Input value={team.name} onChange={onTeamNameChange} />
+            <p className="text-sm text-slate-700">
+              <PlayersInMatchLabel players={team.players.length} />
+            </p>
+          </div>
+        </div>
         <div className="flex flex-col gap-4">
           {Boolean(team.players.length) ? (
             <div className="flex flex-col gap-2">

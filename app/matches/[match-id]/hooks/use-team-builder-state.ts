@@ -28,6 +28,7 @@ type UseTeamsBuilderStateResult = {
   teams: Team[];
   togglePlayer: (playerId: number) => void;
   unselectedPlayers: Player[];
+  updateTeamName: (teamId: string, newName: string) => void;
 };
 
 type UseTeamsBuilderState = (players: Player[]) => UseTeamsBuilderStateResult;
@@ -134,6 +135,25 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (players) => {
     });
   };
 
+  const updateTeamName: (teamId: string, newName: string) => void = (
+    teamId,
+    newName
+  ) => {
+    setTeams((currTeams) =>
+      currTeams.map((currTeam) => {
+        if (currTeam.id !== teamId) {
+          return currTeam;
+        }
+
+        /* Making a copy so it's sage to mutate it */
+        const nextTeam = { ...currTeam };
+        nextTeam.name = newName;
+
+        return nextTeam;
+      })
+    );
+  };
+
   return {
     assignSelectionToTeam,
     createNewTeam,
@@ -143,5 +163,6 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (players) => {
     teams,
     togglePlayer,
     unselectedPlayers: getUnselectedPlayers(),
+    updateTeamName,
   };
 };
