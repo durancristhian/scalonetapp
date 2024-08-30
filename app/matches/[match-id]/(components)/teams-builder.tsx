@@ -23,6 +23,7 @@ type TeamsBuilderProps = {
 export const TeamsBuilder: FC<TeamsBuilderProps> = ({ players }) => {
   const {
     assignSelectionToTeam,
+    createNewTeam,
     removePlayerFromTeam,
     removeTeam,
     selectedIds,
@@ -59,6 +60,16 @@ export const TeamsBuilder: FC<TeamsBuilderProps> = ({ players }) => {
               </div>
             ))}
           </div>
+          <div>
+            <Button
+              onClick={() => {
+                createNewTeam();
+              }}
+              variant="outline"
+            >
+              Agregar otro equipo
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
@@ -71,8 +82,20 @@ type Team = {
   players: Player[];
 };
 
+const getEmptyTeam: (name: string) => Team = (name) => ({
+  id: uniqueId("team-"),
+  name,
+  players: [],
+});
+
+const DEFAULT_TEAMS: Team[] = [
+  getEmptyTeam("Equipo 1"),
+  getEmptyTeam("Equipo 2"),
+];
+
 type UseTeamsBuilderStateResult = {
   assignSelectionToTeam: (teamId: string) => void;
+  createNewTeam: () => void;
   removePlayerFromTeam: (playerId: number, teamId: string) => void;
   removeTeam: (teamId: string) => void;
   selectedIds: number[];
@@ -84,10 +107,7 @@ type UseTeamsBuilderStateResult = {
 type UseTeamsBuilderState = (players: Player[]) => UseTeamsBuilderStateResult;
 
 const useTeamsBuilderState: UseTeamsBuilderState = (players) => {
-  const [teams, setTeams] = useState<Team[]>([
-    { id: uniqueId("team-"), name: "Equipo 1", players: [] },
-    { id: uniqueId("team-"), name: "Equipo 2", players: [] },
-  ]);
+  const [teams, setTeams] = useState<Team[]>(DEFAULT_TEAMS);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   const assignSelectionToTeam: (teamId: string) => void = (teamId) => {
@@ -126,6 +146,12 @@ const useTeamsBuilderState: UseTeamsBuilderState = (players) => {
 
     /* We clean the current selected ids as well so we can start over */
     setSelectedIds([]);
+  };
+
+  const createNewTeam: () => void = () => {
+    setTeams((currTeams) =>
+      currTeams.concat([getEmptyTeam(`Equipo ${currTeams.length + 1}`)])
+    );
   };
 
   const getUnselectedPlayers = () => {
@@ -184,6 +210,7 @@ const useTeamsBuilderState: UseTeamsBuilderState = (players) => {
 
   return {
     assignSelectionToTeam,
+    createNewTeam,
     removePlayerFromTeam,
     removeTeam,
     selectedIds,
@@ -271,7 +298,7 @@ const Team: FC<TeamProps> = ({
                   <div className="inline-flex">
                     <Button
                       type="submit"
-                      variant="ghost"
+                      variant="outline"
                       size="icon"
                       onClick={() => {
                         removePlayerFromTeam(player.id, team.id);
@@ -289,7 +316,7 @@ const Team: FC<TeamProps> = ({
               onClick={() => {
                 removeTeam(team.id);
               }}
-              variant="ghost"
+              variant="outline"
               size="icon"
             >
               <TrashIcon className="h-4 text-red-700 w-4" />
