@@ -47,7 +47,7 @@ export const TeamsBuilder: FC<TeamsBuilderProps> = ({ players }) => {
             selectedIds={selectedIds}
             togglePlayer={togglePlayer}
           />
-          <div className="flex gap-4">
+          <div className="gap-4 grid md:grid-cols-2">
             {teams.map((team) => (
               <div key={team.id} className="grow">
                 <Team
