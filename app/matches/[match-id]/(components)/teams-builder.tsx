@@ -21,8 +21,15 @@ type TeamsBuilderProps = {
 };
 
 export const TeamsBuilder: FC<TeamsBuilderProps> = ({ players }) => {
-  const { selectedIds, togglePlayer, teams, assignSelectionToTeam } =
-    useTeamsBuilderState(players);
+  const {
+    assignSelectionToTeam,
+    removePlayerFromTeam,
+    removeTeam,
+    selectedIds,
+    teams,
+    togglePlayer,
+    unselectedPlayers,
+  } = useTeamsBuilderState(players);
 
   return (
     <Card>
@@ -35,7 +42,7 @@ export const TeamsBuilder: FC<TeamsBuilderProps> = ({ players }) => {
       <CardContent>
         <div className="flex flex-col gap-4">
           <PlayersList
-            players={players}
+            players={unselectedPlayers}
             selectedIds={selectedIds}
             togglePlayer={togglePlayer}
           />
@@ -43,9 +50,11 @@ export const TeamsBuilder: FC<TeamsBuilderProps> = ({ players }) => {
             {teams.map((team) => (
               <div key={team.id} className="grow">
                 <Team
-                  team={team}
-                  canAssignSelection={!selectedIds.length}
                   assignSelectionToTeam={assignSelectionToTeam}
+                  canAssignSelection={!selectedIds.length}
+                  removePlayerFromTeam={removePlayerFromTeam}
+                  removeTeam={removeTeam}
+                  team={team}
                 />
               </div>
             ))}
@@ -63,10 +72,13 @@ type Team = {
 };
 
 type UseTeamsBuilderStateResult = {
-  selectedIds: number[];
-  togglePlayer: (playerId: number) => void;
-  teams: Team[];
   assignSelectionToTeam: (teamId: string) => void;
+  removePlayerFromTeam: (playerId: number, teamId: string) => void;
+  removeTeam: (teamId: string) => void;
+  selectedIds: number[];
+  teams: Team[];
+  togglePlayer: (playerId: number) => void;
+  unselectedPlayers: Player[];
 };
 
 type UseTeamsBuilderState = (players: Player[]) => UseTeamsBuilderStateResult;
@@ -77,26 +89,6 @@ const useTeamsBuilderState: UseTeamsBuilderState = (players) => {
     { id: uniqueId("team-"), name: "Equipo 2", players: [] },
   ]);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-
-  const togglePlayer: (playerId: number) => void = (playerId) => {
-    setSelectedIds((currSelectedIds) => {
-      /* Grabbing the idx of the player in case is already selected */
-      const idx = currSelectedIds.findIndex((id) => id === playerId);
-
-      /* Making a copy so it's safe to mutate it */
-      const nextState = [...currSelectedIds];
-
-      /* If the id is already selected, we eliminate it from the list */
-      if (currSelectedIds.includes(playerId)) {
-        nextState.splice(idx, 1);
-      } else {
-        /* We add the id to the list since it's not there yet */
-        nextState.push(playerId);
-      }
-
-      return nextState;
-    });
-  };
 
   const assignSelectionToTeam: (teamId: string) => void = (teamId) => {
     setTeams((currTeams) =>
@@ -136,11 +128,68 @@ const useTeamsBuilderState: UseTeamsBuilderState = (players) => {
     setSelectedIds([]);
   };
 
+  const getUnselectedPlayers = () => {
+    const idsInUse = teams.flatMap((team) =>
+      team.players.map((player) => player.id)
+    );
+
+    return players.filter((player) => !idsInUse.includes(player.id));
+  };
+
+  const removePlayerFromTeam: (playerId: number, teamId: string) => void = (
+    playerId,
+    teamId
+  ) => {
+    setTeams((currTeams) =>
+      currTeams.map((currTeam) => {
+        if (currTeam.id !== teamId) {
+          return currTeam;
+        }
+
+        const currPlayerIdIdx = currTeam.players.findIndex(
+          (player) => player.id === playerId
+        );
+
+        /* Making a copy so it's sage to mutate it */
+        const nextTeam = { ...currTeam };
+        nextTeam.players.splice(currPlayerIdIdx, 1);
+
+        return nextTeam;
+      })
+    );
+  };
+
+  const removeTeam: (teamId: string) => void = (teamId) => {
+    setTeams((currTeams) => currTeams.filter((team) => team.id !== teamId));
+  };
+
+  const togglePlayer: (playerId: number) => void = (playerId) => {
+    setSelectedIds((currSelectedIds) => {
+      /* Making a copy so it's safe to mutate it */
+      const nextState = [...currSelectedIds];
+
+      /* If the id is already selected, we eliminate it from the list */
+      if (currSelectedIds.includes(playerId)) {
+        const idx = currSelectedIds.findIndex((id) => id === playerId);
+
+        nextState.splice(idx, 1);
+      } else {
+        /* We add the id to the list since it's not there yet */
+        nextState.push(playerId);
+      }
+
+      return nextState;
+    });
+  };
+
   return {
-    selectedIds,
-    togglePlayer,
-    teams,
     assignSelectionToTeam,
+    removePlayerFromTeam,
+    removeTeam,
+    selectedIds,
+    teams,
+    togglePlayer,
+    unselectedPlayers: getUnselectedPlayers(),
   };
 };
 
@@ -155,6 +204,10 @@ const PlayersList: FC<PlayersListProps> = ({
   selectedIds,
   togglePlayer,
 }) => {
+  if (!players.length) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap gap-2">
@@ -180,12 +233,16 @@ const PlayersList: FC<PlayersListProps> = ({
 type TeamProps = {
   assignSelectionToTeam: (teamId: string) => void;
   canAssignSelection: boolean;
+  removePlayerFromTeam: (playerId: number, teamId: string) => void;
+  removeTeam: (teamId: string) => void;
   team: Team;
 };
 
 const Team: FC<TeamProps> = ({
   assignSelectionToTeam,
   canAssignSelection,
+  removePlayerFromTeam,
+  removeTeam,
   team,
 }) => {
   return (
@@ -212,7 +269,14 @@ const Team: FC<TeamProps> = ({
                     </div>
                   </div>
                   <div className="inline-flex">
-                    <Button type="submit" variant="ghost" size="icon">
+                    <Button
+                      type="submit"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => {
+                        removePlayerFromTeam(player.id, team.id);
+                      }}
+                    >
                       <TrashIcon className="h-4 text-red-700 w-4" />
                     </Button>
                   </div>
@@ -223,7 +287,7 @@ const Team: FC<TeamProps> = ({
           <div className="flex gap-4 justify-between">
             <Button
               onClick={() => {
-                console.log("Delete");
+                removeTeam(team.id);
               }}
               variant="ghost"
               size="icon"
