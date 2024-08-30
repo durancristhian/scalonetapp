@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { deletePlayer } from "@/server/queries/player";
+import { deletePlayer } from "@/server/actions/player";
 import { Player } from "@prisma/client";
 import { TrashIcon } from "lucide-react";
 import { FC } from "react";
