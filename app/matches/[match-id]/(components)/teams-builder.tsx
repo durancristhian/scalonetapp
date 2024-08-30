@@ -12,7 +12,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Player } from "@prisma/client";
+import copy from "copy-to-clipboard";
+import { PartyPopper } from "lucide-react";
 import { FC } from "react";
+import { toast } from "sonner";
 
 type TeamsBuilderProps = {
   players: Player[];
@@ -30,6 +33,25 @@ export const TeamsBuilder: FC<TeamsBuilderProps> = ({ players }) => {
     unselectedPlayers,
     updateTeamName,
   } = useTeamsBuilderState(players);
+
+  const copyTeams = () => {
+    const text = `${teams
+      .map((team) => {
+        const players = team.players
+          .sort((playerA, playerB) => playerA.name.localeCompare(playerB.name))
+          .map((player) => `- ${player.name}`)
+          .join("\n");
+
+        return `${team.name}:\n${players}`;
+      })
+      .join("\n\n")}`;
+
+    copy(text);
+
+    toast("Equipos copiados al portapapeles.", {
+      icon: <PartyPopper className="h-4 opacity-50 w-4" />,
+    });
+  };
 
   return (
     <Card>
@@ -60,15 +82,26 @@ export const TeamsBuilder: FC<TeamsBuilderProps> = ({ players }) => {
               </div>
             ))}
           </div>
-          <div>
-            <Button
-              onClick={() => {
-                createNewTeam();
-              }}
-              variant="outline"
-            >
-              Agregar otro equipo
-            </Button>
+          <div className="flex justify-between gap-4">
+            <div>
+              <Button
+                onClick={() => {
+                  createNewTeam();
+                }}
+                variant="outline"
+              >
+                Agregar otro equipo
+              </Button>
+            </div>
+            <div>
+              <Button
+                onClick={() => {
+                  copyTeams();
+                }}
+              >
+                Copiar equipos
+              </Button>
+            </div>
           </div>
         </div>
       </CardContent>

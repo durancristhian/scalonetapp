@@ -1,6 +1,7 @@
 import "@/app/globals.css";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+import { Toaster } from "@/components/ui/sonner";
 import { ClerkProvider } from "@clerk/nextjs";
 import clsx from "clsx";
 import type { Metadata } from "next";
@@ -36,6 +37,7 @@ export default function Layout({
             <div className="grow">{children}</div>
             <Footer />
           </div>
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>
