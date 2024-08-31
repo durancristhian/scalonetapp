@@ -1,6 +1,4 @@
-import { MatchPlayers } from "@/app/[match-id]/(components)/match-players";
-import { TeamsBuilder } from "@/app/[match-id]/(components)/teams-builder";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MatchDetails } from "@/app/[match-id]/(components)/match-details";
 import { getMatchById } from "@/server/queries/match";
 import { notFound } from "next/navigation";
 
@@ -18,27 +16,9 @@ export default async function Page({ params }: PageProps) {
   }
 
   return (
-    <div className="py-8">
-      <div className="container mx-auto">
-        <div className="flex flex-col gap-4">
-          <div>
-            <h2 className="font-semibold text-2xl">{match.name}</h2>
-          </div>
-          <div>
-            <Tabs defaultValue="players">
-              <TabsList className="grid grid-cols-2 w-full">
-                <TabsTrigger value="players">Personas</TabsTrigger>
-                <TabsTrigger value="teams">Equipos</TabsTrigger>
-              </TabsList>
-              <TabsContent value="players">
-                <MatchPlayers players={match.players} />
-              </TabsContent>
-              <TabsContent value="teams">
-                <TeamsBuilder players={match.players} />
-              </TabsContent>
-            </Tabs>
-          </div>
-        </div>
+    <div className="py-4 md:py-8">
+      <div className="max-w-7xl mx-auto px-2 md:px-4 w-full">
+        <MatchDetails match={match} />
       </div>
     </div>
   );

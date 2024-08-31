@@ -33,21 +33,25 @@ export const addPlayer = async (data: PlayerSchema, matchId: number) => {
     matchId,
   };
 
-  return await prisma.player.create({
+  await prisma.player.create({
     data: nextPlayer,
   });
+
+  return;
 };
 
-export const deletePlayer = async (id: number) => {
+export const deletePlayer: (id: number) => Promise<void> = async (id) => {
   const user = auth();
 
   if (!user || !user.userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
 
-  return await prisma.player.delete({
+  await prisma.player.delete({
     where: {
       id,
     },
   });
+
+  return;
 };

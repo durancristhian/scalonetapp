@@ -39,7 +39,7 @@ export default function Layout({
         <body
           className={clsx(
             inter.className,
-            "antialiased bg-white text-slate-800"
+            "antialiased bg-white slashed-zero tabular-nums text-slate-800"
           )}
         >
           <SignedOut>

@@ -1,6 +1,6 @@
 import { Player } from "@prisma/client";
 import uniqueId from "lodash.uniqueid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export type Team = {
   id: string;
@@ -37,11 +37,27 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (players) => {
   const [teams, setTeams] = useState<Team[]>(DEFAULT_TEAMS);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
+  /* When players change we check there is no assigned players that were deleted */
+  useEffect(() => {
+    const playerIds = new Set(players.map((player) => player.id));
+
+    setTeams((currTeams) =>
+      currTeams.map((currTeam) => {
+        const nextTeam = { ...currTeam };
+
+        nextTeam.players = nextTeam.players.filter((player) =>
+          playerIds.has(player.id)
+        );
+
+        return nextTeam;
+      })
+    );
+  }, [players]);
+
   const assignSelectionToTeam: (teamId: string) => void = (teamId) => {
     setTeams((currTeams) =>
       /* We loop over all the teams since an update might include removing players from another team, not only adding them to the specified team */
       currTeams.map((currTeam) => {
-        /* Making a copy so it's sage to mutate it */
         const nextTeam = { ...currTeam };
 
         /* If the selection is meant to be for the specified team id */
@@ -103,7 +119,6 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (players) => {
           (player) => player.id === playerId
         );
 
-        /* Making a copy so it's sage to mutate it */
         const nextTeam = { ...currTeam };
         nextTeam.players.splice(currPlayerIdIdx, 1);
 
@@ -118,7 +133,6 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (players) => {
 
   const togglePlayer: (playerId: number) => void = (playerId) => {
     setSelectedIds((currSelectedIds) => {
-      /* Making a copy so it's safe to mutate it */
       const nextState = [...currSelectedIds];
 
       /* If the id is already selected, we eliminate it from the list */
@@ -145,7 +159,6 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (players) => {
           return currTeam;
         }
 
-        /* Making a copy so it's sage to mutate it */
         const nextTeam = { ...currTeam };
         nextTeam.name = newName;
 

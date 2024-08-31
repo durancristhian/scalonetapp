@@ -12,7 +12,7 @@ type MatchItemProps = {
   match: Match;
 };
 
-export const MatchItem: FC<MatchItemProps> = async ({ deleteMatch, match }) => {
+export const MatchItem: FC<MatchItemProps> = ({ deleteMatch, match }) => {
   const onDeleteMatch: () => Promise<void> = async () => {
     try {
       await deleteMatch();

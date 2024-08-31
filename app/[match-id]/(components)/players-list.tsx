@@ -1,36 +1,54 @@
+"use client";
+
+import { Team } from "@/app/[match-id]/hooks/use-team-builder-state";
 import { SpicyTooltips } from "@/components/spicy-tooltips";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Toggle } from "@/components/ui/toggle";
 import { Player } from "@prisma/client";
 import { default as BoringAvatar } from "boring-avatars";
-import { FC } from "react";
+import { FC, useState } from "react";
 
 type PlayersListProps = {
+  assignSelectionToTeam: (teamId: string) => void;
+  canAssignSelection: boolean;
   players: Player[];
   selectedIds: number[];
+  teams: Team[];
   togglePlayer: (playerId: number) => void;
 };
 
 export const PlayersList: FC<PlayersListProps> = ({
+  assignSelectionToTeam,
+  canAssignSelection,
   players,
   selectedIds,
+  teams,
   togglePlayer,
 }) => {
+  const [selectedTeamId, setSelectedTeamId] = useState("");
+
   if (!players.length) {
     return null;
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="grid gap-4">
       <div className="flex flex-wrap gap-2">
         {players.map((player) => (
           <Toggle
             key={player.id}
-            aria-label={player.name}
-            variant="outline"
-            pressed={selectedIds.includes(player.id)}
             onPressedChange={() => {
               togglePlayer(player.id);
             }}
+            pressed={selectedIds.includes(player.id)}
+            variant="outline"
           >
             <SpicyTooltips>
               <BoringAvatar variant="beam" name={player.name} size={24} />
@@ -39,6 +57,34 @@ export const PlayersList: FC<PlayersListProps> = ({
           </Toggle>
         ))}
       </div>
+      <Select
+        value={selectedTeamId}
+        disabled={canAssignSelection}
+        onValueChange={(selectedTeamId) => {
+          assignSelectionToTeam(selectedTeamId);
+
+          setSelectedTeamId("");
+        }}
+      >
+        <SelectTrigger>
+          <SelectValue
+            placeholder={
+              canAssignSelection
+                ? "Selecciona al menos un jugador"
+                : "Elegí un equipo"
+            }
+          />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            {teams.map((team) => (
+              <SelectItem key={team.id} value={team.id}>
+                {team.name}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
     </div>
   );
 };

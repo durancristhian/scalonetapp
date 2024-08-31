@@ -53,7 +53,7 @@ export const getMatchById = async (id: number) => {
   return match;
 };
 
-export const addMatch = async (data: MatchSchema) => {
+export const addMatch: (data: MatchSchema) => Promise<void> = async (data) => {
   const user = auth();
 
   if (!user || !user.userId) {
@@ -72,7 +72,7 @@ export const addMatch = async (data: MatchSchema) => {
   return;
 };
 
-export const deleteMatch = async (id: number) => {
+export const deleteMatch: (id: number) => Promise<void> = async (id) => {
   const user = auth();
 
   if (!user || !user.userId) {

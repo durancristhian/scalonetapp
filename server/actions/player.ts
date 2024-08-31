@@ -12,7 +12,7 @@ type AddPlayer = (data: PlayerSchema, matchId: number) => Promise<void>;
 export const addPlayer: AddPlayer = async (data, matchId) => {
   await addPlayerQuery(data, matchId);
 
-  revalidatePath("/matches/[match-id]", "page");
+  revalidatePath("/[match-id]", "page");
 };
 
 type DeletePlayer = (id: number) => Promise<void>;
@@ -20,5 +20,5 @@ type DeletePlayer = (id: number) => Promise<void>;
 export const deletePlayer: DeletePlayer = async (id) => {
   await deletePlayerQuery(id);
 
-  revalidatePath("/matches/[match-id]", "page");
+  revalidatePath("/[match-id]", "page");
 };
