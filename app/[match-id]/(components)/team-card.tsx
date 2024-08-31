@@ -81,7 +81,7 @@ export const TeamCard: FC<TeamCardProps> = ({
               </div>
             </>
           ) : (
-            <p>Por el momento no hay jugadores en este equipo.</p>
+            <p>No hay jugadores en este equipo.</p>
           )}
         </div>
       </CardContent>

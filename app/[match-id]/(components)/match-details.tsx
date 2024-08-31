@@ -65,7 +65,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
   };
 
   return (
-    <div className="grid md:grid-cols-3 gap-4">
+    <div className="grid md:grid-cols-3 gap-8">
       <div className="md:col-span-1">
         <Card className="bg-slate-50">
           <CardHeader>
@@ -81,52 +81,48 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
         </Card>
       </div>
       <div className="md:col-span-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Equipos</CardTitle>
+        <div className="grid gap-4">
+          <div>
+            <CardTitle className="mb-1.5">Los equipos</CardTitle>
             <CardDescription>
               {unselectedPlayers.length
                 ? "Seleccioná jugadores de la lista a continuación para luego agregarlos a uno de los equipos."
                 : "Listo! Ya agregaste a todos los jugadores en un equipo. Ahora podés guardar tus equipos."}
             </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4">
-              <PlayersList
-                assignSelectionToTeam={assignSelectionToTeam}
-                canAssignSelection={!selectedIds.length}
-                players={unselectedPlayers}
-                selectedIds={selectedIds}
-                teams={teams}
-                togglePlayer={togglePlayer}
+          </div>
+          <PlayersList
+            assignSelectionToTeam={assignSelectionToTeam}
+            canAssignSelection={!selectedIds.length}
+            players={unselectedPlayers}
+            selectedIds={selectedIds}
+            teams={teams}
+            togglePlayer={togglePlayer}
+          />
+          <div className="grid md:grid-cols-2 gap-4">
+            {teams.map((team) => (
+              <TeamCard
+                key={team.id}
+                canBeDeleted={teams.length > 1}
+                removePlayerFromTeam={removePlayerFromTeam}
+                removeTeam={removeTeam}
+                team={team}
+                updateTeamName={updateTeamName}
               />
-              <div className="grid md:grid-cols-2 gap-4">
-                {teams.map((team) => (
-                  <TeamCard
-                    key={team.id}
-                    canBeDeleted={teams.length > 1}
-                    removePlayerFromTeam={removePlayerFromTeam}
-                    removeTeam={removeTeam}
-                    team={team}
-                    updateTeamName={updateTeamName}
-                  />
-                ))}
-              </div>
-              <div className="flex justify-between gap-4">
-                <Button variant="outline" size="sm" onClick={createNewTeam}>
-                  Agregar otro equipo
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={copyTeams}
-                  disabled={!!unselectedPlayers.length}
-                >
-                  Copiar
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            ))}
+          </div>
+          <div className="flex justify-between gap-4">
+            <Button variant="outline" size="sm" onClick={createNewTeam}>
+              Agregar otro equipo
+            </Button>
+            <Button
+              size="sm"
+              onClick={copyTeams}
+              disabled={!!unselectedPlayers.length}
+            >
+              Copiar
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );
