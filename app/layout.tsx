@@ -11,9 +11,16 @@ import {
   SignInButton,
 } from "@clerk/nextjs";
 import clsx from "clsx";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { FC, PropsWithChildren } from "react";
+
+export const viewport: Viewport = {
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  width: "device-width",
+};
 
 const inter = Inter({
   subsets: ["latin"],
