@@ -1,5 +1,4 @@
-import { PlayersInMatchLabel } from "@/app/matches/(components)/players-in-match-label";
-import { Team } from "@/app/matches/[match-id]/hooks/use-team-builder-state";
+import { Team } from "@/app/[match-id]/hooks/use-team-builder-state";
 import { SpicyTooltips } from "@/components/spicy-tooltips";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -35,9 +34,6 @@ export const TeamCard: FC<TeamCardProps> = ({
         <div className="py-6">
           <div className="grid grid-rows-1 gap-2">
             <Input value={team.name} onChange={onTeamNameChange} />
-            <p className="text-sm text-slate-700">
-              <PlayersInMatchLabel players={team.players.length} />
-            </p>
           </div>
         </div>
         <div className="flex flex-col gap-4">

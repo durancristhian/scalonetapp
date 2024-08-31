@@ -1,6 +1,5 @@
-import { PlayersInMatchLabel } from "@/app/matches/(components)/players-in-match-label";
-import { MatchPlayers } from "@/app/matches/[match-id]/(components)/match-players";
-import { TeamsBuilder } from "@/app/matches/[match-id]/(components)/teams-builder";
+import { MatchPlayers } from "@/app/[match-id]/(components)/match-players";
+import { TeamsBuilder } from "@/app/[match-id]/(components)/teams-builder";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getMatchById } from "@/server/queries/match";
 import { notFound } from "next/navigation";
@@ -24,9 +23,6 @@ export default async function Page({ params }: PageProps) {
         <div className="flex flex-col gap-4">
           <div>
             <h2 className="font-semibold text-2xl">{match.name}</h2>
-            <p className="text-sm text-slate-700">
-              <PlayersInMatchLabel players={match.players.length} />
-            </p>
           </div>
           <div>
             <Tabs defaultValue="players">

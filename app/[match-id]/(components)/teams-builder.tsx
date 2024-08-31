@@ -1,8 +1,8 @@
 "use client";
 
-import { PlayersList } from "@/app/matches/[match-id]/(components)/players-list";
-import { TeamCard } from "@/app/matches/[match-id]/(components)/team-card";
-import { useTeamsBuilderState } from "@/app/matches/[match-id]/hooks/use-team-builder-state";
+import { PlayersList } from "@/app/[match-id]/(components)/players-list";
+import { TeamCard } from "@/app/[match-id]/(components)/team-card";
+import { useTeamsBuilderState } from "@/app/[match-id]/hooks/use-team-builder-state";
 import { Button } from "@/components/ui/button";
 import {
   Card,

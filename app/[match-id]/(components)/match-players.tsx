@@ -1,4 +1,4 @@
-import { AddPlayerForm } from "@/app/matches/[match-id]/(components)/add-player-form";
+import { AddPlayerForm } from "@/app/[match-id]/(components)/add-player-form";
 import { SpicyTooltips } from "@/components/spicy-tooltips";
 import { Button } from "@/components/ui/button";
 import {

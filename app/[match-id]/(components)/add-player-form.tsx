@@ -1,7 +1,6 @@
 "use client";
 
 import { SpicyTooltips } from "@/components/spicy-tooltips";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -79,7 +78,6 @@ export const AddPlayerForm = () => {
             </div>
           )}
         />
-        <Button type="submit">Agregar</Button>
       </form>
     </Form>
   );

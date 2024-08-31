@@ -57,8 +57,8 @@ export default function Layout({
 
 const LoggedOutContent: FC = () => {
   return (
-    <div className="bg-slate-100 flex flex-col items-center justify-center min-h-dvh p-2 md:p-4">
-      <h1 className="font-semibold text-2xl md:text-4xl">
+    <div className="bg-slate-100 flex flex-col items-center justify-center min-h-dvh p-2">
+      <h1 className="font-semibold text-2xl">
         Bienvenidos a&nbsp;
         <span className="font-bold text-slate-950 tracking-wide">
           Scalonet.app

@@ -13,8 +13,8 @@ type AddMatch = (data: MatchSchema) => Promise<void>;
 export const addMatch: AddMatch = async (data) => {
   await addMatchQuery(data);
 
-  revalidatePath("/matches");
-  redirect("/matches");
+  revalidatePath("/");
+  redirect("/");
 };
 
 type DeleteMatch = (id: number) => Promise<void>;
@@ -22,5 +22,5 @@ type DeleteMatch = (id: number) => Promise<void>;
 export const deleteMatch: DeleteMatch = async (id) => {
   await deleteMatchQuery(id);
 
-  revalidatePath("/matches");
+  revalidatePath("/");
 };

@@ -65,9 +65,11 @@ export const addMatch = async (data: MatchSchema) => {
     userId: user.userId,
   };
 
-  return await prisma.match.create({
+  await prisma.match.create({
     data: nextMatch,
   });
+
+  return;
 };
 
 export const deleteMatch = async (id: number) => {
@@ -77,10 +79,12 @@ export const deleteMatch = async (id: number) => {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
 
-  return await prisma.match.delete({
+  await prisma.match.delete({
     where: {
       id,
       userId: user.userId,
     },
   });
+
+  return;
 };

@@ -1,19 +1,34 @@
-import { MatchesList } from "@/app/matches/(components)/matches-list";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { AddMatchForm } from "@/app/(components)/add-match-form";
+import { MatchList } from "@/app/(components)/match-list";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Page() {
   return (
-    <div className="py-8">
-      <div className="container mx-auto">
-        <div className="flex flex-col gap-4">
-          <div className="flex gap-4 items-center justify-between">
-            <h2 className="font-semibold text-2xl">Tus partidos</h2>
-            <Button asChild>
-              <Link href="/matches/new">Crear</Link>
-            </Button>
+    <div className="py-4 md:py-8">
+      <div className="max-w-7xl mx-auto px-2 md:px-4 w-full">
+        <div className="grid gap-4">
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className="md:col-span-1">
+              <Card className="bg-slate-50">
+                <CardHeader>
+                  <CardTitle>Nuevo partido</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <AddMatchForm />
+                </CardContent>
+              </Card>
+            </div>
+            <div className="md:col-span-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Tus partidos</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <MatchList />
+                </CardContent>
+              </Card>
+            </div>
           </div>
-          <MatchesList />
         </div>
       </div>
     </div>
