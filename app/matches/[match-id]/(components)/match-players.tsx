@@ -1,5 +1,5 @@
 import { AddPlayerForm } from "@/app/matches/[match-id]/(components)/add-player-form";
-import { Avatar } from "@/components/avatar";
+import { SpicyTooltips } from "@/components/spicy-tooltips";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { deletePlayer } from "@/server/actions/player";
 import { Player } from "@prisma/client";
+import { default as BoringAvatar } from "boring-avatars";
 import { TrashIcon } from "lucide-react";
 import { FC } from "react";
 
@@ -37,7 +38,13 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
                     <li key={player.id}>
                       <div className="border border-slate-300 flex items-center gap-4 p-2 rounded-md">
                         <div className="inline-flex">
-                          <Avatar name={player.name} size={36} />
+                          <SpicyTooltips>
+                            <BoringAvatar
+                              variant="beam"
+                              name={player.name}
+                              size={36}
+                            />
+                          </SpicyTooltips>
                         </div>
                         <div className="grow">
                           <p className="font-semibold">{player.name}</p>

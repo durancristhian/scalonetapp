@@ -1,9 +1,10 @@
 import { PlayersInMatchLabel } from "@/app/matches/(components)/players-in-match-label";
 import { Team } from "@/app/matches/[match-id]/hooks/use-team-builder-state";
-import { Avatar } from "@/components/avatar";
+import { SpicyTooltips } from "@/components/spicy-tooltips";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { default as BoringAvatar } from "boring-avatars";
 import { TrashIcon } from "lucide-react";
 import { ChangeEventHandler, FC } from "react";
 
@@ -49,7 +50,13 @@ export const TeamCard: FC<TeamCardProps> = ({
                 >
                   <div className="grow">
                     <div className="flex gap-2 items-center">
-                      <Avatar name={player.name} size={24} />
+                      <SpicyTooltips>
+                        <BoringAvatar
+                          variant="beam"
+                          name={player.name}
+                          size={24}
+                        />
+                      </SpicyTooltips>
                       <p className="font-semibold">{player.name}</p>
                     </div>
                   </div>

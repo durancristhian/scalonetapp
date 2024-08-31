@@ -6,9 +6,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { default as BoringAvatar } from "boring-avatars";
 import throttle from "lodash.throttle";
-import { FC, useState } from "react";
+import { FC, PropsWithChildren, useState } from "react";
 
 const TOOLTIP_MESSAGES = [
   "ee ke mirá? queré que te cague a trompada?",
@@ -17,12 +16,7 @@ const TOOLTIP_MESSAGES = [
   "No te conozco pero dame tu url y te voy a buscar a ver si te la bancás",
 ];
 
-type AvatarProps = {
-  name: string;
-  size?: number;
-};
-
-export const Avatar: FC<AvatarProps> = ({ name, size = 48 }) => {
+export const SpicyTooltips: FC<PropsWithChildren> = ({ children }) => {
   const [tooltipIndex, setTooltipIndex] = useState(-1);
 
   const handleMouseEnter = throttle(() => {
@@ -35,10 +29,7 @@ export const Avatar: FC<AvatarProps> = ({ name, size = 48 }) => {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          {/* This div here is necessary since the BoringAvatar component doesn't spread the ref AND we need an element to attach an event listener so we can display different tooltip messages */}
-          <div onMouseEnter={handleMouseEnter}>
-            <BoringAvatar name={name} variant="beam" size={size} />
-          </div>
+          <div onMouseEnter={handleMouseEnter}>{children}</div>
         </TooltipTrigger>
         <TooltipContent>
           <p>{TOOLTIP_MESSAGES[tooltipIndex]}</p>

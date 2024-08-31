@@ -1,6 +1,7 @@
-import { Avatar } from "@/components/avatar";
+import { SpicyTooltips } from "@/components/spicy-tooltips";
 import { Toggle } from "@/components/ui/toggle";
 import { Player } from "@prisma/client";
+import { default as BoringAvatar } from "boring-avatars";
 import { FC } from "react";
 
 type PlayersListProps = {
@@ -31,7 +32,9 @@ export const PlayersList: FC<PlayersListProps> = ({
               togglePlayer(player.id);
             }}
           >
-            <Avatar name={player.name} size={24} />
+            <SpicyTooltips>
+              <BoringAvatar variant="beam" name={player.name} size={24} />
+            </SpicyTooltips>
             <p className="ml-2">{player.name}</p>
           </Toggle>
         ))}

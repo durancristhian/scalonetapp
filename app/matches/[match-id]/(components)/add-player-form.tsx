@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar } from "@/components/avatar";
+import { SpicyTooltips } from "@/components/spicy-tooltips";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { addPlayer } from "@/server/actions/player";
 import { PLAYER_SCHEMA, PlayerSchema } from "@/server/schemas/player";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { default as BoringAvatar } from "boring-avatars";
 import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 
@@ -58,7 +59,13 @@ export const AddPlayerForm = () => {
           render={({ field }) => (
             <div className="flex gap-4 items-center">
               <div>
-                <Avatar name={field.value || PLACEHOLDER} />
+                <SpicyTooltips>
+                  <BoringAvatar
+                    variant="beam"
+                    name={field.value || PLACEHOLDER}
+                    size={48}
+                  />
+                </SpicyTooltips>
               </div>
               <div className="grow">
                 <FormItem>
