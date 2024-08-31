@@ -5,7 +5,7 @@ import { getMatches } from "@/server/queries/match";
 export const MatchList = async () => {
   const matches = await getMatches();
 
-  if (!matches.length) {
+  if (!Array.isArray(matches) || !matches.length) {
     return <p>A medida que crees partidos van a aparecer listados acá.</p>;
   }
 

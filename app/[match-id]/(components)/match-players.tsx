@@ -11,7 +11,7 @@ type MatchPlayersProps = {
 };
 
 export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
-  if (!players.length) {
+  if (!Array.isArray(players) || !players.length) {
     return <p>Las personas que agregues van a aparecer listadas acá.</p>;
   }
 

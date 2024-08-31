@@ -34,7 +34,7 @@ export const PlayersList: FC<PlayersListProps> = ({
 }) => {
   const [selectedTeamId, setSelectedTeamId] = useState("");
 
-  if (!players.length) {
+  if (!Array.isArray(players) || !players.length) {
     return null;
   }
 
