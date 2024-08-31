@@ -15,7 +15,7 @@ export const LoggedOutContent: FC = () => {
       <ShowOff />
       <div className="mt-8">
         <SignInButton mode="modal">
-          <Button size="sm">Ingresar</Button>
+          <Button size="sm">Ingresar con Google</Button>
         </SignInButton>
       </div>
     </div>
