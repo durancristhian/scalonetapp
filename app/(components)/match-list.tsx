@@ -11,7 +11,7 @@ export const MatchList = async () => {
 
   return (
     <div className="grid gap-4">
-      {matches.map((match) => (
+      {matches.map((match, idx) => (
         <MatchItem
           key={match.id}
           deleteMatch={async () => {
@@ -19,6 +19,7 @@ export const MatchList = async () => {
 
             await deleteMatch(match.id);
           }}
+          listIndex={idx}
           match={match}
         />
       ))}

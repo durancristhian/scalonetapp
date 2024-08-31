@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { deletePlayer } from "@/server/actions/player";
 import { Player } from "@prisma/client";
 import { default as BoringAvatar } from "boring-avatars";
+import { motion } from "framer-motion";
 import { TrashIcon } from "lucide-react";
 import { FC } from "react";
 
@@ -17,11 +18,16 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
 
   return (
     <ul className="grid gap-2">
-      {players.map((player) => {
+      {players.map((player, idx) => {
         const deletePlayerWithId = deletePlayer.bind(null, player.id);
 
         return (
-          <li key={player.id}>
+          <motion.li
+            key={player.id}
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.15, delay: idx * 0.15 }}
+          >
             <div className="flex items-center gap-2">
               <form action={deletePlayerWithId} className="inline-flex">
                 <Button type="submit" variant="ghost" size="icon">
@@ -45,7 +51,7 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
                 </div>
               </div>
             </div>
-          </li>
+          </motion.li>
         );
       })}
     </ul>
