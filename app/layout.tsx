@@ -1,6 +1,8 @@
+import { LoggedInContent } from "@/app/(components)/logged-in-content";
+import { LoggedOutContent } from "@/app/(components)/logged-out-content";
 import "@/app/globals.css";
 import { Toaster } from "@/components/ui/sonner";
-import { ClerkProvider } from "@clerk/nextjs";
+import { ClerkProvider, SignedIn, SignedOut } from "@clerk/nextjs";
 import clsx from "clsx";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
@@ -39,7 +41,12 @@ export default function Layout({
             "antialiased bg-white slashed-zero tabular-nums text-slate-800"
           )}
         >
-          {children}
+          <SignedOut>
+            <LoggedOutContent />
+          </SignedOut>
+          <SignedIn>
+            <LoggedInContent>{children}</LoggedInContent>
+          </SignedIn>
           <Toaster />
         </body>
       </html>

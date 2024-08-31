@@ -3,6 +3,7 @@
 import {
   addMatch as addMatchQuery,
   deleteMatch as deleteMatchQuery,
+  editMatch as editMatchQuery,
 } from "@/server/queries/match";
 import { MatchSchema } from "@/server/schemas/match";
 import { revalidatePath } from "next/cache";
@@ -12,6 +13,15 @@ type AddMatch = (data: MatchSchema) => Promise<void>;
 
 export const addMatch: AddMatch = async (data) => {
   await addMatchQuery(data);
+
+  revalidatePath("/");
+  redirect("/");
+};
+
+type EditMatch = (matchId: number, data: MatchSchema) => Promise<void>;
+
+export const editMatch: EditMatch = async (matchId, data) => {
+  await editMatchQuery(matchId, data);
 
   revalidatePath("/");
   redirect("/");

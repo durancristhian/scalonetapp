@@ -72,6 +72,29 @@ export const addMatch: (data: MatchSchema) => Promise<void> = async (data) => {
   return;
 };
 
+export const editMatch: (
+  matchId: number,
+  data: MatchSchema
+) => Promise<void> = async (matchId, data) => {
+  const user = auth();
+
+  if (!user || !user.userId) {
+    throw new Error(ERROR_MESSAGES.unauthorized);
+  }
+
+  await prisma.match.update({
+    where: {
+      id: matchId,
+      userId: user.userId,
+    },
+    data: {
+      name: data.name,
+    },
+  });
+
+  return;
+};
+
 export const deleteMatch: (id: number) => Promise<void> = async (id) => {
   const user = auth();
 

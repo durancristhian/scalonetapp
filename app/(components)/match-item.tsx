@@ -1,5 +1,6 @@
 "use client";
 
+import { MatchForm } from "@/app/(components)/match-form";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,10 +13,17 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Match } from "@prisma/client";
-import { ArrowRightIcon, BugIcon, TrashIcon } from "lucide-react";
+import { ArrowRightIcon, BugIcon, Edit3Icon, TrashIcon } from "lucide-react";
 import Link from "next/link";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { toast } from "sonner";
 
 type MatchItemProps = {
@@ -24,6 +32,8 @@ type MatchItemProps = {
 };
 
 export const MatchItem: FC<MatchItemProps> = ({ deleteMatch, match }) => {
+  const [dialogOpen, setDialogOpen] = useState(false);
+
   const onDeleteMatch: () => Promise<void> = async () => {
     try {
       await deleteMatch();
@@ -68,6 +78,25 @@ export const MatchItem: FC<MatchItemProps> = ({ deleteMatch, match }) => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogTrigger asChild>
+          <Button variant="ghost" size="icon">
+            <Edit3Icon className="h-4 text-slate-500 w-4" />
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Editar partido</DialogTitle>
+          </DialogHeader>
+          <MatchForm
+            mode="edit"
+            match={match}
+            onFinish={() => {
+              setDialogOpen(false);
+            }}
+          />
+        </DialogContent>
+      </Dialog>
       <div className="grow">
         <Link href={`/${match.id}`}>
           <div className="border border-slate-300 hover:bg-slate-50 px-4 py-2 rounded-md transition-colors">
