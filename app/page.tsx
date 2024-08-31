@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export default function Page() {
   return (
     <div className="py-4 md:py-8">
-      <div className="max-w-7xl mx-auto px-2 md:px-4 w-full">
+      <div className="max-w-7xl mx-auto px-4 w-full">
         <div className="grid gap-4">
           <div className="grid md:grid-cols-3 gap-4">
             <div className="md:col-span-1">
