@@ -21,7 +21,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { MatchSchema } from "@/schemas/match";
-import { editMatch } from "@/server/actions/match";
+import { deleteMatch, editMatch } from "@/server/actions/match";
 import { Match } from "@prisma/client";
 import { motion } from "framer-motion";
 import { ArrowRightIcon, BugIcon, Edit3Icon, TrashIcon } from "lucide-react";
@@ -30,21 +30,16 @@ import { FC, useState } from "react";
 import { toast } from "sonner";
 
 type MatchItemProps = {
-  deleteMatch: () => Promise<void>;
   listIndex: number;
   match: Match;
 };
 
-export const MatchItem: FC<MatchItemProps> = ({
-  deleteMatch,
-  listIndex,
-  match,
-}) => {
+export const MatchItem: FC<MatchItemProps> = ({ listIndex, match }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const onDeleteMatch: () => Promise<void> = async () => {
     try {
-      await deleteMatch();
+      await deleteMatch(match.id);
     } catch (error) {
       if (error instanceof Error) {
         toast("Ha ocurrido un error.", {

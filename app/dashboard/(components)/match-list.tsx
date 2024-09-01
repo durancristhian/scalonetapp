@@ -1,5 +1,4 @@
 import { MatchItem } from "@/app/dashboard/(components)/match-item";
-import { deleteMatch } from "@/server/actions/match";
 import { getMatches } from "@/server/queries/match";
 
 export const MatchList = async () => {
@@ -12,16 +11,7 @@ export const MatchList = async () => {
   return (
     <div className="grid gap-4">
       {matches.map((match, idx) => (
-        <MatchItem
-          key={match.id}
-          deleteMatch={async () => {
-            "use server";
-
-            await deleteMatch(match.id);
-          }}
-          listIndex={idx}
-          match={match}
-        />
+        <MatchItem key={match.id} listIndex={idx} match={match} />
       ))}
     </div>
   );

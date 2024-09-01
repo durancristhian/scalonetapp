@@ -1,3 +1,5 @@
+"use client";
+
 import { TeamForm } from "@/app/matches/[match-id]/(components)/team-form";
 import { Team } from "@/app/matches/[match-id]/hooks/use-team-builder-state";
 import { SpicyTooltips } from "@/components/spicy-tooltips";

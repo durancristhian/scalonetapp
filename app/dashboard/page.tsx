@@ -1,3 +1,5 @@
+"use client";
+
 import { MatchForm } from "@/app/dashboard/(components)/match-form";
 import { MatchList } from "@/app/dashboard/(components)/match-list";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

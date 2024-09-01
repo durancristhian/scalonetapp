@@ -5,7 +5,6 @@ import {
   VALIDATION_MESSAGES,
 } from "@/utils/validation-messages";
 import { auth } from "@clerk/nextjs/server";
-import "server-only";
 
 export const addPlayer = async (data: PlayerSchema, matchId: number) => {
   const user = auth();
