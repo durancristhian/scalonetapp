@@ -2,12 +2,6 @@ import { ERROR_MESSAGES } from "@/utils/validation-messages";
 import { NextRequest, NextResponse } from "next/server";
 import puppeteer, { Browser } from "puppeteer";
 
-const delay: (time: number) => Promise<void> = (time) => {
-  return new Promise(function (resolve) {
-    setTimeout(resolve, time);
-  });
-};
-
 const getBrowser: () => Promise<Browser> = async () =>
   process.env.NODE_ENV === "production"
     ? /* We connect to browserless in prod */
@@ -34,9 +28,6 @@ export async function GET(request: NextRequest) {
       width: 1080,
     });
     await page.goto(`https://www.scalonet.app/download/${matchId}/ui`);
-
-    /* We wait a few seconds just in case */
-    await delay(3000);
 
     const screenshot = await page.screenshot({ type: "png" });
 
