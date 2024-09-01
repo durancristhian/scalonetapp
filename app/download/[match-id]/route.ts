@@ -11,6 +11,11 @@ const getBrowser: () => Promise<Browser> = async () =>
     : /* We use the puppeteer's bundled version of Chromium in other environments */
       puppeteer.launch();
 
+const getAppDomain: () => string = () =>
+  process.env.NODE_ENV === "production"
+    ? "https://www.scalonet.app"
+    : "http://localhost:3000";
+
 /* TODO: Change this to a POST */
 export async function GET(request: NextRequest) {
   /* pathname here will be /[match-id]/export */
@@ -24,12 +29,21 @@ export async function GET(request: NextRequest) {
 
     const page = await browser.newPage();
     page.setViewport({
-      height: 1920,
+      /* Height here is pointless (but needed) since we take a fullpage screenshot */
+      height: 300,
       width: 1080,
     });
-    await page.goto(`https://www.scalonet.app/download/${matchId}/ui`);
+    await page.goto(`${getAppDomain()}/download/${matchId}/ui`);
 
-    const screenshot = await page.screenshot({ type: "png" });
+    await page.waitForNetworkIdle({
+      idleTime: 1000,
+    });
+
+    const screenshot = await page.screenshot({
+      captureBeyondViewport: true,
+      fullPage: true,
+      type: "png",
+    });
 
     /* We close the browser since we don't need it anymore */
     await browser.close();
