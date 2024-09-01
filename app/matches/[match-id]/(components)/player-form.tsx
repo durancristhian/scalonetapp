@@ -12,26 +12,32 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
-import { addPlayer } from "@/server/actions/player";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { default as BoringAvatar } from "boring-avatars";
-import { useParams } from "next/navigation";
+import { FC } from "react";
 import { useForm } from "react-hook-form";
 
 const PLACEHOLDER = "Juan Roman Riquelme";
 
-export const PlayerForm = () => {
+type PlayerFormProps = {
+  onSubmit: (values: PlayerSchema) => Promise<void>;
+  values?: PlayerSchema;
+};
+
+export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
   const form = useForm<PlayerSchema>({
-    resolver: zodResolver(PLAYER_SCHEMA),
-    defaultValues: {
+    defaultValues: values || {
       name: "",
     },
+    resolver: zodResolver(PLAYER_SCHEMA),
+    values,
   });
-  const params = useParams();
 
-  const onSubmit: (values: PlayerSchema) => Promise<void> = async (values) => {
+  const onSubmitHandler: (values: PlayerSchema) => Promise<void> = async (
+    values
+  ) => {
     try {
-      await addPlayer(values, Number(params["match-id"]));
+      await onSubmit(values);
     } catch (error) {
       if (error instanceof Error) {
         form.setError("name", {
@@ -50,7 +56,7 @@ export const PlayerForm = () => {
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(onSubmitHandler)}
         className="flex flex-col gap-4"
       >
         <FormField

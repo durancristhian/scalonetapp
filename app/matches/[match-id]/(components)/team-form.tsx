@@ -14,21 +14,25 @@ import { FC } from "react";
 import { useForm } from "react-hook-form";
 
 type TeamFormProps = {
-  defaultValues: TeamSchema;
   onSubmit: (values: TeamSchema) => void;
+  values?: TeamSchema;
 };
 
-export const TeamForm: FC<TeamFormProps> = ({ defaultValues, onSubmit }) => {
+export const TeamForm: FC<TeamFormProps> = ({ onSubmit, values }) => {
   const form = useForm<TeamSchema>({
-    defaultValues,
+    defaultValues: values || {
+      name: "",
+    },
     resolver: zodResolver(TEAM_SCHEMA),
+    values,
   });
 
   return (
     <Form {...form}>
       <form
-        /* This form is special since we submit data on each form change */
+        /* This form is special since we also submit data on each form change */
         onChange={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col gap-4"
       >
         <FormField

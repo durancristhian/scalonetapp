@@ -20,6 +20,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { MatchSchema } from "@/schemas/match";
+import { editMatch } from "@/server/actions/match";
 import { Match } from "@prisma/client";
 import { motion } from "framer-motion";
 import { ArrowRightIcon, BugIcon, Edit3Icon, TrashIcon } from "lucide-react";
@@ -57,6 +59,10 @@ export const MatchItem: FC<MatchItemProps> = ({
     toast("Se ha eliminado tu partido.", {
       icon: <TrashIcon className="h-4 opacity-50 w-4" />,
     });
+  };
+
+  const onMatchSubmit: (values: MatchSchema) => Promise<void> = (values) => {
+    return editMatch(match.id, values);
   };
 
   return (
@@ -100,10 +106,9 @@ export const MatchItem: FC<MatchItemProps> = ({
               <DialogTitle>Editar partido</DialogTitle>
             </DialogHeader>
             <MatchForm
-              mode="edit"
-              match={match}
-              onFinish={() => {
-                setDialogOpen(false);
+              onSubmit={onMatchSubmit}
+              values={{
+                name: match.name,
               }}
             />
           </DialogContent>

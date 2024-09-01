@@ -46,7 +46,7 @@ export const TeamCard: FC<TeamCardProps> = ({
             </Button>
             <div className="grow">
               <TeamForm
-                defaultValues={{ name: team.name }}
+                values={{ name: team.name }}
                 onSubmit={onTeamNameChange}
               />
             </div>

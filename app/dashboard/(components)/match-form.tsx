@@ -11,13 +11,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { MATCH_SCHEMA, MatchSchema } from "@/schemas/match";
-import { addMatch, editMatch } from "@/server/actions/match";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Match } from "@prisma/client";
-import { PartyPopper } from "lucide-react";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 const DAY_LABELS = [
   "Domingos",
@@ -29,41 +25,25 @@ const DAY_LABELS = [
   "Sábados",
 ];
 
-const DEFAULT_FORM_VALUES: MatchSchema = {
-  name: "",
-};
-
 type MatchFormProps = {
-  /* TODO: This should be MatchSchema */
-  match?: Match;
-  mode?: "add" | "edit";
-  onFinish?: () => void;
+  onSubmit: (values: MatchSchema) => Promise<void>;
+  values?: MatchSchema;
 };
 
-export const MatchForm: FC<MatchFormProps> = ({
-  match,
-  mode = "add",
-  onFinish,
-}) => {
+export const MatchForm: FC<MatchFormProps> = ({ onSubmit, values }) => {
   const form = useForm<MatchSchema>({
+    defaultValues: values || {
+      name: "",
+    },
     resolver: zodResolver(MATCH_SCHEMA),
-    defaultValues: match
-      ? {
-          name: match.name,
-        }
-      : DEFAULT_FORM_VALUES,
+    values,
   });
 
-  const onSubmit: (values: MatchSchema) => Promise<void> = async (values) => {
+  const onSubmitHandler: (values: MatchSchema) => Promise<void> = async (
+    values
+  ) => {
     try {
-      /* TODO: This logic should live outside of this component */
-      if (mode === "add") {
-        await addMatch(values);
-      } else if (mode === "edit" && !!match) {
-        await editMatch(match.id, values);
-      }
-
-      onFinish?.();
+      await onSubmit(values);
     } catch (error) {
       if (error instanceof Error) {
         form.setError("name", {
@@ -77,19 +57,16 @@ export const MatchForm: FC<MatchFormProps> = ({
 
     form.reset();
     form.setFocus("name");
-
-    if (mode === "add") {
-      toast("Se ha creado tu partido.", {
-        icon: <PartyPopper className="h-4 opacity-50 w-4" />,
-      });
-    }
   };
 
   const placeholder = `Partido de los ${DAY_LABELS[new Date().getDay()]}`;
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmitHandler)}
+        className="grid gap-4"
+      >
         <FormField
           control={form.control}
           name="name"

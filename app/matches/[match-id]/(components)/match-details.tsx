@@ -14,11 +14,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { PlayerSchema } from "@/schemas/player";
+import { addPlayer } from "@/server/actions/player";
 import { getMatchById } from "@/server/queries/match";
 import { Prisma } from "@prisma/client";
 import copy from "copy-to-clipboard";
 import { PartyPopper } from "lucide-react";
-import { FC } from "react";
+import { useParams } from "next/navigation";
+import { FC, useCallback } from "react";
 import { toast } from "sonner";
 
 /* We create this type since Prisma doesn't return relationships in the generated types */
@@ -29,6 +32,7 @@ type MatchDetailsProps = {
 };
 
 export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
+  const params = useParams();
   const {
     assignSelectionToTeam,
     createNewTeam,
@@ -64,6 +68,17 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
     });
   };
 
+  /* We consider teams are valid when there is no unselected players AND all teams have a valid name */
+  const areTeamsValid: () => boolean = useCallback(() => {
+    const validTeamNames = teams.every((team) => Boolean(team.name));
+
+    return !unselectedPlayers.length && validTeamNames;
+  }, [teams, unselectedPlayers]);
+
+  const onPlayerSubmit: (values: PlayerSchema) => Promise<void> = (values) => {
+    return addPlayer(values, Number(params["match-id"]));
+  };
+
   return (
     <div className="grid md:grid-cols-3 gap-8">
       <div className="md:col-span-1">
@@ -73,7 +88,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
           </CardHeader>
           <CardContent>
             <div className="grid gap-4">
-              <PlayerForm />
+              <PlayerForm onSubmit={onPlayerSubmit} />
               <Separator />
               <MatchPlayers players={match.players} />
             </div>
@@ -114,11 +129,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
             <Button variant="outline" size="sm" onClick={createNewTeam}>
               Agregar otro equipo
             </Button>
-            <Button
-              size="sm"
-              onClick={copyTeams}
-              disabled={!!unselectedPlayers.length}
-            >
+            <Button size="sm" onClick={copyTeams} disabled={!areTeamsValid()}>
               Copiar
             </Button>
           </div>
