@@ -1,8 +1,9 @@
 import { MatchForm } from "@/app/(components)/match-form";
 import { MatchList } from "@/app/(components)/match-list";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FC } from "react";
 
-export default function Page() {
+const Page: FC = () => {
   return (
     <div className="py-4 md:py-8">
       <div className="max-w-7xl mx-auto px-4 w-full">
@@ -27,4 +28,6 @@ export default function Page() {
       </div>
     </div>
   );
-}
+};
+
+export default Page;

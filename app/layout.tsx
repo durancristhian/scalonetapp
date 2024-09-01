@@ -6,6 +6,7 @@ import { ClerkProvider, SignedIn, SignedOut } from "@clerk/nextjs";
 import clsx from "clsx";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import { FC, PropsWithChildren } from "react";
 
 export const viewport: Viewport = {
   initialScale: 1,
@@ -25,11 +26,7 @@ export const metadata: Metadata = {
   description: "scalonet.app",
 };
 
-export default function Layout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+const Layout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <ClerkProvider
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
@@ -52,4 +49,6 @@ export default function Layout({
       </html>
     </ClerkProvider>
   );
-}
+};
+
+export default Layout;
