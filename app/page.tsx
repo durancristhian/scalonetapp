@@ -28,9 +28,7 @@ const Page: FC = () => {
         transition={{ duration: 0.5, delay: 0.15 }}
       >
         Bienvenidos a&nbsp;
-        <span className="font-bold text-slate-950 tracking-wide">
-          Scalonet.app
-        </span>
+        <span className="font-bold text-slate-950">Scalonet.app</span>
       </motion.h1>
       <motion.div
         initial={{ opacity: 0, y: 16 }}

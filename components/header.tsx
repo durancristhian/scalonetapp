@@ -7,9 +7,7 @@ export const Header = () => {
       <div className="max-w-7xl mx-auto px-4 w-full">
         <div className="flex h-10 md:h-12 items-center justify-between">
           <Link href="/dashboard">
-            <h1 className="font-bold text-slate-950 tracking-wide">
-              Scalonet.app
-            </h1>
+            <h1 className="font-bold text-slate-950">Scalonet.app</h1>
           </Link>
           <SignedIn>
             <UserButton showName />
