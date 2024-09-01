@@ -47,6 +47,7 @@
     "next-themes": "^0.3.0",
     "postcss": "^8.4.41",
     "prisma": "^5.19.0",
+    "puppeteer": "^23.2.1",
     "react-hook-form": "^7.53.0",
     "server-only": "^0.0.1",
     "sonner": "^1.5.0",
