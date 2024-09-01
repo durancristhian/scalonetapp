@@ -1,9 +1,12 @@
 import { MatchItem } from "@/app/dashboard/(components)/match-item";
-import { getMatches } from "@/server/queries/match";
+import { Match } from "@prisma/client";
+import { FC } from "react";
 
-export const MatchList = async () => {
-  const matches = await getMatches();
+type MatchListProps = {
+  matches: Match[];
+};
 
+export const MatchList: FC<MatchListProps> = ({ matches }) => {
   if (!Array.isArray(matches) || !matches.length) {
     return <p>A medida que crees partidos van a aparecer listados acá.</p>;
   }

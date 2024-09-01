@@ -1,15 +1,16 @@
-"use client";
-
 import { MatchForm } from "@/app/dashboard/(components)/match-form";
 import { MatchList } from "@/app/dashboard/(components)/match-list";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MatchSchema } from "@/schemas/match";
 import { addMatch } from "@/server/actions/match";
+import { getMatches } from "@/server/queries/match";
 import { PartyPopper } from "lucide-react";
 import { FC } from "react";
 import { toast } from "sonner";
 
-const Page: FC = () => {
+const Page: FC = async () => {
+  const matches = await getMatches();
+
   const onMatchSubmit: (values: MatchSchema) => Promise<void> = (values) => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -43,7 +44,7 @@ const Page: FC = () => {
           <div className="md:col-span-2">
             <div className="grid gap-4">
               <CardTitle>Tus partidos</CardTitle>
-              <MatchList />
+              <MatchList matches={matches} />
             </div>
           </div>
         </div>
