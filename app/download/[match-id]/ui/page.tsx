@@ -1,30 +1,69 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getMatchById } from "@/server/queries/match";
 import { default as BoringAvatar } from "boring-avatars";
+import { notFound } from "next/navigation";
 import { FC } from "react";
 
-const Page: FC = () => {
+type FormattedTeam = {
+  id: string;
+  name: string;
+  players: number[];
+};
+
+type PageProps = {
+  params: {
+    ["match-id"]: string;
+  };
+};
+
+const Page: FC<PageProps> = async ({ params }) => {
+  const match = await getMatchById(Number(params["match-id"]));
+
+  if (!match) {
+    return notFound();
+  }
+
+  const formattedTeams: FormattedTeam[] = JSON.parse(match.teams);
+
   return (
     <div className="px-4 py-8">
       <div className="grid gap-8">
-        <p className="font-semibold text-4xl text-center">
-          La Escuelita - 27/Ago
-        </p>
+        <p className="font-semibold text-4xl text-center">{match.name}</p>
         <div className="grid grid-cols-2 gap-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-center">Equipo 1</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex gap-4 items-center">
-                  <BoringAvatar variant="beam" name="Jugador 1" size={48} />
-                  <div className="grow">
-                    <p className="text-xl">Jugador 1</p>
-                  </div>
+          {formattedTeams.map((team) => (
+            <Card key={team.id}>
+              <CardHeader>
+                <CardTitle className="text-center">{team.name}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4">
+                  {team.players.map((playerId) => {
+                    /* We look for the player data in the match */
+                    const player = match.players.find(
+                      (player) => player.id === playerId
+                    );
+
+                    if (!player) {
+                      return null;
+                    }
+
+                    return (
+                      <div key={playerId} className="flex gap-4 items-center">
+                        <BoringAvatar
+                          variant="beam"
+                          name={player.name}
+                          size={48}
+                        />
+                        <div className="grow">
+                          <p className="text-xl">{player.name}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          ))}
         </div>
         <p className="text-slate-500 text-center">
           Hecho con{" "}

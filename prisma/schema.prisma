@@ -27,6 +27,8 @@ model Match {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId    String
+  // Since Prisma's sqlite integration doesn't support JSON fields, we need to workaround this by converting the teams array to an stringified version back and forth. It's really ugly, I know
+  teams     String   @default("[]")
 
   // Relationships
   players Player[]

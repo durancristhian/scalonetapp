@@ -8,7 +8,11 @@ type MatchListProps = {
 
 export const MatchList: FC<MatchListProps> = ({ matches }) => {
   if (!Array.isArray(matches) || !matches.length) {
-    return <p>A medida que crees partidos van a aparecer listados acá.</p>;
+    return (
+      <p className="text-slate-500">
+        A medida que crees partidos van a aparecer listados acá.
+      </p>
+    );
   }
 
   return (

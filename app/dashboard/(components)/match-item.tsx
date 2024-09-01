@@ -43,7 +43,8 @@ export const MatchItem: FC<MatchItemProps> = ({ listIndex, match }) => {
     } catch (error) {
       if (error instanceof Error) {
         toast("Ha ocurrido un error.", {
-          description: error.message,
+          description:
+            "No pudimos borrar el partido. ¿Podrías volver a intentarlo?.",
           icon: <BugIcon className="h-4 opacity-50 w-4" />,
         });
       }
@@ -59,7 +60,7 @@ export const MatchItem: FC<MatchItemProps> = ({ listIndex, match }) => {
   const onMatchSubmit: (values: MatchSchema) => Promise<void> = (values) => {
     return new Promise(async (resolve, reject) => {
       try {
-        await editMatch(match.id, values);
+        await editMatch(match.id, values, "/dashboard");
 
         setDialogOpen(false);
 

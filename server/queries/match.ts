@@ -2,6 +2,7 @@ import { MatchSchema } from "@/schemas/match";
 import prisma from "@/utils/prisma";
 import { ERROR_MESSAGES } from "@/utils/validation-messages";
 import { auth } from "@clerk/nextjs/server";
+import { Match } from "@prisma/client";
 
 export const getMatches = async () => {
   const user = auth();
@@ -73,7 +74,7 @@ export const addMatch: (data: MatchSchema) => Promise<void> = async (data) => {
 
 export const editMatch: (
   matchId: number,
-  data: MatchSchema
+  data: Partial<Match>
 ) => Promise<void> = async (matchId, data) => {
   const user = auth();
 
@@ -86,9 +87,7 @@ export const editMatch: (
       id: matchId,
       userId: user.userId,
     },
-    data: {
-      name: data.name,
-    },
+    data,
   });
 
   return;

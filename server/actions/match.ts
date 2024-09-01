@@ -6,6 +6,7 @@ import {
   deleteMatch as deleteMatchQuery,
   editMatch as editMatchQuery,
 } from "@/server/queries/match";
+import { Match } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 type AddMatch = (data: MatchSchema) => Promise<void>;
@@ -16,12 +17,16 @@ export const addMatch: AddMatch = async (data) => {
   revalidatePath("/dashboard");
 };
 
-type EditMatch = (matchId: number, data: MatchSchema) => Promise<void>;
+type EditMatch = (
+  matchId: number,
+  data: Partial<Match>,
+  pathToRevalidate: string
+) => Promise<void>;
 
-export const editMatch: EditMatch = async (matchId, data) => {
+export const editMatch: EditMatch = async (matchId, data, pathToRevalidate) => {
   await editMatchQuery(matchId, data);
 
-  revalidatePath("/dashboard");
+  revalidatePath(pathToRevalidate, "page");
 };
 
 type DeleteMatch = (id: number) => Promise<void>;

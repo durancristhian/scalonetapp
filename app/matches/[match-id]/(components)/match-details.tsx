@@ -15,11 +15,12 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { PlayerSchema } from "@/schemas/player";
+import { editMatch } from "@/server/actions/match";
 import { addPlayer } from "@/server/actions/player";
 import { getMatchById } from "@/server/queries/match";
 import { Prisma } from "@prisma/client";
 import copy from "copy-to-clipboard";
-import { PartyPopper } from "lucide-react";
+import { BugIcon, PartyPopper } from "lucide-react";
 import { useParams } from "next/navigation";
 import { FC, useCallback } from "react";
 import { toast } from "sonner";
@@ -79,6 +80,35 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
     return addPlayer(values, Number(params["match-id"]));
   };
 
+  const saveTeams = () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const formattedTeams = teams.map((team) => ({
+          ...team,
+          /* We only store the player ids */
+          players: team.players.map((player) => player.id),
+        }));
+
+        await editMatch(
+          match.id,
+          {
+            teams: JSON.stringify(formattedTeams),
+          },
+          "/matches/[match-id]"
+        );
+        toast("Equipos guardados con éxito.", {
+          icon: <PartyPopper className="h-4 opacity-50 w-4" />,
+        });
+      } catch (error) {
+        toast("Ha ocurrido un error.", {
+          description:
+            "No pudimos guardar los equipos. ¿Podrías volver a intentarlo?.",
+          icon: <BugIcon className="h-4 opacity-50 w-4" />,
+        });
+      }
+    });
+  };
+
   return (
     <div className="grid md:grid-cols-3 gap-8">
       <div className="md:col-span-1">
@@ -126,12 +156,22 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
             ))}
           </div>
           <div className="flex justify-between gap-2">
-            <Button variant="outline" size="sm" onClick={createNewTeam}>
+            <Button onClick={createNewTeam} variant="outline" size="sm">
               Agregar otro equipo
             </Button>
-            <Button size="sm" onClick={copyTeams} disabled={!areTeamsValid()}>
-              Copiar
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                onClick={copyTeams}
+                disabled={!areTeamsValid()}
+                variant="outline"
+                size="sm"
+              >
+                Copiar
+              </Button>
+              <Button onClick={saveTeams} disabled={!areTeamsValid()} size="sm">
+                Guardar
+              </Button>
+            </div>
           </div>
         </div>
       </div>
