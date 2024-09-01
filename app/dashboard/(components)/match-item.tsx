@@ -1,6 +1,6 @@
 "use client";
 
-import { MatchForm } from "@/app/(components)/match-form";
+import { MatchForm } from "@/app/dashboard/(components)/match-form";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -109,7 +109,7 @@ export const MatchItem: FC<MatchItemProps> = ({
           </DialogContent>
         </Dialog>
         <div className="grow">
-          <Link href={`/${match.id}`}>
+          <Link href={`/matches/${match.id}`}>
             <div className="border border-slate-300 hover:bg-slate-50 px-4 py-2 rounded-md transition-colors">
               <div className="flex items-center justify-between gap-4">
                 <p>{match.name}</p>

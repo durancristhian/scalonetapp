@@ -1,14 +1,9 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-/* We protect all routes in the application but the homepage and /download */
-const isPublicRoute = createRouteMatcher((req) => {
-  const pathname = req.nextUrl.pathname;
-
-  return pathname === "/" || pathname.includes("download");
-});
+const isProtectedRoute = createRouteMatcher(["/dashboard(.*)", "/matches(.*)"]);
 
 export default clerkMiddleware((auth, req) => {
-  if (!isPublicRoute(req)) {
+  if (isProtectedRoute(req)) {
     auth().protect();
   }
 });

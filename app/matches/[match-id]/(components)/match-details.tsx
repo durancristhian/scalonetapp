@@ -1,10 +1,10 @@
 "use client";
 
-import { AddPlayerForm } from "@/app/[match-id]/(components)/add-player-form";
-import { MatchPlayers } from "@/app/[match-id]/(components)/match-players";
-import { PlayersList } from "@/app/[match-id]/(components)/players-list";
-import { TeamCard } from "@/app/[match-id]/(components)/team-card";
-import { useTeamsBuilderState } from "@/app/[match-id]/hooks/use-team-builder-state";
+import { AddPlayerForm } from "@/app/matches/[match-id]/(components)/add-player-form";
+import { MatchPlayers } from "@/app/matches/[match-id]/(components)/match-players";
+import { PlayersList } from "@/app/matches/[match-id]/(components)/players-list";
+import { TeamCard } from "@/app/matches/[match-id]/(components)/team-card";
+import { useTeamsBuilderState } from "@/app/matches/[match-id]/hooks/use-team-builder-state";
 import { Button } from "@/components/ui/button";
 import {
   Card,

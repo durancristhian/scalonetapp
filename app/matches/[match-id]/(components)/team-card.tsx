@@ -1,4 +1,4 @@
-import { Team } from "@/app/[match-id]/hooks/use-team-builder-state";
+import { Team } from "@/app/matches/[match-id]/hooks/use-team-builder-state";
 import { SpicyTooltips } from "@/components/spicy-tooltips";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";

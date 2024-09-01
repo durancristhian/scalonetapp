@@ -1,4 +1,4 @@
-import { MatchDetails } from "@/app/[match-id]/(components)/match-details";
+import { MatchDetails } from "@/app/matches/[match-id]/(components)/match-details";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { getMatchById } from "@/server/queries/match";
 import { notFound } from "next/navigation";
+import { FC } from "react";
 
 type PageProps = {
   params: {
@@ -16,7 +17,7 @@ type PageProps = {
   };
 };
 
-export default async function Page({ params }: PageProps) {
+const Page: FC<PageProps> = async ({ params }) => {
   const match = await getMatchById(Number(params["match-id"]));
 
   if (!match) {
@@ -29,7 +30,7 @@ export default async function Page({ params }: PageProps) {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Tus partidos</BreadcrumbLink>
+              <BreadcrumbLink href="/dashboard">Tus partidos</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
@@ -43,4 +44,6 @@ export default async function Page({ params }: PageProps) {
       </div>
     </div>
   );
-}
+};
+
+export default Page;

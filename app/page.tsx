@@ -1,30 +1,54 @@
-import { MatchForm } from "@/app/(components)/match-form";
-import { MatchList } from "@/app/(components)/match-list";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FC } from "react";
+"use client";
+
+import { ShowOff } from "@/components/show-off";
+import { Button } from "@/components/ui/button";
+import { SignInButton } from "@clerk/nextjs";
+import { motion } from "framer-motion";
+import { FC, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 
 const Page: FC = () => {
+  const { isLoaded, userId } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    /* If we have a valid userId, we redirect the user to the /dashboard */
+    if (isLoaded && userId) {
+      router.push("/dashboard");
+    }
+  }, [isLoaded, router, userId]);
+
   return (
-    <div className="py-4 md:py-8">
-      <div className="max-w-7xl mx-auto px-4 w-full">
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="md:col-span-1">
-            <Card className="bg-slate-50">
-              <CardHeader>
-                <CardTitle>Nuevo partido</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <MatchForm />
-              </CardContent>
-            </Card>
-          </div>
-          <div className="md:col-span-2">
-            <div className="grid gap-4">
-              <CardTitle>Tus partidos</CardTitle>
-              <MatchList />
-            </div>
-          </div>
-        </div>
+    <div className="bg-slate-100 flex flex-col items-center justify-center min-h-dvh p-2">
+      <motion.h1
+        className="font-semibold text-2xl"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.15 }}
+      >
+        Bienvenidos a&nbsp;
+        <span className="font-bold text-slate-950 tracking-wide">
+          Scalonet.app
+        </span>
+      </motion.h1>
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.5 }}
+      >
+        <ShowOff />
+      </motion.div>
+      <div className="h-[36px] mt-8">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.85 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 1 }}
+        >
+          <SignInButton mode="modal">
+            <Button size="sm">Ingresar con Google</Button>
+          </SignInButton>
+        </motion.div>
       </div>
     </div>
   );

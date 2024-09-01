@@ -1,4 +1,4 @@
-import { MatchItem } from "@/app/(components)/match-item";
+import { MatchItem } from "@/app/dashboard/(components)/match-item";
 import { deleteMatch } from "@/server/actions/match";
 import { getMatches } from "@/server/queries/match";
 

@@ -14,8 +14,7 @@ type AddMatch = (data: MatchSchema) => Promise<void>;
 export const addMatch: AddMatch = async (data) => {
   await addMatchQuery(data);
 
-  revalidatePath("/");
-  redirect("/");
+  revalidatePath("/dashboard");
 };
 
 type EditMatch = (matchId: number, data: MatchSchema) => Promise<void>;
@@ -23,8 +22,7 @@ type EditMatch = (matchId: number, data: MatchSchema) => Promise<void>;
 export const editMatch: EditMatch = async (matchId, data) => {
   await editMatchQuery(matchId, data);
 
-  revalidatePath("/");
-  redirect("/");
+  revalidatePath("/dashboard");
 };
 
 type DeleteMatch = (id: number) => Promise<void>;
@@ -32,5 +30,5 @@ type DeleteMatch = (id: number) => Promise<void>;
 export const deleteMatch: DeleteMatch = async (id) => {
   await deleteMatchQuery(id);
 
-  revalidatePath("/");
+  revalidatePath("/dashboard");
 };

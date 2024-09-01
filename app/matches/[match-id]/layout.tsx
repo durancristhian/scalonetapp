@@ -1,7 +1,8 @@
+import { AppLayout } from "@/app/(components)/app-layout";
 import { FC, PropsWithChildren } from "react";
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
-  return <div className="bg-yellow-200 p-10">{children}</div>;
+  return <AppLayout>{children}</AppLayout>;
 };
 
 export default Layout;
