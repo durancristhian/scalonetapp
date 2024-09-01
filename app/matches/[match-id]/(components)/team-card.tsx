@@ -1,13 +1,14 @@
+import { TeamForm } from "@/app/matches/[match-id]/(components)/team-form";
 import { Team } from "@/app/matches/[match-id]/hooks/use-team-builder-state";
 import { SpicyTooltips } from "@/components/spicy-tooltips";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { TeamSchema } from "@/schemas/team";
 import { default as BoringAvatar } from "boring-avatars";
 import { motion } from "framer-motion";
 import { TrashIcon } from "lucide-react";
-import { ChangeEventHandler, FC } from "react";
+import { FC } from "react";
 
 type TeamCardProps = {
   canBeDeleted: boolean;
@@ -24,8 +25,8 @@ export const TeamCard: FC<TeamCardProps> = ({
   team,
   updateTeamName,
 }) => {
-  const onTeamNameChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    updateTeamName(team.id, event.target.value);
+  const onTeamNameChange: (values: TeamSchema) => void = ({ name }) => {
+    updateTeamName(team.id, name);
   };
 
   return (
@@ -44,8 +45,10 @@ export const TeamCard: FC<TeamCardProps> = ({
               <TrashIcon className="h-4 text-red-700 w-4" />
             </Button>
             <div className="grow">
-              {/* TODO: Would be cool to validate the team.name can't be empty */}
-              <Input value={team.name} onChange={onTeamNameChange} />
+              <TeamForm
+                defaultValues={{ name: team.name }}
+                onSubmit={onTeamNameChange}
+              />
             </div>
           </div>
           <Separator />

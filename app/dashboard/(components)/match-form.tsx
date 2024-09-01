@@ -34,6 +34,7 @@ const DEFAULT_FORM_VALUES: MatchSchema = {
 };
 
 type MatchFormProps = {
+  /* TODO: This should be MatchSchema */
   match?: Match;
   mode?: "add" | "edit";
   onFinish?: () => void;
@@ -55,6 +56,7 @@ export const MatchForm: FC<MatchFormProps> = ({
 
   const onSubmit: (values: MatchSchema) => Promise<void> = async (values) => {
     try {
+      /* TODO: This logic should live outside of this component */
       if (mode === "add") {
         await addMatch(values);
       } else if (mode === "edit" && !!match) {
