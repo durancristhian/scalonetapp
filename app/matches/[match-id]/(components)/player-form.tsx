@@ -20,7 +20,7 @@ import { useForm } from "react-hook-form";
 
 const PLACEHOLDER = "Juan Roman Riquelme";
 
-export const AddPlayerForm = () => {
+export const PlayerForm = () => {
   const form = useForm<PlayerSchema>({
     resolver: zodResolver(PLAYER_SCHEMA),
     defaultValues: {

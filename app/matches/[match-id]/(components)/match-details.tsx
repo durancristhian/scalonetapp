@@ -1,7 +1,7 @@
 "use client";
 
-import { AddPlayerForm } from "@/app/matches/[match-id]/(components)/add-player-form";
 import { MatchPlayers } from "@/app/matches/[match-id]/(components)/match-players";
+import { PlayerForm } from "@/app/matches/[match-id]/(components)/player-form";
 import { PlayersList } from "@/app/matches/[match-id]/(components)/players-list";
 import { TeamCard } from "@/app/matches/[match-id]/(components)/team-card";
 import { useTeamsBuilderState } from "@/app/matches/[match-id]/hooks/use-team-builder-state";
@@ -73,7 +73,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
           </CardHeader>
           <CardContent>
             <div className="grid gap-4">
-              <AddPlayerForm />
+              <PlayerForm />
               <Separator />
               <MatchPlayers players={match.players} />
             </div>
