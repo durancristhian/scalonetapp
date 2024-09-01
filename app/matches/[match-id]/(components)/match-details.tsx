@@ -101,8 +101,8 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
             <CardTitle className="mb-1.5">Los equipos</CardTitle>
             <CardDescription>
               {unselectedPlayers.length
-                ? "Seleccioná jugadores de la lista a continuación para luego agregarlos a uno de los equipos."
-                : "Listo! Ya agregaste a todos los jugadores en un equipo. Ahora podés guardar tus equipos."}
+                ? "Seleccioná jugadores de la siguiente para luego agregarlos a uno de los equipos."
+                : "Listo! Ya agregaste a todos los jugadores en algún equipo. Ahora podés guardarlos."}
             </CardDescription>
           </div>
           <PlayersList

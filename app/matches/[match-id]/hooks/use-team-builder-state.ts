@@ -92,9 +92,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (players) => {
   };
 
   const createNewTeam: () => void = () => {
-    setTeams((currTeams) =>
-      currTeams.concat([getEmptyTeam(`Equipo ${currTeams.length + 1}`)])
-    );
+    setTeams((currTeams) => currTeams.concat([getEmptyTeam("Nuevo equipo")]));
   };
 
   const getUnselectedPlayers = () => {

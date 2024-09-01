@@ -39,7 +39,7 @@ export const PlayersList: FC<PlayersListProps> = ({
   }
 
   return (
-    <div className="grid gap-2">
+    <div className="grid gap-4">
       <div className="flex flex-wrap gap-2">
         {players.map((player) => (
           <Toggle

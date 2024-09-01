@@ -31,15 +31,17 @@ export const TeamCard: FC<TeamCardProps> = ({
     updateTeamName(team.id, name);
   };
 
+  const onTeamRemove: () => void = () => {
+    removeTeam(team.id);
+  };
+
   return (
     <Card className="bg-slate-50">
       <CardContent className="pt-6">
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
             <Button
-              onClick={() => {
-                removeTeam(team.id);
-              }}
+              onClick={onTeamRemove}
               disabled={!canBeDeleted}
               variant="ghost"
               size="icon"
@@ -94,7 +96,7 @@ export const TeamCard: FC<TeamCardProps> = ({
               </div>
             </>
           ) : (
-            <p>No hay jugadores en este equipo.</p>
+            <p className="text-slate-500">Este equipo está vacío.</p>
           )}
         </div>
       </CardContent>

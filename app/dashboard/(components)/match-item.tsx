@@ -57,7 +57,17 @@ export const MatchItem: FC<MatchItemProps> = ({ listIndex, match }) => {
   };
 
   const onMatchSubmit: (values: MatchSchema) => Promise<void> = (values) => {
-    return editMatch(match.id, values);
+    return new Promise(async (resolve, reject) => {
+      try {
+        await editMatch(match.id, values);
+
+        setDialogOpen(false);
+
+        resolve();
+      } catch (error) {
+        reject(error);
+      }
+    });
   };
 
   return (

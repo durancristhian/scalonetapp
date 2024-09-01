@@ -8,7 +8,6 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { getMatchById } from "@/server/queries/match";
-import { SlashIcon } from "lucide-react";
 import { notFound } from "next/navigation";
 import { FC } from "react";
 
@@ -33,9 +32,7 @@ const Page: FC<PageProps> = async ({ params }) => {
             <BreadcrumbItem>
               <BreadcrumbLink href="/dashboard">Tus partidos</BreadcrumbLink>
             </BreadcrumbItem>
-            <BreadcrumbSeparator>
-              <SlashIcon />
-            </BreadcrumbSeparator>
+            <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbPage>{match.name}</BreadcrumbPage>
             </BreadcrumbItem>
