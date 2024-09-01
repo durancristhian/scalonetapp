@@ -2,11 +2,10 @@
 
 import { ShowOff } from "@/components/show-off";
 import { Button } from "@/components/ui/button";
-import { SignInButton } from "@clerk/nextjs";
+import { SignInButton, useAuth } from "@clerk/nextjs";
 import { motion } from "framer-motion";
-import { FC, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
+import { FC, useEffect } from "react";
 
 const Page: FC = () => {
   const { isLoaded, userId } = useAuth();

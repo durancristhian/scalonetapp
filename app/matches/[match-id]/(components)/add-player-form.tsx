@@ -11,8 +11,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
 import { addPlayer } from "@/server/actions/player";
-import { PLAYER_SCHEMA, PlayerSchema } from "@/server/schemas/player";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { default as BoringAvatar } from "boring-avatars";
 import { useParams } from "next/navigation";

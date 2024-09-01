@@ -1,4 +1,4 @@
-import { MatchSchema } from "@/server/schemas/match";
+import { MatchSchema } from "@/schemas/match";
 import prisma from "@/utils/prisma";
 import { ERROR_MESSAGES } from "@/utils/validation-messages";
 import { auth } from "@clerk/nextjs/server";

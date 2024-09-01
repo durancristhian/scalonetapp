@@ -10,8 +10,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { MATCH_SCHEMA, MatchSchema } from "@/schemas/match";
 import { addMatch, editMatch } from "@/server/actions/match";
-import { MATCH_SCHEMA, MatchSchema } from "@/server/schemas/match";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Match } from "@prisma/client";
 import { PartyPopper } from "lucide-react";

@@ -1,4 +1,4 @@
-import { PlayerSchema } from "@/server/schemas/player";
+import { PlayerSchema } from "@/schemas/player";
 import prisma from "@/utils/prisma";
 import {
   ERROR_MESSAGES,

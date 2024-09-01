@@ -1,13 +1,12 @@
 "use server";
 
+import { MatchSchema } from "@/schemas/match";
 import {
   addMatch as addMatchQuery,
   deleteMatch as deleteMatchQuery,
   editMatch as editMatchQuery,
 } from "@/server/queries/match";
-import { MatchSchema } from "@/server/schemas/match";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 type AddMatch = (data: MatchSchema) => Promise<void>;
 

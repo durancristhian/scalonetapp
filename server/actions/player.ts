@@ -1,10 +1,10 @@
 "use server";
 
+import { PlayerSchema } from "@/schemas/player";
 import {
   addPlayer as addPlayerQuery,
   deletePlayer as deletePlayerQuery,
 } from "@/server/queries/player";
-import { PlayerSchema } from "@/server/schemas/player";
 import { revalidatePath } from "next/cache";
 
 type AddPlayer = (data: PlayerSchema, matchId: number) => Promise<void>;
