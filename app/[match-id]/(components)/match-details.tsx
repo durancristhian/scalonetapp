@@ -81,7 +81,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
         </Card>
       </div>
       <div className="md:col-span-2">
-        <div className="grid gap-4">
+        <div className="grid gap-8">
           <div>
             <CardTitle className="mb-1.5">Los equipos</CardTitle>
             <CardDescription>
@@ -110,7 +110,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
               />
             ))}
           </div>
-          <div className="flex justify-between gap-4">
+          <div className="flex justify-between gap-2">
             <Button variant="outline" size="sm" onClick={createNewTeam}>
               Agregar otro equipo
             </Button>
