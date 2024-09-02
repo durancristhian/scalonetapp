@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "generate-prisma-prod-schema": "prisma generate --schema=./prisma/prod.schema.prisma && && npx prisma db push --schema=./prisma/prod.schema.prisma",
+    "generate-prisma-prod-schema": "prisma generate --schema=./prisma/prod.schema.prisma && npx prisma db push --schema=./prisma/prod.schema.prisma",
     "lint": "next lint",
     "migrate": "tsx app/api/migrations.ts",
     "start": "next start"
