@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getMatchById } from "@/server/queries/match";
+import { getMatchForDownload } from "@/server/queries/match";
 import { default as BoringAvatar } from "boring-avatars";
 import { notFound } from "next/navigation";
 import { FC } from "react";
@@ -17,7 +17,7 @@ type PageProps = {
 };
 
 const Page: FC<PageProps> = async ({ params }) => {
-  const match = await getMatchById(Number(params["match-id"]));
+  const match = await getMatchForDownload(Number(params["match-id"]));
 
   if (!match) {
     return notFound();
@@ -66,7 +66,7 @@ const Page: FC<PageProps> = async ({ params }) => {
           ))}
         </div>
         <p className="text-slate-500 text-center">
-          Hecho con{" "}
+          Hecho con&nbsp;
           <span className="underline underline-offset-2">scalonet.app</span>
         </p>
       </div>

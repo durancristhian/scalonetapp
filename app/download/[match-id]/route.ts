@@ -16,15 +16,14 @@ const getAppDomain: () => string = () =>
     ? "https://www.scalonet.app"
     : "http://localhost:3000";
 
-/* TODO: Change this to a POST */
 export async function GET(request: NextRequest) {
-  /* pathname here will be /[match-id]/export */
-  const pathname = request.nextUrl.pathname;
-  /* We split the string by / and we grab the matchId */
-  const [_, matchIdStr] = pathname.split("/");
-  const matchId = Number(matchIdStr);
-
   try {
+    /* pathname here will be /download/[match-id] */
+    const pathname = request.nextUrl.pathname;
+    /* We split the string by / and we grab the matchId */
+    const [, , matchIdStr] = pathname.split("/");
+    const matchId = Number(matchIdStr);
+
     const browser = await getBrowser();
 
     const page = await browser.newPage();
@@ -59,7 +58,7 @@ export async function GET(request: NextRequest) {
     /* We're done, we return the screenshot */
     return response;
   } catch (error) {
-    console.log(error);
+    console.error(error);
 
     return NextResponse.json(
       { error: ERROR_MESSAGES.server_error },

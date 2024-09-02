@@ -20,7 +20,7 @@ import { addPlayer } from "@/server/actions/player";
 import { getMatchById } from "@/server/queries/match";
 import { Prisma } from "@prisma/client";
 import copy from "copy-to-clipboard";
-import { BugIcon, PartyPopper } from "lucide-react";
+import { BugIcon, LoaderCircle, PartyPopper } from "lucide-react";
 import { useParams } from "next/navigation";
 import { FC, useCallback } from "react";
 import { toast } from "sonner";
@@ -80,7 +80,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
     return addPlayer(values, Number(params["match-id"]));
   };
 
-  const saveTeams = () => {
+  const exportTeams: () => Promise<void> = () => {
     return new Promise(async (resolve, reject) => {
       try {
         const formattedTeams = teams.map((team) => ({
@@ -96,15 +96,40 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
           },
           "/matches/[match-id]"
         );
-        toast("Equipos guardados con éxito.", {
-          icon: <PartyPopper className="h-4 opacity-50 w-4" />,
-        });
+
+        toast(
+          "Equipos guardados con éxito. En instantes comienza la descarga...",
+          {
+            icon: <LoaderCircle className="animate-spin h-4 opacity-50 w-4" />,
+          }
+        );
+
+        /* TODO: Move this to a util fn */
+        fetch(`/download/${match.id}`)
+          .then((response) => response.blob())
+          .then((blob) => {
+            const url = window.URL.createObjectURL(new Blob([blob]));
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", "equipos.png");
+
+            document.body.appendChild(link);
+
+            link.click();
+
+            window.URL.revokeObjectURL(url);
+          });
+
+        resolve();
       } catch (error) {
         toast("Ha ocurrido un error.", {
           description:
             "No pudimos guardar los equipos. ¿Podrías volver a intentarlo?.",
           icon: <BugIcon className="h-4 opacity-50 w-4" />,
         });
+
+        reject();
       }
     });
   };
@@ -160,16 +185,16 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
               Agregar otro equipo
             </Button>
             <div className="flex gap-2">
-              <Button
-                onClick={copyTeams}
-                disabled={!areTeamsValid()}
-                variant="outline"
-                size="sm"
-              >
+              <Button onClick={copyTeams} variant="outline" size="sm">
                 Copiar
               </Button>
-              <Button onClick={saveTeams} disabled={!areTeamsValid()} size="sm">
-                Guardar
+              {/* TODO: Wrap this in a tooltip explaining why is disabled */}
+              <Button
+                onClick={exportTeams}
+                disabled={!areTeamsValid()}
+                size="sm"
+              >
+                Exportar
               </Button>
             </div>
           </div>

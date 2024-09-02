@@ -53,6 +53,27 @@ export const getMatchById = async (id: number) => {
   return match;
 };
 
+/* TODO: This is a terrible hack. I hope I can fix it properly soon. */
+export const getMatchForDownload = async (id: number) => {
+  const match = await prisma.match.findFirst({
+    where: {
+      id: {
+        equals: id,
+      },
+    },
+    include: {
+      players: true,
+    },
+  });
+
+  /* We sort players by name */
+  match?.players.sort((playerA, playerB) =>
+    playerA.name.localeCompare(playerB.name)
+  );
+
+  return match;
+};
+
 export const addMatch: (data: MatchSchema) => Promise<void> = async (data) => {
   const user = auth();
 
