@@ -7,13 +7,13 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { default as BoringAvatar } from "boring-avatars";
+import { LoaderCircleIcon } from "lucide-react";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 
@@ -65,19 +65,18 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
           control={form.control}
           name="name"
           render={({ field }) => (
-            <div className="flex gap-4 items-center">
+            <div className="flex gap-4">
               <div>
                 <SpicyTooltips>
                   <BoringAvatar
                     variant="beam"
                     name={field.value || PLACEHOLDER}
-                    size={48}
+                    size={40}
                   />
                 </SpicyTooltips>
               </div>
               <div className="grow">
                 <FormItem>
-                  <FormLabel>Nombre</FormLabel>
                   <FormControl>
                     <Input placeholder={PLACEHOLDER} {...field} />
                   </FormControl>
@@ -87,8 +86,15 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
             </div>
           )}
         />
-        <Button type="submit" size="sm">
-          Guardar
+        <Button
+          type="submit"
+          size="sm"
+          disabled={!form.formState.isValid || form.formState.isSubmitting}
+        >
+          {form.formState.isSubmitting ? (
+            <LoaderCircleIcon className="animate-spin h-4 mr-2 opacity-50 w-4" />
+          ) : null}
+          {form.formState.isSubmitting ? "Guardando..." : "Guardar"}
         </Button>
       </form>
     </Form>
