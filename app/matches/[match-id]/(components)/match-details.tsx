@@ -20,7 +20,7 @@ import { addPlayer } from "@/server/actions/player";
 import { getMatchById } from "@/server/queries/match";
 import { Prisma } from "@prisma/client";
 import copy from "copy-to-clipboard";
-import { BugIcon, LoaderCircle, PartyPopper } from "lucide-react";
+import { BugIcon, LoaderCircle, PartyPopperIcon } from "lucide-react";
 import { useParams } from "next/navigation";
 import { FC, useCallback } from "react";
 import { toast } from "sonner";
@@ -65,7 +65,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
     copy(text);
 
     toast("Equipos copiados al portapapeles.", {
-      icon: <PartyPopper className="h-4 opacity-50 w-4" />,
+      icon: <PartyPopperIcon className="h-4 opacity-50 w-4" />,
     });
   };
 
@@ -123,13 +123,15 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
 
         resolve();
       } catch (error) {
+        console.error(error);
+
         toast("Ha ocurrido un error.", {
           description:
             "No pudimos guardar los equipos. ¿Podrías volver a intentarlo?.",
           icon: <BugIcon className="h-4 opacity-50 w-4" />,
         });
 
-        reject();
+        reject(error);
       }
     });
   };

@@ -2,6 +2,7 @@
 
 import { TeamForm } from "@/app/matches/[match-id]/(components)/team-form";
 import { Team } from "@/app/matches/[match-id]/hooks/use-team-builder-state";
+import { EmptyState } from "@/components/empty-state";
 import { SpicyTooltips } from "@/components/spicy-tooltips";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -96,7 +97,7 @@ export const TeamCard: FC<TeamCardProps> = ({
               </div>
             </>
           ) : (
-            <p className="text-slate-500">Este equipo está vacío.</p>
+            <EmptyState>Este equipo está vacío.</EmptyState>
           )}
         </div>
       </CardContent>

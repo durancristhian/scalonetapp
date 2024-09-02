@@ -1,4 +1,6 @@
 import { MatchItem } from "@/app/dashboard/(components)/match-item";
+import { EmptyState } from "@/components/empty-state";
+import { CardTitle } from "@/components/ui/card";
 import { Match } from "@prisma/client";
 import { FC } from "react";
 
@@ -7,19 +9,20 @@ type MatchListProps = {
 };
 
 export const MatchList: FC<MatchListProps> = ({ matches }) => {
-  if (!Array.isArray(matches) || !matches.length) {
-    return (
-      <p className="text-slate-500">
-        A medida que crees partidos van a aparecer listados acá.
-      </p>
-    );
-  }
+  const canListMatches = Array.isArray(matches) && matches.length;
 
   return (
     <div className="grid gap-4">
-      {matches.map((match, idx) => (
-        <MatchItem key={match.id} listIndex={idx} match={match} />
-      ))}
+      <CardTitle>Tus partidos</CardTitle>
+      {canListMatches ? (
+        matches.map((match, idx) => (
+          <MatchItem key={match.id} listIndex={idx} match={match} />
+        ))
+      ) : (
+        <EmptyState>
+          A medida que crees partidos van a aparecer listados acá.
+        </EmptyState>
+      )}
     </div>
   );
 };

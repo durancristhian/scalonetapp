@@ -39,6 +39,8 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
     try {
       await onSubmit(values);
     } catch (error) {
+      console.error(error);
+
       if (error instanceof Error) {
         form.setError("name", {
           message: error.message,

@@ -4,7 +4,7 @@ import { MatchForm } from "@/app/dashboard/(components)/match-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MatchSchema } from "@/schemas/match";
 import { addMatch } from "@/server/actions/match";
-import { PartyPopper } from "lucide-react";
+import { BugIcon, PartyPopperIcon } from "lucide-react";
 import { FC } from "react";
 import { toast } from "sonner";
 
@@ -15,11 +15,19 @@ export const AddMatch: FC = () => {
         await addMatch(values);
 
         toast("Se ha creado tu partido.", {
-          icon: <PartyPopper className="h-4 opacity-50 w-4" />,
+          icon: <PartyPopperIcon className="h-4 opacity-50 w-4" />,
         });
 
         resolve();
       } catch (error) {
+        console.error(error);
+
+        toast("Ha ocurrido un error.", {
+          description:
+            "No pudimos crear el partido. ¿Podrías volver a intentarlo?.",
+          icon: <BugIcon className="h-4 opacity-50 w-4" />,
+        });
+
         reject(error);
       }
     });
@@ -28,7 +36,7 @@ export const AddMatch: FC = () => {
   return (
     <Card className="bg-slate-50">
       <CardHeader>
-        <CardTitle>Nuevo partido</CardTitle>
+        <CardTitle>Crear un partido</CardTitle>
       </CardHeader>
       <CardContent>
         <MatchForm onSubmit={onMatchSubmit} />

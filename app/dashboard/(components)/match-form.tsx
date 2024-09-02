@@ -6,23 +6,23 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { MATCH_SCHEMA, MatchSchema } from "@/schemas/match";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { LoaderCircleIcon } from "lucide-react";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 
 const DAY_LABELS = [
-  "Domingos",
-  "Lunes",
-  "Martes",
-  "Miércoles",
-  "Jueves",
-  "Viernes",
-  "Sábados",
+  "domingos",
+  "lunes",
+  "martes",
+  "miércoles",
+  "jueves",
+  "viernes",
+  "sábados",
 ];
 
 type MatchFormProps = {
@@ -45,6 +45,8 @@ export const MatchForm: FC<MatchFormProps> = ({ onSubmit, values }) => {
     try {
       await onSubmit(values);
     } catch (error) {
+      console.error(error);
+
       if (error instanceof Error) {
         form.setError("name", {
           message: error.message,
@@ -72,7 +74,6 @@ export const MatchForm: FC<MatchFormProps> = ({ onSubmit, values }) => {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nombre</FormLabel>
               <FormControl>
                 <Input placeholder={placeholder} {...field} />
               </FormControl>
@@ -80,8 +81,11 @@ export const MatchForm: FC<MatchFormProps> = ({ onSubmit, values }) => {
             </FormItem>
           )}
         />
-        <Button type="submit" size="sm">
-          Guardar
+        <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
+          {form.formState.isSubmitting ? (
+            <LoaderCircleIcon className="animate-spin h-4 mr-2 opacity-50 w-4" />
+          ) : null}
+          {form.formState.isSubmitting ? "Guardando..." : "Guardar"}
         </Button>
       </form>
     </Form>

@@ -41,13 +41,13 @@ export const MatchItem: FC<MatchItemProps> = ({ listIndex, match }) => {
     try {
       await deleteMatch(match.id);
     } catch (error) {
-      if (error instanceof Error) {
-        toast("Ha ocurrido un error.", {
-          description:
-            "No pudimos borrar el partido. ¿Podrías volver a intentarlo?.",
-          icon: <BugIcon className="h-4 opacity-50 w-4" />,
-        });
-      }
+      console.error(error);
+
+      toast("Ha ocurrido un error.", {
+        description:
+          "No pudimos borrar el partido. ¿Podrías volver a intentarlo?.",
+        icon: <BugIcon className="h-4 opacity-50 w-4" />,
+      });
 
       return;
     }
@@ -66,6 +66,8 @@ export const MatchItem: FC<MatchItemProps> = ({ listIndex, match }) => {
 
         resolve();
       } catch (error) {
+        console.error(error);
+
         reject(error);
       }
     });

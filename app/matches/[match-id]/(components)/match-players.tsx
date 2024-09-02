@@ -1,3 +1,4 @@
+import { EmptyState } from "@/components/empty-state";
 import { SpicyTooltips } from "@/components/spicy-tooltips";
 import { Button } from "@/components/ui/button";
 import { deletePlayer } from "@/server/actions/player";
@@ -14,9 +15,9 @@ type MatchPlayersProps = {
 export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
   if (!Array.isArray(players) || !players.length) {
     return (
-      <p className="text-slate-500">
+      <EmptyState>
         Las personas que agregues van a aparecer listadas acá.
-      </p>
+      </EmptyState>
     );
   }
 
