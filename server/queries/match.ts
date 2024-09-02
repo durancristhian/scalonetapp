@@ -58,6 +58,13 @@ export const getMatchById = async (id: number) => {
   return match;
 };
 
+/* This is the object version of the Match.teams Prisma field (String in the DB) */
+export type FormattedTeam = {
+  id: string;
+  name: string;
+  players: number[];
+};
+
 /* TODO: This is a terrible hack. I hope I can fix it properly soon. */
 export const getMatchForDownload = async (id: number) => {
   const match = await prisma.match.findFirst({

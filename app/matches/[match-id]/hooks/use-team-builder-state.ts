@@ -1,4 +1,4 @@
-import { MatchWithPlayers } from "@/server/queries/match";
+import { FormattedTeam, MatchWithPlayers } from "@/server/queries/match";
 import { Player } from "@prisma/client";
 import uniqueId from "lodash.uniqueid";
 import { useEffect, useState } from "react";
@@ -9,16 +9,32 @@ export type Team = {
   players: Player[];
 };
 
-const getEmptyTeam: (name: string) => Team = (name) => ({
+const createEmptyTeam: (name: string) => Team = (name) => ({
   id: uniqueId("team-"),
   name,
   players: [],
 });
 
 const DEFAULT_TEAMS: Team[] = [
-  getEmptyTeam("Equipo 1"),
-  getEmptyTeam("Equipo 2"),
+  createEmptyTeam("Equipo 1"),
+  createEmptyTeam("Equipo 2"),
 ];
+
+const getInitialTeams: (match: MatchWithPlayers) => Team[] = (match) => {
+  const formattedTeams: FormattedTeam[] = JSON.parse(match.teams);
+
+  if (!formattedTeams.length) {
+    return DEFAULT_TEAMS;
+  }
+
+  return formattedTeams.map((team) => ({
+    ...team,
+    players: team.players
+      /* We look for the player data based on the id. Since you can save teams and after that remove them from the match, it's important to filter potentical empty values after the map */
+      .map((playerId) => match.players.find((player) => player.id === playerId))
+      .filter(Boolean),
+  })) as Team[];
+};
 
 type UseTeamsBuilderStateResult = {
   assignSelectionToTeam: (teamId: string) => void;
@@ -37,7 +53,7 @@ type UseTeamsBuilderState = (
 ) => UseTeamsBuilderStateResult;
 
 export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
-  const [teams, setTeams] = useState<Team[]>(DEFAULT_TEAMS);
+  const [teams, setTeams] = useState<Team[]>(() => getInitialTeams(match));
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   /* When players change we check there is no assigned players that were deleted */
@@ -95,7 +111,9 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
   };
 
   const createNewTeam: () => void = () => {
-    setTeams((currTeams) => currTeams.concat([getEmptyTeam("Nuevo equipo")]));
+    setTeams((currTeams) =>
+      currTeams.concat([createEmptyTeam("Nuevo equipo")])
+    );
   };
 
   const getUnselectedPlayers = () => {

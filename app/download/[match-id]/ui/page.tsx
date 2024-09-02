@@ -1,15 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { getMatchForDownload } from "@/server/queries/match";
+import { FormattedTeam, getMatchForDownload } from "@/server/queries/match";
 import { default as BoringAvatar } from "boring-avatars";
 import { notFound } from "next/navigation";
 import { FC } from "react";
-
-type FormattedTeam = {
-  id: string;
-  name: string;
-  players: number[];
-};
 
 type PageProps = {
   params: {
