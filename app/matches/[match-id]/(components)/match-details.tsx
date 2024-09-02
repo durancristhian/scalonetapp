@@ -17,16 +17,12 @@ import {
 } from "@/components/ui/card";
 import { PlayerSchema } from "@/schemas/player";
 import { addPlayer } from "@/server/actions/player";
-import { getMatchById } from "@/server/queries/match";
-import { Prisma } from "@prisma/client";
+import { MatchWithPlayers } from "@/server/queries/match";
 import { useParams } from "next/navigation";
 import { FC, useCallback } from "react";
 
-/* We create this type since Prisma doesn't return relationships in the generated types */
-type Match = NonNullable<Prisma.PromiseReturnType<typeof getMatchById>>;
-
 type MatchDetailsProps = {
-  match: Match;
+  match: MatchWithPlayers;
 };
 
 export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
@@ -41,7 +37,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
     togglePlayer,
     unselectedPlayers,
     updateTeamName,
-  } = useTeamsBuilderState(match.players);
+  } = useTeamsBuilderState(match);
 
   /* We consider teams are valid when there is no unselected players AND all teams have a valid name */
   const areTeamsValid: () => boolean = useCallback(() => {

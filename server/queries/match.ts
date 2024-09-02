@@ -2,7 +2,7 @@ import { MatchSchema } from "@/schemas/match";
 import prisma from "@/utils/prisma";
 import { ERROR_MESSAGES } from "@/utils/validation-messages";
 import { auth } from "@clerk/nextjs/server";
-import { Match } from "@prisma/client";
+import { Match, Prisma } from "@prisma/client";
 
 export const getMatches = async () => {
   const user = auth();
@@ -23,6 +23,11 @@ export const getMatches = async () => {
     },
   });
 };
+
+/* We create this type since Prisma doesn't return relationships in the generated types */
+export type MatchWithPlayers = NonNullable<
+  Prisma.PromiseReturnType<typeof getMatchById>
+>;
 
 export const getMatchById = async (id: number) => {
   const user = auth();

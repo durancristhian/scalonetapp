@@ -1,3 +1,4 @@
+import { MatchWithPlayers } from "@/server/queries/match";
 import { Player } from "@prisma/client";
 import uniqueId from "lodash.uniqueid";
 import { useEffect, useState } from "react";
@@ -31,15 +32,17 @@ type UseTeamsBuilderStateResult = {
   updateTeamName: (teamId: string, newName: string) => void;
 };
 
-type UseTeamsBuilderState = (players: Player[]) => UseTeamsBuilderStateResult;
+type UseTeamsBuilderState = (
+  match: MatchWithPlayers
+) => UseTeamsBuilderStateResult;
 
-export const useTeamsBuilderState: UseTeamsBuilderState = (players) => {
+export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
   const [teams, setTeams] = useState<Team[]>(DEFAULT_TEAMS);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   /* When players change we check there is no assigned players that were deleted */
   useEffect(() => {
-    const playerIds = new Set(players.map((player) => player.id));
+    const playerIds = new Set(match.players.map((player) => player.id));
 
     setTeams((currTeams) =>
       currTeams.map((currTeam) => {
@@ -52,7 +55,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (players) => {
         return nextTeam;
       })
     );
-  }, [players]);
+  }, [match.players]);
 
   const assignSelectionToTeam: (teamId: string) => void = (teamId) => {
     setTeams((currTeams) =>
@@ -65,7 +68,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (players) => {
           const existingIds = new Set(
             currTeam.players.map((player) => player.id)
           );
-          const nextSelectedPlayers = players.filter((player) =>
+          const nextSelectedPlayers = match.players.filter((player) =>
             selectedIds.includes(player.id)
           );
 
@@ -100,7 +103,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (players) => {
       team.players.map((player) => player.id)
     );
 
-    return players.filter((player) => !idsInUse.includes(player.id));
+    return match.players.filter((player) => !idsInUse.includes(player.id));
   };
 
   const removePlayerFromTeam: (playerId: number, teamId: string) => void = (
