@@ -1,4 +1,5 @@
 import { MatchItem } from "@/app/dashboard/(components)/match-item";
+import { AnimatedListItem } from "@/components/animated-list-item";
 import { EmptyState } from "@/components/empty-state";
 import { CardTitle } from "@/components/ui/card";
 import { Match } from "@prisma/client";
@@ -16,7 +17,9 @@ export const MatchList: FC<MatchListProps> = ({ matches }) => {
       <CardTitle>Tus partidos</CardTitle>
       {canListMatches ? (
         matches.map((match, idx) => (
-          <MatchItem key={match.id} listIndex={idx} match={match} />
+          <AnimatedListItem key={match.id} listIndex={idx}>
+            <MatchItem match={match} />
+          </AnimatedListItem>
         ))
       ) : (
         <EmptyState>

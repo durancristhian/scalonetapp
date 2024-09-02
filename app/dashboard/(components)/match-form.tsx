@@ -81,7 +81,11 @@ export const MatchForm: FC<MatchFormProps> = ({ onSubmit, values }) => {
             </FormItem>
           )}
         />
-        <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
+        <Button
+          type="submit"
+          size="sm"
+          disabled={!form.formState.isValid || form.formState.isSubmitting}
+        >
           {form.formState.isSubmitting ? (
             <LoaderCircleIcon className="animate-spin h-4 mr-2 opacity-50 w-4" />
           ) : null}

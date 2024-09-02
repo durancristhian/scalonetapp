@@ -1,3 +1,4 @@
+import { AnimatedListItem } from "@/components/animated-list-item";
 import { EmptyState } from "@/components/empty-state";
 import { SpicyTooltips } from "@/components/spicy-tooltips";
 import { Button } from "@/components/ui/button";
@@ -27,12 +28,7 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
         const deletePlayerWithId = deletePlayer.bind(null, player.id);
 
         return (
-          <motion.li
-            key={player.id}
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.15, delay: idx * 0.15 }}
-          >
+          <AnimatedListItem key={player.id} listIndex={idx}>
             <div className="flex items-center gap-2">
               <form action={deletePlayerWithId} className="inline-flex">
                 <Button type="submit" variant="ghost" size="icon">
@@ -56,7 +52,7 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
                 </div>
               </div>
             </div>
-          </motion.li>
+          </AnimatedListItem>
         );
       })}
     </ul>

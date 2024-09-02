@@ -2,6 +2,7 @@
 
 import { TeamForm } from "@/app/matches/[match-id]/(components)/team-form";
 import { Team } from "@/app/matches/[match-id]/hooks/use-team-builder-state";
+import { AnimatedListItem } from "@/components/animated-list-item";
 import { EmptyState } from "@/components/empty-state";
 import { SpicyTooltips } from "@/components/spicy-tooltips";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { TeamSchema } from "@/schemas/team";
 import { default as BoringAvatar } from "boring-avatars";
-import { motion } from "framer-motion";
 import { TrashIcon } from "lucide-react";
 import { FC } from "react";
 
@@ -61,12 +61,7 @@ export const TeamCard: FC<TeamCardProps> = ({
             <>
               <div className="grid gap-2">
                 {team.players.map((player, idx) => (
-                  <motion.div
-                    key={player.id}
-                    initial={{ opacity: 0, y: -8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.15, delay: idx * 0.15 }}
-                  >
+                  <AnimatedListItem key={player.id} listIndex={idx}>
                     <div className="flex items-center gap-2">
                       <Button
                         variant="ghost"
@@ -92,7 +87,7 @@ export const TeamCard: FC<TeamCardProps> = ({
                         </div>
                       </div>
                     </div>
-                  </motion.div>
+                  </AnimatedListItem>
                 ))}
               </div>
             </>
