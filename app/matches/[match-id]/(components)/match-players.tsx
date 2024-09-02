@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { deletePlayer } from "@/server/actions/player";
 import { Player } from "@prisma/client";
 import { default as BoringAvatar } from "boring-avatars";
-import { TrashIcon } from "lucide-react";
+import { LoaderCircleIcon, TrashIcon } from "lucide-react";
 import { FC } from "react";
+import { useFormState, useFormStatus } from "react-dom";
 
 type MatchPlayersProps = {
   players: Player[];
@@ -20,33 +21,9 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
       {canListPlayers ? (
         <ul className="grid gap-2">
           {players.map((player, idx) => {
-            const deletePlayerWithId = deletePlayer.bind(null, player.id);
-
             return (
               <AnimatedListItem key={player.id} listIndex={idx}>
-                <div className="flex items-center gap-2">
-                  <form action={deletePlayerWithId} className="inline-flex">
-                    <Button type="submit" variant="ghost" size="icon">
-                      <TrashIcon className="h-4 text-red-700 w-4" />
-                    </Button>
-                  </form>
-                  <div className="grow">
-                    <div className="border border-slate-300 px-4 py-2 rounded-md">
-                      <div className="flex gap-2 items-center">
-                        <SpicyTooltips>
-                          <BoringAvatar
-                            variant="beam"
-                            name={player.name}
-                            size={24}
-                          />
-                        </SpicyTooltips>
-                        <div className="grow">
-                          <p>{player.name}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <MatchPlayer player={player} />
               </AnimatedListItem>
             );
           })}
@@ -57,5 +34,48 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
         </EmptyState>
       )}
     </>
+  );
+};
+
+type MatchPlayerProps = {
+  player: Player;
+};
+
+const MatchPlayer: FC<MatchPlayerProps> = ({ player }) => {
+  const deletePlayerWithId = deletePlayer.bind(null, player.id);
+  const [_, deletePlayerAction] = useFormState(deletePlayerWithId, null);
+
+  return (
+    <div className="flex items-center gap-2">
+      <form action={deletePlayerAction} className="inline-flex">
+        <SubmitButton />
+      </form>
+      <div className="grow">
+        <div className="border border-slate-300 px-4 py-2 rounded-md">
+          <div className="flex gap-2 items-center">
+            <SpicyTooltips>
+              <BoringAvatar variant="beam" name={player.name} size={24} />
+            </SpicyTooltips>
+            <div className="grow">
+              <p>{player.name}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const SubmitButton = () => {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button type="submit" disabled={pending} variant="ghost" size="icon">
+      {pending ? (
+        <LoaderCircleIcon className="animate-spin h-4 opacity-50 w-4" />
+      ) : (
+        <TrashIcon className="h-4 text-red-700 w-4" />
+      )}
+    </Button>
   );
 };
