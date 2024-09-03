@@ -5,7 +5,7 @@ import { EditMatch } from "@/app/dashboard/(components)/edit-match";
 import { Match } from "@prisma/client";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale/es";
-import { ArrowRightIcon } from "lucide-react";
+import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 import { FC } from "react";
 
@@ -31,7 +31,7 @@ export const MatchItem: FC<MatchItemProps> = ({ match }) => {
                   })}
                 </p>
               </div>
-              <ArrowRightIcon className="h-4 text-slate-500 w-4" />
+              <ChevronRightIcon className="h-4 text-slate-500 w-4" />
             </div>
           </div>
         </Link>
