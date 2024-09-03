@@ -32,7 +32,7 @@ export const CopyTeams: FC<CopyTeamsProps> = ({ teams }) => {
   };
 
   return (
-    <Button onClick={copyTeams} variant="outline" size="sm">
+    <Button onClick={copyTeams} variant="outline">
       Copiar
     </Button>
   );

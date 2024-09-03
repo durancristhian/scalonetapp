@@ -43,7 +43,7 @@ const Page: FC = () => {
           transition={{ duration: 0.5, delay: 1 }}
         >
           <SignInButton mode="modal">
-            <Button size="sm">Ingresar con Google</Button>
+            <Button>Ingresar con Google</Button>
           </SignInButton>
         </motion.div>
       </div>

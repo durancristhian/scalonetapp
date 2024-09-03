@@ -82,7 +82,7 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
   };
 
   return (
-    <Button onClick={exportTeams} disabled={disabled || processing} size="sm">
+    <Button onClick={exportTeams} disabled={disabled || processing}>
       {processing ? (
         <LoaderCircleIcon className="animate-spin h-4 mr-2 opacity-50 w-4" />
       ) : null}

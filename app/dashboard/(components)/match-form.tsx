@@ -83,7 +83,6 @@ export const MatchForm: FC<MatchFormProps> = ({ onSubmit, values }) => {
         />
         <Button
           type="submit"
-          size="sm"
           disabled={!form.formState.isValid || form.formState.isSubmitting}
         >
           {form.formState.isSubmitting ? (

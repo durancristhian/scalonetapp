@@ -3,7 +3,7 @@
 import { CopyTeams } from "@/app/matches/[match-id]/(components)/copy-teams";
 import { ExportTeams } from "@/app/matches/[match-id]/(components)/export-teams";
 import { MatchPlayers } from "@/app/matches/[match-id]/(components)/match-players";
-import { PlayerForm } from "@/app/matches/[match-id]/(components)/player-form";
+import { PlayerTabs } from "@/app/matches/[match-id]/(components)/player-tabs";
 import { PlayersList } from "@/app/matches/[match-id]/(components)/players-list";
 import { TeamCard } from "@/app/matches/[match-id]/(components)/team-card";
 import { useTeamsBuilderState } from "@/app/matches/[match-id]/hooks/use-team-builder-state";
@@ -15,10 +15,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { PlayerSchema } from "@/schemas/player";
-import { addPlayer } from "@/server/actions/player";
 import { MatchWithPlayers } from "@/server/queries/match";
-import { useParams } from "next/navigation";
 import { FC, useCallback } from "react";
 
 type MatchDetailsProps = {
@@ -26,7 +23,6 @@ type MatchDetailsProps = {
 };
 
 export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
-  const params = useParams();
   const {
     assignSelectionToTeam,
     createNewTeam,
@@ -46,20 +42,16 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
     return !unselectedPlayers.length && validTeamNames;
   }, [teams, unselectedPlayers]);
 
-  const onPlayerSubmit: (values: PlayerSchema) => Promise<void> = (values) => {
-    return addPlayer(values, Number(params["match-id"]));
-  };
-
   return (
     <div className="grid md:grid-cols-3 gap-8">
       <div className="md:col-span-1">
         <div className="grid gap-4">
           <Card className="bg-slate-50">
             <CardHeader>
-              <CardTitle>Agregar un jugador</CardTitle>
+              <CardTitle>Agregar jugadores</CardTitle>
             </CardHeader>
             <CardContent>
-              <PlayerForm onSubmit={onPlayerSubmit} />
+              <PlayerTabs />
             </CardContent>
           </Card>
           <Card className="bg-slate-50">
@@ -106,7 +98,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
             ))}
           </div>
           <div className="flex justify-between gap-2">
-            <Button onClick={createNewTeam} variant="outline" size="sm">
+            <Button onClick={createNewTeam} variant="outline">
               Agregar otro equipo
             </Button>
             <div className="flex gap-2">

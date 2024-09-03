@@ -88,7 +88,6 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
         />
         <Button
           type="submit"
-          size="sm"
           disabled={!form.formState.isValid || form.formState.isSubmitting}
         >
           {form.formState.isSubmitting ? (
