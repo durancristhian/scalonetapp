@@ -61,15 +61,6 @@ export const TeamCard: FC<TeamCardProps> = ({
                 {team.players.map((player, idx) => (
                   <AnimatedListItem key={player.id} listIndex={idx}>
                     <div className="flex items-center gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          removePlayerFromTeam(player.id, team.id);
-                        }}
-                      >
-                        <XIcon className="h-4 text-red-700 w-4" />
-                      </Button>
                       <div className="grow">
                         <div className="flex gap-2 items-center">
                           <SpicyTooltips>
@@ -82,6 +73,15 @@ export const TeamCard: FC<TeamCardProps> = ({
                           <p>{player.name}</p>
                         </div>
                       </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          removePlayerFromTeam(player.id, team.id);
+                        }}
+                      >
+                        <XIcon className="h-4 text-red-700 w-4" />
+                      </Button>
                     </div>
                   </AnimatedListItem>
                 ))}
