@@ -4,6 +4,13 @@ import { ERROR_MESSAGES } from "@/utils/validation-messages";
 import { auth } from "@clerk/nextjs/server";
 import { Match, Prisma } from "@prisma/client";
 
+/* This is the object version of the Match.teams Prisma field (String in the DB) */
+export type FormattedTeam = {
+  id: string;
+  name: string;
+  players: number[];
+};
+
 export const getMatches = async () => {
   const user = auth();
   if (!user || !user.userId) {
@@ -41,34 +48,6 @@ export const getMatchById = async (id: number) => {
       },
       userId: {
         equals: user.userId,
-      },
-    },
-    include: {
-      players: true,
-    },
-  });
-
-  /* We sort players by name */
-  match?.players.sort((playerA, playerB) =>
-    playerA.name.localeCompare(playerB.name)
-  );
-
-  return match;
-};
-
-/* This is the object version of the Match.teams Prisma field (String in the DB) */
-export type FormattedTeam = {
-  id: string;
-  name: string;
-  players: number[];
-};
-
-/* TODO: This method is a terrible hack for now since it doesn't check there is an authenticated user. I hope I can find a proper solution soon */
-export const getMatchForDownload = async (id: number) => {
-  const match = await prisma.match.findFirst({
-    where: {
-      id: {
-        equals: id,
       },
     },
     include: {

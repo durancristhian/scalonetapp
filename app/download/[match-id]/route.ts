@@ -1,3 +1,4 @@
+import { getMatchById } from "@/server/queries/match";
 import { ERROR_MESSAGES } from "@/utils/validation-messages";
 import { NextRequest, NextResponse } from "next/server";
 import puppeteer, { Browser } from "puppeteer";
@@ -24,6 +25,16 @@ export async function GET(request: NextRequest) {
     const [, , matchIdStr] = pathname.split("/");
     const matchId = Number(matchIdStr);
 
+    /* We look for the match data in the db */
+    const match = await getMatchById(matchId);
+
+    if (!match) {
+      return NextResponse.json(
+        { error: ERROR_MESSAGES.not_found },
+        { status: 404 }
+      );
+    }
+
     const browser = await getBrowser();
 
     const page = await browser.newPage();
@@ -33,10 +44,13 @@ export async function GET(request: NextRequest) {
       width: 1080,
     });
     await page.goto(`${getAppDomain()}/download/${matchId}/ui`);
-
-    await page.waitForNetworkIdle({
-      idleTime: 1000,
-    });
+    /* We add the match data to localStorage */
+    await page.evaluate((data) => {
+      window.localStorage.setItem("match", JSON.stringify(data));
+    }, match);
+    /* We navigate AGAIN to the same page so we have access to the localStorage data :) YES, IT'S A HACK */
+    await page.goto(`${getAppDomain()}/download/${matchId}/ui`);
+    await page.waitForNetworkIdle();
 
     const screenshot = await page.screenshot({
       captureBeyondViewport: true,

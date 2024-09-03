@@ -1,21 +1,24 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { FormattedTeam, getMatchForDownload } from "@/server/queries/match";
+import { FormattedTeam, MatchWithPlayers } from "@/server/queries/match";
 import { default as BoringAvatar } from "boring-avatars";
-import { notFound } from "next/navigation";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 
-type PageProps = {
-  params: {
-    ["match-id"]: string;
-  };
-};
+const Page: FC = () => {
+  const [match, setMatch] = useState<MatchWithPlayers>();
 
-const Page: FC<PageProps> = async ({ params }) => {
-  const match = await getMatchForDownload(Number(params["match-id"]));
+  useEffect(() => {
+    const data = window.localStorage.getItem("match");
+
+    if (data) {
+      setMatch(JSON.parse(data));
+    }
+  }, []);
 
   if (!match) {
-    return notFound();
+    return null;
   }
 
   const formattedTeams: FormattedTeam[] = JSON.parse(match.teams);
@@ -28,7 +31,9 @@ const Page: FC<PageProps> = async ({ params }) => {
           {formattedTeams.map((team) => (
             <Card key={team.id}>
               <CardHeader>
-                <CardTitle className="text-center">{team.name}</CardTitle>
+                <CardTitle className="text-center text-2xl">
+                  {team.name}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-6">
