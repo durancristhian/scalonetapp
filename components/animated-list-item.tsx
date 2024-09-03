@@ -15,7 +15,11 @@ export const AnimatedListItem: FC<PropsWithChildren<AnimatedListItemProps>> = ({
     <motion.div
       initial={{ opacity: 0, y: -8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.15, delay: listIndex * 0.15 }}
+      transition={{
+        ease: "easeInOut",
+        duration: 0.15,
+        delay: listIndex * 0.15,
+      }}
     >
       {children}
     </motion.div>
