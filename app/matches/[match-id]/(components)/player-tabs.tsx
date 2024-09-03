@@ -25,7 +25,7 @@ export const PlayerTabs: FC = ({}) => {
       <Tabs defaultValue="single">
         <div className="grid gap-4">
           <TabsList className="grid grid-cols-2">
-            <TabsTrigger value="single">De a 1</TabsTrigger>
+            <TabsTrigger value="single">De a uno</TabsTrigger>
             <TabsTrigger value="multiple">De a muchos</TabsTrigger>
           </TabsList>
           <TabsContent value="single">
