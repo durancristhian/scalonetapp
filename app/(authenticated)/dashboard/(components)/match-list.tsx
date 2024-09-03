@@ -1,4 +1,4 @@
-import { MatchItem } from "@/app/dashboard/(components)/match-item";
+import { MatchItem } from "@/app/(authenticated)/dashboard/(components)/match-item";
 import { AnimatedListItem } from "@/components/animated-list-item";
 import { EmptyState } from "@/components/empty-state";
 import { CardTitle } from "@/components/ui/card";

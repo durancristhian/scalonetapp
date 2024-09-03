@@ -1,6 +1,6 @@
 "use client";
 
-import { Team } from "@/app/matches/[match-id]/hooks/use-team-builder-state";
+import { Team } from "@/app/(authenticated)/matches/[match-id]/hooks/use-team-builder-state";
 import { Button } from "@/components/ui/button";
 import copy from "copy-to-clipboard";
 import { PartyPopperIcon } from "lucide-react";

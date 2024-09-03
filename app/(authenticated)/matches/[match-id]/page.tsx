@@ -1,4 +1,4 @@
-import { MatchDetails } from "@/app/matches/[match-id]/(components)/match-details";
+import { MatchDetails } from "@/app/(authenticated)/matches/[match-id]/(components)/match-details";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,6 +8,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { getMatchById } from "@/server/queries/match";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FC } from "react";
 
@@ -30,7 +31,9 @@ const Page: FC<PageProps> = async ({ params }) => {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/dashboard">Tus partidos</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href="/dashboard">Tus partidos</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>

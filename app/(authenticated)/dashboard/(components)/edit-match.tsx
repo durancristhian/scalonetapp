@@ -1,6 +1,6 @@
 "use client";
 
-import { MatchForm } from "@/app/dashboard/(components)/match-form";
+import { MatchForm } from "@/app/(authenticated)/dashboard/(components)/match-form";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

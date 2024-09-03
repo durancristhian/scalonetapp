@@ -1,7 +1,7 @@
 "use client";
 
-import { DeleteMatch } from "@/app/dashboard/(components)/delete-match";
-import { EditMatch } from "@/app/dashboard/(components)/edit-match";
+import { DeleteMatch } from "@/app/(authenticated)/dashboard/(components)/delete-match";
+import { EditMatch } from "@/app/(authenticated)/dashboard/(components)/edit-match";
 import { Match } from "@prisma/client";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale/es";

@@ -1,5 +1,5 @@
-import { MultiplePlayersForm } from "@/app/matches/[match-id]/(components)/multiple-players-form";
-import { PlayerForm } from "@/app/matches/[match-id]/(components)/player-form";
+import { MultiplePlayersForm } from "@/app/(authenticated)/matches/[match-id]/(components)/multiple-players-form";
+import { PlayerForm } from "@/app/(authenticated)/matches/[match-id]/(components)/player-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlayerSchema } from "@/schemas/player";
 import { addMultiplePlayers, addPlayer } from "@/server/actions/player";

@@ -1,5 +1,5 @@
-import { AddMatch } from "@/app/dashboard/(components)/add-match";
-import { MatchList } from "@/app/dashboard/(components)/match-list";
+import { AddMatch } from "@/app/(authenticated)/dashboard/(components)/add-match";
+import { MatchList } from "@/app/(authenticated)/dashboard/(components)/match-list";
 import { getMatches } from "@/server/queries/match";
 import { FC } from "react";
 

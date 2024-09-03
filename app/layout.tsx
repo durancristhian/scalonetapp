@@ -1,4 +1,5 @@
 import "@/app/globals.css";
+import { Toaster } from "@/components/ui/sonner";
 import { ClerkProvider } from "@clerk/nextjs";
 import clsx from "clsx";
 import type { Metadata, Viewport } from "next";
@@ -41,6 +42,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
           )}
         >
           {children}
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>

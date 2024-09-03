@@ -1,7 +1,7 @@
 "use client";
 
-import { TeamForm } from "@/app/matches/[match-id]/(components)/team-form";
-import { Team } from "@/app/matches/[match-id]/hooks/use-team-builder-state";
+import { TeamForm } from "@/app/(authenticated)/matches/[match-id]/(components)/team-form";
+import { Team } from "@/app/(authenticated)/matches/[match-id]/hooks/use-team-builder-state";
 import { AnimatedListItem } from "@/components/animated-list-item";
 import { EmptyState } from "@/components/empty-state";
 import { SpicyTooltips } from "@/components/spicy-tooltips";

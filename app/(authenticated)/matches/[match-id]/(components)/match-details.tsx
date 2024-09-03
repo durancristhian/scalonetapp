@@ -1,12 +1,12 @@
 "use client";
 
-import { CopyTeams } from "@/app/matches/[match-id]/(components)/copy-teams";
-import { ExportTeams } from "@/app/matches/[match-id]/(components)/export-teams";
-import { MatchPlayers } from "@/app/matches/[match-id]/(components)/match-players";
-import { PlayerTabs } from "@/app/matches/[match-id]/(components)/player-tabs";
-import { PlayersList } from "@/app/matches/[match-id]/(components)/players-list";
-import { TeamCard } from "@/app/matches/[match-id]/(components)/team-card";
-import { useTeamsBuilderState } from "@/app/matches/[match-id]/hooks/use-team-builder-state";
+import { CopyTeams } from "@/app/(authenticated)/matches/[match-id]/(components)/copy-teams";
+import { ExportTeams } from "@/app/(authenticated)/matches/[match-id]/(components)/export-teams";
+import { MatchPlayers } from "@/app/(authenticated)/matches/[match-id]/(components)/match-players";
+import { PlayerTabs } from "@/app/(authenticated)/matches/[match-id]/(components)/player-tabs";
+import { PlayersList } from "@/app/(authenticated)/matches/[match-id]/(components)/players-list";
+import { TeamCard } from "@/app/(authenticated)/matches/[match-id]/(components)/team-card";
+import { useTeamsBuilderState } from "@/app/(authenticated)/matches/[match-id]/hooks/use-team-builder-state";
 import { Button } from "@/components/ui/button";
 import {
   Card,

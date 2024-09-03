@@ -1,6 +1,6 @@
 "use client";
 
-import { MatchForm } from "@/app/dashboard/(components)/match-form";
+import { MatchForm } from "@/app/(authenticated)/dashboard/(components)/match-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MatchSchema } from "@/schemas/match";
 import { addMatch } from "@/server/actions/match";
