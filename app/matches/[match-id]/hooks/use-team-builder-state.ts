@@ -145,12 +145,11 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
             return currTeam;
           }
 
-          const currPlayerIdIdx = currTeam.players.findIndex(
-            (player) => player.id === playerId
+          const nextPlayers = currTeam.players.filter(
+            (player) => player.id !== playerId
           );
 
-          const nextTeam = { ...currTeam };
-          nextTeam.players.splice(currPlayerIdIdx, 1);
+          const nextTeam: Team = { ...currTeam, players: nextPlayers };
 
           return nextTeam;
         })
