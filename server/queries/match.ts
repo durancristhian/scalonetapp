@@ -6,7 +6,6 @@ import { Match, Prisma } from "@prisma/client";
 
 export const getMatches = async () => {
   const user = auth();
-
   if (!user || !user.userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
@@ -31,7 +30,6 @@ export type MatchWithPlayers = NonNullable<
 
 export const getMatchById = async (id: number) => {
   const user = auth();
-
   if (!user || !user.userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
@@ -65,7 +63,7 @@ export type FormattedTeam = {
   players: number[];
 };
 
-/* TODO: This is a terrible hack. I hope I can fix it properly soon. */
+/* TODO: This method is a terrible hack for now since it doesn't check there is an authenticated user. I hope I can find a proper solution soon */
 export const getMatchForDownload = async (id: number) => {
   const match = await prisma.match.findFirst({
     where: {
@@ -88,7 +86,6 @@ export const getMatchForDownload = async (id: number) => {
 
 export const addMatch: (data: MatchSchema) => Promise<void> = async (data) => {
   const user = auth();
-
   if (!user || !user.userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
@@ -110,7 +107,6 @@ export const editMatch: (
   data: Partial<Match>
 ) => Promise<void> = async (id, data) => {
   const user = auth();
-
   if (!user || !user.userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
@@ -128,7 +124,6 @@ export const editMatch: (
 
 export const deleteMatch: (id: number) => Promise<void> = async (id) => {
   const user = auth();
-
   if (!user || !user.userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }

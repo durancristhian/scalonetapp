@@ -5,37 +5,56 @@ import {
   VALIDATION_MESSAGES,
 } from "@/utils/validation-messages";
 import { auth } from "@clerk/nextjs/server";
+import { Match } from "@prisma/client";
+
+const getMatch: (
+  userId: string,
+  matchId: number
+) => Promise<Match | null> = async (userId, matchId) => {
+  const match = await prisma.match.findFirst({
+    where: {
+      id: matchId,
+      userId: userId,
+    },
+  });
+
+  return match;
+};
+
+const namesAlreadyInMatch: (
+  matchId: number,
+  names: string[]
+) => Promise<boolean> = async (matchId, names) => {
+  const coincidences = await prisma.player.findMany({
+    where: {
+      matchId,
+      OR: names.map((name) => ({
+        name,
+      })),
+    },
+  });
+
+  return !!coincidences.length;
+};
 
 export const addPlayer: (
   matchId: number,
   data: PlayerSchema
 ) => Promise<void> = async (matchId, data) => {
   const user = auth();
-
   if (!user || !user.userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
 
-  const userOwnsMatch = await prisma.match.findFirst({
-    where: {
-      id: matchId,
-      userId: user.userId,
-    },
-  });
-
+  /* We check the current user owns the match we're trying to add a player to */
+  const userOwnsMatch = await getMatch(user.userId, matchId);
   if (!userOwnsMatch) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
 
   /* We check that we don't have a player named the same in the match already */
-  const exists = await prisma.player.findFirst({
-    where: {
-      name: data.name,
-      matchId,
-    },
-  });
-
-  if (exists) {
+  const hasCoincidences = await namesAlreadyInMatch(matchId, [data.name]);
+  if (hasCoincidences) {
     throw new Error(VALIDATION_MESSAGES.player_repeated);
   }
 
@@ -56,42 +75,28 @@ export const addMultiplePlayers: (
   data: PlayerSchema[]
 ) => Promise<void> = async (matchId, data) => {
   const user = auth();
-
   if (!user || !user.userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
 
-  const userOwnsMatch = await prisma.match.findFirst({
-    where: {
-      id: matchId,
-      userId: user.userId,
-    },
-  });
-
+  /* We check the current user owns the match we're trying to add a player to */
+  const userOwnsMatch = await getMatch(user.userId, matchId);
   if (!userOwnsMatch) {
     throw new Error(ERROR_MESSAGES.unauthorized);
+  }
+
+  const coincidences = await namesAlreadyInMatch(
+    matchId,
+    data.map((player) => player.name)
+  );
+  if (coincidences) {
+    throw new Error(VALIDATION_MESSAGES.at_least_one_player_repeated);
   }
 
   const nextPlayers = data.map((player) => ({
     ...player,
     matchId,
   }));
-
-  /* We check that we don't have any player named the same in the match already */
-  const exists = await prisma.player.findMany({
-    where: {
-      matchId,
-      OR: nextPlayers.map(({ name }) => ({
-        name: {
-          contains: name,
-        },
-      })),
-    },
-  });
-
-  if (exists.length) {
-    throw new Error(VALIDATION_MESSAGES.at_least_one_player_repeated);
-  }
 
   await prisma.player.createMany({
     data: nextPlayers,
@@ -105,7 +110,6 @@ export const editPlayer: (
   data: Partial<PlayerSchema>
 ) => Promise<void> = async (id, data) => {
   const user = auth();
-
   if (!user || !user.userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
@@ -122,7 +126,6 @@ export const editPlayer: (
 
 export const deletePlayer: (id: number) => Promise<void> = async (id) => {
   const user = auth();
-
   if (!user || !user.userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
