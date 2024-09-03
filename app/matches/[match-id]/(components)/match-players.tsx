@@ -14,9 +14,10 @@ import { PlayerSchema } from "@/schemas/player";
 import { deletePlayer, editPlayer } from "@/server/actions/player";
 import { Player } from "@prisma/client";
 import { default as BoringAvatar } from "boring-avatars";
-import { LoaderCircleIcon, PencilIcon, TrashIcon } from "lucide-react";
+import { BugIcon, LoaderCircleIcon, PencilIcon, TrashIcon } from "lucide-react";
 import { FC, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
+import { toast } from "sonner";
 
 type MatchPlayersProps = {
   players: Player[];
@@ -25,11 +26,27 @@ type MatchPlayersProps = {
 export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
   const canListPlayers = Array.isArray(players) && players.length;
 
-  const onPlayerSubmit: (
-    playerId: number,
-    values: PlayerSchema
-  ) => Promise<void> = (playerId, values) => {
-    return editPlayer(playerId, values);
+  const onPlayerSubmit: (id: number, values: PlayerSchema) => Promise<void> = (
+    id,
+    values
+  ) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await editPlayer(id, values);
+
+        resolve();
+      } catch (error) {
+        console.error(error);
+
+        toast("Ha ocurrido un error.", {
+          description:
+            "No pudimos actualizar el jugador. ¿Podrías volver a intentarlo?.",
+          icon: <BugIcon className="h-4 opacity-50 w-4" />,
+        });
+
+        reject(error);
+      }
+    });
   };
 
   return (
@@ -55,7 +72,7 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
 
 type MatchPlayerProps = {
   player: Player;
-  onPlayerSubmit: (playerId: number, values: PlayerSchema) => Promise<void>;
+  onPlayerSubmit: (id: number, values: PlayerSchema) => Promise<void>;
 };
 
 const MatchPlayer: FC<MatchPlayerProps> = ({ player, onPlayerSubmit }) => {
@@ -63,6 +80,12 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player, onPlayerSubmit }) => {
   /* This looks ugly, I know */
   const deletePlayerWithId = deletePlayer.bind(null, player.id);
   const [_, deletePlayerAction] = useFormState(deletePlayerWithId, null);
+
+  const onSubmit: (values: PlayerSchema) => Promise<void> = async (values) => {
+    await onPlayerSubmit(player.id, values);
+
+    setDialogOpen(false);
+  };
 
   return (
     <div className="flex items-center gap-2">
@@ -95,7 +118,7 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player, onPlayerSubmit }) => {
               <DialogTitle>Editar jugador</DialogTitle>
             </DialogHeader>
             <PlayerForm
-              onSubmit={(values) => onPlayerSubmit(player.id, values)}
+              onSubmit={onSubmit}
               values={{
                 name: player.name,
               }}

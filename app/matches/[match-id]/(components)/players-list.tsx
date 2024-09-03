@@ -21,7 +21,7 @@ type PlayersListProps = {
   players: Player[];
   selectedIds: number[];
   teams: Team[];
-  togglePlayer: (playerId: number) => void;
+  togglePlayer: (id: number) => void;
 };
 
 export const PlayersList: FC<PlayersListProps> = ({

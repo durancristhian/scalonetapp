@@ -18,13 +18,13 @@ import { FC } from "react";
 import { toast } from "sonner";
 
 type DeleteMatchProps = {
-  matchId: number;
+  id: number;
 };
 
-export const DeleteMatch: FC<DeleteMatchProps> = ({ matchId }) => {
+export const DeleteMatch: FC<DeleteMatchProps> = ({ id }) => {
   const onDeleteMatch: () => Promise<void> = async () => {
     try {
-      await deleteMatch(matchId);
+      await deleteMatch(id);
 
       toast("Se ha eliminado tu partido.", {
         icon: <TrashIcon className="h-4 opacity-50 w-4" />,

@@ -43,7 +43,7 @@ type UseTeamsBuilderStateResult = {
   removeTeam: (teamId: string) => void;
   selectedIds: number[];
   teams: Team[];
-  togglePlayer: (playerId: number) => void;
+  togglePlayer: (id: number) => void;
   unselectedPlayers: Player[];
   updateTeamName: (teamId: string, newName: string) => void;
 };
@@ -56,7 +56,11 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
   const [teams, setTeams] = useState<Team[]>(() => getInitialTeams(match));
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
-  /* When players change we check there is no assigned players that were deleted */
+  /*
+    When players change we check:
+    - there is no assigned players that were deleted
+    - player names are updated
+  */
   useEffect(() => {
     const playerIds = new Set(match.players.map((player) => player.id));
 
@@ -64,53 +68,62 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
       currTeams.map((currTeam) => {
         const nextTeam = { ...currTeam };
 
-        nextTeam.players = nextTeam.players.filter((player) =>
+        const playersInTeam = nextTeam.players.filter((player) =>
           playerIds.has(player.id)
         );
+        const updatedPlayersInTeam = playersInTeam
+          .map((player) =>
+            match.players.find((matchPlayer) => matchPlayer.id === player.id)
+          )
+          .filter(Boolean);
+
+        /* This "as unknown as" is ugly but typescript doesn't know how to properly understand what I'm doing (looping over an array of players that I'm sure won't be undefined after .find because of the previous check) */
+        nextTeam.players = updatedPlayersInTeam as unknown as Player[];
 
         return nextTeam;
       })
     );
   }, [match.players]);
 
-  const assignSelectionToTeam: (teamId: string) => void = (teamId) => {
-    setTeams((currTeams) =>
-      /* We loop over all the teams since an update might include removing players from another team, not only adding them to the specified team */
-      currTeams.map((currTeam) => {
-        const nextTeam = { ...currTeam };
+  const assignSelectionToTeam: UseTeamsBuilderStateResult["assignSelectionToTeam"] =
+    (teamId) => {
+      setTeams((currTeams) =>
+        /* We loop over all the teams since an update might include removing players from another team, not only adding them to the specified team */
+        currTeams.map((currTeam) => {
+          const nextTeam = { ...currTeam };
 
-        /* If the selection is meant to be for the specified team id */
-        if (currTeam.id === teamId) {
-          const existingIds = new Set(
-            currTeam.players.map((player) => player.id)
-          );
-          const nextSelectedPlayers = match.players.filter((player) =>
-            selectedIds.includes(player.id)
-          );
+          /* If the selection is meant to be for the specified team id */
+          if (currTeam.id === teamId) {
+            const existingIds = new Set(
+              currTeam.players.map((player) => player.id)
+            );
+            const nextSelectedPlayers = match.players.filter((player) =>
+              selectedIds.includes(player.id)
+            );
 
-          /* We compute the next players array based on the current data + the new selection without the already added players */
-          nextTeam.players = [
-            ...nextTeam.players,
-            ...nextSelectedPlayers.filter(
-              (player) => !existingIds.has(player.id)
-            ),
-          ];
-        } else {
-          /* If the team is not supposed to get this selection, we remove the coincidences */
-          nextTeam.players = currTeam.players.filter(
-            (player) => !selectedIds.includes(player.id)
-          );
-        }
+            /* We compute the next players array based on the current data + the new selection without the already added players */
+            nextTeam.players = [
+              ...nextTeam.players,
+              ...nextSelectedPlayers.filter(
+                (player) => !existingIds.has(player.id)
+              ),
+            ];
+          } else {
+            /* If the team is not supposed to get this selection, we remove the coincidences */
+            nextTeam.players = currTeam.players.filter(
+              (player) => !selectedIds.includes(player.id)
+            );
+          }
 
-        return nextTeam;
-      })
-    );
+          return nextTeam;
+        })
+      );
 
-    /* We clean the current selected ids as well so we can start over */
-    setSelectedIds([]);
-  };
+      /* We clean the current selected ids as well so we can start over */
+      setSelectedIds([]);
+    };
 
-  const createNewTeam: () => void = () => {
+  const createNewTeam: UseTeamsBuilderStateResult["createNewTeam"] = () => {
     setTeams((currTeams) =>
       currTeams.concat([createEmptyTeam("Nuevo equipo")])
     );
@@ -124,33 +137,33 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
     return match.players.filter((player) => !idsInUse.includes(player.id));
   };
 
-  const removePlayerFromTeam: (playerId: number, teamId: string) => void = (
-    playerId,
-    teamId
-  ) => {
-    setTeams((currTeams) =>
-      currTeams.map((currTeam) => {
-        if (currTeam.id !== teamId) {
-          return currTeam;
-        }
+  const removePlayerFromTeam: UseTeamsBuilderStateResult["removePlayerFromTeam"] =
+    (playerId, teamId) => {
+      setTeams((currTeams) =>
+        currTeams.map((currTeam) => {
+          if (currTeam.id !== teamId) {
+            return currTeam;
+          }
 
-        const currPlayerIdIdx = currTeam.players.findIndex(
-          (player) => player.id === playerId
-        );
+          const currPlayerIdIdx = currTeam.players.findIndex(
+            (player) => player.id === playerId
+          );
 
-        const nextTeam = { ...currTeam };
-        nextTeam.players.splice(currPlayerIdIdx, 1);
+          const nextTeam = { ...currTeam };
+          nextTeam.players.splice(currPlayerIdIdx, 1);
 
-        return nextTeam;
-      })
-    );
-  };
+          return nextTeam;
+        })
+      );
+    };
 
-  const removeTeam: (teamId: string) => void = (teamId) => {
+  const removeTeam: UseTeamsBuilderStateResult["removeTeam"] = (teamId) => {
     setTeams((currTeams) => currTeams.filter((team) => team.id !== teamId));
   };
 
-  const togglePlayer: (playerId: number) => void = (playerId) => {
+  const togglePlayer: UseTeamsBuilderStateResult["togglePlayer"] = (
+    playerId
+  ) => {
     setSelectedIds((currSelectedIds) => {
       const nextState = [...currSelectedIds];
 
@@ -168,7 +181,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
     });
   };
 
-  const updateTeamName: (teamId: string, newName: string) => void = (
+  const updateTeamName: UseTeamsBuilderStateResult["updateTeamName"] = (
     teamId,
     newName
   ) => {

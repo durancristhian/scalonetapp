@@ -16,7 +16,7 @@ type MatchItemProps = {
 export const MatchItem: FC<MatchItemProps> = ({ match }) => {
   return (
     <div className="flex items-center gap-2">
-      <DeleteMatch matchId={match.id} />
+      <DeleteMatch id={match.id} />
       <EditMatch match={match} />
       <div className="grow">
         <Link href={`/matches/${match.id}`}>

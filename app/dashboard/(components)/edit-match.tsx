@@ -12,8 +12,9 @@ import {
 import { MatchSchema } from "@/schemas/match";
 import { editMatch } from "@/server/actions/match";
 import { Match } from "@prisma/client";
-import { PencilIcon } from "lucide-react";
+import { BugIcon, PencilIcon } from "lucide-react";
 import { FC, useState } from "react";
+import { toast } from "sonner";
 
 type EditMatchProps = {
   match: Match;
@@ -32,6 +33,12 @@ export const EditMatch: FC<EditMatchProps> = ({ match }) => {
         resolve();
       } catch (error) {
         console.error(error);
+
+        toast("Ha ocurrido un error.", {
+          description:
+            "No pudimos actualizar el partido. ¿Podrías volver a intentarlo?.",
+          icon: <BugIcon className="h-4 opacity-50 w-4" />,
+        });
 
         reject(error);
       }
