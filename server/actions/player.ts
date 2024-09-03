@@ -2,6 +2,7 @@
 
 import { PlayerSchema } from "@/schemas/player";
 import {
+  addMultiplePlayers as addMultiplePlayersQuery,
   addPlayer as addPlayerQuery,
   deletePlayer as deletePlayerQuery,
 } from "@/server/queries/player";
@@ -11,6 +12,17 @@ type AddPlayer = (data: PlayerSchema, matchId: number) => Promise<void>;
 
 export const addPlayer: AddPlayer = async (data, matchId) => {
   await addPlayerQuery(data, matchId);
+
+  revalidatePath("/matches/[match-id]", "page");
+};
+
+type AddMultiplePlayers = (
+  data: PlayerSchema[],
+  matchId: number
+) => Promise<void>;
+
+export const addMultiplePlayers: AddMultiplePlayers = async (data, matchId) => {
+  await addMultiplePlayersQuery(data, matchId);
 
   revalidatePath("/matches/[match-id]", "page");
 };

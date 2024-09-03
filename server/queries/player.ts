@@ -13,7 +13,16 @@ export const addPlayer = async (data: PlayerSchema, matchId: number) => {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
 
-  /* TODO: Check the user is the owner of the match */
+  const userOwnsMatch = await prisma.match.findFirst({
+    where: {
+      id: matchId,
+      userId: user.userId,
+    },
+  });
+
+  if (!userOwnsMatch) {
+    throw new Error(ERROR_MESSAGES.unauthorized);
+  }
 
   /* We check that we don't have a player named the same in the match already */
   const exists = await prisma.player.findFirst({
@@ -34,6 +43,55 @@ export const addPlayer = async (data: PlayerSchema, matchId: number) => {
 
   await prisma.player.create({
     data: nextPlayer,
+  });
+
+  return;
+};
+
+export const addMultiplePlayers = async (
+  data: PlayerSchema[],
+  matchId: number
+) => {
+  const user = auth();
+
+  if (!user || !user.userId) {
+    throw new Error(ERROR_MESSAGES.unauthorized);
+  }
+
+  const userOwnsMatch = await prisma.match.findFirst({
+    where: {
+      id: matchId,
+      userId: user.userId,
+    },
+  });
+
+  if (!userOwnsMatch) {
+    throw new Error(ERROR_MESSAGES.unauthorized);
+  }
+
+  const nextPlayers = data.map((player) => ({
+    ...player,
+    matchId,
+  }));
+
+  /* We check that we don't have any player named the same in the match already */
+  const exists = await prisma.player.findMany({
+    where: {
+      matchId,
+      OR: nextPlayers.map(({ name }) => ({
+        name: {
+          contains: name,
+        },
+      })),
+    },
+  });
+
+  if (exists.length) {
+    throw new Error(VALIDATION_MESSAGES.at_least_one_player_repeated);
+  }
+
+  await prisma.player.createMany({
+    data: nextPlayers,
   });
 
   return;

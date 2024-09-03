@@ -65,13 +65,13 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
           control={form.control}
           name="name"
           render={({ field }) => (
-            <div className="flex gap-4">
+            <div className="flex gap-4 items-center">
               <div>
                 <SpicyTooltips>
                   <BoringAvatar
                     variant="beam"
                     name={field.value || PLACEHOLDER}
-                    size={40}
+                    size={48}
                   />
                 </SpicyTooltips>
               </div>
