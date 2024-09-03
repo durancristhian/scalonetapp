@@ -7,7 +7,6 @@ import { EmptyState } from "@/components/empty-state";
 import { SpicyTooltips } from "@/components/spicy-tooltips";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { TeamSchema } from "@/schemas/team";
 import { default as BoringAvatar } from "boring-avatars";
 import { TrashIcon, XIcon } from "lucide-react";
@@ -56,7 +55,6 @@ export const TeamCard: FC<TeamCardProps> = ({
               />
             </div>
           </div>
-          <Separator />
           {Boolean(team.players.length) ? (
             <>
               <div className="grid gap-2">
@@ -73,17 +71,15 @@ export const TeamCard: FC<TeamCardProps> = ({
                         <XIcon className="h-4 text-red-700 w-4" />
                       </Button>
                       <div className="grow">
-                        <div className="border border-slate-300 px-4 py-2 rounded-md">
-                          <div className="flex gap-2 items-center">
-                            <SpicyTooltips>
-                              <BoringAvatar
-                                variant="beam"
-                                name={player.name}
-                                size={24}
-                              />
-                            </SpicyTooltips>
-                            <p>{player.name}</p>
-                          </div>
+                        <div className="flex gap-2 items-center">
+                          <SpicyTooltips>
+                            <BoringAvatar
+                              variant="beam"
+                              name={player.name}
+                              size={24}
+                            />
+                          </SpicyTooltips>
+                          <p>{player.name}</p>
                         </div>
                       </div>
                     </div>
