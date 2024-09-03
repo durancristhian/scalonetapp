@@ -106,9 +106,9 @@ export const addMatch: (data: MatchSchema) => Promise<void> = async (data) => {
 };
 
 export const editMatch: (
-  matchId: number,
+  id: number,
   data: Partial<Match>
-) => Promise<void> = async (matchId, data) => {
+) => Promise<void> = async (id, data) => {
   const user = auth();
 
   if (!user || !user.userId) {
@@ -117,7 +117,7 @@ export const editMatch: (
 
   await prisma.match.update({
     where: {
-      id: matchId,
+      id,
       userId: user.userId,
     },
     data,

@@ -11,13 +11,13 @@ export const PlayerTabs: FC = ({}) => {
   const matchId = Number(params["match-id"]);
 
   const onPlayerSubmit: (values: PlayerSchema) => Promise<void> = (values) => {
-    return addPlayer(values, matchId);
+    return addPlayer(matchId, values);
   };
 
   const onMultiplePlayersSubmit: (values: PlayerSchema[]) => Promise<void> = (
     values
   ) => {
-    return addMultiplePlayers(values, matchId);
+    return addMultiplePlayers(matchId, values);
   };
 
   return (

@@ -12,7 +12,7 @@ import {
 import { MatchSchema } from "@/schemas/match";
 import { editMatch } from "@/server/actions/match";
 import { Match } from "@prisma/client";
-import { Edit3Icon } from "lucide-react";
+import { PencilIcon } from "lucide-react";
 import { FC, useState } from "react";
 
 type EditMatchProps = {
@@ -42,7 +42,7 @@ export const EditMatch: FC<EditMatchProps> = ({ match }) => {
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
         <Button variant="ghost" size="icon">
-          <Edit3Icon className="h-4 text-slate-500 w-4" />
+          <PencilIcon className="h-4 text-slate-500 w-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

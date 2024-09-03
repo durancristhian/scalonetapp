@@ -18,13 +18,13 @@ export const addMatch: AddMatch = async (data) => {
 };
 
 type EditMatch = (
-  matchId: number,
+  id: number,
   data: Partial<Match>,
   pathToRevalidate: string
 ) => Promise<void>;
 
-export const editMatch: EditMatch = async (matchId, data, pathToRevalidate) => {
-  await editMatchQuery(matchId, data);
+export const editMatch: EditMatch = async (id, data, pathToRevalidate) => {
+  await editMatchQuery(id, data);
 
   revalidatePath(pathToRevalidate, "page");
 };

@@ -5,31 +5,38 @@ import {
   addMultiplePlayers as addMultiplePlayersQuery,
   addPlayer as addPlayerQuery,
   deletePlayer as deletePlayerQuery,
+  editPlayer as editPlayerQuery,
 } from "@/server/queries/player";
 import { revalidatePath } from "next/cache";
 
-type AddPlayer = (data: PlayerSchema, matchId: number) => Promise<void>;
-
-export const addPlayer: AddPlayer = async (data, matchId) => {
-  await addPlayerQuery(data, matchId);
-
-  revalidatePath("/matches/[match-id]", "page");
-};
-
-type AddMultiplePlayers = (
-  data: PlayerSchema[],
-  matchId: number
-) => Promise<void>;
-
-export const addMultiplePlayers: AddMultiplePlayers = async (data, matchId) => {
-  await addMultiplePlayersQuery(data, matchId);
+export const addPlayer: (
+  matchId: number,
+  data: PlayerSchema
+) => Promise<void> = async (matchId, data) => {
+  await addPlayerQuery(matchId, data);
 
   revalidatePath("/matches/[match-id]", "page");
 };
 
-type DeletePlayer = (id: number) => Promise<void>;
+export const addMultiplePlayers: (
+  matchId: number,
+  data: PlayerSchema[]
+) => Promise<void> = async (matchId, data) => {
+  await addMultiplePlayersQuery(matchId, data);
 
-export const deletePlayer: DeletePlayer = async (id) => {
+  revalidatePath("/matches/[match-id]", "page");
+};
+
+export const editPlayer: (
+  id: number,
+  data: Partial<PlayerSchema>
+) => Promise<void> = async (id, data) => {
+  await editPlayerQuery(id, data);
+
+  revalidatePath("/matches/[match-id]", "page");
+};
+
+export const deletePlayer: (id: number) => Promise<void> = async (id) => {
   await deletePlayerQuery(id);
 
   revalidatePath("/matches/[match-id]", "page");

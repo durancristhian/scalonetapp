@@ -6,7 +6,10 @@ import {
 } from "@/utils/validation-messages";
 import { auth } from "@clerk/nextjs/server";
 
-export const addPlayer = async (data: PlayerSchema, matchId: number) => {
+export const addPlayer: (
+  matchId: number,
+  data: PlayerSchema
+) => Promise<void> = async (matchId, data) => {
   const user = auth();
 
   if (!user || !user.userId) {
@@ -48,10 +51,10 @@ export const addPlayer = async (data: PlayerSchema, matchId: number) => {
   return;
 };
 
-export const addMultiplePlayers = async (
-  data: PlayerSchema[],
-  matchId: number
-) => {
+export const addMultiplePlayers: (
+  matchId: number,
+  data: PlayerSchema[]
+) => Promise<void> = async (matchId, data) => {
   const user = auth();
 
   if (!user || !user.userId) {
@@ -92,6 +95,26 @@ export const addMultiplePlayers = async (
 
   await prisma.player.createMany({
     data: nextPlayers,
+  });
+
+  return;
+};
+
+export const editPlayer: (
+  id: number,
+  data: Partial<PlayerSchema>
+) => Promise<void> = async (id, data) => {
+  const user = auth();
+
+  if (!user || !user.userId) {
+    throw new Error(ERROR_MESSAGES.unauthorized);
+  }
+
+  await prisma.player.update({
+    where: {
+      id,
+    },
+    data,
   });
 
   return;
