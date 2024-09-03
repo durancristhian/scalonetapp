@@ -27,24 +27,24 @@ const Page: FC = () => {
       <SignedOut>
         <motion.h1
           className="font-semibold text-2xl"
-          initial={{ opacity: 0, scale: 0.85, y: 16 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ ease: "easeInOut", duration: 0.5, delay: 0.15 }}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ease: "easeInOut", duration: 0.5 }}
         >
           Bienvenidos a&nbsp;
           <span className="font-bold text-slate-950">Scalonet.app</span>
         </motion.h1>
         <motion.div
-          initial={{ opacity: 0, scale: 0.85, y: 16 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ ease: "easeInOut", duration: 0.5, delay: 0.5 }}
         >
           <ShowOff />
         </motion.div>
         <div className="h-[36px] mt-8">
           <motion.div
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ ease: "easeInOut", duration: 0.5, delay: 1 }}
           >
             <SignInButton mode="modal">

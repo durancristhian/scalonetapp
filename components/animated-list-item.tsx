@@ -17,8 +17,8 @@ export const AnimatedListItem: FC<PropsWithChildren<AnimatedListItemProps>> = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{
         ease: "easeInOut",
-        duration: 0.15,
-        delay: listIndex * 0.15,
+        duration: 0.1,
+        delay: listIndex * 0.1,
       }}
     >
       {children}
