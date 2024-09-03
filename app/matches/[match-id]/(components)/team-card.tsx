@@ -10,7 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { TeamSchema } from "@/schemas/team";
 import { default as BoringAvatar } from "boring-avatars";
-import { DeleteIcon, TrashIcon } from "lucide-react";
+import { TrashIcon, XIcon } from "lucide-react";
 import { FC } from "react";
 
 type TeamCardProps = {
@@ -70,7 +70,7 @@ export const TeamCard: FC<TeamCardProps> = ({
                           removePlayerFromTeam(player.id, team.id);
                         }}
                       >
-                        <DeleteIcon className="h-4 text-red-700 w-4" />
+                        <XIcon className="h-4 text-red-700 w-4" />
                       </Button>
                       <div className="grow">
                         <div className="border border-slate-300 px-4 py-2 rounded-md">
