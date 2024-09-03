@@ -20,7 +20,7 @@ export const MatchItem: FC<MatchItemProps> = ({ match }) => {
       <EditMatch match={match} />
       <div className="grow">
         <Link href={`/matches/${match.id}`}>
-          <div className="border border-slate-300 hover:bg-slate-50 px-4 py-2 rounded-md transition-colors">
+          <div className="border border-slate-300 hover:bg-slate-100 px-4 py-2 rounded-md transition-colors">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p>{match.name}</p>
