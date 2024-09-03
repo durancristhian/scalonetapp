@@ -41,6 +41,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "copy-to-clipboard": "^3.3.3",
+    "date-fns": "^3.6.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.6",
     "framer-motion": "^11.3.31",
