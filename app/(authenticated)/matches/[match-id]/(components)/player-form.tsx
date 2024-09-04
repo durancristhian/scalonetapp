@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -21,6 +22,18 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { ZodError } from "zod";
 
+const LEVEL_MESSAGES: Record<number, string> = {
+  1: "Un tronco realmente.",
+  2: "Se defiende, pero podría jugar al pelota paleta mejor.",
+  3: "Definitivamente hay peores.",
+  4: "Ni bueno ni malo.",
+  5: "Es un jugador regular. Cumple.",
+  6: "Tiene sus días pero en general anda bien.",
+  7: "Está por encima de la media.",
+  8: "Che, a este hay que sumarlo al grupo.",
+  9: "Andá a saber por que no llegó a primera.",
+  10: "La verdadera máquina.",
+};
 const NAME_PLACEHOLDER = "Juan Roman Riquelme";
 
 const DEFAULT_VALUES = {
@@ -132,6 +145,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
                   ))}
                 </div>
               </FormControl>
+              <FormDescription>{LEVEL_MESSAGES[field.value]}</FormDescription>
               <FormMessage />
             </FormItem>
           )}
