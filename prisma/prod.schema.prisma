@@ -16,6 +16,7 @@ model Player {
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  level     Int      @default(5)
 
   // Relationships
   matchId Int

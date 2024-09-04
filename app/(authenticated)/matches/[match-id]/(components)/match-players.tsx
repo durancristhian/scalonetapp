@@ -121,6 +121,7 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player, onPlayerSubmit }) => {
               onSubmit={onSubmit}
               values={{
                 name: player.name,
+                level: player.level,
               }}
             />
           </DialogContent>
