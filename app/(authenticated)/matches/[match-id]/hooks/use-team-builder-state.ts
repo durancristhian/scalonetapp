@@ -149,7 +149,9 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
 
       return currTeams.map((currTeam, idx) => ({
         ...currTeam,
-        players: chunks[idx],
+        players: chunks[idx].sort((playerA, playerB) =>
+          playerA.name.localeCompare(playerB.name)
+        ),
       }));
     });
   };
