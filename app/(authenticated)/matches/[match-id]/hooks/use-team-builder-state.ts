@@ -1,5 +1,7 @@
 import { FormattedTeam, MatchWithPlayers } from "@/server/queries/match";
 import { Player } from "@prisma/client";
+import chunk from "lodash.chunk";
+import shuffle from "lodash.shuffle";
 import uniqueId from "lodash.uniqueid";
 import { useEffect, useState } from "react";
 
@@ -39,6 +41,7 @@ const getInitialTeams: (match: MatchWithPlayers) => Team[] = (match) => {
 type UseTeamsBuilderStateResult = {
   assignSelectionToTeam: (teamId: string) => void;
   createNewTeam: () => void;
+  randomizeTeams: () => void;
   removePlayerFromTeam: (playerId: number, teamId: string) => void;
   removeTeam: (teamId: string) => void;
   selectedIds: number[];
@@ -137,6 +140,20 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
     return match.players.filter((player) => !idsInUse.includes(player.id));
   };
 
+  const randomizeTeams: UseTeamsBuilderStateResult["randomizeTeams"] = () => {
+    setTeams((currTeams) => {
+      /* We compute how many players we should havce per created team */
+      const chunkLenght = Math.ceil(match.players.length / currTeams.length);
+      const shuffledPlayers = shuffle([...match.players]);
+      const chunks = chunk(shuffledPlayers, chunkLenght);
+
+      return currTeams.map((currTeam, idx) => ({
+        ...currTeam,
+        players: chunks[idx],
+      }));
+    });
+  };
+
   const removePlayerFromTeam: UseTeamsBuilderStateResult["removePlayerFromTeam"] =
     (playerId, teamId) => {
       setTeams((currTeams) =>
@@ -201,6 +218,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
   return {
     assignSelectionToTeam,
     createNewTeam,
+    randomizeTeams,
     removePlayerFromTeam,
     removeTeam,
     selectedIds,

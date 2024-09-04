@@ -5,6 +5,7 @@ import { ExportTeams } from "@/app/(authenticated)/matches/[match-id]/(component
 import { MatchPlayers } from "@/app/(authenticated)/matches/[match-id]/(components)/match-players";
 import { PlayerTabs } from "@/app/(authenticated)/matches/[match-id]/(components)/player-tabs";
 import { PlayersList } from "@/app/(authenticated)/matches/[match-id]/(components)/players-list";
+import { RandomizeTeams } from "@/app/(authenticated)/matches/[match-id]/(components)/randomize-teams";
 import { TeamCard } from "@/app/(authenticated)/matches/[match-id]/(components)/team-card";
 import { useTeamsBuilderState } from "@/app/(authenticated)/matches/[match-id]/hooks/use-team-builder-state";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
   const {
     assignSelectionToTeam,
     createNewTeam,
+    randomizeTeams,
     removePlayerFromTeam,
     removeTeam,
     selectedIds,
@@ -95,7 +97,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
             </TabsList>
             <TabsContent value="suggested-teams">
               <div className="grid gap-4">
-                <div className="grid gap-1">
+                <div className="grid gap-2">
                   <p className="font-semibold">
                     Separar a la gente aleatoriamente
                   </p>
@@ -106,10 +108,15 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                     parejo.
                   </p>
                   <div>
-                    <Button>Usar equipos aleatorios</Button>
+                    <RandomizeTeams
+                      onClick={randomizeTeams}
+                      showConfirmation={
+                        unselectedPlayers.length !== match.players.length
+                      }
+                    />
                   </div>
                 </div>
-                {/* <div className="grid gap-1">
+                {/* <div className="grid gap-2">
                   <p className="font-semibold">Separar a la gente por nivel</p>
                   <p className="text-sm">
                     Teniendo en cuenta el nivel de los jugadores, podemos
