@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
+import { DEFAULT_PLAYER_LEVEL, PLAYER_LEVELS } from "@/utils/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { default as BoringAvatar } from "boring-avatars";
 import { LoaderCircleIcon } from "lucide-react";
@@ -19,9 +20,6 @@ import { FC } from "react";
 import { useForm } from "react-hook-form";
 
 const NAME_PLACEHOLDER = "Juan Roman Riquelme";
-
-const PLAYER_LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-const DEFAULT_PLAYER_LEVEL = 5;
 
 const DEFAULT_VALUES = {
   name: "",
