@@ -1,6 +1,5 @@
 import { FormattedTeam, MatchWithPlayers } from "@/server/queries/match";
 import { Player } from "@prisma/client";
-import chunk from "lodash.chunk";
 import shuffle from "lodash.shuffle";
 import uniqueId from "lodash.uniqueid";
 import { useEffect, useState } from "react";
@@ -140,12 +139,34 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
     return match.players.filter((player) => !idsInUse.includes(player.id));
   };
 
-  const randomizeTeams: UseTeamsBuilderStateResult["randomizeTeams"] = () => {
+  /* Thank you ChatGPT */
+  const chunkArray: <T>(array: T[], numberOfChunks: number) => T[][] = (
+    array,
+    numberOfChunks
+  ) => {
+    /* Base chunk size */
+    const chunkSize = Math.floor(array.length / numberOfChunks);
+    /* Extra elements that need to be distributed */
+    const remainder = array.length % numberOfChunks;
+
+    const result = [];
+    let start = 0;
+
+    for (let i = 0; i < numberOfChunks; i++) {
+      /* Distribute remainder as +1 to the first "remainder" number of chunks */
+      const size = chunkSize + (i < remainder ? 1 : 0);
+      result.push(array.slice(start, start + size));
+      start += size;
+    }
+
+    return result;
+  };
+
+  const updateTeamsWithPlayerChunks: (playerChunks: Player[]) => void = (
+    playerChunks
+  ) => {
     setTeams((currTeams) => {
-      /* We compute how many players we should havce per created team */
-      const chunkLenght = Math.ceil(match.players.length / currTeams.length);
-      const shuffledPlayers = shuffle([...match.players]);
-      const chunks = chunk(shuffledPlayers, chunkLenght);
+      const chunks = chunkArray<Player>(playerChunks, currTeams.length);
 
       return currTeams.map((currTeam, idx) => ({
         ...currTeam,
@@ -154,6 +175,12 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
         ),
       }));
     });
+  };
+
+  const randomizeTeams: UseTeamsBuilderStateResult["randomizeTeams"] = () => {
+    const shuffledPlayers = shuffle([...match.players]);
+
+    updateTeamsWithPlayerChunks(shuffledPlayers);
   };
 
   const removePlayerFromTeam: UseTeamsBuilderStateResult["removePlayerFromTeam"] =
