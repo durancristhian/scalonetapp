@@ -21,21 +21,17 @@ export const PlayerTabs: FC = ({}) => {
   };
 
   return (
-    <>
-      <Tabs defaultValue="single">
-        <div className="grid gap-2">
-          <TabsList className="grid grid-cols-2">
-            <TabsTrigger value="single">De a uno</TabsTrigger>
-            <TabsTrigger value="multiple">De a muchos</TabsTrigger>
-          </TabsList>
-          <TabsContent value="single">
-            <PlayerForm onSubmit={onPlayerSubmit} />
-          </TabsContent>
-          <TabsContent value="multiple">
-            <MultiplePlayersForm onSubmit={onMultiplePlayersSubmit} />
-          </TabsContent>
-        </div>
-      </Tabs>
-    </>
+    <Tabs defaultValue="single">
+      <TabsList className="grid grid-cols-2">
+        <TabsTrigger value="single">De a uno</TabsTrigger>
+        <TabsTrigger value="multiple">De a muchos</TabsTrigger>
+      </TabsList>
+      <TabsContent value="single">
+        <PlayerForm onSubmit={onPlayerSubmit} />
+      </TabsContent>
+      <TabsContent value="multiple">
+        <MultiplePlayersForm onSubmit={onMultiplePlayersSubmit} />
+      </TabsContent>
+    </Tabs>
   );
 };

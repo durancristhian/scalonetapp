@@ -86,7 +86,7 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
       {processing ? (
         <LoaderCircleIcon className="animate-spin h-4 mr-2 opacity-50 w-4" />
       ) : null}
-      {processing ? "Exportando..." : "Exportar"}
+      {processing ? "Procesando..." : "Guardar y exportar"}
     </Button>
   );
 };
