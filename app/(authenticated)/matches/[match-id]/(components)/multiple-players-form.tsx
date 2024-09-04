@@ -10,14 +10,17 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { PlayerSchema } from "@/schemas/player";
+import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
 import { PLAYERS_SCHEMA, PlayersSchema } from "@/schemas/players";
 import { DEFAULT_PLAYER_LEVEL, MAX_PLAYERS_BATCH } from "@/utils/constants";
 import { getLinesFromString } from "@/utils/get-lines-from-string";
+import { getPlayersFromLines } from "@/utils/get-players-from-lines";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoaderCircleIcon } from "lucide-react";
+import { BugIcon, LoaderCircleIcon } from "lucide-react";
 import { FC, useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
+import { toast } from "sonner";
+import { ZodError } from "zod";
 
 const PLACEHOLDER = `Juan, 2
 Roman
@@ -49,32 +52,36 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
 
   const onSubmitHandler: () => Promise<void> = async () => {
     try {
-      const nextPlayers = lines.map((line) => {
-        const lastCommaIdx = line.lastIndexOf(",");
+      const nextPlayers = getPlayersFromLines(lines);
 
-        if (lastCommaIdx === -1) {
-          return {
-            name: line,
-            level: DEFAULT_PLAYER_LEVEL,
-          };
-        }
-
-        return {
-          name: line.substring(0, lastCommaIdx).trim(),
-          level: Number(line.substring(lastCommaIdx + 1).trim()),
-        };
-      });
+      /* This seems redundant but it's not since each item in the array should be a valid player */
+      nextPlayers.map((nextPlayer) => PLAYER_SCHEMA.parse(nextPlayer));
 
       await onSubmit(nextPlayers);
     } catch (error) {
       console.error(error);
 
-      if (error instanceof Error) {
-        form.setError("players", {
-          message: error.message,
-          type: "validate",
+      if (error instanceof ZodError) {
+        toast(`Ups, parece que algo anda mal`, {
+          description: (
+            <ul className="list-disc list-inside">
+              {error.errors.map(({ message }, idx) => (
+                <li key={idx}>{message}</li>
+              ))}
+            </ul>
+          ),
+          icon: <BugIcon className="h-4 opacity-50 w-4" />,
         });
+
+        return;
       }
+
+      toast("Ha ocurrido un error", {
+        description: `No pudimos agregar ${
+          lines.length > 1 ? "el jugador" : "los jugadores"
+        }. ¿Podrías volver a intentarlo?.`,
+        icon: <BugIcon className="h-4 opacity-50 w-4" />,
+      });
 
       return;
     }

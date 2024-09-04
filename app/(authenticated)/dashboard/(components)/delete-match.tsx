@@ -26,13 +26,13 @@ export const DeleteMatch: FC<DeleteMatchProps> = ({ id }) => {
     try {
       await deleteMatch(id);
 
-      toast("Se ha eliminado tu partido.", {
+      toast("Se ha eliminado tu partido", {
         icon: <TrashIcon className="h-4 opacity-50 w-4" />,
       });
     } catch (error) {
       console.error(error);
 
-      toast("Ha ocurrido un error.", {
+      toast("Ha ocurrido un error", {
         description:
           "No pudimos borrar el partido. ¿Podrías volver a intentarlo?.",
         icon: <BugIcon className="h-4 opacity-50 w-4" />,

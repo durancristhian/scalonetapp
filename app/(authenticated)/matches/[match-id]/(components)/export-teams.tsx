@@ -68,7 +68,7 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
       } catch (error) {
         console.error(error);
 
-        toast("Ha ocurrido un error.", {
+        toast("Ha ocurrido un error", {
           description:
             "No pudimos guardar los equipos. ¿Podrías volver a intentarlo?.",
           icon: <BugIcon className="h-4 opacity-50 w-4" />,

@@ -1,4 +1,4 @@
-import { PlayerSchema } from "@/schemas/player";
+import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
 import prisma from "@/utils/prisma";
 import {
   ERROR_MESSAGES,
@@ -63,6 +63,8 @@ export const addPlayer: (
     matchId,
   };
 
+  PLAYER_SCHEMA.parse(nextPlayer);
+
   await prisma.player.create({
     data: nextPlayer,
   });
@@ -98,6 +100,8 @@ export const addMultiplePlayers: (
     matchId,
   }));
 
+  nextPlayers.map((player) => PLAYER_SCHEMA.parse(player));
+
   await prisma.player.createMany({
     data: nextPlayers,
   });
@@ -113,6 +117,8 @@ export const editPlayer: (
   if (!user || !user.userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
+
+  PLAYER_SCHEMA.parse(data);
 
   await prisma.player.update({
     where: {

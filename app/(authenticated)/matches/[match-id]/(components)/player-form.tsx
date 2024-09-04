@@ -15,9 +15,11 @@ import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
 import { DEFAULT_PLAYER_LEVEL, PLAYER_LEVELS } from "@/utils/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { default as BoringAvatar } from "boring-avatars";
-import { LoaderCircleIcon } from "lucide-react";
+import { BugIcon, LoaderCircleIcon } from "lucide-react";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { ZodError } from "zod";
 
 const NAME_PLACEHOLDER = "Juan Roman Riquelme";
 
@@ -46,12 +48,26 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
     } catch (error) {
       console.error(error);
 
-      if (error instanceof Error) {
-        form.setError("name", {
-          message: error.message,
-          type: "validate",
+      if (error instanceof ZodError) {
+        toast(`Ups, parece que algo anda mal`, {
+          description: (
+            <ul className="list-disc list-inside">
+              {error.errors.map(({ message }, idx) => (
+                <li key={idx}>{message}</li>
+              ))}
+            </ul>
+          ),
+          icon: <BugIcon className="h-4 opacity-50 w-4" />,
         });
+
+        return;
       }
+
+      toast("Ha ocurrido un error", {
+        description:
+          "No pudimos agregar el jugador. ¿Podrías volver a intentarlo?.",
+        icon: <BugIcon className="h-4 opacity-50 w-4" />,
+      });
 
       return;
     }

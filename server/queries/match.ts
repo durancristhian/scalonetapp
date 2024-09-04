@@ -1,4 +1,4 @@
-import { MatchSchema } from "@/schemas/match";
+import { MATCH_SCHEMA, MatchSchema } from "@/schemas/match";
 import prisma from "@/utils/prisma";
 import { ERROR_MESSAGES } from "@/utils/validation-messages";
 import { auth } from "@clerk/nextjs/server";
@@ -74,6 +74,8 @@ export const addMatch: (data: MatchSchema) => Promise<void> = async (data) => {
     userId: user.userId,
   };
 
+  MATCH_SCHEMA.parse(nextMatch);
+
   await prisma.match.create({
     data: nextMatch,
   });
@@ -89,6 +91,8 @@ export const editMatch: (
   if (!user || !user.userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
+
+  MATCH_SCHEMA.parse(data);
 
   await prisma.match.update({
     where: {
