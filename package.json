@@ -5,9 +5,8 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "generate-prisma-prod-schema": "prisma generate --schema=./prisma/prod.schema.prisma && npx prisma db push --schema=./prisma/prod.schema.prisma",
+    "generate-prod-schema": "prisma generate --schema=./prisma/prod.schema.prisma",
     "lint": "next lint",
-    "migrate": "tsx app/api/migrations.ts",
     "start": "next start"
   },
   "dependencies": {
@@ -59,7 +58,6 @@
     "tailwind-merge": "^2.5.2",
     "tailwindcss": "^3.4.10",
     "tailwindcss-animate": "^1.0.7",
-    "tsx": "^4.18.0",
     "typescript": "^5",
     "zod": "^3.23.8"
   }
