@@ -126,8 +126,44 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
       setSelectedIds([]);
     };
 
+  const createBalancedTeams: (
+    players: Player[],
+    numberOfChunks: number
+  ) => Player[][] = (players, numberOfChunks) => {
+    const teams: Player[][] = Array.from(
+      {
+        length: numberOfChunks,
+      },
+      () => []
+    );
+    const playersByLevelDesc = players.sort(
+      (playerA, playerB) => playerB.level - playerA.level
+    );
+
+    /* We distribute players in a round-robin fashion */
+    playersByLevelDesc.forEach((player, idx) => {
+      const teamIndex = idx % numberOfChunks;
+
+      teams[teamIndex].push(player);
+    });
+
+    return teams;
+  };
+
   const balanceTeams: UseTeamsBuilderStateResult["balanceTeams"] = () => {
-    console.log("balanceTeams");
+    setTeams((currTeams) => {
+      const balancedTeams = createBalancedTeams(
+        match.players,
+        currTeams.length
+      );
+
+      return currTeams.map((currTeam, idx) => ({
+        ...currTeam,
+        players: balancedTeams[idx].sort((playerA, playerB) =>
+          playerA.name.localeCompare(playerB.name)
+        ),
+      }));
+    });
   };
 
   const createNewTeam: UseTeamsBuilderStateResult["createNewTeam"] = () => {
@@ -171,11 +207,14 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
     playerChunks
   ) => {
     setTeams((currTeams) => {
-      const chunks = chunkArray<Player>(playerChunks, currTeams.length);
+      const randomizedTeams = chunkArray<Player>(
+        playerChunks,
+        currTeams.length
+      );
 
       return currTeams.map((currTeam, idx) => ({
         ...currTeam,
-        players: chunks[idx].sort((playerA, playerB) =>
+        players: randomizedTeams[idx].sort((playerA, playerB) =>
           playerA.name.localeCompare(playerB.name)
         ),
       }));
