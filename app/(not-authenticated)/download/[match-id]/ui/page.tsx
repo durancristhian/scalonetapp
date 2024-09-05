@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { FormattedTeam, MatchWithPlayers } from "@/server/queries/match";
+import { Player } from "@prisma/client";
 import { default as BoringAvatar } from "boring-avatars";
 import { FC, useEffect, useState } from "react";
 
@@ -39,18 +40,22 @@ const Page: FC = () => {
                 <div className="grid gap-6">
                   <Separator />
                   <div className="grid grid-cols-2 gap-4">
-                    {team.players.map((playerId) => {
+                    {team.players
                       /* We look for the player data in the match */
-                      const player = match.players.find(
-                        (player) => player.id === playerId
-                      );
-
-                      if (!player) {
-                        return null;
-                      }
-
-                      return (
-                        <div key={playerId} className="flex gap-4 items-center">
+                      .map((playerId) =>
+                        match.players.find((player) => player.id === playerId)
+                      )
+                      /* We exclude potential empty players */
+                      .filter((player): player is Player => Boolean(player))
+                      /* We sort players in the team by name */
+                      .sort((playerA, playerB) =>
+                        playerA.name.localeCompare(playerB.name)
+                      )
+                      .map((player) => (
+                        <div
+                          key={player.id}
+                          className="flex gap-4 items-center"
+                        >
                           <BoringAvatar
                             variant="beam"
                             name={player.name}
@@ -60,8 +65,7 @@ const Page: FC = () => {
                             <p className="text-xl">{player.name}</p>
                           </div>
                         </div>
-                      );
-                    })}
+                      ))}
                   </div>
                 </div>
               </CardContent>
