@@ -10,6 +10,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { PlayerSchema } from "@/schemas/player";
 import { deletePlayer, editPlayer } from "@/server/actions/player";
 import { Player } from "@prisma/client";
@@ -151,12 +157,21 @@ const SubmitButton = () => {
   const { pending } = useFormStatus();
 
   return (
-    <Button type="submit" disabled={pending} variant="ghost" size="icon">
-      {pending ? (
-        <LoaderCircleIcon className="animate-spin h-4 opacity-50 w-4" />
-      ) : (
-        <TrashIcon className="h-4 text-red-700 w-4" />
-      )}
-    </Button>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button type="submit" disabled={pending} variant="ghost" size="icon">
+            {pending ? (
+              <LoaderCircleIcon className="animate-spin h-4 opacity-50 w-4" />
+            ) : (
+              <TrashIcon className="h-4 text-red-700 w-4" />
+            )}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Eliminar</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };

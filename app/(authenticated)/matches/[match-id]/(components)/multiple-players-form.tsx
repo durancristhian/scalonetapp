@@ -58,6 +58,9 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
       nextPlayers.map((nextPlayer) => PLAYER_SCHEMA.parse(nextPlayer));
 
       await onSubmit(nextPlayers);
+
+      form.setFocus("players");
+      form.reset();
     } catch (error) {
       console.error(error);
 
@@ -85,9 +88,6 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
 
       return;
     }
-
-    form.reset();
-    form.setFocus("players");
   };
 
   return (

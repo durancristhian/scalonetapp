@@ -58,6 +58,9 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
   ) => {
     try {
       await onSubmit(values);
+
+      form.setFocus("name");
+      form.reset();
     } catch (error) {
       console.error(error);
 
@@ -84,9 +87,6 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
 
       return;
     }
-
-    form.reset();
-    form.setFocus("name");
   };
 
   return (

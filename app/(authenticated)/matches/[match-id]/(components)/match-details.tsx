@@ -146,7 +146,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
               {teams.map((team) => (
                 <TeamCard
                   key={team.id}
-                  canBeDeleted={teams.length > 1}
+                  canBeDeleted={teams.length > 2}
                   removePlayerFromTeam={removePlayerFromTeam}
                   removeTeam={removeTeam}
                   team={team}
