@@ -39,6 +39,7 @@ const getInitialTeams: (match: MatchWithPlayers) => Team[] = (match) => {
 
 type UseTeamsBuilderStateResult = {
   assignSelectionToTeam: (teamId: string) => void;
+  balanceTeams: () => void;
   createNewTeam: () => void;
   randomizeTeams: () => void;
   removePlayerFromTeam: (playerId: number, teamId: string) => void;
@@ -125,6 +126,46 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
       setSelectedIds([]);
     };
 
+  const createBalancedTeams: (
+    players: Player[],
+    numberOfChunks: number
+  ) => Player[][] = (players, numberOfChunks) => {
+    const teams: Player[][] = Array.from(
+      {
+        length: numberOfChunks,
+      },
+      () => []
+    );
+    const playersByLevelDesc = players.sort(
+      (playerA, playerB) => playerB.level - playerA.level
+    );
+
+    /* We distribute players in a round-robin fashion */
+    playersByLevelDesc.forEach((player, idx) => {
+      const teamIndex = idx % numberOfChunks;
+
+      teams[teamIndex].push(player);
+    });
+
+    return teams;
+  };
+
+  const balanceTeams: UseTeamsBuilderStateResult["balanceTeams"] = () => {
+    setTeams((currTeams) => {
+      const balancedTeams = createBalancedTeams(
+        match.players,
+        currTeams.length
+      );
+
+      return currTeams.map((currTeam, idx) => ({
+        ...currTeam,
+        players: balancedTeams[idx].sort((playerA, playerB) =>
+          playerA.name.localeCompare(playerB.name)
+        ),
+      }));
+    });
+  };
+
   const createNewTeam: UseTeamsBuilderStateResult["createNewTeam"] = () => {
     setTeams((currTeams) =>
       currTeams.concat([createEmptyTeam("Nuevo equipo")])
@@ -166,11 +207,14 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
     playerChunks
   ) => {
     setTeams((currTeams) => {
-      const chunks = chunkArray<Player>(playerChunks, currTeams.length);
+      const randomizedTeams = chunkArray<Player>(
+        playerChunks,
+        currTeams.length
+      );
 
       return currTeams.map((currTeam, idx) => ({
         ...currTeam,
-        players: chunks[idx].sort((playerA, playerB) =>
+        players: randomizedTeams[idx].sort((playerA, playerB) =>
           playerA.name.localeCompare(playerB.name)
         ),
       }));
@@ -246,6 +290,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
 
   return {
     assignSelectionToTeam,
+    balanceTeams,
     createNewTeam,
     randomizeTeams,
     removePlayerFromTeam,
