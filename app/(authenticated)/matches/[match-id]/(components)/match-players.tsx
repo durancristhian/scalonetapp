@@ -75,13 +75,20 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
     <>
       {canListPlayers ? (
         <ul className="grid gap-2">
-          {players.map((player, idx) => {
-            return (
-              <AnimatedListItem key={player.id} listIndex={idx}>
-                <MatchPlayer player={player} onPlayerSubmit={onPlayerSubmit} />
-              </AnimatedListItem>
-            );
-          })}
+          {players
+            .sort((playerA, playerB) =>
+              playerA.name.localeCompare(playerB.name)
+            )
+            .map((player, idx) => {
+              return (
+                <AnimatedListItem key={player.id} listIndex={idx}>
+                  <MatchPlayer
+                    player={player}
+                    onPlayerSubmit={onPlayerSubmit}
+                  />
+                </AnimatedListItem>
+              );
+            })}
         </ul>
       ) : (
         <EmptyState>

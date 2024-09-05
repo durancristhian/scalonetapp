@@ -62,7 +62,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
           <Card className="bg-slate-50">
             <CardHeader>
               <CardTitle>
-                Jugadores
+                Confirmados
                 {match.players.length ? `: ${match.players.length}` : ""}
               </CardTitle>
             </CardHeader>
