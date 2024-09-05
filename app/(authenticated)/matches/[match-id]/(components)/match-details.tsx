@@ -1,11 +1,11 @@
 "use client";
 
+import { ConfirmTeamsUpdate } from "@/app/(authenticated)/matches/[match-id]/(components)/confirm-teams-update";
 import { CopyTeams } from "@/app/(authenticated)/matches/[match-id]/(components)/copy-teams";
 import { ExportTeams } from "@/app/(authenticated)/matches/[match-id]/(components)/export-teams";
 import { MatchPlayers } from "@/app/(authenticated)/matches/[match-id]/(components)/match-players";
 import { PlayerTabs } from "@/app/(authenticated)/matches/[match-id]/(components)/player-tabs";
 import { PlayersList } from "@/app/(authenticated)/matches/[match-id]/(components)/players-list";
-import { RandomizeTeams } from "@/app/(authenticated)/matches/[match-id]/(components)/randomize-teams";
 import { TeamCard } from "@/app/(authenticated)/matches/[match-id]/(components)/team-card";
 import { useTeamsBuilderState } from "@/app/(authenticated)/matches/[match-id]/hooks/use-team-builder-state";
 import { Button } from "@/components/ui/button";
@@ -96,7 +96,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
               </TabsTrigger>
             </TabsList>
             <TabsContent value="suggested-teams">
-              <div className="grid gap-4">
+              <div className="grid gap-4 md:grid-cols-2">
                 <div className="grid gap-2">
                   <p className="font-semibold">
                     Separar a la gente aleatoriamente
@@ -106,26 +106,31 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                     jugadores o simplemente necesitás armar algo sin importar
                     que el partido esté parejo.
                   </p>
-                  <div>
-                    <RandomizeTeams
-                      onClick={randomizeTeams}
-                      showConfirmation={
-                        unselectedPlayers.length !== match.players.length
-                      }
-                    />
-                  </div>
+                  <ConfirmTeamsUpdate
+                    onClick={randomizeTeams}
+                    showConfirmation={
+                      unselectedPlayers.length !== match.players.length
+                    }
+                    triggerText="Armar equipos aleatorios"
+                  />
                 </div>
-                {/* <div className="grid gap-2">
+                <div className="grid gap-2">
                   <p className="font-semibold">Separar a la gente por nivel</p>
                   <p className="text-sm">
                     Teniendo en cuenta el nivel de los jugadores, podemos
                     separar a la gente para que los equipos queden lo más
                     balanceados posibles.
                   </p>
-                  <div>
-                    <Button>Usar equipos balanceados</Button>
-                  </div>
-                </div> */}
+                  <ConfirmTeamsUpdate
+                    onClick={() => {
+                      console.log("Armar equipos balanceados");
+                    }}
+                    showConfirmation={
+                      unselectedPlayers.length !== match.players.length
+                    }
+                    triggerText="Armar equipos balanceados"
+                  />
+                </div>
               </div>
             </TabsContent>
             <TabsContent value="custom-teams">

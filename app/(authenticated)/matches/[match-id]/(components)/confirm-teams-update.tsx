@@ -14,23 +14,25 @@ import {
 import { Button } from "@/components/ui/button";
 import { FC } from "react";
 
-type RandomizeTeamsProps = {
+type ConfirmTeamsUpdateProps = {
   onClick: () => void;
   showConfirmation: boolean;
+  triggerText: string;
 };
 
-export const RandomizeTeams: FC<RandomizeTeamsProps> = ({
+export const ConfirmTeamsUpdate: FC<ConfirmTeamsUpdateProps> = ({
   onClick,
   showConfirmation,
+  triggerText,
 }) => {
   if (!showConfirmation) {
-    return <Button onClick={onClick}>Usar equipos aleatorios</Button>;
+    return <Button onClick={onClick}>{triggerText}</Button>;
   }
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button>Usar equipos aleatorios</Button>
+        <Button>{triggerText}</Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
