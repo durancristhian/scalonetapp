@@ -1,4 +1,4 @@
-import { MatchSchema } from "@/schemas/match";
+import { MATCH_SCHEMA, MatchSchema } from "@/schemas/match";
 import prisma from "@/utils/prisma";
 import { ERROR_MESSAGES } from "@/utils/validation-messages";
 import { auth } from "@clerk/nextjs/server";
@@ -73,6 +73,8 @@ export const addMatch: (data: MatchSchema) => Promise<void> = async (data) => {
     ...data,
     userId: user.userId,
   };
+
+  MATCH_SCHEMA.parse(nextMatch);
 
   await prisma.match.create({
     data: nextMatch,

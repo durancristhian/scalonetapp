@@ -2,6 +2,12 @@
 
 import { Team } from "@/app/(authenticated)/matches/[match-id]/hooks/use-team-builder-state";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { editMatch } from "@/server/actions/match";
 import { BugIcon, LoaderCircleIcon, PartyPopperIcon } from "lucide-react";
 import { FC, useState } from "react";
@@ -68,7 +74,7 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
       } catch (error) {
         console.error(error);
 
-        toast("Ha ocurrido un error.", {
+        toast("Ha ocurrido un error", {
           description:
             "No pudimos guardar los equipos. ¿Podrías volver a intentarlo?.",
           icon: <BugIcon className="h-4 opacity-50 w-4" />,
@@ -82,11 +88,28 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
   };
 
   return (
-    <Button onClick={exportTeams} disabled={disabled || processing}>
-      {processing ? (
-        <LoaderCircleIcon className="animate-spin h-4 mr-2 opacity-50 w-4" />
-      ) : null}
-      {processing ? "Exportando..." : "Exportar"}
-    </Button>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {/* Putting this empty div here so the tooltip works even if the button is disabled (it can't receive focus hence the tooltip won't be shown) */}
+          <div>
+            <Button onClick={exportTeams} disabled={disabled || processing}>
+              {processing ? (
+                <LoaderCircleIcon className="animate-spin h-4 mr-2 opacity-50 w-4" />
+              ) : null}
+              {processing ? "Procesando..." : "Guardar y exportar"}
+            </Button>
+          </div>
+        </TooltipTrigger>
+        {disabled && !processing ? (
+          <TooltipContent>
+            <p>
+              Cuando todos los jugadores estén en un equipo este botón va a
+              estar habilitado.
+            </p>
+          </TooltipContent>
+        ) : null}
+      </Tooltip>
+    </TooltipProvider>
   );
 };

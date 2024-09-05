@@ -7,6 +7,12 @@ import { EmptyState } from "@/components/empty-state";
 import { SpicyTooltips } from "@/components/spicy-tooltips";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { TeamSchema } from "@/schemas/team";
 import { default as BoringAvatar } from "boring-avatars";
 import { TrashIcon, XIcon } from "lucide-react";
@@ -40,14 +46,30 @@ export const TeamCard: FC<TeamCardProps> = ({
       <CardContent className="pt-6">
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
-            <Button
-              onClick={onTeamRemove}
-              disabled={!canBeDeleted}
-              variant="ghost"
-              size="icon"
-            >
-              <TrashIcon className="h-4 text-red-700 w-4" />
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  {/* Putting this empty div here so the tooltip works even if the button is disabled (it can't receive focus hence the tooltip won't be shown) */}
+                  <div>
+                    <Button
+                      onClick={onTeamRemove}
+                      disabled={!canBeDeleted}
+                      variant="ghost"
+                      size="icon"
+                    >
+                      <TrashIcon className="h-4 text-red-700 w-4" />
+                    </Button>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>
+                    {canBeDeleted
+                      ? "Eliminar"
+                      : "No se puede eliminar este equipo porque mínimo tienen que ser 2"}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <div className="grow">
               <TeamForm
                 onSubmit={onTeamNameChange}
@@ -75,15 +97,24 @@ export const TeamCard: FC<TeamCardProps> = ({
                           <p>{player.name}</p>
                         </div>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          removePlayerFromTeam(player.id, team.id);
-                        }}
-                      >
-                        <XIcon className="h-4 text-red-700 w-4" />
-                      </Button>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => {
+                                removePlayerFromTeam(player.id, team.id);
+                              }}
+                            >
+                              <XIcon className="h-4 text-red-700 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Eliminar del equipo</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
                   </AnimatedListItem>
                 ))}

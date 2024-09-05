@@ -10,6 +10,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { PlayerSchema } from "@/schemas/player";
 import { deletePlayer, editPlayer } from "@/server/actions/player";
 import { Player } from "@prisma/client";
@@ -18,6 +24,7 @@ import { BugIcon, LoaderCircleIcon, PencilIcon, TrashIcon } from "lucide-react";
 import { FC, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { toast } from "sonner";
+import { ZodError } from "zod";
 
 type MatchPlayersProps = {
   players: Player[];
@@ -38,7 +45,22 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
       } catch (error) {
         console.error(error);
 
-        toast("Ha ocurrido un error.", {
+        if (error instanceof ZodError) {
+          toast(`Ups, parece que algo anda mal`, {
+            description: (
+              <ul className="list-disc list-inside">
+                {error.errors.map(({ message }, idx) => (
+                  <li key={idx}>{message}</li>
+                ))}
+              </ul>
+            ),
+            icon: <BugIcon className="h-4 opacity-50 w-4" />,
+          });
+
+          return;
+        }
+
+        toast("Ha ocurrido un error", {
           description:
             "No pudimos actualizar el jugador. ¿Podrías volver a intentarlo?.",
           icon: <BugIcon className="h-4 opacity-50 w-4" />,
@@ -121,6 +143,7 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player, onPlayerSubmit }) => {
               onSubmit={onSubmit}
               values={{
                 name: player.name,
+                level: player.level,
               }}
             />
           </DialogContent>
@@ -134,12 +157,21 @@ const SubmitButton = () => {
   const { pending } = useFormStatus();
 
   return (
-    <Button type="submit" disabled={pending} variant="ghost" size="icon">
-      {pending ? (
-        <LoaderCircleIcon className="animate-spin h-4 opacity-50 w-4" />
-      ) : (
-        <TrashIcon className="h-4 text-red-700 w-4" />
-      )}
-    </Button>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button type="submit" disabled={pending} variant="ghost" size="icon">
+            {pending ? (
+              <LoaderCircleIcon className="animate-spin h-4 opacity-50 w-4" />
+            ) : (
+              <TrashIcon className="h-4 text-red-700 w-4" />
+            )}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Eliminar</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };

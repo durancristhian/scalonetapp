@@ -5,19 +5,41 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
+import { DEFAULT_PLAYER_LEVEL, PLAYER_LEVELS } from "@/utils/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { default as BoringAvatar } from "boring-avatars";
-import { LoaderCircleIcon } from "lucide-react";
+import { BugIcon, LoaderCircleIcon } from "lucide-react";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { ZodError } from "zod";
 
-const PLACEHOLDER = "Juan Roman Riquelme";
+const LEVEL_MESSAGES: Record<number, string> = {
+  1: "Un tronco realmente.",
+  2: "Se defiende, pero podría jugar al pelota paleta mejor.",
+  3: "Definitivamente hay peores.",
+  4: "Ni bueno ni malo.",
+  5: "Es un jugador regular. Cumple.",
+  6: "Tiene sus días pero en general anda bien.",
+  7: "Está por encima de la media.",
+  8: "Che, a este hay que sumarlo al grupo.",
+  9: "Andá a saber por que no llegó a primera.",
+  10: "La verdadera máquina.",
+};
+const NAME_PLACEHOLDER = "Juan Roman Riquelme";
+
+const DEFAULT_VALUES = {
+  name: "",
+  level: DEFAULT_PLAYER_LEVEL,
+};
 
 type PlayerFormProps = {
   onSubmit: (values: PlayerSchema) => Promise<void>;
@@ -26,9 +48,7 @@ type PlayerFormProps = {
 
 export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
   const form = useForm<PlayerSchema>({
-    defaultValues: values || {
-      name: "",
-    },
+    defaultValues: values || DEFAULT_VALUES,
     resolver: zodResolver(PLAYER_SCHEMA),
     values,
   });
@@ -38,21 +58,35 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
   ) => {
     try {
       await onSubmit(values);
+
+      form.setFocus("name");
+      form.reset();
     } catch (error) {
       console.error(error);
 
-      if (error instanceof Error) {
-        form.setError("name", {
-          message: error.message,
-          type: "validate",
+      if (error instanceof ZodError) {
+        toast(`Ups, parece que algo anda mal`, {
+          description: (
+            <ul className="list-disc list-inside">
+              {error.errors.map(({ message }, idx) => (
+                <li key={idx}>{message}</li>
+              ))}
+            </ul>
+          ),
+          icon: <BugIcon className="h-4 opacity-50 w-4" />,
         });
+
+        return;
       }
+
+      toast("Ha ocurrido un error", {
+        description:
+          "No pudimos agregar el jugador. ¿Podrías volver a intentarlo?.",
+        icon: <BugIcon className="h-4 opacity-50 w-4" />,
+      });
 
       return;
     }
-
-    form.reset();
-    form.setFocus("name");
   };
 
   return (
@@ -70,20 +104,50 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
                 <SpicyTooltips>
                   <BoringAvatar
                     variant="beam"
-                    name={field.value || PLACEHOLDER}
+                    name={field.value || NAME_PLACEHOLDER}
                     size={48}
                   />
                 </SpicyTooltips>
               </div>
               <div className="grow">
                 <FormItem>
+                  <FormLabel>Nombre</FormLabel>
                   <FormControl>
-                    <Input placeholder={PLACEHOLDER} {...field} />
+                    <Input placeholder={NAME_PLACEHOLDER} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               </div>
             </div>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="level"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Nivel</FormLabel>
+              <FormControl>
+                <div className="auto-cols-max gap-1 grid grid-cols-10">
+                  {PLAYER_LEVELS.map((level) => (
+                    <Button
+                      key={level}
+                      type="button"
+                      variant={field.value === level ? "outline" : "ghost"}
+                      /* We remove the horizontal padding in favor of getting space from the parent auto-cols-max */
+                      className="px-0"
+                      onClick={() => {
+                        field.onChange(level);
+                      }}
+                    >
+                      {level}
+                    </Button>
+                  ))}
+                </div>
+              </FormControl>
+              <FormDescription>{LEVEL_MESSAGES[field.value]}</FormDescription>
+              <FormMessage />
+            </FormItem>
           )}
         />
         <Button

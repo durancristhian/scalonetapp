@@ -44,6 +44,9 @@ export const MatchForm: FC<MatchFormProps> = ({ onSubmit, values }) => {
   ) => {
     try {
       await onSubmit(values);
+
+      form.setFocus("name");
+      form.reset();
     } catch (error) {
       console.error(error);
 
@@ -56,9 +59,6 @@ export const MatchForm: FC<MatchFormProps> = ({ onSubmit, values }) => {
 
       return;
     }
-
-    form.reset();
-    form.setFocus("name");
   };
 
   const placeholder = `Partido de los ${DAY_LABELS[new Date().getDay()]}`;

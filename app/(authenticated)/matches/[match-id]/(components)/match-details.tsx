@@ -5,6 +5,7 @@ import { ExportTeams } from "@/app/(authenticated)/matches/[match-id]/(component
 import { MatchPlayers } from "@/app/(authenticated)/matches/[match-id]/(components)/match-players";
 import { PlayerTabs } from "@/app/(authenticated)/matches/[match-id]/(components)/player-tabs";
 import { PlayersList } from "@/app/(authenticated)/matches/[match-id]/(components)/players-list";
+import { RandomizeTeams } from "@/app/(authenticated)/matches/[match-id]/(components)/randomize-teams";
 import { TeamCard } from "@/app/(authenticated)/matches/[match-id]/(components)/team-card";
 import { useTeamsBuilderState } from "@/app/(authenticated)/matches/[match-id]/hooks/use-team-builder-state";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MatchWithPlayers } from "@/server/queries/match";
 import { FC, useCallback } from "react";
 
@@ -26,6 +29,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
   const {
     assignSelectionToTeam,
     createNewTeam,
+    randomizeTeams,
     removePlayerFromTeam,
     removeTeam,
     selectedIds,
@@ -43,7 +47,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
   }, [teams, unselectedPlayers]);
 
   return (
-    <div className="grid md:grid-cols-3 gap-8">
+    <div className="grid md:grid-cols-3 gap-4">
       <div className="md:col-span-1">
         <div className="grid gap-4">
           <Card className="bg-slate-50">
@@ -69,46 +73,102 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
       </div>
       <div className="md:col-span-2">
         <div className="grid gap-8">
-          <div>
-            <CardTitle className="mb-1.5">Vamos a armar los equipos</CardTitle>
+          <div className="grid gap-2">
+            <CardTitle>A agarrar la pala</CardTitle>
             <CardDescription>
-              {unselectedPlayers.length
-                ? "Seleccioná jugadores de la siguiente lista para luego agregarlos a uno de los equipos."
-                : "Listo! Ya agregaste a todos los jugadores en algún equipo."}
+              Podés arrancar con uno de los equipos sugeridos y luego ir
+              actualizando a mano en base a lo que prefieras.
             </CardDescription>
           </div>
-          <PlayersList
-            assignSelectionToTeam={assignSelectionToTeam}
-            canAssignSelection={!selectedIds.length}
-            players={unselectedPlayers}
-            selectedIds={selectedIds}
-            teams={teams}
-            togglePlayer={togglePlayer}
-          />
-          <div className="grid md:grid-cols-2 gap-4">
-            {teams.map((team) => (
-              <TeamCard
-                key={team.id}
-                canBeDeleted={teams.length > 1}
-                removePlayerFromTeam={removePlayerFromTeam}
-                removeTeam={removeTeam}
-                team={team}
-                updateTeamName={updateTeamName}
-              />
-            ))}
-          </div>
-          <div className="flex justify-between gap-2">
-            <Button onClick={createNewTeam} variant="outline">
-              Agregar otro equipo
-            </Button>
-            <div className="flex gap-2">
-              <CopyTeams teams={teams} />
-              <ExportTeams
-                disabled={!areTeamsValid()}
-                matchId={match.id}
+          <Tabs
+            defaultValue="suggested-teams"
+            value={!unselectedPlayers.length ? "suggested-teams" : undefined}
+          >
+            <TabsList className="grid grid-cols-2 mb-4">
+              <TabsTrigger value="suggested-teams">
+                Equipos sugeridos
+              </TabsTrigger>
+              <TabsTrigger
+                value="custom-teams"
+                disabled={!unselectedPlayers.length}
+              >
+                Personalizar equipos
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="suggested-teams">
+              <div className="grid gap-4">
+                <div className="grid gap-2">
+                  <p className="font-semibold">
+                    Separar a la gente aleatoriamente
+                  </p>
+                  <p className="text-sm">
+                    Esta opción es útil cuando no conoces el nivel de los
+                    jugadores o simplemente necesitás armar algo sin importar
+                    que el partido esté parejo.
+                  </p>
+                  <div>
+                    <RandomizeTeams
+                      onClick={randomizeTeams}
+                      showConfirmation={
+                        unselectedPlayers.length !== match.players.length
+                      }
+                    />
+                  </div>
+                </div>
+                {/* <div className="grid gap-2">
+                  <p className="font-semibold">Separar a la gente por nivel</p>
+                  <p className="text-sm">
+                    Teniendo en cuenta el nivel de los jugadores, podemos
+                    separar a la gente para que los equipos queden lo más
+                    balanceados posibles.
+                  </p>
+                  <div>
+                    <Button>Usar equipos balanceados</Button>
+                  </div>
+                </div> */}
+              </div>
+            </TabsContent>
+            <TabsContent value="custom-teams">
+              <PlayersList
+                assignSelectionToTeam={assignSelectionToTeam}
+                canAssignSelection={!selectedIds.length}
+                players={unselectedPlayers}
+                selectedIds={selectedIds}
                 teams={teams}
+                togglePlayer={togglePlayer}
               />
+            </TabsContent>
+          </Tabs>
+          <Separator />
+          <div className="grid gap-4">
+            <CardTitle>Los equipos</CardTitle>
+            <div className="grid md:grid-cols-2 gap-4">
+              {teams.map((team) => (
+                <TeamCard
+                  key={team.id}
+                  canBeDeleted={teams.length > 2}
+                  removePlayerFromTeam={removePlayerFromTeam}
+                  removeTeam={removeTeam}
+                  team={team}
+                  updateTeamName={updateTeamName}
+                />
+              ))}
             </div>
+            <div className="flex gap-2 items-center justify-between">
+              <Button onClick={createNewTeam} variant="outline">
+                Nuevo equipo
+              </Button>
+              <CopyTeams teams={teams} />
+            </div>
+          </div>
+          <Separator />
+          <div className="flex gap-4 items-center justify-center">
+            <p>¿Terminaste?</p>
+            <ExportTeams
+              disabled={!areTeamsValid()}
+              matchId={match.id}
+              teams={teams}
+            />
           </div>
         </div>
       </div>

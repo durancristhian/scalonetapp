@@ -40,6 +40,9 @@ export const PlayersList: FC<PlayersListProps> = ({
 
   return (
     <div className="grid gap-4">
+      <p className="font-semibold">
+        Todavía tenés jugadores libres. Elegí alguno:
+      </p>
       <div className="flex flex-wrap gap-2">
         {players.map((player) => (
           <Toggle
@@ -57,6 +60,7 @@ export const PlayersList: FC<PlayersListProps> = ({
           </Toggle>
         ))}
       </div>
+      <p className="font-semibold">Y ahora agregalos al equipo:</p>
       <Select
         value={selectedTeamId}
         disabled={canAssignSelection}

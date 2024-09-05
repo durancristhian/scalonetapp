@@ -10,18 +10,21 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { PlayerSchema } from "@/schemas/player";
+import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
 import { PLAYERS_SCHEMA, PlayersSchema } from "@/schemas/players";
-import { MAX_PLAYERS_PER_SAVE } from "@/utils/constants";
+import { DEFAULT_PLAYER_LEVEL, MAX_PLAYERS_BATCH } from "@/utils/constants";
 import { getLinesFromString } from "@/utils/get-lines-from-string";
+import { getPlayersFromLines } from "@/utils/get-players-from-lines";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoaderCircleIcon } from "lucide-react";
+import { BugIcon, LoaderCircleIcon } from "lucide-react";
 import { FC, useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
+import { toast } from "sonner";
+import { ZodError } from "zod";
 
-const PLACEHOLDER = `Juan
+const PLACEHOLDER = `Juan, 2
 Roman
-Riquelme`;
+Riquelme, 10`;
 
 type MultiplePlayersFormProps = {
   onSubmit: (values: PlayerSchema[]) => Promise<void>;
@@ -37,34 +40,54 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
     resolver: zodResolver(PLAYERS_SCHEMA),
   });
   /* We listen for changes in the players string */
-  const players = useWatch({ name: "players", control: form.control });
+  const players = useWatch({
+    name: "players",
+    control: form.control,
+  });
 
-  /* We count the valid names in the form */
-  const names = useMemo(() => {
+  /* We count the valid lines in the form */
+  const lines = useMemo(() => {
     return getLinesFromString(players);
   }, [players]);
 
   const onSubmitHandler: () => Promise<void> = async () => {
     try {
-      /* We just use the computed names so we don't need to format the submit handler values string again */
-      const nextPlayers = names.map((name) => ({ name }));
+      const nextPlayers = getPlayersFromLines(lines);
+
+      /* This seems redundant but it's not since each item in the array should be a valid player */
+      nextPlayers.map((nextPlayer) => PLAYER_SCHEMA.parse(nextPlayer));
 
       await onSubmit(nextPlayers);
+
+      form.setFocus("players");
+      form.reset();
     } catch (error) {
       console.error(error);
 
-      if (error instanceof Error) {
-        form.setError("players", {
-          message: error.message,
-          type: "validate",
+      if (error instanceof ZodError) {
+        toast(`Ups, parece que algo anda mal`, {
+          description: (
+            <ul className="list-disc list-inside">
+              {error.errors.map(({ message }, idx) => (
+                <li key={idx}>{message}</li>
+              ))}
+            </ul>
+          ),
+          icon: <BugIcon className="h-4 opacity-50 w-4" />,
         });
+
+        return;
       }
+
+      toast("Ha ocurrido un error", {
+        description: `No pudimos agregar ${
+          lines.length > 1 ? "el jugador" : "los jugadores"
+        }. ¿Podrías volver a intentarlo?.`,
+        icon: <BugIcon className="h-4 opacity-50 w-4" />,
+      });
 
       return;
     }
-
-    form.reset();
-    form.setFocus("players");
   };
 
   return (
@@ -82,14 +105,16 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
                 <Textarea rows={10} placeholder={PLACEHOLDER} {...field} />
               </FormControl>
               <FormDescription>
-                Agregá un nombre por línea. Se permiten hasta&nbsp;
-                {MAX_PLAYERS_PER_SAVE} por lote.
+                Agregá un nombre (requerido) y un nivel (opcional) por línea
+                separados por coma. Quienes no tengan nivel, se les asigna{" "}
+                {DEFAULT_PLAYER_LEVEL} por defecto. Se permiten hasta&nbsp;
+                {MAX_PLAYERS_BATCH} líneas por lote.
               </FormDescription>
-              {names.length > 0 ? (
+              {lines.length > 0 ? (
                 <FormDescription>
-                  {names.length === 1
+                  {lines.length === 1
                     ? "Se ha detectado 1 nombre."
-                    : `Se han detectado ${names.length} nombres.`}
+                    : `Se han detectado ${lines.length} nombres.`}
                 </FormDescription>
               ) : null}
               <FormMessage />
