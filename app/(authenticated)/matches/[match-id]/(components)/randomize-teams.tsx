@@ -24,13 +24,13 @@ export const RandomizeTeams: FC<RandomizeTeamsProps> = ({
   showConfirmation,
 }) => {
   if (!showConfirmation) {
-    return <Button onClick={onClick}>Usar equipos balanceados</Button>;
+    return <Button onClick={onClick}>Usar equipos aleatorios</Button>;
   }
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button>Usar equipos balanceados</Button>
+        <Button>Usar equipos aleatorios</Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

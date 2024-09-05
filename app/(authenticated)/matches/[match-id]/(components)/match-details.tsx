@@ -102,10 +102,9 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                     Separar a la gente aleatoriamente
                   </p>
                   <p className="text-sm">
-                    Separar a la gente aleatoriamente. Esta opción es útil
-                    cuando no conoces el nivel de los jugadores o simplemente
-                    necesitás armar algo sin importar que el partido esté
-                    parejo.
+                    Esta opción es útil cuando no conoces el nivel de los
+                    jugadores o simplemente necesitás armar algo sin importar
+                    que el partido esté parejo.
                   </p>
                   <div>
                     <RandomizeTeams
