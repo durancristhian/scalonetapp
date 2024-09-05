@@ -15,18 +15,18 @@ import { Button } from "@/components/ui/button";
 import { FC } from "react";
 
 type ConfirmTeamsUpdateProps = {
-  onClick: () => void;
+  onConfirm: () => void;
   showConfirmation: boolean;
   triggerText: string;
 };
 
 export const ConfirmTeamsUpdate: FC<ConfirmTeamsUpdateProps> = ({
-  onClick,
+  onConfirm,
   showConfirmation,
   triggerText,
 }) => {
   if (!showConfirmation) {
-    return <Button onClick={onClick}>{triggerText}</Button>;
+    return <Button onClick={onConfirm}>{triggerText}</Button>;
   }
 
   return (
@@ -47,7 +47,7 @@ export const ConfirmTeamsUpdate: FC<ConfirmTeamsUpdateProps> = ({
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
           <AlertDialogAction asChild>
-            <Button onClick={onClick}>Estoy seguro</Button>
+            <Button onClick={onConfirm}>Estoy seguro</Button>
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

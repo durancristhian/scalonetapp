@@ -28,6 +28,7 @@ type MatchDetailsProps = {
 export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
   const {
     assignSelectionToTeam,
+    balanceTeams,
     createNewTeam,
     randomizeTeams,
     removePlayerFromTeam,
@@ -107,7 +108,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                     que el partido esté parejo.
                   </p>
                   <ConfirmTeamsUpdate
-                    onClick={randomizeTeams}
+                    onConfirm={randomizeTeams}
                     showConfirmation={
                       unselectedPlayers.length !== match.players.length
                     }
@@ -122,9 +123,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                     balanceados posibles.
                   </p>
                   <ConfirmTeamsUpdate
-                    onClick={() => {
-                      console.log("Armar equipos balanceados");
-                    }}
+                    onConfirm={balanceTeams}
                     showConfirmation={
                       unselectedPlayers.length !== match.players.length
                     }

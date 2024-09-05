@@ -39,6 +39,7 @@ const getInitialTeams: (match: MatchWithPlayers) => Team[] = (match) => {
 
 type UseTeamsBuilderStateResult = {
   assignSelectionToTeam: (teamId: string) => void;
+  balanceTeams: () => void;
   createNewTeam: () => void;
   randomizeTeams: () => void;
   removePlayerFromTeam: (playerId: number, teamId: string) => void;
@@ -124,6 +125,10 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
       /* We clean the current selected ids as well so we can start over */
       setSelectedIds([]);
     };
+
+  const balanceTeams: UseTeamsBuilderStateResult["balanceTeams"] = () => {
+    console.log("balanceTeams");
+  };
 
   const createNewTeam: UseTeamsBuilderStateResult["createNewTeam"] = () => {
     setTeams((currTeams) =>
@@ -246,6 +251,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
 
   return {
     assignSelectionToTeam,
+    balanceTeams,
     createNewTeam,
     randomizeTeams,
     removePlayerFromTeam,
