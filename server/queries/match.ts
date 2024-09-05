@@ -92,8 +92,6 @@ export const editMatch: (
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
 
-  MATCH_SCHEMA.parse(data);
-
   await prisma.match.update({
     where: {
       id,
