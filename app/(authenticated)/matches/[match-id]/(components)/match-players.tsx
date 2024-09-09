@@ -2,6 +2,7 @@ import { PlayerForm } from "@/app/(authenticated)/matches/[match-id]/(components
 import { AnimatedListItem } from "@/components/animated-list-item";
 import { EmptyState } from "@/components/empty-state";
 import { SpicyTooltips } from "@/components/spicy-tooltips";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,9 +19,16 @@ import {
 } from "@/components/ui/tooltip";
 import { PlayerSchema } from "@/schemas/player";
 import { deletePlayer, editPlayer } from "@/server/actions/player";
+import { MAX_MATCHES_PER_USER, MAX_PLAYERS_PER_MATCH } from "@/utils/constants";
 import { Player } from "@prisma/client";
 import { default as BoringAvatar } from "boring-avatars";
-import { BugIcon, LoaderCircleIcon, PencilIcon, TrashIcon } from "lucide-react";
+import {
+  AlertCircleIcon,
+  BugIcon,
+  LoaderCircleIcon,
+  PencilIcon,
+  TrashIcon,
+} from "lucide-react";
 import { FC, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { toast } from "sonner";
@@ -72,22 +80,34 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
   return (
     <>
       {canListPlayers ? (
-        <ul className="grid gap-2">
-          {players
-            .sort((playerA, playerB) =>
-              playerA.name.localeCompare(playerB.name)
-            )
-            .map((player, idx) => {
-              return (
-                <AnimatedListItem key={player.id} listIndex={idx}>
-                  <MatchPlayer
-                    player={player}
-                    onPlayerSubmit={onPlayerSubmit}
-                  />
-                </AnimatedListItem>
-              );
-            })}
-        </ul>
+        <div className="grid gap-6">
+          {players.length >= MAX_PLAYERS_PER_MATCH ? (
+            <Alert variant="destructive">
+              <AlertCircleIcon className="h-4 w-4" />
+              <AlertTitle>Límite de jugadores alcanzado.</AlertTitle>
+              <AlertDescription>
+                Puedes agregar hasta {MAX_PLAYERS_PER_MATCH} jugadores. Para
+                crear uno nuevo, deberás eliminar uno de los existentes.
+              </AlertDescription>
+            </Alert>
+          ) : null}
+          <ul className="grid gap-2">
+            {players
+              .sort((playerA, playerB) =>
+                playerA.name.localeCompare(playerB.name)
+              )
+              .map((player, idx) => {
+                return (
+                  <AnimatedListItem key={player.id} listIndex={idx}>
+                    <MatchPlayer
+                      player={player}
+                      onPlayerSubmit={onPlayerSubmit}
+                    />
+                  </AnimatedListItem>
+                );
+              })}
+          </ul>
+        </div>
       ) : (
         <EmptyState>
           Las personas que agregues van a aparecer listadas acá.
