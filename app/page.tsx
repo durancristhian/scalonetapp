@@ -1,10 +1,10 @@
 "use client";
 
+import { Loader } from "@/components/loader";
 import { ShowOff } from "@/components/show-off";
 import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut, SignInButton, useAuth } from "@clerk/nextjs";
 import { motion } from "framer-motion";
-import { LoaderCircleIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FC, useEffect } from "react";
 
@@ -22,7 +22,7 @@ const Page: FC = () => {
   return (
     <div className="bg-slate-100 flex flex-col items-center justify-center min-h-dvh p-2">
       <SignedIn>
-        <LoaderCircleIcon className="animate-spin h-10 opacity-50 w-10" />
+        <Loader />
       </SignedIn>
       <SignedOut>
         <motion.h1
