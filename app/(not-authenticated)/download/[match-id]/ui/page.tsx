@@ -29,7 +29,7 @@ const Page: FC = () => {
   return (
     <div className="p-8">
       <div className="grid gap-8">
-        <p className="font-semibold text-4xl text-center">{match.name}</p>
+        <h1 className="font-bold text-4xl text-center">{match.name}</h1>
         <div className="grid grid-cols-2 gap-8">
           {formattedTeams.map((team) => (
             <Card key={team.id}>

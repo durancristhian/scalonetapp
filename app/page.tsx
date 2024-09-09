@@ -20,36 +20,53 @@ const Page: FC = () => {
   }, [isLoaded, router, userId]);
 
   return (
-    <div className="bg-slate-100 flex flex-col items-center justify-center h-full min-h-[inherit] p-2">
+    <div className="bg-slate-100 flex flex-col gap-4 items-center justify-center h-full min-h-[inherit] p-2">
       <SignedIn>
         <Loader />
       </SignedIn>
       <SignedOut>
-        <motion.h1
-          className="font-semibold text-2xl"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ ease: "easeInOut", duration: 0.5 }}
-        >
-          Bienvenidos a&nbsp;
-          <span className="font-bold text-slate-950">Scalonet.app</span>
-        </motion.h1>
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ ease: "easeInOut", duration: 0.5, delay: 0.5 }}
-        >
-          <ShowOff />
-        </motion.div>
-        <div className="h-[36px] mt-8">
+        <div className="mb-4">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ ease: "easeInOut", duration: 0.5, delay: 1 }}
+            transition={{ ease: "easeInOut", duration: 0.5, delay: 0.5 }}
+          >
+            <h1 className="font-bold text-4xl text-balance text-center">
+              Arma equipos como un campeón!
+            </h1>
+          </motion.div>
+        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ease: "easeInOut", duration: 0.5, delay: 1 }}
+        >
+          <p className="text-balance text-center">
+            ¿Tenés lo necesario para ser el{" "}
+            <span className="font-bold">Scaloni</span> entre tus amigos?
+          </p>
+          <p className="text-balance text-center">
+            Demostrá tu habilidad para formar equipos ideales.
+          </p>
+        </motion.div>
+        <div className="h-[36px]">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ ease: "easeInOut", duration: 0.5, delay: 1.5 }}
           >
             <SignInButton mode="modal">
               <Button>Ingresar con Google</Button>
             </SignInButton>
+          </motion.div>
+        </div>
+        <div className="mt-16">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ ease: "easeInOut", duration: 0.5, delay: 2 }}
+          >
+            <ShowOff />
           </motion.div>
         </div>
       </SignedOut>

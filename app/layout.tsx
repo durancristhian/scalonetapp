@@ -20,8 +20,8 @@ const inter = Inter({
 
 /* TODO: Update this information */
 export const metadata: Metadata = {
-  title: "Scalonet.app",
-  description: "Scalonet.app",
+  title: "scalonet.app",
+  description: "scalonet.app",
 };
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {

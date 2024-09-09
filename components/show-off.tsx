@@ -21,13 +21,13 @@ export const ShowOff = () => {
           <Avatar>
             <AvatarImage
               src="/me.jpg"
-              alt="Mi foto de perfil descansando en Merlo, San Luis, Argentina"
+              alt="Descansando en Merlo, San Luis, Argentina"
             />
             <AvatarFallback>CD</AvatarFallback>
           </Avatar>
           <div className="grow">
             <div className="flex flex-col gap-1">
-              <h4 className="font-semibold">Cristhian Duran</h4>
+              <h4 className="font-bold">Cristhian Duran</h4>
               <p className="text-sm">
                 Programador front-end de Buenos Aires, Argentina.
               </p>
