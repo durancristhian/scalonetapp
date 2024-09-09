@@ -1,10 +1,8 @@
 import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
 import { MAX_PLAYERS_PER_MATCH } from "@/utils/constants";
+import { ERROR_MESSAGES } from "@/utils/error-messages";
 import prisma from "@/utils/prisma";
-import {
-  ERROR_MESSAGES,
-  VALIDATION_MESSAGES,
-} from "@/utils/validation-messages";
+import { VALIDATION_MESSAGES } from "@/utils/validation-messages";
 import { auth } from "@clerk/nextjs/server";
 
 const getMatch = async (userId: string, matchId: number) => {

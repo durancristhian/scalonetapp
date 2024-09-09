@@ -1,5 +1,5 @@
 import { getMatchById } from "@/server/queries/match";
-import { ERROR_MESSAGES } from "@/utils/validation-messages";
+import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { NextRequest, NextResponse } from "next/server";
 import puppeteer, { Browser } from "puppeteer";
 

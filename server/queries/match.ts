@@ -2,7 +2,7 @@ import { MATCH_SCHEMA, MatchSchema } from "@/schemas/match";
 import { byName } from "@/utils/by-name";
 import { MAX_MATCHES_PER_USER } from "@/utils/constants";
 import prisma from "@/utils/prisma";
-import { ERROR_MESSAGES } from "@/utils/validation-messages";
+import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { auth } from "@clerk/nextjs/server";
 import { Match, Prisma } from "@prisma/client";
 
