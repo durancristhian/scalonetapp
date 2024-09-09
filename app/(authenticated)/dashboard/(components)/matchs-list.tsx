@@ -5,11 +5,11 @@ import { CardDescription, CardTitle } from "@/components/ui/card";
 import { Match } from "@prisma/client";
 import { FC } from "react";
 
-type MatchListProps = {
+type MatchsListProps = {
   matches: Match[];
 };
 
-export const MatchList: FC<MatchListProps> = ({ matches }) => {
+export const MatchsList: FC<MatchsListProps> = ({ matches }) => {
   const canListMatches = Array.isArray(matches) && matches.length;
 
   return (

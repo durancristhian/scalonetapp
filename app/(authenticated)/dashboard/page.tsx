@@ -1,5 +1,5 @@
 import { AddMatch } from "@/app/(authenticated)/dashboard/(components)/add-match";
-import { MatchList } from "@/app/(authenticated)/dashboard/(components)/match-list";
+import { MatchsList } from "@/app/(authenticated)/dashboard/(components)/matchs-list";
 import { getMatches } from "@/server/queries/match";
 import { FC } from "react";
 
@@ -14,7 +14,7 @@ const Page: FC = async () => {
             <AddMatch />
           </div>
           <div className="md:col-span-2">
-            <MatchList matches={matches} />
+            <MatchsList matches={matches} />
           </div>
         </div>
       </div>
