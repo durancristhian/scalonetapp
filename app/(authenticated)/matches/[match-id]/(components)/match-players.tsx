@@ -56,15 +56,13 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
             ),
             icon: <BugIcon className="h-4 opacity-50 w-4" />,
           });
-
-          return;
+        } else {
+          toast("Ha ocurrido un error", {
+            description:
+              "No pudimos actualizar el jugador. ¿Podrías volver a intentarlo?.",
+            icon: <BugIcon className="h-4 opacity-50 w-4" />,
+          });
         }
-
-        toast("Ha ocurrido un error", {
-          description:
-            "No pudimos actualizar el jugador. ¿Podrías volver a intentarlo?.",
-          icon: <BugIcon className="h-4 opacity-50 w-4" />,
-        });
 
         reject(error);
       }

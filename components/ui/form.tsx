@@ -12,6 +12,7 @@ import {
   FieldValues,
   FormProvider,
   useFormContext,
+  useFormState,
 } from "react-hook-form";
 
 const Form = FormProvider;
@@ -172,6 +173,33 @@ const FormMessage = React.forwardRef<
 });
 FormMessage.displayName = "FormMessage";
 
+/* Inspiration: https://github.com/shadcn-ui/ui/pull/3475 */
+const FormRootError = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
+>(({ className, ...props }, ref) => {
+  const { errors } = useFormState();
+  const rootError = errors.root;
+
+  if (!rootError) {
+    return null;
+  }
+
+  return (
+    <p
+      ref={ref}
+      className={cn(
+        "text-[0.8rem] font-medium text-red-500 dark:text-red-900",
+        className
+      )}
+      {...props}
+    >
+      {rootError.message}
+    </p>
+  );
+});
+FormRootError.displayName = "FormRootError";
+
 export {
   Form,
   FormControl,
@@ -180,5 +208,6 @@ export {
   FormItem,
   FormLabel,
   FormMessage,
+  FormRootError,
   useFormField,
 };

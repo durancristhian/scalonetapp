@@ -10,16 +10,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormRootError,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
 import { DEFAULT_PLAYER_LEVEL, PLAYER_LEVELS } from "@/utils/constants";
+import { unfoldZodError } from "@/utils/errors";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { default as BoringAvatar } from "boring-avatars";
-import { BugIcon, LoaderCircleIcon } from "lucide-react";
+import { LoaderCircleIcon } from "lucide-react";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { ZodError } from "zod";
 
 const LEVEL_MESSAGES: Record<number, string> = {
@@ -64,28 +65,20 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
     } catch (error) {
       console.error(error);
 
-      if (error instanceof ZodError) {
-        toast(`Ups, parece que algo anda mal`, {
-          description: (
-            <ul className="list-disc list-inside">
-              {error.errors.map(({ message }, idx) => (
-                <li key={idx}>{message}</li>
-              ))}
-            </ul>
-          ),
-          icon: <BugIcon className="h-4 opacity-50 w-4" />,
-        });
+      let errorMessage = "";
 
-        return;
+      if (error instanceof ZodError) {
+        errorMessage = unfoldZodError(error).join(". ");
+      } else if (error instanceof Error) {
+        errorMessage =
+          error.message ||
+          "No pudimos agregar el jugador. ¿Podrías volver a intentarlo?.";
       }
 
-      toast("Ha ocurrido un error", {
-        description:
-          "No pudimos agregar el jugador. ¿Podrías volver a intentarlo?.",
-        icon: <BugIcon className="h-4 opacity-50 w-4" />,
+      form.setError("root", {
+        message: errorMessage,
+        type: "validate",
       });
-
-      return;
     }
   };
 
@@ -150,6 +143,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
             </FormItem>
           )}
         />
+        <FormRootError />
         <Button
           type="submit"
           disabled={!form.formState.isValid || form.formState.isSubmitting}

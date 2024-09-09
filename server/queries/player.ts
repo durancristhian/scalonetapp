@@ -1,20 +1,20 @@
 import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
+import { MAX_PLAYERS_PER_MATCH } from "@/utils/constants";
 import prisma from "@/utils/prisma";
 import {
   ERROR_MESSAGES,
   VALIDATION_MESSAGES,
 } from "@/utils/validation-messages";
 import { auth } from "@clerk/nextjs/server";
-import { Match } from "@prisma/client";
 
-const getMatch: (
-  userId: string,
-  matchId: number
-) => Promise<Match | null> = async (userId, matchId) => {
+const getMatch = async (userId: string, matchId: number) => {
   const match = await prisma.match.findFirst({
     where: {
       id: matchId,
       userId: userId,
+    },
+    include: {
+      players: true,
     },
   });
 
@@ -47,8 +47,8 @@ export const addPlayer: (
   }
 
   /* We check the current user owns the match we're trying to add a player to */
-  const userOwnsMatch = await getMatch(user.userId, matchId);
-  if (!userOwnsMatch) {
+  const match = await getMatch(user.userId, matchId);
+  if (!match) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
 
@@ -56,6 +56,11 @@ export const addPlayer: (
   const hasCoincidences = await namesAlreadyInMatch(matchId, [data.name]);
   if (hasCoincidences) {
     throw new Error(VALIDATION_MESSAGES.player_repeated);
+  }
+
+  /* We check we haven't reached the players in match limit */
+  if (match.players.length >= MAX_PLAYERS_PER_MATCH) {
+    throw new Error(ERROR_MESSAGES.players_per_match_limit_reached);
   }
 
   const nextPlayer = {
@@ -68,8 +73,6 @@ export const addPlayer: (
   await prisma.player.create({
     data: nextPlayer,
   });
-
-  return;
 };
 
 export const addMultiplePlayers: (
@@ -82,8 +85,8 @@ export const addMultiplePlayers: (
   }
 
   /* We check the current user owns the match we're trying to add a player to */
-  const userOwnsMatch = await getMatch(user.userId, matchId);
-  if (!userOwnsMatch) {
+  const match = await getMatch(user.userId, matchId);
+  if (!match) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
 
@@ -93,6 +96,11 @@ export const addMultiplePlayers: (
   );
   if (coincidences) {
     throw new Error(VALIDATION_MESSAGES.at_least_one_player_repeated);
+  }
+
+  /* We check we haven't reached the players in match limit */
+  if (match.players.length >= MAX_PLAYERS_PER_MATCH) {
+    throw new Error(ERROR_MESSAGES.players_per_match_limit_reached);
   }
 
   const nextPlayers = data.map((player) => ({
@@ -105,8 +113,6 @@ export const addMultiplePlayers: (
   await prisma.player.createMany({
     data: nextPlayers,
   });
-
-  return;
 };
 
 export const editPlayer: (
@@ -126,8 +132,6 @@ export const editPlayer: (
     },
     data,
   });
-
-  return;
 };
 
 export const deletePlayer: (id: number) => Promise<void> = async (id) => {
@@ -141,6 +145,4 @@ export const deletePlayer: (id: number) => Promise<void> = async (id) => {
       id,
     },
   });
-
-  return;
 };

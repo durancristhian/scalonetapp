@@ -43,8 +43,6 @@ export const DeleteMatch: FC<DeleteMatchProps> = ({ id }) => {
           "No pudimos borrar el partido. ¿Podrías volver a intentarlo?.",
         icon: <BugIcon className="h-4 opacity-50 w-4" />,
       });
-
-      return;
     }
   };
 

@@ -1,4 +1,5 @@
 import { MATCH_SCHEMA, MatchSchema } from "@/schemas/match";
+import { MAX_MATCHES_PER_USER } from "@/utils/constants";
 import prisma from "@/utils/prisma";
 import { ERROR_MESSAGES } from "@/utils/validation-messages";
 import { auth } from "@clerk/nextjs/server";
@@ -76,11 +77,19 @@ export const addMatch: (data: MatchSchema) => Promise<void> = async (data) => {
 
   MATCH_SCHEMA.parse(nextMatch);
 
+  const userMatches = await prisma.match.findMany({
+    where: {
+      userId: user.userId,
+    },
+  });
+
+  if (userMatches.length >= MAX_MATCHES_PER_USER) {
+    throw new Error(ERROR_MESSAGES.matches_limit_reached);
+  }
+
   await prisma.match.create({
     data: nextMatch,
   });
-
-  return;
 };
 
 export const editMatch: (
@@ -99,8 +108,6 @@ export const editMatch: (
     },
     data,
   });
-
-  return;
 };
 
 export const deleteMatch: (id: number) => Promise<void> = async (id) => {
@@ -115,6 +122,4 @@ export const deleteMatch: (id: number) => Promise<void> = async (id) => {
       userId: user.userId,
     },
   });
-
-  return;
 };

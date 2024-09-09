@@ -8,18 +8,19 @@ import {
   FormField,
   FormItem,
   FormMessage,
+  FormRootError,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
 import { PLAYERS_SCHEMA, PlayersSchema } from "@/schemas/players";
 import { DEFAULT_PLAYER_LEVEL, MAX_PLAYERS_BATCH } from "@/utils/constants";
+import { unfoldZodError } from "@/utils/errors";
 import { getLinesFromString } from "@/utils/get-lines-from-string";
 import { getPlayersFromLines } from "@/utils/get-players-from-lines";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { BugIcon, LoaderCircleIcon } from "lucide-react";
+import { LoaderCircleIcon } from "lucide-react";
 import { FC, useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { toast } from "sonner";
 import { ZodError } from "zod";
 
 const PLACEHOLDER = `Juan, 2
@@ -64,29 +65,22 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
     } catch (error) {
       console.error(error);
 
-      if (error instanceof ZodError) {
-        toast(`Ups, parece que algo anda mal`, {
-          description: (
-            <ul className="list-disc list-inside">
-              {error.errors.map(({ message }, idx) => (
-                <li key={idx}>{message}</li>
-              ))}
-            </ul>
-          ),
-          icon: <BugIcon className="h-4 opacity-50 w-4" />,
-        });
+      let errorMessage = "";
 
-        return;
+      if (error instanceof ZodError) {
+        errorMessage = unfoldZodError(error).join(". ");
+      } else if (error instanceof Error) {
+        errorMessage =
+          error.message ||
+          `No pudimos agregar ${
+            lines.length > 1 ? "el jugador" : "los jugadores"
+          }. ¿Podrías volver a intentarlo?.`;
       }
 
-      toast("Ha ocurrido un error", {
-        description: `No pudimos agregar ${
-          lines.length > 1 ? "el jugador" : "los jugadores"
-        }. ¿Podrías volver a intentarlo?.`,
-        icon: <BugIcon className="h-4 opacity-50 w-4" />,
+      form.setError("root", {
+        message: errorMessage,
+        type: "validate",
       });
-
-      return;
     }
   };
 
@@ -121,6 +115,7 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
             </FormItem>
           )}
         />
+        <FormRootError />
         <Button
           type="submit"
           disabled={!form.formState.isValid || form.formState.isSubmitting}

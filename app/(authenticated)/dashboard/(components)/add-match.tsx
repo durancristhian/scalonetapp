@@ -7,7 +7,6 @@ import { addMatch } from "@/server/actions/match";
 import { BugIcon, PartyPopperIcon } from "lucide-react";
 import { FC } from "react";
 import { toast } from "sonner";
-import { ZodError } from "zod";
 
 export const AddMatch: FC = () => {
   const onMatchSubmit: (values: MatchSchema) => Promise<void> = (values) => {
@@ -22,21 +21,6 @@ export const AddMatch: FC = () => {
         resolve();
       } catch (error) {
         console.error(error);
-
-        if (error instanceof ZodError) {
-          toast(`Ups, parece que algo anda mal`, {
-            description: (
-              <ul className="list-disc list-inside">
-                {error.errors.map(({ message }, idx) => (
-                  <li key={idx}>{message}</li>
-                ))}
-              </ul>
-            ),
-            icon: <BugIcon className="h-4 opacity-50 w-4" />,
-          });
-
-          return;
-        }
 
         toast("Ha ocurrido un error", {
           description:

@@ -52,15 +52,13 @@ export const EditMatch: FC<EditMatchProps> = ({ match }) => {
             ),
             icon: <BugIcon className="h-4 opacity-50 w-4" />,
           });
-
-          return;
+        } else {
+          toast("Ha ocurrido un error", {
+            description:
+              "No pudimos actualizar el partido. ¿Podrías volver a intentarlo?.",
+            icon: <BugIcon className="h-4 opacity-50 w-4" />,
+          });
         }
-
-        toast("Ha ocurrido un error", {
-          description:
-            "No pudimos actualizar el partido. ¿Podrías volver a intentarlo?.",
-          icon: <BugIcon className="h-4 opacity-50 w-4" />,
-        });
 
         reject(error);
       }
