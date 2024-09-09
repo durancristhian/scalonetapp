@@ -1,4 +1,5 @@
 import { MATCH_SCHEMA, MatchSchema } from "@/schemas/match";
+import { byName } from "@/utils/by-name";
 import { MAX_MATCHES_PER_USER } from "@/utils/constants";
 import prisma from "@/utils/prisma";
 import { ERROR_MESSAGES } from "@/utils/validation-messages";
@@ -57,9 +58,7 @@ export const getMatchById = async (id: number) => {
   });
 
   /* We sort players by name */
-  match?.players.sort((playerA, playerB) =>
-    playerA.name.localeCompare(playerB.name)
-  );
+  match?.players.sort(byName);
 
   return match;
 };

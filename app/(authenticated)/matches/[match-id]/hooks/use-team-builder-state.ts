@@ -1,4 +1,5 @@
 import { FormattedTeam, MatchWithPlayers } from "@/server/queries/match";
+import { byName } from "@/utils/by-name";
 import { Player } from "@prisma/client";
 import shuffle from "lodash.shuffle";
 import uniqueId from "lodash.uniqueid";
@@ -136,9 +137,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
       },
       () => []
     );
-    const playersByLevelDesc = players.sort(
-      (playerA, playerB) => playerB.level - playerA.level
-    );
+    const playersByLevelDesc = players.sort(byName);
 
     /* We distribute players in a round-robin fashion */
     playersByLevelDesc.forEach((player, idx) => {
@@ -159,9 +158,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
 
       return currTeams.map((currTeam, idx) => ({
         ...currTeam,
-        players: balancedTeams[idx].sort((playerA, playerB) =>
-          playerA.name.localeCompare(playerB.name)
-        ),
+        players: balancedTeams[idx].sort(byName),
       }));
     });
   };
@@ -214,9 +211,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
 
       return currTeams.map((currTeam, idx) => ({
         ...currTeam,
-        players: randomizedTeams[idx].sort((playerA, playerB) =>
-          playerA.name.localeCompare(playerB.name)
-        ),
+        players: randomizedTeams[idx].sort(byName),
       }));
     });
   };

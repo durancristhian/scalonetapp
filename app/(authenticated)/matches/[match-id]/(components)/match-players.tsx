@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/tooltip";
 import { PlayerSchema } from "@/schemas/player";
 import { deletePlayer, editPlayer } from "@/server/actions/player";
+import { byName } from "@/utils/by-name";
 import { MAX_MATCHES_PER_USER, MAX_PLAYERS_PER_MATCH } from "@/utils/constants";
 import { Player } from "@prisma/client";
 import { default as BoringAvatar } from "boring-avatars";
@@ -92,20 +93,16 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
             </Alert>
           ) : null}
           <ul className="grid gap-2">
-            {players
-              .sort((playerA, playerB) =>
-                playerA.name.localeCompare(playerB.name)
-              )
-              .map((player, idx) => {
-                return (
-                  <AnimatedListItem key={player.id} listIndex={idx}>
-                    <MatchPlayer
-                      player={player}
-                      onPlayerSubmit={onPlayerSubmit}
-                    />
-                  </AnimatedListItem>
-                );
-              })}
+            {players.sort(byName).map((player, idx) => {
+              return (
+                <AnimatedListItem key={player.id} listIndex={idx}>
+                  <MatchPlayer
+                    player={player}
+                    onPlayerSubmit={onPlayerSubmit}
+                  />
+                </AnimatedListItem>
+              );
+            })}
           </ul>
         </div>
       ) : (

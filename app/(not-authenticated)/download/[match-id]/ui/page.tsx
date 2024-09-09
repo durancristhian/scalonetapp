@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { FormattedTeam, MatchWithPlayers } from "@/server/queries/match";
+import { byName } from "@/utils/by-name";
 import { Player } from "@prisma/client";
 import { default as BoringAvatar } from "boring-avatars";
 import { FC, useEffect, useState } from "react";
@@ -48,9 +49,7 @@ const Page: FC = () => {
                       /* We exclude potential empty players */
                       .filter((player): player is Player => Boolean(player))
                       /* We sort players in the team by name */
-                      .sort((playerA, playerB) =>
-                        playerA.name.localeCompare(playerB.name)
-                      )
+                      .sort(byName)
                       .map((player) => (
                         <div
                           key={player.id}
