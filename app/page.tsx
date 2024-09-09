@@ -20,7 +20,7 @@ const Page: FC = () => {
   }, [isLoaded, router, userId]);
 
   return (
-    <div className="bg-slate-100 flex flex-col items-center justify-center min-h-dvh p-2">
+    <div className="bg-slate-100 flex flex-col items-center justify-center h-full min-h-[inherit] p-2">
       <SignedIn>
         <Loader />
       </SignedIn>

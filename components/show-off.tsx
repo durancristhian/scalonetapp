@@ -11,7 +11,7 @@ export const ShowOff = () => {
   return (
     <HoverCard>
       <HoverCardTrigger>
-        <Button variant="link" className="text-slate-800">
+        <Button variant="link">
           Hecho por&nbsp;
           <span className="font-bold">Cristhian Duran</span>
         </Button>
