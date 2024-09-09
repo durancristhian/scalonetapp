@@ -20,7 +20,6 @@ import {
 import { PlayerSchema } from "@/schemas/player";
 import { deletePlayer, editPlayer } from "@/server/actions/player";
 import { byName } from "@/utils/by-name";
-import { MAX_MATCHES_PER_USER, MAX_PLAYERS_PER_MATCH } from "@/utils/constants";
 import { Player } from "@prisma/client";
 import { default as BoringAvatar } from "boring-avatars";
 import {
@@ -82,13 +81,14 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
     <>
       {canListPlayers ? (
         <div className="grid gap-6">
-          {players.length >= MAX_PLAYERS_PER_MATCH ? (
+          {players.length >= Number(process.env.MAX_PLAYERS_PER_MATCH) ? (
             <Alert variant="destructive">
               <AlertCircleIcon className="h-4 w-4" />
               <AlertTitle>Límite de jugadores alcanzado.</AlertTitle>
               <AlertDescription>
-                Puedes agregar hasta {MAX_PLAYERS_PER_MATCH} jugadores. Para
-                crear uno nuevo, deberás eliminar uno de los existentes.
+                Puedes agregar hasta {process.env.MAX_PLAYERS_PER_MATCH}{" "}
+                jugadores. Para crear uno nuevo, deberás eliminar uno de los
+                existentes.
               </AlertDescription>
             </Alert>
           ) : null}

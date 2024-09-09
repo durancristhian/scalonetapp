@@ -1,5 +1,4 @@
 import { PlayerSchema } from "@/schemas/player";
-import { DEFAULT_PLAYER_LEVEL } from "@/utils/constants";
 
 export const getPlayersFromLines: (lines: string[]) => PlayerSchema[] = (
   lines
@@ -11,7 +10,7 @@ export const getPlayersFromLines: (lines: string[]) => PlayerSchema[] = (
     if (lastCommaIdx === -1) {
       return {
         name: line,
-        level: DEFAULT_PLAYER_LEVEL,
+        level: Number(process.env.DEFAULT_PLAYER_LEVEL),
       };
     }
 

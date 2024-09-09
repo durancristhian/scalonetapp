@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
-import { DEFAULT_PLAYER_LEVEL, PLAYER_LEVELS } from "@/utils/constants";
 import { unfoldZodError } from "@/utils/errors";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { default as BoringAvatar } from "boring-avatars";
@@ -23,6 +22,10 @@ import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { ZodError } from "zod";
 
+/* Players are categorized from 1 to 10 */
+const PLAYER_LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+/* Description of every player level */
 const LEVEL_MESSAGES: Record<number, string> = {
   1: "Un tronco realmente.",
   2: "Se defiende, pero podría jugar al pelota paleta mejor.",
@@ -35,12 +38,9 @@ const LEVEL_MESSAGES: Record<number, string> = {
   9: "Andá a saber por que no llegó a primera.",
   10: "La verdadera máquina.",
 };
-const NAME_PLACEHOLDER = "Juan Roman Riquelme";
 
-const DEFAULT_VALUES = {
-  name: "",
-  level: DEFAULT_PLAYER_LEVEL,
-};
+/* Input placeholder */
+const INPUT_PLACEHOLDER = "Juan Roman Riquelme";
 
 type PlayerFormProps = {
   onSubmit: (values: PlayerSchema) => Promise<void>;
@@ -49,7 +49,10 @@ type PlayerFormProps = {
 
 export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
   const form = useForm<PlayerSchema>({
-    defaultValues: values || DEFAULT_VALUES,
+    defaultValues: values || {
+      name: "",
+      level: Number(process.env.DEFAULT_PLAYER_LEVEL),
+    },
     resolver: zodResolver(PLAYER_SCHEMA),
     values,
   });
@@ -97,7 +100,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
                 <SpicyTooltips>
                   <BoringAvatar
                     variant="beam"
-                    name={field.value || NAME_PLACEHOLDER}
+                    name={field.value || INPUT_PLACEHOLDER}
                     size={48}
                   />
                 </SpicyTooltips>
@@ -106,7 +109,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
                 <FormItem>
                   <FormLabel>Nombre</FormLabel>
                   <FormControl>
-                    <Input placeholder={NAME_PLACEHOLDER} {...field} />
+                    <Input placeholder={INPUT_PLACEHOLDER} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

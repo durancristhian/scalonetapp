@@ -1,8 +1,7 @@
 import { MATCH_SCHEMA, MatchSchema } from "@/schemas/match";
 import { byName } from "@/utils/by-name";
-import { MAX_MATCHES_PER_USER } from "@/utils/constants";
-import prisma from "@/utils/prisma";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
+import prisma from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { Match, Prisma } from "@prisma/client";
 
@@ -82,7 +81,7 @@ export const addMatch: (data: MatchSchema) => Promise<void> = async (data) => {
     },
   });
 
-  if (userMatches.length >= MAX_MATCHES_PER_USER) {
+  if (userMatches.length >= Number(process.env.MAX_MATCHES_PER_USER)) {
     throw new Error(ERROR_MESSAGES.matches_limit_reached);
   }
 

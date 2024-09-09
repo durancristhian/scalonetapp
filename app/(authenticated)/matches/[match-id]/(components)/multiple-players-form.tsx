@@ -13,7 +13,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
 import { PLAYERS_SCHEMA, PlayersSchema } from "@/schemas/players";
-import { DEFAULT_PLAYER_LEVEL, MAX_PLAYERS_BATCH } from "@/utils/constants";
 import { unfoldZodError } from "@/utils/errors";
 import { getLinesFromString } from "@/utils/get-lines-from-string";
 import { getPlayersFromLines } from "@/utils/get-players-from-lines";
@@ -101,8 +100,9 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
               <FormDescription>
                 Agregá un nombre (requerido) y un nivel (opcional) por línea
                 separados por coma. Quienes no tengan nivel, se les asigna{" "}
-                {DEFAULT_PLAYER_LEVEL} por defecto. Se permiten hasta&nbsp;
-                {MAX_PLAYERS_BATCH} líneas por lote.
+                {process.env.DEFAULT_PLAYER_LEVEL} por defecto. Se permiten
+                hasta&nbsp;
+                {process.env.MAX_PLAYERS_BATCH} líneas por lote.
               </FormDescription>
               {lines.length > 0 ? (
                 <FormDescription>

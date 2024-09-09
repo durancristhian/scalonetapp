@@ -1,5 +1,4 @@
 import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
-import { MAX_PLAYERS_PER_MATCH } from "@/utils/constants";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import prisma from "@/utils/prisma";
 import { VALIDATION_MESSAGES } from "@/utils/validation-messages";
@@ -57,7 +56,7 @@ export const addPlayer: (
   }
 
   /* We check we haven't reached the players in match limit */
-  if (match.players.length >= MAX_PLAYERS_PER_MATCH) {
+  if (match.players.length >= Number(process.env.MAX_PLAYERS_PER_MATCH)) {
     throw new Error(ERROR_MESSAGES.players_per_match_limit_reached);
   }
 
@@ -97,7 +96,7 @@ export const addMultiplePlayers: (
   }
 
   /* We check we haven't reached the players in match limit */
-  if (match.players.length >= MAX_PLAYERS_PER_MATCH) {
+  if (match.players.length >= Number(process.env.MAX_PLAYERS_PER_MATCH)) {
     throw new Error(ERROR_MESSAGES.players_per_match_limit_reached);
   }
 
