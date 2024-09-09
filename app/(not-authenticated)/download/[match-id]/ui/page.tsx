@@ -2,7 +2,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { FormattedTeam, MatchWithPlayers } from "@/server/queries/match";
+import { MatchWithPlayers } from "@/types/match";
+import { BaseTeam } from "@/types/team";
 import { byName } from "@/utils/by-name";
 import { Player } from "@prisma/client";
 import { default as BoringAvatar } from "boring-avatars";
@@ -23,7 +24,7 @@ const Page: FC = () => {
     return null;
   }
 
-  const formattedTeams: FormattedTeam[] = JSON.parse(match.teams);
+  const formattedTeams: BaseTeam[] = JSON.parse(match.teams);
 
   return (
     <div className="p-8">

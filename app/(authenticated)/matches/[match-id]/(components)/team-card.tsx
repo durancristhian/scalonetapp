@@ -1,7 +1,6 @@
 "use client";
 
 import { TeamForm } from "@/app/(authenticated)/matches/[match-id]/(components)/team-form";
-import { Team } from "@/app/(authenticated)/matches/[match-id]/hooks/use-team-builder-state";
 import { AnimatedListItem } from "@/components/animated-list-item";
 import { EmptyState } from "@/components/empty-state";
 import { SpicyTooltips } from "@/components/spicy-tooltips";
@@ -14,6 +13,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { TeamSchema } from "@/schemas/team";
+import { Team } from "@/types/team";
 import { default as BoringAvatar } from "boring-avatars";
 import { TrashIcon, XIcon } from "lucide-react";
 import { FC } from "react";

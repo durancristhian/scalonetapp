@@ -1,15 +1,10 @@
-import { FormattedTeam, MatchWithPlayers } from "@/server/queries/match";
+import { MatchWithPlayers } from "@/types/match";
+import { BaseTeam, Team } from "@/types/team";
 import { byName } from "@/utils/by-name";
 import { Player } from "@prisma/client";
 import shuffle from "lodash.shuffle";
 import uniqueId from "lodash.uniqueid";
 import { useEffect, useState } from "react";
-
-export type Team = {
-  id: string;
-  name: string;
-  players: Player[];
-};
 
 const createEmptyTeam: (name: string) => Team = (name) => ({
   id: uniqueId("team-"),
@@ -23,7 +18,7 @@ const DEFAULT_TEAMS: Team[] = [
 ];
 
 const getInitialTeams: (match: MatchWithPlayers) => Team[] = (match) => {
-  const formattedTeams: FormattedTeam[] = JSON.parse(match.teams);
+  const formattedTeams: BaseTeam[] = JSON.parse(match.teams);
 
   if (!formattedTeams.length) {
     return DEFAULT_TEAMS;

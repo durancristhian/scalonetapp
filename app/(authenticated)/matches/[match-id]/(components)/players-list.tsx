@@ -1,6 +1,5 @@
 "use client";
 
-import { Team } from "@/app/(authenticated)/matches/[match-id]/hooks/use-team-builder-state";
 import { SpicyTooltips } from "@/components/spicy-tooltips";
 import {
   Select,
@@ -11,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Toggle } from "@/components/ui/toggle";
+import { Team } from "@/types/team";
 import { Player } from "@prisma/client";
 import { default as BoringAvatar } from "boring-avatars";
 import { FC, useState } from "react";

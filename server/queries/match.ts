@@ -5,13 +5,6 @@ import prisma from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { Match, Prisma } from "@prisma/client";
 
-/* This is the object version of the Match.teams Prisma field (String in the DB) */
-export type FormattedTeam = {
-  id: string;
-  name: string;
-  players: number[];
-};
-
 export const getMatches = async () => {
   const user = auth();
   if (!user || !user.userId) {
@@ -30,11 +23,6 @@ export const getMatches = async () => {
     },
   });
 };
-
-/* We create this type since Prisma doesn't return relationships in the generated types */
-export type MatchWithPlayers = NonNullable<
-  Prisma.PromiseReturnType<typeof getMatchById>
->;
 
 export const getMatchById = async (id: number) => {
   const user = auth();

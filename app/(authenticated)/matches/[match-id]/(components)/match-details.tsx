@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MatchWithPlayers } from "@/server/queries/match";
+import { MatchWithPlayers } from "@/types/match";
 import { FC, useCallback } from "react";
 
 type MatchDetailsProps = {

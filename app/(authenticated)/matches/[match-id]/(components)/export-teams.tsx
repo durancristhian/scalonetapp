@@ -1,6 +1,5 @@
 "use client";
 
-import { Team } from "@/app/(authenticated)/matches/[match-id]/hooks/use-team-builder-state";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -9,6 +8,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { editMatch } from "@/server/actions/match";
+import { Team } from "@/types/team";
 import { BugIcon, LoaderCircleIcon, PartyPopperIcon } from "lucide-react";
 import { FC, useState } from "react";
 import { toast } from "sonner";
