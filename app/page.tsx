@@ -32,7 +32,7 @@ const Page: FC = () => {
             transition={{ ease: "easeInOut", duration: 0.5, delay: 0.5 }}
           >
             <h1 className="font-bold text-4xl text-balance text-center">
-              Arma equipos como un campeón!
+              ¡Arma equipos como un campeón!
             </h1>
           </motion.div>
         </div>

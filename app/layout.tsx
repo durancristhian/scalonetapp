@@ -18,10 +18,9 @@ const fontFamily = Work_Sans({
   display: "swap",
 });
 
-/* TODO: Update this information */
 export const metadata: Metadata = {
   title: "scalonet.app",
-  description: "scalonet.app",
+  description: "¡Arma equipos como un campeón!",
 };
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
