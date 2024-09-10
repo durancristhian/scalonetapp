@@ -26,13 +26,17 @@ export const ConfirmTeamsUpdate: FC<ConfirmTeamsUpdateProps> = ({
   triggerText,
 }) => {
   if (!showConfirmation) {
-    return <Button onClick={onConfirm}>{triggerText}</Button>;
+    return (
+      <Button onClick={onConfirm} variant="outline">
+        {triggerText}
+      </Button>
+    );
   }
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button>{triggerText}</Button>
+        <Button variant="outline">{triggerText}</Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

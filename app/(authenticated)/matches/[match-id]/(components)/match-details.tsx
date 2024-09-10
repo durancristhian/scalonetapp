@@ -81,12 +81,14 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
       <div className="md:col-span-2">
         <div className="grid gap-8">
           <div className="grid gap-2">
-            <CardTitle>¡Es hora de armar los equipos!</CardTitle>
-            <CardDescription>
+            <h1 className="font-bold text-xl">
+              ¡Es hora de armar los equipos!
+            </h1>
+            <p>
               ¡Puedes comenzar con uno de nuestros equipos sugeridos y luego
               jugar al entrenador a tu manera! Ajusta y cambia lo que quieras,
               porque en el fútbol, ¡siempre hay espacio para una jugada maestra!
-            </CardDescription>
+            </p>
           </div>
           <Tabs
             defaultValue="suggested-teams"
@@ -104,10 +106,10 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
               </TabsTrigger>
             </TabsList>
             <TabsContent value="suggested-teams">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="grid gap-2">
+              <div className="grid gap-8 md:grid-cols-2">
+                <div className="grid gap-4">
                   <p className="font-semibold">¡El sorteo del sorteo!</p>
-                  <p className="text-sm">
+                  <p>
                     Usa esta opción para hacer magia y separar a los jugadores
                     al azar. Ideal si no tienes idea del nivel de tus estrellas
                     o si simplemente quieres armar un partido y ver cómo se
@@ -121,9 +123,9 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                     triggerText="Armar equipos aleatorios"
                   />
                 </div>
-                <div className="grid gap-2">
+                <div className="grid gap-4">
                   <p className="font-semibold">¡Divide y vencerás por nivel!</p>
-                  <p className="text-sm">
+                  <p>
                     Con esta opción, haremos que los equipos queden lo más
                     equilibrados posible. Usamos el nivel de los jugadores para
                     armar bandos que prometen una competencia justa y
