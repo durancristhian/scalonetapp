@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { ClerkProvider } from "@clerk/nextjs";
 import clsx from "clsx";
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Work_Sans } from "next/font/google";
 import { FC, PropsWithChildren } from "react";
 
 export const viewport: Viewport = {
@@ -13,7 +13,7 @@ export const viewport: Viewport = {
   width: "device-width",
 };
 
-const inter = Inter({
+const fontFamily = Work_Sans({
   subsets: ["latin"],
   display: "swap",
 });
@@ -37,7 +37,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
       <html lang="es">
         <body
           className={clsx(
-            inter.className,
+            fontFamily.className,
             "antialiased bg-background min-h-dvh slashed-zero tabular-nums text-foreground"
           )}
         >
