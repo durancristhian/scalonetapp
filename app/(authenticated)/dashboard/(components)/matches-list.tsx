@@ -116,7 +116,7 @@ export const MatchesList: FC<MatchsListProps> = ({ matches }) => {
                 ¡Alto ahí, entrenador! ¡Llegaste al límite!
               </AlertTitle>
               <AlertDescription>
-                Parece que ya tienes{" "}
+                Parece que ya tienes&nbsp;
                 {process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER} partidos creados.
                 Antes de añadir otro, te sugerimos despedir a uno de tus
                 encuentros más viejitos. ¡Elimina un partido y dale lugar a

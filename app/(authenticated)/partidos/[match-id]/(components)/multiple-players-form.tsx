@@ -99,10 +99,10 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
               </FormControl>
               <FormDescription>
                 Agrega un nombre (obligatorio) y un nivel (opcional) por línea,
-                separados por coma. Si no pones nivel, asignamos un{" "}
+                separados por coma. Si no pones nivel, asignamos un&nbsp;
                 {process.env.NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL} por defecto.
-                ¡Puedes añadir hasta {process.env.NEXT_PUBLIC_MAX_PLAYERS_BATCH}{" "}
-                jugadores de una sola vez!
+                ¡Puedes añadir hasta {process.env.NEXT_PUBLIC_MAX_PLAYERS_BATCH}
+                &nbsp; jugadores de una sola vez!
               </FormDescription>
               {lines.length > 0 ? (
                 <FormDescription>

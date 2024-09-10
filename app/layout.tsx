@@ -18,9 +18,40 @@ const fontFamily = Work_Sans({
   display: "swap",
 });
 
+const title = "scalonet.app - ¡Arma equipos como un campeón!";
+const description =
+  "Tienes lo necesario para ser el Lionel Scaloni entre tus amigos?. Demostrá tu habilidad para formar equipos ideales.";
+const ogImagePath = "https://www.scalonet.app/api/static";
+
 export const metadata: Metadata = {
-  title: "scalonet.app",
-  description: "¡Arma equipos como un campeón!",
+  title,
+  description,
+  applicationName: "scalonet.app",
+  authors: {
+    name: "Cristhian Duran",
+    url: "https://github.com/durancristhian",
+  },
+  keywords: ["scaloneta", "scalonet.app", "fútbol", "armar equipos de fútbol"],
+  creator: "Cristhian Duran",
+  openGraph: {
+    type: "website",
+    url: "https://www.scalonet.app/",
+    title,
+    description,
+    siteName: "scalonet.app",
+    images: [
+      {
+        url: ogImagePath,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    creator: "@durancristhian",
+    images: ogImagePath,
+  },
 };
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {

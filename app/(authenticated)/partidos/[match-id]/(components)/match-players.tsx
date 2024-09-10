@@ -84,7 +84,7 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
               <AlertCircleIcon className="h-4 w-4" />
               <AlertTitle>¡No hay más espacio en el banco!</AlertTitle>
               <AlertDescription>
-                ¡Has alcanzado el máximo de{" "}
+                ¡Has alcanzado el máximo de&nbsp;
                 {process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH} jugadores! Tu
                 partido está tan lleno que no cabe ni uno más. Si necesitas
                 añadir más estrellas, considera liberar espacio eliminando un
