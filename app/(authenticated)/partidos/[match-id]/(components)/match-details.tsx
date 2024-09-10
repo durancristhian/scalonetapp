@@ -48,9 +48,9 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
   }, [teams, unselectedPlayers]);
 
   return (
-    <div className="grid md:grid-cols-3 gap-4">
+    <div className="grid md:grid-cols-3 gap-8">
       <div className="md:col-span-1">
-        <div className="grid gap-4">
+        <div className="grid gap-8">
           <Card>
             <CardHeader>
               <CardTitle>¡Convoca a los galácticos!</CardTitle>
