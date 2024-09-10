@@ -108,7 +108,7 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
       ) : (
         <EmptyState>
           Parece que aún no has agregado a nadie. ¡Es hora de llenar la
-          plantilla con tus estrellas favoritas y armar un equipo de campeones!
+          plantilla con tus estrellas favoritas!
         </EmptyState>
       )}
     </>
