@@ -3,11 +3,11 @@ import Link from "next/link";
 
 export const Header = () => {
   return (
-    <div className="bg-slate-100 border-b border-slate-300">
+    <div className="bg-accent border-b border-border">
       <div className="max-w-7xl mx-auto px-4 w-full">
         <div className="flex h-10 md:h-12 items-center justify-between">
           <Link href="/dashboard">
-            <h1 className="font-bold text-slate-950">scalonet.app</h1>
+            <h1 className="font-bold">scalonet.app</h1>
           </Link>
           <SignedIn>
             <UserButton showName />

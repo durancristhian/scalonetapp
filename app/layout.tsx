@@ -38,7 +38,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
         <body
           className={clsx(
             inter.className,
-            "antialiased bg-white min-h-dvh slashed-zero tabular-nums text-slate-800"
+            "antialiased bg-background min-h-dvh slashed-zero tabular-nums text-foreground"
           )}
         >
           {children}

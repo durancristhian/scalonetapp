@@ -32,8 +32,8 @@ export const ShowOff = () => {
                 Programador front-end de Buenos Aires, Argentina.
               </p>
               <div className="flex gap-2 items-center mt-4">
-                <MailIcon className="h-4 text-slate-700 w-4" />
-                <span className="text-xs text-muted-foreground text-slate-700">
+                <MailIcon className="h-4 text-muted-foreground w-4" />
+                <span className="text-muted-foreground text-xs">
                   durancristhian@gmail.com
                 </span>
               </div>

@@ -42,7 +42,7 @@ export const AddMatch: FC = () => {
   };
 
   return (
-    <Card className="bg-slate-50">
+    <Card>
       <CardHeader>
         <CardTitle>El primer paso hacia la gloria</CardTitle>
         <CardDescription>

@@ -20,18 +20,18 @@ export const MatchItem: FC<MatchItemProps> = ({ match }) => {
       <EditMatch match={match} />
       <div className="grow">
         <Link href={`/partidos/${match.id}`}>
-          <div className="border border-slate-300 hover:bg-slate-100 px-4 py-2 rounded-md transition-colors">
+          <div className="border border-border hover:bg-accent px-4 py-2 rounded-md transition-colors">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p>{match.name}</p>
-                <p className="text-slate-500 text-sm">
+                <p className="text-muted-foreground text-sm">
                   Última actualización:&nbsp;
                   {formatDistanceToNow(match.updatedAt, {
                     locale: es,
                   })}
                 </p>
               </div>
-              <ChevronRightIcon className="h-4 text-slate-500 w-4" />
+              <ChevronRightIcon className="h-4 text-muted-foreground w-4" />
             </div>
           </div>
         </Link>

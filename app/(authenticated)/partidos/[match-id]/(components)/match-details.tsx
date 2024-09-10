@@ -51,7 +51,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
     <div className="grid md:grid-cols-3 gap-4">
       <div className="md:col-span-1">
         <div className="grid gap-4">
-          <Card className="bg-slate-50">
+          <Card>
             <CardHeader>
               <CardTitle>¡Convoca a los galácticos!</CardTitle>
               <CardDescription>
@@ -63,7 +63,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
               <PlayerTabs />
             </CardContent>
           </Card>
-          <Card className="bg-slate-50">
+          <Card>
             <CardHeader>
               <CardTitle>
                 Jugadores fichados

@@ -74,7 +74,7 @@ export const EditMatch: FC<EditMatchProps> = ({ match }) => {
           <TooltipTrigger asChild>
             <DialogTrigger asChild>
               <Button variant="ghost" size="icon">
-                <PencilIcon className="h-4 text-slate-500 w-4" />
+                <PencilIcon className="h-4 text-muted-foreground w-4" />
               </Button>
             </DialogTrigger>
           </TooltipTrigger>

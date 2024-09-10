@@ -140,7 +140,7 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player, onPlayerSubmit }) => {
       <div className="grow">
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger className="w-full">
-            <div className="border border-slate-300 hover:bg-slate-100 px-4 py-2 rounded-md transition-colors">
+            <div className="border border-border hover:bg-accent px-4 py-2 rounded-md transition-colors">
               <div className="flex gap-2 items-center">
                 <div className="grow">
                   <div className="flex gap-2 items-center">
@@ -154,7 +154,7 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player, onPlayerSubmit }) => {
                     <p>{player.name}</p>
                   </div>
                 </div>
-                <PencilIcon className="h-4 text-slate-500 w-4" />
+                <PencilIcon className="h-4 text-muted-foreground w-4" />
               </div>
             </div>
           </DialogTrigger>
