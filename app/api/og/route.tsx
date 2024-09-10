@@ -32,7 +32,7 @@ export async function GET() {
         <div
           style={{
             display: "flex",
-            fontSize: 24,
+            fontSize: 36,
             marginTop: 96,
           }}
         >
