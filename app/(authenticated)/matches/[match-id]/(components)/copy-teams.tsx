@@ -27,7 +27,9 @@ export const CopyTeams: FC<CopyTeamsProps> = ({ teams }) => {
 
     copy(text);
 
-    toast("Equipos copiados al portapapeles", {
+    toast("¡Equipos copiados al portapapeles!", {
+      description:
+        "¡Tus equipos están ahora listos para ser pegados en cualquier parte! Haz lo que quieras con ellos: compártelos, imprímelos o simplemente presúmelos.",
       icon: <PartyPopperIcon className="h-4 opacity-50 w-4" />,
     });
   };

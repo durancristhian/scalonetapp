@@ -50,13 +50,16 @@ export const addPlayer: (
   }
 
   /* We check that we don't have a player named the same in the match already */
-  const hasCoincidences = await namesAlreadyInMatch(matchId, [data.name]);
-  if (hasCoincidences) {
+  const coincidences = await namesAlreadyInMatch(matchId, [data.name]);
+  if (coincidences) {
     throw new Error(VALIDATION_MESSAGES.player_repeated);
   }
 
   /* We check we haven't reached the players in match limit */
-  if (match.players.length >= Number(process.env.MAX_PLAYERS_PER_MATCH)) {
+  if (
+    match.players.length >=
+    Number(process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH)
+  ) {
     throw new Error(ERROR_MESSAGES.players_per_match_limit_reached);
   }
 
@@ -96,7 +99,10 @@ export const addMultiplePlayers: (
   }
 
   /* We check we haven't reached the players in match limit */
-  if (match.players.length >= Number(process.env.MAX_PLAYERS_PER_MATCH)) {
+  if (
+    match.players.length >=
+    Number(process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH)
+  ) {
     throw new Error(ERROR_MESSAGES.players_per_match_limit_reached);
   }
 

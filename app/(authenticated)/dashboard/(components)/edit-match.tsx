@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -42,7 +43,7 @@ export const EditMatch: FC<EditMatchProps> = ({ match }) => {
         console.error(error);
 
         if (error instanceof ZodError) {
-          toast(`Ups, parece que algo anda mal`, {
+          toast("Ups!, parece que algo anda mal", {
             description: (
               <ul className="list-disc list-inside">
                 {error.errors.map(({ message }, idx) => (
@@ -53,9 +54,9 @@ export const EditMatch: FC<EditMatchProps> = ({ match }) => {
             icon: <BugIcon className="h-4 opacity-50 w-4" />,
           });
         } else {
-          toast("Ha ocurrido un error", {
+          toast("Error en la edición del partido", {
             description:
-              "No pudimos actualizar el partido. ¿Podrías volver a intentarlo?.",
+              "Por favor, verifica la información y prueba otra vez.",
             icon: <BugIcon className="h-4 opacity-50 w-4" />,
           });
         }
@@ -83,7 +84,11 @@ export const EditMatch: FC<EditMatchProps> = ({ match }) => {
       </TooltipProvider>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Editar partido</DialogTitle>
+          <DialogTitle>¿Listo para un cambio?</DialogTitle>
+          <DialogDescription>
+            Tómate un momento para hacer este ajuste y optimizar tu gestión. ¡A
+            Lionel no se le escapa una!
+          </DialogDescription>
         </DialogHeader>
         <MatchForm
           onSubmit={onMatchSubmit}

@@ -10,7 +10,7 @@ export const PLAYERS_SCHEMA = z.object({
     .refine(
       (value) =>
         getLinesFromString(value).length <=
-        Number(process.env.MAX_PLAYERS_BATCH),
+        Number(process.env.NEXT_PUBLIC_MAX_PLAYERS_BATCH),
       {
         message: VALIDATION_MESSAGES.max_players_per_save,
       }

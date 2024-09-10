@@ -1,5 +1,6 @@
 "use client";
 
+import { SoccerBall } from "@/components/soccer-ball";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -9,7 +10,7 @@ import {
 } from "@/components/ui/tooltip";
 import { editMatch } from "@/server/actions/match";
 import { Team } from "@/types/team";
-import { BugIcon, LoaderCircleIcon, PartyPopperIcon } from "lucide-react";
+import { BugIcon, PartyPopperIcon } from "lucide-react";
 import { FC, useState } from "react";
 import { toast } from "sonner";
 
@@ -45,12 +46,11 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
           "/matches/[match-id]"
         );
 
-        toast(
-          "Equipos guardados con éxito. En instantes comienza la descarga...",
-          {
-            icon: <PartyPopperIcon className="h-4 opacity-50 w-4" />,
-          }
-        );
+        toast("¡Equipos guardados con éxito!", {
+          description:
+            "En un momento, la descarga comenzará y tus equipos estarán al alcance de tu mano. Prepárate para disfrutar de tu estrategia y llevarla al campo de juego.",
+          icon: <PartyPopperIcon className="h-4 opacity-50 w-4" />,
+        });
 
         fetch(`/download/${matchId}`)
           .then((response) => response.blob())
@@ -75,8 +75,7 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
         console.error(error);
 
         toast("Ha ocurrido un error", {
-          description:
-            "No pudimos guardar los equipos. ¿Podrías volver a intentarlo?.",
+          description: "Por favor, verifica la información y prueba otra vez.",
           icon: <BugIcon className="h-4 opacity-50 w-4" />,
         });
 
@@ -95,7 +94,7 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
           <div>
             <Button onClick={exportTeams} disabled={disabled || processing}>
               {processing ? (
-                <LoaderCircleIcon className="animate-spin h-4 mr-2 opacity-50 w-4" />
+                <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
               ) : null}
               {processing ? "Procesando..." : "Guardar y exportar"}
             </Button>
@@ -104,8 +103,8 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
         {disabled && !processing ? (
           <TooltipContent>
             <p>
-              Cuando todos los jugadores estén en un equipo este botón va a
-              estar habilitado.
+              Cuando todos tus jugadores estén en algún equipo, este botón se
+              habilitará. ¡Completa los equipos y prepárate para la acción!
             </p>
           </TooltipContent>
         ) : null}

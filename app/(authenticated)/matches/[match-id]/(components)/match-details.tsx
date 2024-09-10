@@ -53,7 +53,11 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
         <div className="grid gap-4">
           <Card className="bg-slate-50">
             <CardHeader>
-              <CardTitle>Agregar jugadores</CardTitle>
+              <CardTitle>¡Convoca a los galácticos!</CardTitle>
+              <CardDescription>
+                Es el momento de traer a los mejores jugadores al campo. Puedes
+                agregarlos de a uno o de a muchos al mismo tiempo.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <PlayerTabs />
@@ -62,8 +66,10 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
           <Card className="bg-slate-50">
             <CardHeader>
               <CardTitle>
-                Confirmados
-                {match.players.length ? `: ${match.players.length}` : ""}
+                Jugadores fichados
+                {match.players.length
+                  ? `: ${match.players.length} de ${process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH}`
+                  : ""}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -75,10 +81,11 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
       <div className="md:col-span-2">
         <div className="grid gap-8">
           <div className="grid gap-2">
-            <CardTitle>A agarrar la pala</CardTitle>
+            <CardTitle>¡Es hora de armar los equipos!</CardTitle>
             <CardDescription>
-              Podés arrancar con uno de los equipos sugeridos y luego ir
-              actualizando a mano en base a lo que prefieras.
+              ¡Puedes comenzar con uno de nuestros equipos sugeridos y luego
+              jugar al entrenador a tu manera! Ajusta y cambia lo que quieras,
+              porque en el fútbol, ¡siempre hay espacio para una jugada maestra!
             </CardDescription>
           </div>
           <Tabs
@@ -99,13 +106,12 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
             <TabsContent value="suggested-teams">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="grid gap-2">
-                  <p className="font-semibold">
-                    Separar a la gente aleatoriamente
-                  </p>
+                  <p className="font-semibold">¡El sorteo del sorteo!</p>
                   <p className="text-sm">
-                    Esta opción es útil cuando no conoces el nivel de los
-                    jugadores o simplemente necesitás armar algo sin importar
-                    que el partido esté parejo.
+                    Usa esta opción para hacer magia y separar a los jugadores
+                    al azar. Ideal si no tienes idea del nivel de tus estrellas
+                    o si simplemente quieres armar un partido y ver cómo se
+                    desarrolla. ¡La suerte está echada!
                   </p>
                   <ConfirmTeamsUpdate
                     onConfirm={randomizeTeams}
@@ -116,11 +122,12 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <p className="font-semibold">Separar a la gente por nivel</p>
+                  <p className="font-semibold">¡Divide y vencerás por nivel!</p>
                   <p className="text-sm">
-                    Teniendo en cuenta el nivel de los jugadores, podemos
-                    separar a la gente para que los equipos queden lo más
-                    balanceados posibles.
+                    Con esta opción, haremos que los equipos queden lo más
+                    equilibrados posible. Usamos el nivel de los jugadores para
+                    armar bandos que prometen una competencia justa y
+                    emocionante. ¡Prepárate para el desafío!
                   </p>
                   <ConfirmTeamsUpdate
                     onConfirm={balanceTeams}
@@ -167,7 +174,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
           </div>
           <Separator />
           <div className="flex gap-4 items-center justify-center">
-            <p>¿Terminaste?</p>
+            <p>¿Listo para la acción?</p>
             <ExportTeams
               disabled={!areTeamsValid()}
               matchId={match.id}

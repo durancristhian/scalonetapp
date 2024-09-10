@@ -1,6 +1,7 @@
 import { PlayerForm } from "@/app/(authenticated)/matches/[match-id]/(components)/player-form";
 import { AnimatedListItem } from "@/components/animated-list-item";
 import { EmptyState } from "@/components/empty-state";
+import { SoccerBall } from "@/components/soccer-ball";
 import { SpicyTooltips } from "@/components/spicy-tooltips";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -22,13 +23,7 @@ import { deletePlayer, editPlayer } from "@/server/actions/player";
 import { byName } from "@/utils/by-name";
 import { Player } from "@prisma/client";
 import { default as BoringAvatar } from "boring-avatars";
-import {
-  AlertCircleIcon,
-  BugIcon,
-  LoaderCircleIcon,
-  PencilIcon,
-  TrashIcon,
-} from "lucide-react";
+import { AlertCircleIcon, BugIcon, PencilIcon, TrashIcon } from "lucide-react";
 import { FC, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { toast } from "sonner";
@@ -54,7 +49,7 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
         console.error(error);
 
         if (error instanceof ZodError) {
-          toast(`Ups, parece que algo anda mal`, {
+          toast("Ups!, parece que algo anda mal", {
             description: (
               <ul className="list-disc list-inside">
                 {error.errors.map(({ message }, idx) => (
@@ -65,9 +60,9 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
             icon: <BugIcon className="h-4 opacity-50 w-4" />,
           });
         } else {
-          toast("Ha ocurrido un error", {
+          toast("Error en la edición del jugador", {
             description:
-              "No pudimos actualizar el jugador. ¿Podrías volver a intentarlo?.",
+              "Por favor, verifica la información y prueba otra vez.",
             icon: <BugIcon className="h-4 opacity-50 w-4" />,
           });
         }
@@ -81,14 +76,17 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
     <>
       {canListPlayers ? (
         <div className="grid gap-6">
-          {players.length >= Number(process.env.MAX_PLAYERS_PER_MATCH) ? (
+          {players.length >=
+          Number(process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH) ? (
             <Alert variant="destructive">
               <AlertCircleIcon className="h-4 w-4" />
-              <AlertTitle>Límite de jugadores alcanzado.</AlertTitle>
+              <AlertTitle>¡No hay más espacio en el banco!</AlertTitle>
               <AlertDescription>
-                Puedes agregar hasta {process.env.MAX_PLAYERS_PER_MATCH}{" "}
-                jugadores. Para crear uno nuevo, deberás eliminar uno de los
-                existentes.
+                ¡Has alcanzado el máximo de{" "}
+                {process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH} jugadores! Tu
+                partido está tan lleno que no cabe ni uno más. Si necesitas
+                añadir más estrellas, considera liberar espacio eliminando un
+                jugador existente.
               </AlertDescription>
             </Alert>
           ) : null}
@@ -107,7 +105,8 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
         </div>
       ) : (
         <EmptyState>
-          Las personas que agregues van a aparecer listadas acá.
+          Parece que aún no has agregado a nadie. ¡Es hora de llenar la
+          plantilla con tus estrellas favoritas y armar un equipo de campeones!
         </EmptyState>
       )}
     </>
@@ -159,7 +158,7 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player, onPlayerSubmit }) => {
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Editar jugador</DialogTitle>
+              <DialogTitle>Editar ficha del jugador</DialogTitle>
             </DialogHeader>
             <PlayerForm
               onSubmit={onSubmit}
@@ -184,7 +183,7 @@ const SubmitButton = () => {
         <TooltipTrigger asChild>
           <Button type="submit" disabled={pending} variant="ghost" size="icon">
             {pending ? (
-              <LoaderCircleIcon className="animate-spin h-4 opacity-50 w-4" />
+              <SoccerBall className="animate-spin h-4 opacity-50 w-4" />
             ) : (
               <TrashIcon className="h-4 text-red-700 w-4" />
             )}

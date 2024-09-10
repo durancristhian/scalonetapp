@@ -32,15 +32,14 @@ export const DeleteMatch: FC<DeleteMatchProps> = ({ id }) => {
     try {
       await deleteMatch(id);
 
-      toast("Se ha eliminado tu partido", {
+      toast("¡Partido eliminado!", {
         icon: <TrashIcon className="h-4 opacity-50 w-4" />,
       });
     } catch (error) {
       console.error(error);
 
-      toast("Ha ocurrido un error", {
-        description:
-          "No pudimos borrar el partido. ¿Podrías volver a intentarlo?.",
+      toast("Error en la eliminación del partido", {
+        description: "¿Podrías volver a intentarlo?.",
         icon: <BugIcon className="h-4 opacity-50 w-4" />,
       });
     }
@@ -64,11 +63,11 @@ export const DeleteMatch: FC<DeleteMatchProps> = ({ id }) => {
       </TooltipProvider>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>
-            ¿Estás seguro de eliminar este partido?
-          </AlertDialogTitle>
+          <AlertDialogTitle>¿Eliminar este partido?</AlertDialogTitle>
           <AlertDialogDescription>
-            Esta acción no se puede deshacer.
+            Eliminar este partido eliminará toda la información asociada a él.
+            Revisa tu decisión antes de proceder, ya que esta acción no tiene
+            vuelta atrás.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

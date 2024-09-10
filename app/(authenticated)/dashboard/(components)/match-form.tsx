@@ -1,11 +1,13 @@
 "use client";
 
+import { SoccerBall } from "@/components/soccer-ball";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
   FormRootError,
 } from "@/components/ui/form";
@@ -13,7 +15,6 @@ import { Input } from "@/components/ui/input";
 import { MATCH_SCHEMA, MatchSchema } from "@/schemas/match";
 import { unfoldZodError } from "@/utils/errors";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoaderCircleIcon } from "lucide-react";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { ZodError } from "zod";
@@ -75,6 +76,7 @@ export const MatchForm: FC<MatchFormProps> = ({ onSubmit, values }) => {
           name="name"
           render={({ field }) => (
             <FormItem>
+              <FormLabel>Nombre</FormLabel>
               <FormControl>
                 <Input placeholder={placeholder} {...field} />
               </FormControl>
@@ -88,7 +90,7 @@ export const MatchForm: FC<MatchFormProps> = ({ onSubmit, values }) => {
           disabled={!form.formState.isValid || form.formState.isSubmitting}
         >
           {form.formState.isSubmitting ? (
-            <LoaderCircleIcon className="animate-spin h-4 mr-2 opacity-50 w-4" />
+            <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
           ) : null}
           {form.formState.isSubmitting ? "Guardando..." : "Guardar"}
         </Button>

@@ -42,8 +42,8 @@ const Page: FC = () => {
           transition={{ ease: "easeInOut", duration: 0.5, delay: 1 }}
         >
           <p className="text-balance text-center">
-            ¿Tenés lo necesario para ser el{" "}
-            <span className="font-bold">Scaloni</span> entre tus amigos?
+            Tienes lo necesario para ser el{" "}
+            <span className="font-bold">Lionel Scaloni</span> entre tus amigos?
           </p>
           <p className="text-balance text-center">
             Demostrá tu habilidad para formar equipos ideales.

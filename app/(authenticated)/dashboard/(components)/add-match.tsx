@@ -1,7 +1,13 @@
 "use client";
 
 import { MatchForm } from "@/app/(authenticated)/dashboard/(components)/match-form";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { MatchSchema } from "@/schemas/match";
 import { addMatch } from "@/server/actions/match";
 import { BugIcon, PartyPopperIcon } from "lucide-react";
@@ -14,7 +20,9 @@ export const AddMatch: FC = () => {
       try {
         await addMatch(values);
 
-        toast("Se ha creado tu partido", {
+        toast("¡Partido creado!", {
+          description:
+            "Está todo listo para que el fútbol comience. ¡Adelante, entrenador!",
           icon: <PartyPopperIcon className="h-4 opacity-50 w-4" />,
         });
 
@@ -22,9 +30,8 @@ export const AddMatch: FC = () => {
       } catch (error) {
         console.error(error);
 
-        toast("Ha ocurrido un error", {
-          description:
-            "No pudimos crear el partido. ¿Podrías volver a intentarlo?.",
+        toast("Error en la creación del partido", {
+          description: "Por favor, verifica la información y prueba otra vez.",
           icon: <BugIcon className="h-4 opacity-50 w-4" />,
         });
 
@@ -36,7 +43,11 @@ export const AddMatch: FC = () => {
   return (
     <Card className="bg-slate-50">
       <CardHeader>
-        <CardTitle>Crear un partido</CardTitle>
+        <CardTitle>El primer paso hacia la gloria</CardTitle>
+        <CardDescription>
+          Antes de demostrar tu habilidad como DT, necesitas decirnos como se
+          llama el partido.
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <MatchForm onSubmit={onMatchSubmit} />

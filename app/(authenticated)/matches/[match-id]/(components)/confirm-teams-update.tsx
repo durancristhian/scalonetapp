@@ -37,17 +37,18 @@ export const ConfirmTeamsUpdate: FC<ConfirmTeamsUpdateProps> = ({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            ¿Estás seguro de usar esta opción?
+            ¿Confirmas el cambio de alineación?
           </AlertDialogTitle>
           <AlertDialogDescription>
-            En el caso de confirmar, se va a perder el estado actual de los
-            equipos.
+            Si confirmas, el estado actual de tus equipos se perderá como un
+            tiro libre mal pateado. Asegúrate de estar listo para esta jugada
+            antes de proceder.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
           <AlertDialogAction asChild>
-            <Button onClick={onConfirm}>Estoy seguro</Button>
+            <Button onClick={onConfirm}>Sí, confirmo</Button>
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

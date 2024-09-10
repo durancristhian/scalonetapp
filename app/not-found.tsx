@@ -4,13 +4,22 @@ import { FC } from "react";
 
 const NotFound: FC = () => {
   return (
-    <div className="flex flex-col gap-4 items-center justify-center h-full min-h-[inherit] p-2">
-      <h1 className="font-bold text-2xl text-slate-950">
-        Está página no existe :(
-      </h1>
-      <Button asChild>
-        <Link href="/">Volver a la página principal</Link>
-      </Button>
+    <div className="flex items-center justify-center h-full min-h-[inherit] p-2">
+      <div className="max-w-3xl mx-auto w-full">
+        <div className="grid gap-4 place-items-center">
+          <h1 className="font-bold text-2xl text-slate-950">
+            ¡Offside de búsqueda!
+          </h1>
+          <p>
+            Parece que lo que estabas buscando se ha adelantado y está en una
+            posición prohibida. No te preocupes, puedes volver al campo para
+            intentar otra jugada.
+          </p>
+          <Button asChild>
+            <Link href="/">Volver a la página principal</Link>
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };

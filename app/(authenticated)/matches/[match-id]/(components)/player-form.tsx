@@ -1,5 +1,6 @@
 "use client";
 
+import { SoccerBall } from "@/components/soccer-ball";
 import { SpicyTooltips } from "@/components/spicy-tooltips";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +18,6 @@ import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
 import { unfoldZodError } from "@/utils/errors";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { default as BoringAvatar } from "boring-avatars";
-import { LoaderCircleIcon } from "lucide-react";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { ZodError } from "zod";
@@ -51,7 +51,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
   const form = useForm<PlayerSchema>({
     defaultValues: values || {
       name: "",
-      level: Number(process.env.DEFAULT_PLAYER_LEVEL),
+      level: Number(process.env.NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL),
     },
     resolver: zodResolver(PLAYER_SCHEMA),
     values,
@@ -75,7 +75,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
       } else if (error instanceof Error) {
         errorMessage =
           error.message ||
-          "No pudimos agregar el jugador. ¿Podrías volver a intentarlo?.";
+          "No pudimos agregar el jugador. Por favor, verifica la información y prueba otra vez.";
       }
 
       form.setError("root", {
@@ -122,7 +122,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
           name="level"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nivel</FormLabel>
+              <FormLabel>Nivel de juego</FormLabel>
               <FormControl>
                 <div className="auto-cols-max gap-1 grid grid-cols-10">
                   {PLAYER_LEVELS.map((level) => (
@@ -152,7 +152,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
           disabled={!form.formState.isValid || form.formState.isSubmitting}
         >
           {form.formState.isSubmitting ? (
-            <LoaderCircleIcon className="animate-spin h-4 mr-2 opacity-50 w-4" />
+            <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
           ) : null}
           {form.formState.isSubmitting ? "Guardando..." : "Guardar"}
         </Button>

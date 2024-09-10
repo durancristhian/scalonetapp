@@ -2,7 +2,6 @@ import { MatchItem } from "@/app/(authenticated)/dashboard/(components)/match-it
 import { AnimatedListItem } from "@/components/animated-list-item";
 import { EmptyState } from "@/components/empty-state";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { CardDescription, CardTitle } from "@/components/ui/card";
 import { Match } from "@prisma/client";
 import { AlertCircleIcon } from "lucide-react";
 import { FC } from "react";
@@ -16,22 +15,29 @@ export const MatchsList: FC<MatchsListProps> = ({ matches }) => {
 
   return (
     <div className="grid gap-4">
-      <div className="grid gap-2">
-        <CardTitle>Tus partidos</CardTitle>
-      </div>
+      <h2 className="font-bold text-xl">Tus partidos</h2>
       {canListMatches ? (
         <>
-          {matches.length >= Number(process.env.MAX_MATCHES_PER_USER) ? (
+          {matches.length >=
+          Number(process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER) ? (
             <Alert variant="destructive">
               <AlertCircleIcon className="h-4 w-4" />
-              <AlertTitle>Límite de partidos alcanzado.</AlertTitle>
+              <AlertTitle>
+                ¡Alto ahí, entrenador! ¡Llegaste al límite!
+              </AlertTitle>
               <AlertDescription>
-                Puedes crear hasta {process.env.MAX_MATCHES_PER_USER} partidos.
-                Para crear uno nuevo, deberás eliminar uno de los existentes.
+                Parece que ya tienes{" "}
+                {process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER} partidos creados.
+                Antes de añadir otro, te sugerimos despedir a uno de tus
+                encuentros más viejitos. ¡Elimina un partido y dale lugar a
+                nuevas glorias futbolísticas!
               </AlertDescription>
             </Alert>
           ) : null}
-          <CardDescription>Ordenados por última modificación.</CardDescription>
+          <p>
+            Los partidos a continuación están ordenados por{" "}
+            <span className="font-bold">última fecha de actualización</span>.
+          </p>
           {matches.map((match, idx) => (
             <AnimatedListItem key={match.id} listIndex={idx}>
               <MatchItem match={match} />
@@ -40,7 +46,8 @@ export const MatchsList: FC<MatchsListProps> = ({ matches }) => {
         </>
       ) : (
         <EmptyState>
-          A medida que crees partidos van a aparecer listados acá.
+          Silencio atroz... hasta que crees un partido y hagas que la hinchada
+          ruja. ¡Vamos, empieza ya!
         </EmptyState>
       )}
     </div>

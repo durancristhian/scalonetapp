@@ -69,7 +69,9 @@ export const addMatch: (data: MatchSchema) => Promise<void> = async (data) => {
     },
   });
 
-  if (userMatches.length >= Number(process.env.MAX_MATCHES_PER_USER)) {
+  if (
+    userMatches.length >= Number(process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER)
+  ) {
     throw new Error(ERROR_MESSAGES.matches_limit_reached);
   }
 

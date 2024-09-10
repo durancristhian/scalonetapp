@@ -1,5 +1,6 @@
 "use client";
 
+import { SoccerBall } from "@/components/soccer-ball";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,7 +18,6 @@ import { unfoldZodError } from "@/utils/errors";
 import { getLinesFromString } from "@/utils/get-lines-from-string";
 import { getPlayersFromLines } from "@/utils/get-players-from-lines";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoaderCircleIcon } from "lucide-react";
 import { FC, useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { ZodError } from "zod";
@@ -73,7 +73,7 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
           error.message ||
           `No pudimos agregar ${
             lines.length > 1 ? "el jugador" : "los jugadores"
-          }. ¿Podrías volver a intentarlo?.`;
+          }. Por favor, verifica la información y prueba otra vez.`;
       }
 
       form.setError("root", {
@@ -98,11 +98,11 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
                 <Textarea rows={10} placeholder={PLACEHOLDER} {...field} />
               </FormControl>
               <FormDescription>
-                Agregá un nombre (requerido) y un nivel (opcional) por línea
-                separados por coma. Quienes no tengan nivel, se les asigna{" "}
-                {process.env.DEFAULT_PLAYER_LEVEL} por defecto. Se permiten
-                hasta&nbsp;
-                {process.env.MAX_PLAYERS_BATCH} líneas por lote.
+                Agrega un nombre (obligatorio) y un nivel (opcional) por línea,
+                separados por coma. Si no pones nivel, asignamos un{" "}
+                {process.env.NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL} por defecto.
+                ¡Puedes añadir hasta {process.env.NEXT_PUBLIC_MAX_PLAYERS_BATCH}{" "}
+                jugadores de una sola vez!
               </FormDescription>
               {lines.length > 0 ? (
                 <FormDescription>
@@ -121,7 +121,7 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
           disabled={!form.formState.isValid || form.formState.isSubmitting}
         >
           {form.formState.isSubmitting ? (
-            <LoaderCircleIcon className="animate-spin h-4 mr-2 opacity-50 w-4" />
+            <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
           ) : null}
           {form.formState.isSubmitting ? "Guardando..." : "Guardar"}
         </Button>

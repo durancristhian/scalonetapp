@@ -41,9 +41,10 @@ export const PlayersList: FC<PlayersListProps> = ({
   return (
     <div className="grid gap-4">
       <div className="grid gap-2">
-        <p className="font-semibold">Todavía tenés jugadores libres</p>
+        <p className="font-semibold">¡Aún tienes jugadores en el banco!</p>
         <p className="text-sm">
-          Elegí alguno de los que aparecen a continuación:
+          ¡No dejes a estos cracks esperando! Elige alguno de los jugadores que
+          aparecen a continuación:
         </p>
       </div>
       <div className="flex flex-wrap gap-2">
@@ -64,7 +65,10 @@ export const PlayersList: FC<PlayersListProps> = ({
         ))}
       </div>
       <div className="grid gap-2">
-        <p className="text-sm">Y ahora elegí el equipo al que van:</p>
+        <p className="text-sm">
+          Selecciona el equipo al que estos jugadores se unirán. ¡Es el momento
+          de decidir en qué bando brillarán tus nuevas estrellas!
+        </p>
         <Select
           value={selectedTeamId}
           disabled={canAssignSelection}
