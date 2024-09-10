@@ -156,7 +156,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
           </Tabs>
           <Separator />
           <div className="grid gap-4">
-            <CardTitle>Los equipos</CardTitle>
+            <p className="font-semibold">Los equipos</p>
             <div className="grid md:grid-cols-2 gap-4">
               {teams.map((team) => (
                 <TeamCard
