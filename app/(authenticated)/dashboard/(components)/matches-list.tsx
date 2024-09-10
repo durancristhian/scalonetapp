@@ -37,12 +37,12 @@ const DEFAULT_SORTING_OPTION = {
 const SORTING_OPTIONS: SortingOption[] = [
   DEFAULT_SORTING_OPTION,
   {
-    label: "Orden alfabético (A -> Z)",
+    label: "Orden alfabético (A > Z)",
     icon: ArrowDownAZIcon,
     value: "alphabetical",
   },
   {
-    label: "Orden alfabético Desc (Z -> A)",
+    label: "Orden alfabético Desc (Z > A)",
     icon: ArrowUpZAIcon,
     value: "alphabetical-revert",
   },
