@@ -1,3 +1,4 @@
+import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { PlayerForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/player-form";
 import { AnimatedListItem } from "@/components/animated-list-item";
 import { EmptyState } from "@/components/empty-state";
@@ -23,10 +24,9 @@ import { deletePlayer, editPlayer } from "@/server/actions/player";
 import { byName } from "@/utils/by-name";
 import { Player } from "@prisma/client";
 import { default as BoringAvatar } from "boring-avatars";
-import { AlertCircleIcon, BugIcon, PencilIcon, TrashIcon } from "lucide-react";
+import { AlertCircleIcon, PencilIcon, TrashIcon } from "lucide-react";
 import { FC, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
-import { toast } from "sonner";
 import { ZodError } from "zod";
 
 type MatchPlayersProps = {
@@ -34,6 +34,8 @@ type MatchPlayersProps = {
 };
 
 export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
+  const { errorAlert } = useAlerts();
+
   const canListPlayers = Array.isArray(players) && players.length;
 
   const onPlayerSubmit: (id: number, values: PlayerSchema) => Promise<void> = (
@@ -49,7 +51,8 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
         console.error(error);
 
         if (error instanceof ZodError) {
-          toast("Ups!, parece que algo anda mal", {
+          errorAlert({
+            title: "Ups!, parece que algo anda mal",
             description: (
               <ul className="list-disc list-inside">
                 {error.errors.map(({ message }, idx) => (
@@ -57,13 +60,12 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
                 ))}
               </ul>
             ),
-            icon: <BugIcon className="h-4 opacity-50 w-4" />,
           });
         } else {
-          toast("Error en la edición del jugador", {
+          errorAlert({
+            title: "Error en la edición del jugador",
             description:
               "Por favor, verifica la información y prueba otra vez.",
-            icon: <BugIcon className="h-4 opacity-50 w-4" />,
           });
         }
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { MatchForm } from "@/app/(authenticated)/dashboard/(components)/match-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,9 +20,8 @@ import {
 import { MatchSchema } from "@/schemas/match";
 import { editMatch } from "@/server/actions/match";
 import { Match } from "@prisma/client";
-import { BugIcon, PencilIcon } from "lucide-react";
+import { PencilIcon } from "lucide-react";
 import { FC, useState } from "react";
-import { toast } from "sonner";
 import { ZodError } from "zod";
 
 type EditMatchProps = {
@@ -29,6 +29,7 @@ type EditMatchProps = {
 };
 
 export const EditMatch: FC<EditMatchProps> = ({ match }) => {
+  const { errorAlert } = useAlerts();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const onMatchSubmit: (values: MatchSchema) => Promise<void> = (values) => {
@@ -43,7 +44,8 @@ export const EditMatch: FC<EditMatchProps> = ({ match }) => {
         console.error(error);
 
         if (error instanceof ZodError) {
-          toast("Ups!, parece que algo anda mal", {
+          errorAlert({
+            title: "Ups!, parece que algo anda mal",
             description: (
               <ul className="list-disc list-inside">
                 {error.errors.map(({ message }, idx) => (
@@ -51,13 +53,12 @@ export const EditMatch: FC<EditMatchProps> = ({ match }) => {
                 ))}
               </ul>
             ),
-            icon: <BugIcon className="h-4 opacity-50 w-4" />,
           });
         } else {
-          toast("Error en la edición del partido", {
+          errorAlert({
+            title: "Error en la edición del partido",
             description:
               "Por favor, verifica la información y prueba otra vez.",
-            icon: <BugIcon className="h-4 opacity-50 w-4" />,
           });
         }
 

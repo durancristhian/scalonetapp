@@ -1,5 +1,6 @@
 "use client";
 
+import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,28 +20,27 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { deleteMatch } from "@/server/actions/match";
-import { BugIcon, TrashIcon } from "lucide-react";
+import { TrashIcon } from "lucide-react";
 import { FC } from "react";
-import { toast } from "sonner";
 
 type DeleteMatchProps = {
   id: number;
 };
 
 export const DeleteMatch: FC<DeleteMatchProps> = ({ id }) => {
+  const { errorAlert, successAlert } = useAlerts();
+
   const onDeleteMatch: () => Promise<void> = async () => {
     try {
       await deleteMatch(id);
 
-      toast("¡Partido eliminado!", {
-        icon: <TrashIcon className="h-4 opacity-50 w-4" />,
-      });
+      successAlert({ title: "¡Partido eliminado!" });
     } catch (error) {
       console.error(error);
 
-      toast("Error en la eliminación del partido", {
+      errorAlert({
+        title: "Error en la eliminación del partido",
         description: "¿Podrías volver a intentarlo?.",
-        icon: <BugIcon className="h-4 opacity-50 w-4" />,
       });
     }
   };

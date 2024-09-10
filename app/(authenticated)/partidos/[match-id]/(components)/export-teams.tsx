@@ -1,5 +1,6 @@
 "use client";
 
+import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { SoccerBall } from "@/components/soccer-ball";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,9 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import { editMatch } from "@/server/actions/match";
 import { Team } from "@/types/team";
-import { BugIcon, PartyPopperIcon } from "lucide-react";
 import { FC, useState } from "react";
-import { toast } from "sonner";
 
 type ExportTeamsProps = {
   disabled: boolean;
@@ -25,6 +24,7 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
   matchId,
   teams,
 }) => {
+  const { errorAlert, successAlert } = useAlerts();
   const [processing, setIsProcessing] = useState(false);
 
   const exportTeams: () => Promise<void> = () => {
@@ -46,10 +46,10 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
           "/partidos/[match-id]"
         );
 
-        toast("¡Equipos guardados con éxito!", {
+        successAlert({
+          title: "¡Equipos guardados con éxito!",
           description:
             "En un momento, la descarga comenzará y tus equipos estarán al alcance de tu mano. Prepárate para disfrutar de tu estrategia y llevarla al campo de juego.",
-          icon: <PartyPopperIcon className="h-4 opacity-50 w-4" />,
         });
 
         fetch(`/download/${matchId}`)
@@ -74,9 +74,9 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
       } catch (error) {
         console.error(error);
 
-        toast("Ha ocurrido un error", {
+        errorAlert({
+          title: "Ha ocurrido un error",
           description: "Por favor, verifica la información y prueba otra vez.",
-          icon: <BugIcon className="h-4 opacity-50 w-4" />,
         });
 
         setIsProcessing(false);
