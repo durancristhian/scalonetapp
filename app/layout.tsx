@@ -21,7 +21,7 @@ const fontFamily = Work_Sans({
 const title = "scalonet.app - ¡Arma equipos como un campeón!";
 const description =
   "Tienes lo necesario para ser el Lionel Scaloni entre tus amigos?. Demostrá tu habilidad para formar equipos ideales.";
-const ogImagePath = "https://www.scalonet.app/api/static";
+const ogImagePath = "https://www.scalonet.app/api/og";
 
 export const metadata: Metadata = {
   title,
