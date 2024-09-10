@@ -19,7 +19,7 @@ const Error: FC<ErrorProps> = ({ error, reset }) => {
       <div className="max-w-3xl mx-auto w-full">
         <div className="grid gap-4 place-items-center">
           <h1 className="font-bold text-2xl">¡PENAAAL!</h1>
-          <p className="text-balance text-muted-foreground">
+          <p className="text-muted-foreground">
             Ups! Algo salió mal y hemos cometido un penal. No te preocupes,
             capaz el dibu puede atajarlo por vos.
           </p>
