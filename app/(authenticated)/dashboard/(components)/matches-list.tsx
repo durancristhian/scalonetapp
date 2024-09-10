@@ -52,7 +52,7 @@ type MatchsListProps = {
   matches: Match[];
 };
 
-export const MatchsList: FC<MatchsListProps> = ({ matches }) => {
+export const MatchesList: FC<MatchsListProps> = ({ matches }) => {
   const [currSortingOption, setCurrSortingOption] = useState<SortingOption>(
     DEFAULT_SORTING_OPTION
   );
@@ -86,7 +86,7 @@ export const MatchsList: FC<MatchsListProps> = ({ matches }) => {
               {currSortingOption.label}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent>
+          <DropdownMenuContent className="mr-4">
             {SORTING_OPTIONS.map((sortingOption) => {
               const Icon = sortingOption.icon;
 
