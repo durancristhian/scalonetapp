@@ -15,19 +15,21 @@ import { Button } from "@/components/ui/button";
 import { FC } from "react";
 
 type ConfirmTeamsUpdateProps = {
+  disableTrigger: boolean;
   onConfirm: () => void;
   showConfirmation: boolean;
   triggerText: string;
 };
 
 export const ConfirmTeamsUpdate: FC<ConfirmTeamsUpdateProps> = ({
+  disableTrigger,
   onConfirm,
   showConfirmation,
   triggerText,
 }) => {
   if (!showConfirmation) {
     return (
-      <Button onClick={onConfirm} variant="outline">
+      <Button onClick={onConfirm} disabled={disableTrigger} variant="outline">
         {triggerText}
       </Button>
     );
@@ -36,7 +38,9 @@ export const ConfirmTeamsUpdate: FC<ConfirmTeamsUpdateProps> = ({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="outline">{triggerText}</Button>
+        <Button disabled={disableTrigger} variant="outline">
+          {triggerText}
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

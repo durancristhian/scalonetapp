@@ -120,6 +120,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                     showConfirmation={
                       unselectedPlayers.length !== match.players.length
                     }
+                    disableTrigger={!match.players.length}
                     triggerText="Armar equipos aleatorios"
                   />
                 </div>
@@ -136,6 +137,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                     showConfirmation={
                       unselectedPlayers.length !== match.players.length
                     }
+                    disableTrigger={!match.players.length}
                     triggerText="Armar equipos balanceados"
                   />
                 </div>
