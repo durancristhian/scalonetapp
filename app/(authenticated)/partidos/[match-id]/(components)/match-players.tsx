@@ -1,4 +1,4 @@
-import { PlayerForm } from "@/app/(authenticated)/matches/[match-id]/(components)/player-form";
+import { PlayerForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/player-form";
 import { AnimatedListItem } from "@/components/animated-list-item";
 import { EmptyState } from "@/components/empty-state";
 import { SoccerBall } from "@/components/soccer-ball";

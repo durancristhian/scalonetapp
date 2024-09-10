@@ -43,7 +43,7 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
           {
             teams: JSON.stringify(formattedTeams),
           },
-          "/matches/[match-id]"
+          "/partidos/[match-id]"
         );
 
         toast("¡Equipos guardados con éxito!", {

@@ -1,13 +1,13 @@
 "use client";
 
-import { ConfirmTeamsUpdate } from "@/app/(authenticated)/matches/[match-id]/(components)/confirm-teams-update";
-import { CopyTeams } from "@/app/(authenticated)/matches/[match-id]/(components)/copy-teams";
-import { ExportTeams } from "@/app/(authenticated)/matches/[match-id]/(components)/export-teams";
-import { MatchPlayers } from "@/app/(authenticated)/matches/[match-id]/(components)/match-players";
-import { PlayerTabs } from "@/app/(authenticated)/matches/[match-id]/(components)/player-tabs";
-import { PlayersList } from "@/app/(authenticated)/matches/[match-id]/(components)/players-list";
-import { TeamCard } from "@/app/(authenticated)/matches/[match-id]/(components)/team-card";
-import { useTeamsBuilderState } from "@/app/(authenticated)/matches/[match-id]/hooks/use-team-builder-state";
+import { ConfirmTeamsUpdate } from "@/app/(authenticated)/partidos/[match-id]/(components)/confirm-teams-update";
+import { CopyTeams } from "@/app/(authenticated)/partidos/[match-id]/(components)/copy-teams";
+import { ExportTeams } from "@/app/(authenticated)/partidos/[match-id]/(components)/export-teams";
+import { MatchPlayers } from "@/app/(authenticated)/partidos/[match-id]/(components)/match-players";
+import { PlayerTabs } from "@/app/(authenticated)/partidos/[match-id]/(components)/player-tabs";
+import { PlayersList } from "@/app/(authenticated)/partidos/[match-id]/(components)/players-list";
+import { TeamCard } from "@/app/(authenticated)/partidos/[match-id]/(components)/team-card";
+import { useTeamsBuilderState } from "@/app/(authenticated)/partidos/[match-id]/(hooks)/use-team-builder-state";
 import { Button } from "@/components/ui/button";
 import {
   Card,

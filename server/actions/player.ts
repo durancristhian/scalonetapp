@@ -15,7 +15,7 @@ export const addPlayer: (
 ) => Promise<void> = async (matchId, data) => {
   await addPlayerQuery(matchId, data);
 
-  revalidatePath("/matches/[match-id]", "page");
+  revalidatePath("/partidos/[match-id]", "page");
 };
 
 export const addMultiplePlayers: (
@@ -24,7 +24,7 @@ export const addMultiplePlayers: (
 ) => Promise<void> = async (matchId, data) => {
   await addMultiplePlayersQuery(matchId, data);
 
-  revalidatePath("/matches/[match-id]", "page");
+  revalidatePath("/partidos/[match-id]", "page");
 };
 
 export const editPlayer: (
@@ -33,11 +33,11 @@ export const editPlayer: (
 ) => Promise<void> = async (id, data) => {
   await editPlayerQuery(id, data);
 
-  revalidatePath("/matches/[match-id]", "page");
+  revalidatePath("/partidos/[match-id]", "page");
 };
 
 export const deletePlayer: (id: number) => Promise<void> = async (id) => {
   await deletePlayerQuery(id);
 
-  revalidatePath("/matches/[match-id]", "page");
+  revalidatePath("/partidos/[match-id]", "page");
 };

@@ -1,4 +1,4 @@
-import { MatchDetails } from "@/app/(authenticated)/matches/[match-id]/(components)/match-details";
+import { MatchDetails } from "@/app/(authenticated)/partidos/[match-id]/(components)/match-details";
 import {
   Breadcrumb,
   BreadcrumbItem,

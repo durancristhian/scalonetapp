@@ -1,6 +1,6 @@
 "use client";
 
-import { TeamForm } from "@/app/(authenticated)/matches/[match-id]/(components)/team-form";
+import { TeamForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/team-form";
 import { AnimatedListItem } from "@/components/animated-list-item";
 import { EmptyState } from "@/components/empty-state";
 import { SpicyTooltips } from "@/components/spicy-tooltips";
