@@ -79,7 +79,7 @@ export const MatchItem: FC<MatchItemProps> = ({ match }) => {
               <div>
                 <p>{match.name}</p>
                 <p className="text-muted-foreground text-sm">
-                  Última actualización:&nbsp;
+                  Última actualización:{" "}
                   {formatDistanceToNow(match.updatedAt, {
                     locale: es,
                   })}

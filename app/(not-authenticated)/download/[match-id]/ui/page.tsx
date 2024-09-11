@@ -73,7 +73,7 @@ const Page: FC = () => {
           ))}
         </div>
         <p className="text-center text-slate-500 text-sm">
-          Hecho con&nbsp;
+          Hecho con{" "}
           <span className="underline underline-offset-2">scalonet.app</span>
         </p>
       </div>

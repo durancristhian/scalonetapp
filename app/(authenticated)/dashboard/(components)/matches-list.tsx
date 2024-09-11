@@ -122,11 +122,9 @@ export const MatchesList: FC<MatchsListProps> = ({ matches }) => {
                 ¡Alto ahí, entrenador! ¡Llegaste al límite!
               </AlertTitle>
               <AlertDescription>
-                Parece que ya tienes&nbsp;
-                {process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER} partidos creados.
-                Antes de añadir otro, te sugerimos despedir a uno de tus
-                encuentros más viejitos. ¡Elimina un partido y dale lugar a
-                nuevas glorias futbolísticas!
+                Ya tienes {process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER}{" "}
+                partidos creados. Te sugerimos despedir a uno de tus encuentros
+                más viejitos para darle lugar a nuevas glorias futbolísticas!
               </AlertDescription>
             </Alert>
           ) : null}
@@ -138,8 +136,8 @@ export const MatchesList: FC<MatchsListProps> = ({ matches }) => {
         </>
       ) : (
         <EmptyState>
-          Silencio atroz... hasta que crees un partido y hagas que la hinchada
-          ruja. ¡Vamos, empieza ya!
+          Silencio atroz... hasta que crees tu primer partido. ¡Vamos, empieza
+          ya!
         </EmptyState>
       )}
     </div>

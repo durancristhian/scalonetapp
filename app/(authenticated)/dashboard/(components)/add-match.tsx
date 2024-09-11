@@ -23,8 +23,6 @@ export const AddMatch: FC = () => {
 
         successAlert({
           title: "¡Partido creado!",
-          description:
-            "Está todo listo para que el fútbol comience. ¡Adelante, entrenador!",
         });
 
         resolve();
@@ -33,7 +31,6 @@ export const AddMatch: FC = () => {
 
         errorAlert({
           title: "Error en la creación del partido",
-          description: "Por favor, verifica la información y prueba otra vez.",
         });
 
         reject(error);

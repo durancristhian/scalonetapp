@@ -36,7 +36,7 @@ export const EditMatch: FC<EditMatchProps> = ({ match, onClose }) => {
 
         if (error instanceof ZodError) {
           errorAlert({
-            title: "Ups!, parece que algo anda mal",
+            title: "Error en la edición del partido",
             description: (
               <ul className="list-disc list-inside">
                 {error.errors.map(({ message }, idx) => (
