@@ -6,6 +6,7 @@ import { ExportTeams } from "@/app/(authenticated)/partidos/[match-id]/(componen
 import { MatchPlayers } from "@/app/(authenticated)/partidos/[match-id]/(components)/match-players";
 import { PlayerTabs } from "@/app/(authenticated)/partidos/[match-id]/(components)/player-tabs";
 import { PlayersList } from "@/app/(authenticated)/partidos/[match-id]/(components)/players-list";
+import { SaveTeams } from "@/app/(authenticated)/partidos/[match-id]/(components)/save-teams";
 import { TeamCard } from "@/app/(authenticated)/partidos/[match-id]/(components)/team-card";
 import { useTeamsBuilderState } from "@/app/(authenticated)/partidos/[match-id]/(hooks)/use-team-builder-state";
 import { EmptyState } from "@/components/empty-state";
@@ -20,7 +21,8 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MatchWithPlayers } from "@/types/match";
-import { FC, useCallback } from "react";
+import { getTeamsToSave } from "@/utils/get-teams-to-save";
+import { FC, useMemo } from "react";
 
 type MatchDetailsProps = {
   match: MatchWithPlayers;
@@ -42,11 +44,16 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
   } = useTeamsBuilderState(match);
 
   /* We consider teams are valid when there is no unselected players AND all teams have a valid name */
-  const areTeamsValid: () => boolean = useCallback(() => {
+  const areTeamsValid = useMemo(() => {
     const validTeamNames = teams.every((team) => Boolean(team.name));
 
     return !unselectedPlayers.length && validTeamNames;
   }, [teams, unselectedPlayers]);
+
+  /* We check if there is a difference between the local state and the db state */
+  const areTeamsSaved = useMemo(() => {
+    return match.teams === getTeamsToSave(teams);
+  }, [match, teams]);
 
   return (
     <div className="grid md:grid-cols-3 gap-8">
@@ -179,13 +186,20 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                 </div>
               </div>
               <Separator />
-              <div className="flex gap-4 items-center justify-center">
-                <p>¿Listo para la acción?</p>
-                <ExportTeams
-                  disabled={!areTeamsValid()}
-                  matchId={match.id}
-                  teams={teams}
-                />
+              <div className="grid gap-4 place-items-center">
+                <p className="font-semibold">¿Listo para la acción?</p>
+                <div className="flex gap-2 items-center justify-center">
+                  <SaveTeams
+                    disabled={!areTeamsValid}
+                    matchId={match.id}
+                    teams={teams}
+                  />
+                  <ExportTeams
+                    disabled={!areTeamsValid || !areTeamsSaved}
+                    matchId={match.id}
+                    teams={teams}
+                  />
+                </div>
               </div>
             </>
           ) : (

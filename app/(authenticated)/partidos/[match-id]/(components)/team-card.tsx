@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/tooltip";
 import { TeamSchema } from "@/schemas/team";
 import { Team } from "@/types/team";
+import { byName } from "@/utils/by-name";
 import { default as BoringAvatar } from "boring-avatars";
 import { TrashIcon, XIcon } from "lucide-react";
 import { FC } from "react";
@@ -82,7 +83,7 @@ export const TeamCard: FC<TeamCardProps> = ({
           {Boolean(team.players.length) ? (
             <>
               <div className="grid gap-2">
-                {team.players.map((player, idx) => (
+                {team.players.sort(byName).map((player, idx) => (
                   <AnimatedListItem key={player.id} listIndex={idx}>
                     <div className="flex items-center gap-2">
                       <div className="grow">

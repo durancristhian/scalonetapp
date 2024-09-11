@@ -9,56 +9,47 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { editMatch } from "@/server/actions/match";
 import { Team } from "@/types/team";
+import { getTeamsToSave } from "@/utils/get-teams-to-save";
 import { FC, useState } from "react";
 
-type ExportTeamsProps = {
+type SaveTeamsProps = {
   disabled: boolean;
   matchId: number;
   teams: Team[];
 };
 
-export const ExportTeams: FC<ExportTeamsProps> = ({
-  disabled,
-  matchId,
-  teams,
-}) => {
+export const SaveTeams: FC<SaveTeamsProps> = ({ disabled, matchId, teams }) => {
   const { errorAlert, successAlert } = useAlerts();
   const [processing, setIsProcessing] = useState(false);
 
-  const exportTeams = () => {
-    setIsProcessing(true);
+  const saveTeams = async () => {
+    try {
+      setIsProcessing(true);
 
-    fetch(`/download/${matchId}`)
-      .then((response) => response.blob())
-      .then((blob) => {
-        const url = window.URL.createObjectURL(new Blob([blob]));
+      await editMatch(
+        matchId,
+        {
+          teams: getTeamsToSave(teams),
+        },
+        "/partidos/[match-id]"
+      );
 
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", "equipos.png");
-
-        document.body.appendChild(link);
-
-        link.click();
-
-        window.URL.revokeObjectURL(url);
-
-        successAlert({
-          title: "¡Equipos descargados!",
-        });
-
-        setIsProcessing(false);
-      })
-      .catch((error) => {
-        console.error(error);
-
-        errorAlert({
-          title: "Ha ocurrido un error",
-        });
-
-        setIsProcessing(false);
+      successAlert({
+        title: "¡Equipos guardados con éxito!",
       });
+
+      setIsProcessing(false);
+    } catch (error) {
+      console.error(error);
+
+      errorAlert({
+        title: "Ha ocurrido un error",
+      });
+
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -67,17 +58,21 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
         <TooltipTrigger asChild>
           {/* Putting this empty div here so the tooltip works even if the button is disabled (it can't receive focus hence the tooltip won't be shown) */}
           <div>
-            <Button onClick={exportTeams} disabled={disabled || processing}>
+            <Button onClick={saveTeams} disabled={disabled || processing}>
               {processing ? (
                 <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
               ) : null}
-              {processing ? "Exportando..." : "Exportar"}
+              {processing ? "Guardando..." : "Guardar"}
             </Button>
           </div>
         </TooltipTrigger>
         {disabled && !processing ? (
           <TooltipContent>
-            <p>Tienes que guardar tus equipos primero antes de exportarlos.</p>
+            <p>No se cumple alguno de estos requisitos:</p>
+            <ul className="list-disc list-inside">
+              <li>Los nombres de los equipos no pueden estar vacíos.</li>
+              <li>No puedes tener jugadores sin equipo.</li>
+            </ul>
           </TooltipContent>
         ) : null}
       </Tooltip>

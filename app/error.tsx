@@ -20,8 +20,9 @@ const Error: FC<ErrorProps> = ({ error, reset }) => {
         <div className="grid gap-4 place-items-center">
           <h1 className="font-bold text-2xl">¡PENAAAL!</h1>
           <p className="text-balance text-center text-muted-foreground">
-            Ups! Algo salió mal y hemos cometido un penal. No te preocupes,
-            capaz el dibu puede atajarlo por vos.
+            Ups! Mala nuestra... Se escapó uno y lo tuvimos que bajar en el
+            área. No te preocupes, capaz el dibu puede atajar este penal para
+            vos.
           </p>
           <p className="font-bold text-muted-foreground">{error.message}</p>
           <Button
