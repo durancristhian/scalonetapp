@@ -188,7 +188,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
               <Separator />
               <div className="grid gap-4 place-items-center">
                 <p className="font-semibold">¿Listo para la acción?</p>
-                <div className="flex gap-2 items-center justify-center">
+                <div className="flex gap-4 items-center justify-center">
                   <SaveTeams
                     disabled={!areTeamsValid}
                     matchId={match.id}

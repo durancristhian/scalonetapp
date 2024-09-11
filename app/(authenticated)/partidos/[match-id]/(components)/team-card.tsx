@@ -86,18 +86,6 @@ export const TeamCard: FC<TeamCardProps> = ({
                 {team.players.sort(byName).map((player, idx) => (
                   <AnimatedListItem key={player.id} listIndex={idx}>
                     <div className="flex items-center gap-2">
-                      <div className="grow">
-                        <div className="flex gap-2 items-center">
-                          <SpicyTooltips>
-                            <BoringAvatar
-                              variant="beam"
-                              name={player.name}
-                              size={24}
-                            />
-                          </SpicyTooltips>
-                          <p>{player.name}</p>
-                        </div>
-                      </div>
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -116,6 +104,18 @@ export const TeamCard: FC<TeamCardProps> = ({
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
+                      <div className="grow">
+                        <div className="flex gap-2 items-center">
+                          <SpicyTooltips>
+                            <BoringAvatar
+                              variant="beam"
+                              name={player.name}
+                              size={24}
+                            />
+                          </SpicyTooltips>
+                          <p>{player.name}</p>
+                        </div>
+                      </div>
                     </div>
                   </AnimatedListItem>
                 ))}
