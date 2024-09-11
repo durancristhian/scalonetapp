@@ -36,7 +36,8 @@ export const MatchItem: FC<MatchItemProps> = ({ match }) => {
             <EllipsisVerticalIcon className="h-4 text-muted-foreground w-4" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        {/* margin-left here helps to detach the menu from the left limit of the screen (specially in mobile) */}
+        <DropdownMenuContent className="ml-4">
           <DropdownMenuItem
             onSelect={() => {
               setDialogId("edit");
