@@ -13,6 +13,7 @@ import { Toggle } from "@/components/ui/toggle";
 import { Team } from "@/types/team";
 import { Player } from "@prisma/client";
 import { default as BoringAvatar } from "boring-avatars";
+import clsx from "clsx";
 import { FC, useState } from "react";
 
 type PlayersListProps = {
@@ -53,6 +54,11 @@ export const PlayersList: FC<PlayersListProps> = ({
             }}
             pressed={selectedIds.includes(player.id)}
             variant="outline"
+            className={clsx(
+              selectedIds.includes(player.id)
+                ? "data-[state=on]:bg-white"
+                : undefined
+            )}
           >
             <SpicyTooltips>
               <BoringAvatar variant="beam" name={player.name} size={24} />
@@ -72,7 +78,7 @@ export const PlayersList: FC<PlayersListProps> = ({
             setSelectedTeamId("");
           }}
         >
-          <SelectTrigger>
+          <SelectTrigger className="bg-white">
             <SelectValue
               placeholder={
                 canAssignSelection
