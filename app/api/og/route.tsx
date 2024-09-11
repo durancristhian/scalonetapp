@@ -19,24 +19,35 @@ export async function GET() {
           width: "100%",
         }}
       >
-        <div style={{ fontSize: 96 }}>scalonet.app</div>
+        <div style={{ fontSize: 64, marginBottom: 24 }}>
+          ¡Arma equipos como un campeón!
+        </div>
         <div
           style={{
             /* text-muted-foreground */
             color: "#78716c",
-            fontSize: 60,
+            fontSize: 36,
           }}
         >
-          ¡Arma equipos como un campeón!
+          Tienes lo necesario para ser el Lionel Scaloni entre tus amigos?
+        </div>
+        <div
+          style={{
+            /* text-muted-foreground */
+            color: "#78716c",
+            fontSize: 36,
+          }}
+        >
+          Demostrá tu habilidad para formar equipos ideales.
         </div>
         <div
           style={{
             display: "flex",
             fontSize: 36,
-            marginTop: 96,
+            marginTop: 72,
           }}
         >
-          Hecho por Cristhian Duran
+          scalonet.app
         </div>
       </div>
     ),
