@@ -3,17 +3,17 @@ import { byName } from "@/utils/by-name";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import prisma from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { Match, Prisma } from "@prisma/client";
+import { Match } from "@prisma/client";
 
 export const getMatches = async () => {
-  const user = auth();
-  if (!user || !user.userId) {
+  const { userId } = auth();
+  if (!userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
 
   return await prisma.match.findMany({
     where: {
-      userId: user.userId,
+      userId,
     },
     orderBy: {
       createdAt: "desc",
@@ -25,19 +25,15 @@ export const getMatches = async () => {
 };
 
 export const getMatchById = async (id: number) => {
-  const user = auth();
-  if (!user || !user.userId) {
+  const { userId } = auth();
+  if (!userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
 
   const match = await prisma.match.findFirst({
     where: {
-      id: {
-        equals: id,
-      },
-      userId: {
-        equals: user.userId,
-      },
+      id,
+      userId,
     },
     include: {
       players: true,
@@ -51,21 +47,21 @@ export const getMatchById = async (id: number) => {
 };
 
 export const addMatch: (data: MatchSchema) => Promise<void> = async (data) => {
-  const user = auth();
-  if (!user || !user.userId) {
+  const { userId } = auth();
+  if (!userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
 
   const nextMatch = {
     ...data,
-    userId: user.userId,
+    userId,
   };
 
   MATCH_SCHEMA.parse(nextMatch);
 
   const userMatches = await prisma.match.findMany({
     where: {
-      userId: user.userId,
+      userId,
     },
   });
 
@@ -84,30 +80,30 @@ export const editMatch: (
   id: number,
   data: Partial<Match>
 ) => Promise<void> = async (id, data) => {
-  const user = auth();
-  if (!user || !user.userId) {
+  const { userId } = auth();
+  if (!userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
 
   await prisma.match.update({
     where: {
       id,
-      userId: user.userId,
+      userId: userId,
     },
     data,
   });
 };
 
 export const deleteMatch: (id: number) => Promise<void> = async (id) => {
-  const user = auth();
-  if (!user || !user.userId) {
+  const { userId } = auth();
+  if (!userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
 
   await prisma.match.delete({
     where: {
       id,
-      userId: user.userId,
+      userId,
     },
   });
 };

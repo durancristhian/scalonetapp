@@ -36,19 +36,19 @@ export const SaveTeams: FC<SaveTeamsProps> = ({ disabled, matchId, teams }) => {
         "/partidos/[match-id]"
       );
 
+      setIsProcessing(false);
+
       successAlert({
         title: "¡Equipos guardados con éxito!",
       });
-
-      setIsProcessing(false);
     } catch (error) {
       console.error(error);
+
+      setIsProcessing(false);
 
       errorAlert({
         title: "Ha ocurrido un error",
       });
-
-      setIsProcessing(false);
     }
   };
 

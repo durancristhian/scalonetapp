@@ -8,7 +8,7 @@ const getMatch = async (userId: string, matchId: number) => {
   const match = await prisma.match.findFirst({
     where: {
       id: matchId,
-      userId: userId,
+      userId,
     },
     include: {
       players: true,
@@ -38,13 +38,13 @@ export const addPlayer: (
   matchId: number,
   data: PlayerSchema
 ) => Promise<void> = async (matchId, data) => {
-  const user = auth();
-  if (!user || !user.userId) {
+  const { userId } = auth();
+  if (!userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
 
   /* We check the current user owns the match we're trying to add a player to */
-  const match = await getMatch(user.userId, matchId);
+  const match = await getMatch(userId, matchId);
   if (!match) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
@@ -79,13 +79,13 @@ export const addMultiplePlayers: (
   matchId: number,
   data: PlayerSchema[]
 ) => Promise<void> = async (matchId, data) => {
-  const user = auth();
-  if (!user || !user.userId) {
+  const { userId } = auth();
+  if (!userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
 
   /* We check the current user owns the match we're trying to add a player to */
-  const match = await getMatch(user.userId, matchId);
+  const match = await getMatch(userId, matchId);
   if (!match) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
@@ -122,8 +122,8 @@ export const editPlayer: (
   id: number,
   data: Partial<PlayerSchema>
 ) => Promise<void> = async (id, data) => {
-  const user = auth();
-  if (!user || !user.userId) {
+  const { userId } = auth();
+  if (!userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
 
@@ -138,8 +138,8 @@ export const editPlayer: (
 };
 
 export const deletePlayer: (id: number) => Promise<void> = async (id) => {
-  const user = auth();
-  if (!user || !user.userId) {
+  const { userId } = auth();
+  if (!userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
 

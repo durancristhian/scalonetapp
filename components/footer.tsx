@@ -1,10 +1,12 @@
+import { Feedback } from "@/components/feedback";
 import { ShowOff } from "@/components/show-off";
 
 export const Footer = () => {
   return (
     <div className="bg-white border-border border-t">
-      <div className="h-10 px-4">
-        <div className="flex h-full items-center justify-center">
+      <div className="max-w-7xl mx-auto px-4 w-full">
+        <div className="flex h-12 md:h-14 items-center justify-between">
+          <Feedback />
           <ShowOff />
         </div>
       </div>

@@ -44,20 +44,20 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
 
         window.URL.revokeObjectURL(url);
 
+        setIsProcessing(false);
+
         successAlert({
           title: "¡Equipos descargados!",
         });
-
-        setIsProcessing(false);
       })
       .catch((error) => {
         console.error(error);
 
+        setIsProcessing(false);
+
         errorAlert({
           title: "Ha ocurrido un error",
         });
-
-        setIsProcessing(false);
       });
   };
 

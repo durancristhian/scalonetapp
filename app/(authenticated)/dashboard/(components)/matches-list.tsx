@@ -89,7 +89,7 @@ export const MatchesList: FC<MatchsListProps> = ({ matches }) => {
                   {currSortingOption.label}
                 </Button>
               </DropdownMenuTrigger>
-              {/* margin-right here helps to detach the menu from the right limit of the screen (specially in mobile) */}
+              {/* margin here helps to detach the menu from the limit of the screen (specially in mobile) */}
               <DropdownMenuContent className="mr-4">
                 {SORTING_OPTIONS.map((sortingOption) => {
                   const Icon = sortingOption.icon;
