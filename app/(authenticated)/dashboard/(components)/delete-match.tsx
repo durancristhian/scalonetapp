@@ -45,7 +45,7 @@ export const DeleteMatch: FC<DeleteMatchProps> = ({ id, onClose }) => {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>¿Eliminar este partido?</AlertDialogTitle>
-          <AlertDialogDescription>
+          <AlertDialogDescription className="max-md:text-balance">
             Ten en cuenta que se eliminará toda la información asociada a él.
             Esta acción no tiene vuelta atrás.
           </AlertDialogDescription>
