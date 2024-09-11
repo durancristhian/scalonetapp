@@ -47,7 +47,7 @@ export const Feedback = () => {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>¿Que te gustaría decirme?</DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-balance">
             Todo feedback, idea y/o sugerencia es bienvenida (:
           </DialogDescription>
         </DialogHeader>
