@@ -20,7 +20,7 @@ const Page: FC = () => {
   }, [isLoaded, router, userId]);
 
   return (
-    <div className="bg-accent flex flex-col gap-4 items-center justify-center h-full min-h-[inherit] p-2">
+    <div className="flex flex-col gap-4 items-center justify-center h-full min-h-[inherit] p-2">
       <SignedIn>
         <Loader />
       </SignedIn>

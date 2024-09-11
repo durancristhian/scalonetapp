@@ -16,7 +16,7 @@ import { Match } from "@prisma/client";
 import {
   AlertCircleIcon,
   ArrowDownAZIcon,
-  ArrowUpZAIcon,
+  ArrowUpAZIcon,
   ClockArrowDownIcon,
   LucideIcon,
 } from "lucide-react";
@@ -29,7 +29,7 @@ type SortingOption = {
 };
 
 const DEFAULT_SORTING_OPTION = {
-  label: "Última actualización (Desc)",
+  label: "Última actualización",
   icon: ClockArrowDownIcon,
   value: "last-update",
 };
@@ -37,13 +37,13 @@ const DEFAULT_SORTING_OPTION = {
 const SORTING_OPTIONS: SortingOption[] = [
   DEFAULT_SORTING_OPTION,
   {
-    label: "Orden alfabético (A > Z)",
+    label: "Orden A > Z",
     icon: ArrowDownAZIcon,
     value: "alphabetical",
   },
   {
-    label: "Orden alfabético Desc (Z > A)",
-    icon: ArrowUpZAIcon,
+    label: "Orden Z > A",
+    icon: ArrowUpAZIcon,
     value: "alphabetical-revert",
   },
 ];
@@ -79,32 +79,38 @@ export const MatchesList: FC<MatchsListProps> = ({ matches }) => {
     <div className="grid gap-4">
       <div className="flex gap-4 items-center justify-between">
         <h2 className="font-bold text-xl">Tus partidos</h2>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline">
-              <Icon className="h-4 mr-2 text-muted-foreground w-4" />
-              {currSortingOption.label}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="mr-4">
-            {SORTING_OPTIONS.map((sortingOption) => {
-              const Icon = sortingOption.icon;
-
-              return (
-                <DropdownMenuCheckboxItem
-                  key={sortingOption.value}
-                  checked={currSortingOption.value === sortingOption.value}
-                  onCheckedChange={() => {
-                    setCurrSortingOption(sortingOption);
-                  }}
-                >
+        {/* We put this element with specific height here so we don't have a layout shift when the button (dropdown trigger) is not rendered */}
+        <div className="h-9">
+          {canListMatches ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
                   <Icon className="h-4 mr-2 text-muted-foreground w-4" />
-                  {sortingOption.label}
-                </DropdownMenuCheckboxItem>
-              );
-            })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+                  {currSortingOption.label}
+                </Button>
+              </DropdownMenuTrigger>
+              {/* margin-right here helps to detach the menu from the right limit of the screen (specially in mobile) */}
+              <DropdownMenuContent className="mr-4">
+                {SORTING_OPTIONS.map((sortingOption) => {
+                  const Icon = sortingOption.icon;
+
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={sortingOption.value}
+                      checked={currSortingOption.value === sortingOption.value}
+                      onCheckedChange={() => {
+                        setCurrSortingOption(sortingOption);
+                      }}
+                    >
+                      <Icon className="h-4 mr-2 text-muted-foreground w-4" />
+                      {sortingOption.label}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : null}
+        </div>
       </div>
       {canListMatches ? (
         <>

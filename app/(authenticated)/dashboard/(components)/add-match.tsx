@@ -46,8 +46,8 @@ export const AddMatch: FC = () => {
       <CardHeader>
         <CardTitle>El primer paso hacia la gloria</CardTitle>
         <CardDescription>
-          Antes de demostrar tu habilidad como DT, necesitas decirnos como se
-          llama el partido.
+          Todo DT necesita de un partido para demostrar su habilidad. Empieza
+          por crear uno.
         </CardDescription>
       </CardHeader>
       <CardContent>

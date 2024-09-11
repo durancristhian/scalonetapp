@@ -24,15 +24,14 @@ const description =
 const ogImagePath = "https://www.scalonet.app/api/og";
 
 export const metadata: Metadata = {
-  title,
-  description,
   applicationName: "scalonet.app",
   authors: {
     name: "Cristhian Duran",
     url: "https://github.com/durancristhian",
   },
-  keywords: ["scaloneta", "scalonet.app", "fútbol", "armar equipos de fútbol"],
   creator: "Cristhian Duran",
+  description,
+  keywords: ["scaloneta", "scalonet.app", "fútbol", "armar equipos de fútbol"],
   openGraph: {
     type: "website",
     url: "https://www.scalonet.app/",
@@ -45,6 +44,7 @@ export const metadata: Metadata = {
       },
     ],
   },
+  title,
   twitter: {
     card: "summary_large_image",
     title,
@@ -68,7 +68,11 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
         <body
           className={clsx(
             fontFamily.className,
-            "antialiased bg-background min-h-dvh slashed-zero tabular-nums text-foreground"
+            "antialiased min-h-dvh slashed-zero tabular-nums text-foreground",
+            /*
+              This custom bg color was taken from https://coolors.co/palette/fafaf9-f5f5f4-e7e5e4-d6d3d1-a8a29e-78716c-57534e-44403c-292524-1c1917 This is a color palette we searched based on the --accent color. We were looking for a lighter one.
+            */
+            "bg-[#fafaf9]"
           )}
         >
           {children}

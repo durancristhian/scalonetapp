@@ -10,24 +10,17 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { deleteMatch } from "@/server/actions/match";
-import { TrashIcon } from "lucide-react";
 import { FC } from "react";
 
 type DeleteMatchProps = {
   id: number;
+  onClose: () => void;
 };
 
-export const DeleteMatch: FC<DeleteMatchProps> = ({ id }) => {
+export const DeleteMatch: FC<DeleteMatchProps> = ({ id, onClose }) => {
   const { errorAlert, successAlert } = useAlerts();
 
   const onDeleteMatch: () => Promise<void> = async () => {
@@ -35,6 +28,8 @@ export const DeleteMatch: FC<DeleteMatchProps> = ({ id }) => {
       await deleteMatch(id);
 
       successAlert({ title: "¡Partido eliminado!" });
+
+      onClose();
     } catch (error) {
       console.error(error);
 
@@ -46,21 +41,7 @@ export const DeleteMatch: FC<DeleteMatchProps> = ({ id }) => {
   };
 
   return (
-    <AlertDialog>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <TrashIcon className="h-4 text-red-700 w-4" />
-              </Button>
-            </AlertDialogTrigger>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Eliminar</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+    <AlertDialog open onOpenChange={onClose}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>¿Eliminar este partido?</AlertDialogTitle>
