@@ -30,8 +30,6 @@ export const CopyTeams: FC<CopyTeamsProps> = ({ teams }) => {
 
     successAlert({
       title: "¡Equipos copiados al portapapeles!",
-      description:
-        "¡Tus equipos están ahora listos para ser pegados en cualquier parte! Haz lo que quieras con ellos: compártelos, imprímelos o simplemente presúmelos.",
     });
   };
 

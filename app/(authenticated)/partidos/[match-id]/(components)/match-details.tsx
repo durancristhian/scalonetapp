@@ -56,8 +56,8 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
             <CardHeader>
               <CardTitle>¡Convoca a los galácticos!</CardTitle>
               <CardDescription>
-                Es el momento de traer a los mejores jugadores al campo. Puedes
-                agregarlos de a uno o de a muchos al mismo tiempo.
+                Es el momento de traer a los mejores jugadores al campo de
+                juego.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -112,14 +112,12 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                   </TabsTrigger>
                 </TabsList>
                 <TabsContent value="suggested-teams">
-                  <div className="grid gap-8 md:grid-cols-2">
-                    <div className="grid gap-4">
-                      <p className="font-semibold">¡El sorteo del sorteo!</p>
+                  <div className="grid gap-8 md:grid-cols-2 md:items-start">
+                    <div className="grid gap-2">
+                      <p className="font-semibold">Lo que toca, toca</p>
                       <p>
-                        Usa esta opción para hacer magia y separar a los
-                        jugadores al azar. Ideal si no tienes idea del nivel de
-                        tus estrellas o si simplemente quieres armar un partido
-                        y ver cómo se desarrolla. ¡La suerte está echada!
+                        Usa esta opción para separar a los jugadores al azar.
+                        ¡La suerte está echada!
                       </p>
                       <ConfirmTeamsUpdate
                         onConfirm={randomizeTeams}
@@ -130,15 +128,11 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                         triggerText="Armar equipos aleatorios"
                       />
                     </div>
-                    <div className="grid gap-4">
-                      <p className="font-semibold">
-                        ¡Divide y vencerás por nivel!
-                      </p>
+                    <div className="grid gap-2">
+                      <p className="font-semibold">Usando la razón</p>
                       <p>
-                        Con esta opción, haremos que los equipos queden lo más
-                        equilibrados posible. Usamos el nivel de los jugadores
-                        para armar bandos que prometen una competencia justa y
-                        emocionante. ¡Prepárate para el desafío!
+                        Haremos los equipos teniendo en cuenta el nivel de los
+                        jugadores. ¡Prepárate para el desafío!
                       </p>
                       <ConfirmTeamsUpdate
                         onConfirm={balanceTeams}

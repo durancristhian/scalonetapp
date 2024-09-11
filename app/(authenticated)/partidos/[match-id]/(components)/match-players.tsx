@@ -52,7 +52,7 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
 
         if (error instanceof ZodError) {
           errorAlert({
-            title: "Ups!, parece que algo anda mal",
+            title: "Error en la edición del jugador",
             description: (
               <ul className="list-disc list-inside">
                 {error.errors.map(({ message }, idx) => (
@@ -107,7 +107,7 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
       ) : (
         <EmptyState>
           Parece que aún no has agregado a nadie. ¡Es hora de llenar la
-          plantilla con tus estrellas favoritas!
+          plantilla!
         </EmptyState>
       )}
     </>

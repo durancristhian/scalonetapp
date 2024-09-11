@@ -65,7 +65,7 @@ export const TeamCard: FC<TeamCardProps> = ({
                   <p>
                     {canBeDeleted
                       ? "Eliminar"
-                      : "No podemos eliminar este equipo porque siempre necesitamos al menos dos para armar una buena competencia"}
+                      : "Se necesitan al menos 2 equipos para armar una buena competencia"}
                   </p>
                 </TooltipContent>
               </Tooltip>

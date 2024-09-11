@@ -72,7 +72,7 @@ const Page: FC = () => {
             </Card>
           ))}
         </div>
-        <p className="text-center text-slate-500 text-sm">
+        <p className="text-center text-muted-foreground text-sm">
           Hecho con{" "}
           <span className="underline underline-offset-2">scalonet.app</span>
         </p>

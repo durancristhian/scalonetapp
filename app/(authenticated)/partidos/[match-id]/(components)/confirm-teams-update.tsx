@@ -45,12 +45,12 @@ export const ConfirmTeamsUpdate: FC<ConfirmTeamsUpdateProps> = ({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            ¿Confirmas el cambio de alineación?
+            ¿Confirmas el cambio de alineaciones?
           </AlertDialogTitle>
           <AlertDialogDescription>
             Si confirmas, el estado actual de tus equipos se perderá como un
-            tiro libre mal pateado. Asegúrate de estar listo para esta jugada
-            antes de proceder.
+            penal pateado por el puma Gigliotti. Asegúrate de estar listo para
+            esta jugada antes de proceder.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

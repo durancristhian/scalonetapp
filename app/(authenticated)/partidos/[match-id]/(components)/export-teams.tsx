@@ -49,7 +49,7 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
         successAlert({
           title: "¡Equipos guardados con éxito!",
           description:
-            "En un momento, la descarga comenzará y tus equipos estarán al alcance de tu mano. Prepárate para disfrutar de tu estrategia y llevarla al campo de juego.",
+            "En un momento, la descarga comenzará y tus equipos estarán al alcance de tu mano.",
         });
 
         fetch(`/download/${matchId}`)
@@ -76,7 +76,6 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
 
         errorAlert({
           title: "Ha ocurrido un error",
-          description: "Por favor, verifica la información y prueba otra vez.",
         });
 
         setIsProcessing(false);
@@ -104,7 +103,7 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
           <TooltipContent>
             <p>
               Cuando todos tus jugadores estén en algún equipo, este botón se
-              habilitará. ¡Completa los equipos y prepárate para la acción!
+              habilitará.
             </p>
           </TooltipContent>
         ) : null}
