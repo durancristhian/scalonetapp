@@ -2,6 +2,7 @@ import { VALIDATION_MESSAGES } from "@/utils/validation-messages";
 import { z } from "zod";
 
 export const PLAYER_SCHEMA = z.object({
+  avatar: z.string().optional(),
   name: z
     .string()
     .trim()

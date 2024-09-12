@@ -1,5 +1,6 @@
 "use client";
 
+import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { SoccerBall } from "@/components/soccer-ball";
 import { SpicyTooltips } from "@/components/spicy-tooltips";
 import { Button } from "@/components/ui/button";
@@ -18,7 +19,7 @@ import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
 import { unfoldZodError } from "@/utils/errors";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { default as BoringAvatar } from "boring-avatars";
-import { FC } from "react";
+import { ChangeEventHandler, FC, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { ZodError } from "zod";
 
@@ -56,6 +57,61 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
     resolver: zodResolver(PLAYER_SCHEMA),
     values,
   });
+  const inputFileRef = useRef<HTMLInputElement>(null);
+  const { errorAlert } = useAlerts();
+  const [uploadingImage, setUploadingImage] = useState(false);
+
+  /* We register the field manually because of our custom UI for it. This also means listening for its changes */
+  const avatar = form.watch("avatar");
+  const avatarFieldProps = form.register("avatar");
+
+  const onUploadAvatar: ChangeEventHandler<HTMLInputElement> = async (
+    event
+  ) => {
+    try {
+      const files = Array.from(event.target.files || []);
+
+      if (!files.length) {
+        return;
+      }
+
+      setUploadingImage(true);
+
+      /* This is safe to do since we don't accept multiple images in the file input */
+      const file = files[0];
+
+      const data = new FormData();
+      data.append("file", file);
+      data.append("upload_preset", "scalonetapp");
+
+      const cloudinaryResponse = await fetch(
+        "https://api.cloudinary.com/v1_1/cristhianjavierduran/image/upload",
+        {
+          method: "POST",
+          body: data,
+        }
+      );
+
+      const cloudinaryImage = await cloudinaryResponse.json();
+      const imageUrl = cloudinaryImage.secure_url;
+
+      form.setValue("avatar", imageUrl);
+
+      setUploadingImage(false);
+    } catch (error) {
+      console.error(error);
+
+      errorAlert({
+        title: "Error al procesar la foto",
+        description: "Por favor, prueba otra vez.",
+      });
+
+      /* We clean the input value */
+      form.setValue("avatar", undefined);
+
+      setUploadingImage(false);
+    }
+  };
 
   const onSubmitHandler: (values: PlayerSchema) => Promise<void> = async (
     values
@@ -95,26 +151,104 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
           control={form.control}
           name="name"
           render={({ field }) => (
-            <div className="flex gap-4 items-center">
-              <div>
-                <SpicyTooltips>
-                  <BoringAvatar
-                    variant="beam"
-                    name={field.value || INPUT_PLACEHOLDER}
-                    size={48}
+            <>
+              <div className="flex gap-4 items-center">
+                <div>
+                  <SpicyTooltips>
+                    <BoringAvatar
+                      variant="beam"
+                      name={field.value || INPUT_PLACEHOLDER}
+                      size={48}
+                    />
+                  </SpicyTooltips>
+                </div>
+                <div className="grow">
+                  <FormItem>
+                    <FormLabel>Nombre</FormLabel>
+                    <FormControl>
+                      <Input placeholder={INPUT_PLACEHOLDER} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </div>
+              </div>
+              {/* <div className="grid gap-4">
+              <FormItem>
+                <FormLabel>Nombre</FormLabel>
+                <FormControl>
+                  <Input placeholder={INPUT_PLACEHOLDER} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+              <div className="flex gap-4 items-center justify-center">
+                <Avatar className="h-16 w-16">
+                  <AvatarImage
+                    src={avatar}
+                    alt={`Avatar de ${field.value || INPUT_PLACEHOLDER}`}
                   />
-                </SpicyTooltips>
+                  <AvatarFallback>
+                    <SpicyTooltips>
+                      <BoringAvatar
+                        variant="beam"
+                        name={field.value || INPUT_PLACEHOLDER}
+                        size={64}
+                      />
+                    </SpicyTooltips>
+                  </AvatarFallback>
+                </Avatar>
+                <input
+                  hidden
+                  type="file"
+                  // We only accept jpg, jpeg and png extensions
+                  accept=".jpg,.jpeg,.png"
+                  {...avatarFieldProps}
+                  ref={inputFileRef}
+                  onChange={onUploadAvatar}
+                />
+                {avatar ? (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          onClick={() => {
+                            form.setValue("avatar", undefined);
+                          }}
+                          variant="ghost"
+                          size="icon"
+                        >
+                          <TrashIcon className="h-4 text-red-700 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Eliminar</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ) : (
+                  <Button
+                    // We trigger the input file click with this button
+                    onClick={() => {
+                      if (inputFileRef.current) {
+                        inputFileRef.current.click();
+                      }
+                    }}
+                    disabled={uploadingImage}
+                    type="button"
+                    variant="outline"
+                  >
+                    {uploadingImage ? (
+                      <>
+                        <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
+                        Subiendo foto...
+                      </>
+                    ) : (
+                      "Subir una foto"
+                    )}
+                  </Button>
+                )}
               </div>
-              <div className="grow">
-                <FormItem>
-                  <FormLabel>Nombre</FormLabel>
-                  <FormControl>
-                    <Input placeholder={INPUT_PLACEHOLDER} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              </div>
-            </div>
+            </div> */}
+            </>
           )}
         />
         <FormField
