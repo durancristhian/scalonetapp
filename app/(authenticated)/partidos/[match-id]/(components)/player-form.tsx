@@ -2,6 +2,7 @@
 
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { SoccerBall } from "@/components/soccer-ball";
+import { SpicyTooltips } from "@/components/spicy-tooltips";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -13,9 +14,11 @@ import {
   FormMessage,
   FormRootError,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
 import { unfoldZodError } from "@/utils/errors";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { default as BoringAvatar } from "boring-avatars";
 import { ChangeEventHandler, FC, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { ZodError } from "zod";
@@ -149,6 +152,26 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
           name="name"
           render={({ field }) => (
             <>
+              <div className="flex gap-4 items-center">
+                <div>
+                  <SpicyTooltips>
+                    <BoringAvatar
+                      variant="beam"
+                      name={field.value || INPUT_PLACEHOLDER}
+                      size={48}
+                    />
+                  </SpicyTooltips>
+                </div>
+                <div className="grow">
+                  <FormItem>
+                    <FormLabel>Nombre</FormLabel>
+                    <FormControl>
+                      <Input placeholder={INPUT_PLACEHOLDER} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </div>
+              </div>
               {/* <div className="grid gap-4">
               <FormItem>
                 <FormLabel>Nombre</FormLabel>
