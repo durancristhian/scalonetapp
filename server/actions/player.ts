@@ -7,7 +7,10 @@ import {
   deletePlayer as deletePlayerQuery,
   editPlayer as editPlayerQuery,
 } from "@/server/queries/player";
+import { actionClient } from "@/utils/safe-action";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { zfd } from "zod-form-data";
 
 export const addPlayer: (
   matchId: number,
@@ -36,8 +39,16 @@ export const editPlayer: (
   revalidatePath("/partidos/[match-id]", "page");
 };
 
-export const deletePlayer: (id: number) => Promise<void> = async (id) => {
-  await deletePlayerQuery(id);
+const deletePlayerSchema = zfd.formData({
+  id: zfd.numeric(z.number()),
+});
 
-  revalidatePath("/partidos/[match-id]", "page");
-};
+export const deletePlayer = actionClient
+  .schema(deletePlayerSchema)
+  .action(async ({ parsedInput }) => {
+    const { id } = parsedInput;
+
+    await deletePlayerQuery(id);
+
+    revalidatePath("/partidos/[match-id]", "page");
+  });

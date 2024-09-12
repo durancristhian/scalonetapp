@@ -1,6 +1,6 @@
 import { getLinesFromString } from "@/utils/get-lines-from-string";
 import { VALIDATION_MESSAGES } from "@/utils/validation-messages";
-import * as z from "zod";
+import { z } from "zod";
 
 export const PLAYERS_SCHEMA = z.object({
   players: z

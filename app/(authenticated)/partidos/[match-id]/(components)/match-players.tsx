@@ -1,11 +1,10 @@
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
+import { DeletePlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/delete-player";
 import { PlayerForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/player-form";
 import { AnimatedListItem } from "@/components/animated-list-item";
 import { EmptyState } from "@/components/empty-state";
-import { SoccerBall } from "@/components/soccer-ball";
 import { SpicyTooltips } from "@/components/spicy-tooltips";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -13,20 +12,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { PlayerSchema } from "@/schemas/player";
-import { deletePlayer, editPlayer } from "@/server/actions/player";
+import { editPlayer } from "@/server/actions/player";
 import { byName } from "@/utils/by-name";
 import { Player } from "@prisma/client";
 import { default as BoringAvatar } from "boring-avatars";
-import { AlertCircleIcon, PencilIcon, TrashIcon } from "lucide-react";
+import { AlertCircleIcon, PencilIcon } from "lucide-react";
 import { FC, useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
 import { ZodError } from "zod";
 
 type MatchPlayersProps = {
@@ -121,9 +113,6 @@ type MatchPlayerProps = {
 
 const MatchPlayer: FC<MatchPlayerProps> = ({ player, onPlayerSubmit }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
-  /* This looks ugly, I know */
-  const deletePlayerWithId = deletePlayer.bind(null, player.id);
-  const [_, deletePlayerAction] = useFormState(deletePlayerWithId, null);
 
   const onSubmit: (values: PlayerSchema) => Promise<void> = async (values) => {
     await onPlayerSubmit(player.id, values);
@@ -133,9 +122,7 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player, onPlayerSubmit }) => {
 
   return (
     <div className="flex items-center gap-2">
-      <form action={deletePlayerAction} className="inline-flex">
-        <SubmitButton />
-      </form>
+      <DeletePlayer id={player.id} />
       <div className="grow">
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger className="w-full">
@@ -172,28 +159,5 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player, onPlayerSubmit }) => {
         </Dialog>
       </div>
     </div>
-  );
-};
-
-const SubmitButton = () => {
-  const { pending } = useFormStatus();
-
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button type="submit" disabled={pending} variant="ghost" size="icon">
-            {pending ? (
-              <SoccerBall className="animate-spin h-4 opacity-50 w-4" />
-            ) : (
-              <TrashIcon className="h-4 text-red-700 w-4" />
-            )}
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>Eliminar</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
   );
 };

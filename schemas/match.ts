@@ -1,5 +1,5 @@
 import { VALIDATION_MESSAGES } from "@/utils/validation-messages";
-import * as z from "zod";
+import { z } from "zod";
 
 export const MATCH_SCHEMA = z.object({
   name: z
