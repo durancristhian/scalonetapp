@@ -88,17 +88,15 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
       /* This is safe to do since we don't accept multiple images in the file input */
       const file = files[0];
 
-      /* TODO: This should be a util fn */
-      const cloudinaryFormData = new FormData();
-      cloudinaryFormData.append("file", file || "");
-      cloudinaryFormData.append("upload_preset", "figuritas");
+      const data = new FormData();
+      data.append("file", file);
+      data.append("upload_preset", "scalonetapp");
 
       const cloudinaryResponse = await fetch(
-        /* TODO: change the preset */
         "https://api.cloudinary.com/v1_1/cristhianjavierduran/image/upload",
         {
           method: "POST",
-          body: cloudinaryFormData,
+          body: data,
         }
       );
 
@@ -109,10 +107,15 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
 
       setUploadingImage(false);
     } catch (error) {
+      console.error(error);
+
       errorAlert({
         title: "Error al procesar la foto",
         description: "Por favor, prueba otra vez.",
       });
+
+      /* We clean the input value */
+      form.setValue("avatar", undefined);
 
       setUploadingImage(false);
     }
@@ -158,7 +161,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
           render={({ field }) => (
             <div className="grid gap-4">
               <FormItem>
-                <FormLabel>Nombre ({field.value})</FormLabel>
+                <FormLabel>Nombre</FormLabel>
                 <FormControl>
                   <Input placeholder={INPUT_PLACEHOLDER} {...field} />
                 </FormControl>
