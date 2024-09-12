@@ -5,9 +5,9 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "generate-prod-schema": "prisma generate --schema=./prisma/prod.schema.prisma",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "vercel-build": "prisma generate --schema=./prisma/prod.schema.prisma && prisma migrate deploy --schema=./prisma/prod.schema.prisma && next build"
   },
   "dependencies": {
     "next": "14.2.6",

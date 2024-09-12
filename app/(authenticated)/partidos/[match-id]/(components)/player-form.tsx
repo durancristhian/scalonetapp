@@ -2,8 +2,6 @@
 
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { SoccerBall } from "@/components/soccer-ball";
-import { SpicyTooltips } from "@/components/spicy-tooltips";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -15,18 +13,9 @@ import {
   FormMessage,
   FormRootError,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
 import { unfoldZodError } from "@/utils/errors";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { default as BoringAvatar } from "boring-avatars";
-import { TrashIcon } from "lucide-react";
 import { ChangeEventHandler, FC, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { ZodError } from "zod";
@@ -159,7 +148,8 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
           control={form.control}
           name="name"
           render={({ field }) => (
-            <div className="grid gap-4">
+            <>
+              {/* <div className="grid gap-4">
               <FormItem>
                 <FormLabel>Nombre</FormLabel>
                 <FormControl>
@@ -186,7 +176,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
                 <input
                   hidden
                   type="file"
-                  /* We only accept jpg, jpeg and png extensions */
+                  // We only accept jpg, jpeg and png extensions
                   accept=".jpg,.jpeg,.png"
                   {...avatarFieldProps}
                   ref={inputFileRef}
@@ -213,7 +203,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
                   </TooltipProvider>
                 ) : (
                   <Button
-                    /* We trigger the input file click with this button */
+                    // We trigger the input file click with this button
                     onClick={() => {
                       if (inputFileRef.current) {
                         inputFileRef.current.click();
@@ -234,7 +224,8 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
                   </Button>
                 )}
               </div>
-            </div>
+            </div> */}
+            </>
           )}
         />
         <FormField
