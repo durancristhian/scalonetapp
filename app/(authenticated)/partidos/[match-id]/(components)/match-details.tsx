@@ -71,19 +71,21 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
               <PlayerTabs />
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                Jugadores fichados
-                {match.players.length
-                  ? `: ${match.players.length} de ${process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH}`
-                  : ""}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <MatchPlayers players={match.players} />
-            </CardContent>
-          </Card>
+          {match.players.length ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  Jugadores fichados
+                  {match.players.length
+                    ? `: ${match.players.length} de ${process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH}`
+                    : ""}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <MatchPlayers players={match.players} />
+              </CardContent>
+            </Card>
+          ) : null}
         </div>
       </div>
       <div className="md:col-span-2">
