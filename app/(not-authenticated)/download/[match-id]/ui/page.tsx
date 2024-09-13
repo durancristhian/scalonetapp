@@ -1,5 +1,6 @@
 "use client";
 
+import { PlayerAvatar } from "@/components/player-avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { MatchWithPlayers } from "@/types/match";
@@ -55,10 +56,10 @@ const Page: FC = () => {
                           key={player.id}
                           className="flex gap-4 items-center"
                         >
-                          {/* <PlayerAvatar
+                          <PlayerAvatar
                             src={player.avatar}
                             name={player.name}
-                          /> */}
+                          />
                           <div className="grow">
                             <p className="text-xl">{player.name}</p>
                           </div>
