@@ -18,6 +18,8 @@ const getAppDomain: () => string = () =>
     : "http://localhost:3000";
 
 export async function GET(request: NextRequest) {
+  let browser: Browser | null = null;
+
   try {
     /* pathname here will be /download/[match-id] */
     const pathname = request.nextUrl.pathname;
@@ -35,7 +37,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const browser = await getBrowser();
+    browser = await getBrowser();
 
     const page = await browser.newPage();
     page.setViewport({
@@ -73,6 +75,10 @@ export async function GET(request: NextRequest) {
     return response;
   } catch (error) {
     console.error(error);
+
+    if (browser) {
+      browser.close();
+    }
 
     return NextResponse.json(
       { error: ERROR_MESSAGES.server_error },
