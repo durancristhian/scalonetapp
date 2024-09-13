@@ -49,8 +49,9 @@ export async function GET(request: NextRequest) {
       window.localStorage.setItem("match", JSON.stringify(data));
     }, match);
     /* We navigate AGAIN to the same page so we have access to the localStorage data :) YES, IT'S A HACK */
-    await page.goto(`${getAppDomain()}/download/${matchId}/ui`);
-    await page.waitForNetworkIdle();
+    await page.goto(`${getAppDomain()}/download/${matchId}/ui`, {
+      waitUntil: "networkidle0",
+    });
 
     const screenshot = await page.screenshot({
       captureBeyondViewport: true,
