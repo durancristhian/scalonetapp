@@ -1,12 +1,12 @@
 "use client";
 
+import { PlayerAvatar } from "@/components/player-avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { MatchWithPlayers } from "@/types/match";
 import { BaseTeam } from "@/types/team";
 import { byName } from "@/utils/by-name";
 import { Player } from "@prisma/client";
-import { default as BoringAvatar } from "boring-avatars";
 import { FC, useEffect, useState } from "react";
 
 const Page: FC = () => {
@@ -56,10 +56,9 @@ const Page: FC = () => {
                           key={player.id}
                           className="flex gap-4 items-center"
                         >
-                          <BoringAvatar
-                            variant="beam"
+                          <PlayerAvatar
+                            src={player.avatar}
                             name={player.name}
-                            size={48}
                           />
                           <div className="grow">
                             <p className="text-xl">{player.name}</p>

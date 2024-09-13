@@ -3,7 +3,7 @@
 import { TeamForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/team-form";
 import { AnimatedListItem } from "@/components/animated-list-item";
 import { EmptyState } from "@/components/empty-state";
-import { SpicyTooltips } from "@/components/spicy-tooltips";
+import { PlayerAvatar } from "@/components/player-avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -15,7 +15,6 @@ import {
 import { TeamSchema } from "@/schemas/team";
 import { Team } from "@/types/team";
 import { byName } from "@/utils/by-name";
-import { default as BoringAvatar } from "boring-avatars";
 import { TrashIcon, XIcon } from "lucide-react";
 import { FC } from "react";
 
@@ -106,13 +105,11 @@ export const TeamCard: FC<TeamCardProps> = ({
                       </TooltipProvider>
                       <div className="grow">
                         <div className="flex gap-2 items-center">
-                          <SpicyTooltips>
-                            <BoringAvatar
-                              variant="beam"
-                              name={player.name}
-                              size={24}
-                            />
-                          </SpicyTooltips>
+                          <PlayerAvatar
+                            src={player.avatar}
+                            name={player.name}
+                            size="sm"
+                          />
                           <p>{player.name}</p>
                         </div>
                       </div>

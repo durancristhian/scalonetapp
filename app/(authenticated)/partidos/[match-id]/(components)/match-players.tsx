@@ -3,7 +3,7 @@ import { DeletePlayer } from "@/app/(authenticated)/partidos/[match-id]/(compone
 import { PlayerForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/player-form";
 import { AnimatedListItem } from "@/components/animated-list-item";
 import { EmptyState } from "@/components/empty-state";
-import { SpicyTooltips } from "@/components/spicy-tooltips";
+import { PlayerAvatar } from "@/components/player-avatar";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Dialog,
@@ -16,7 +16,6 @@ import { PlayerSchema } from "@/schemas/player";
 import { editPlayer } from "@/server/actions/player";
 import { byName } from "@/utils/by-name";
 import { Player } from "@prisma/client";
-import { default as BoringAvatar } from "boring-avatars";
 import { AlertCircleIcon, PencilIcon } from "lucide-react";
 import { FC, useState } from "react";
 import { ZodError } from "zod";
@@ -130,13 +129,11 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player, onPlayerSubmit }) => {
               <div className="flex gap-2 items-center">
                 <div className="grow">
                   <div className="flex gap-2 items-center">
-                    <SpicyTooltips>
-                      <BoringAvatar
-                        variant="beam"
-                        name={player.name}
-                        size={24}
-                      />
-                    </SpicyTooltips>
+                    <PlayerAvatar
+                      src={player.avatar}
+                      name={player.name}
+                      size="sm"
+                    />
                     <p>{player.name}</p>
                   </div>
                 </div>
@@ -148,13 +145,7 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player, onPlayerSubmit }) => {
             <DialogHeader>
               <DialogTitle>Editar ficha del jugador</DialogTitle>
             </DialogHeader>
-            <PlayerForm
-              onSubmit={onSubmit}
-              values={{
-                name: player.name,
-                level: player.level,
-              }}
-            />
+            <PlayerForm onSubmit={onSubmit} values={player} />
           </DialogContent>
         </Dialog>
       </div>
