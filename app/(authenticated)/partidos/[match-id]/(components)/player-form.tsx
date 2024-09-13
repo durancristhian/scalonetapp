@@ -91,16 +91,19 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
       data.append("file", file);
       data.append("upload_preset", "scalonetapp");
 
-      const cloudinaryResponse = await fetch(
+      const response = await fetch(
         "https://api.cloudinary.com/v1_1/cristhianjavierduran/image/upload",
         {
           method: "POST",
           body: data,
         }
-      );
+      ).then(async (response) => await response.json());
 
-      const cloudinaryImage = await cloudinaryResponse.json();
-      const imageUrl = cloudinaryImage.secure_url;
+      if (response.error?.message) {
+        throw new Error(`Cloudinary error: ${response.error.message}`);
+      }
+
+      const imageUrl = response.secure_url;
 
       form.setValue("avatar", imageUrl);
 
