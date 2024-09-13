@@ -1,8 +1,8 @@
 "use client";
 
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
+import { PlayerAvatar } from "@/components/player-avatar";
 import { SoccerBall } from "@/components/soccer-ball";
-import { SpicyTooltips } from "@/components/spicy-tooltips";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -15,10 +15,16 @@ import {
   FormRootError,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
 import { unfoldZodError } from "@/utils/errors";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { default as BoringAvatar } from "boring-avatars";
+import { TrashIcon } from "lucide-react";
 import { ChangeEventHandler, FC, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { ZodError } from "zod";
@@ -51,6 +57,7 @@ type PlayerFormProps = {
 export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
   const form = useForm<PlayerSchema>({
     defaultValues: values || {
+      avatar: "",
       name: "",
       level: Number(process.env.NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL),
     },
@@ -84,16 +91,19 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
       data.append("file", file);
       data.append("upload_preset", "scalonetapp");
 
-      const cloudinaryResponse = await fetch(
+      const response = await fetch(
         "https://api.cloudinary.com/v1_1/cristhianjavierduran/image/upload",
         {
           method: "POST",
           body: data,
         }
-      );
+      ).then(async (response) => await response.json());
 
-      const cloudinaryImage = await cloudinaryResponse.json();
-      const imageUrl = cloudinaryImage.secure_url;
+      if (response.error?.message) {
+        throw new Error(`Cloudinary error: ${response.error.message}`);
+      }
+
+      const imageUrl = response.secure_url;
 
       form.setValue("avatar", imageUrl);
 
@@ -107,7 +117,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
       });
 
       /* We clean the input value */
-      form.setValue("avatar", undefined);
+      form.setValue("avatar", "");
 
       setUploadingImage(false);
     }
@@ -151,28 +161,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
           control={form.control}
           name="name"
           render={({ field }) => (
-            <>
-              <div className="flex gap-4 items-center">
-                <div>
-                  <SpicyTooltips>
-                    <BoringAvatar
-                      variant="beam"
-                      name={field.value || INPUT_PLACEHOLDER}
-                      size={48}
-                    />
-                  </SpicyTooltips>
-                </div>
-                <div className="grow">
-                  <FormItem>
-                    <FormLabel>Nombre</FormLabel>
-                    <FormControl>
-                      <Input placeholder={INPUT_PLACEHOLDER} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                </div>
-              </div>
-              {/* <div className="grid gap-4">
+            <div className="grid gap-4">
               <FormItem>
                 <FormLabel>Nombre</FormLabel>
                 <FormControl>
@@ -181,25 +170,15 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
                 <FormMessage />
               </FormItem>
               <div className="flex gap-4 items-center justify-center">
-                <Avatar className="h-16 w-16">
-                  <AvatarImage
-                    src={avatar}
-                    alt={`Avatar de ${field.value || INPUT_PLACEHOLDER}`}
-                  />
-                  <AvatarFallback>
-                    <SpicyTooltips>
-                      <BoringAvatar
-                        variant="beam"
-                        name={field.value || INPUT_PLACEHOLDER}
-                        size={64}
-                      />
-                    </SpicyTooltips>
-                  </AvatarFallback>
-                </Avatar>
+                <PlayerAvatar
+                  src={avatar || ""}
+                  name={field.value || INPUT_PLACEHOLDER}
+                  size="lg"
+                />
                 <input
                   hidden
                   type="file"
-                  // We only accept jpg, jpeg and png extensions
+                  /* We only accept jpg, jpeg and png extensions */
                   accept=".jpg,.jpeg,.png"
                   {...avatarFieldProps}
                   ref={inputFileRef}
@@ -211,7 +190,8 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
                       <TooltipTrigger asChild>
                         <Button
                           onClick={() => {
-                            form.setValue("avatar", undefined);
+                            /* We clean the input value */
+                            form.setValue("avatar", "");
                           }}
                           variant="ghost"
                           size="icon"
@@ -226,7 +206,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
                   </TooltipProvider>
                 ) : (
                   <Button
-                    // We trigger the input file click with this button
+                    /* We trigger the input file click with this button */
                     onClick={() => {
                       if (inputFileRef.current) {
                         inputFileRef.current.click();
@@ -247,8 +227,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
                   </Button>
                 )}
               </div>
-            </div> */}
-            </>
+            </div>
           )}
         />
         <FormField
@@ -283,7 +262,11 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
         <FormRootError />
         <Button
           type="submit"
-          disabled={!form.formState.isValid || form.formState.isSubmitting}
+          disabled={
+            !form.formState.isValid ||
+            form.formState.isSubmitting ||
+            uploadingImage
+          }
         >
           {form.formState.isSubmitting ? (
             <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />

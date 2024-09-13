@@ -1,6 +1,6 @@
 "use client";
 
-import { SpicyTooltips } from "@/components/spicy-tooltips";
+import { PlayerAvatar } from "@/components/player-avatar";
 import {
   Select,
   SelectContent,
@@ -12,7 +12,6 @@ import {
 import { Toggle } from "@/components/ui/toggle";
 import { Team } from "@/types/team";
 import { Player } from "@prisma/client";
-import { default as BoringAvatar } from "boring-avatars";
 import clsx from "clsx";
 import { FC, useState } from "react";
 
@@ -60,9 +59,7 @@ export const PlayersList: FC<PlayersListProps> = ({
                 : undefined
             )}
           >
-            <SpicyTooltips>
-              <BoringAvatar variant="beam" name={player.name} size={24} />
-            </SpicyTooltips>
+            <PlayerAvatar src={player.avatar} name={player.name} size="sm" />
             <p className="ml-2">{player.name}</p>
           </Toggle>
         ))}
