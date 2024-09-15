@@ -30,30 +30,30 @@ import { ZodError } from "zod";
 
 export const Feedback = () => {
   const { successAlert } = useAlerts();
-  const [popoverOpen, setPopoverOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   return (
-    <Dialog open={popoverOpen} onOpenChange={setPopoverOpen}>
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
         <Button
           onClick={() => {
-            setPopoverOpen(true);
+            setDialogOpen(true);
           }}
           variant="outline"
         >
           Feedback
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>¿Que te gustaría decirme?</DialogTitle>
-          <DialogDescription className="max-md:text-balance">
+          <DialogDescription className="text-balance">
             Todo feedback, idea y/o sugerencia es bienvenida (:
           </DialogDescription>
         </DialogHeader>
         <FeedbackForm
           afterSubmit={() => {
-            setPopoverOpen(false);
+            setDialogOpen(false);
 
             successAlert({ title: "¡Su feedback fue enviado!" });
           }}

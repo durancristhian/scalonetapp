@@ -63,8 +63,6 @@ export const MatchForm: FC<MatchFormProps> = ({ onSubmit, values }) => {
     }
   };
 
-  const placeholder = `Partido de los ${DAY_LABELS[new Date().getDay()]}`;
-
   return (
     <Form {...form}>
       <form
@@ -78,7 +76,12 @@ export const MatchForm: FC<MatchFormProps> = ({ onSubmit, values }) => {
             <FormItem>
               <FormLabel>Nombre</FormLabel>
               <FormControl>
-                <Input placeholder={placeholder} {...field} />
+                <Input
+                  placeholder={`Partido de los ${
+                    DAY_LABELS[new Date().getDay()]
+                  }`}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

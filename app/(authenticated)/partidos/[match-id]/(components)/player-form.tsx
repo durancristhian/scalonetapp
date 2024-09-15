@@ -87,15 +87,15 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
       /* This is safe to do since we don't accept multiple images in the file input */
       const file = files[0];
 
-      const data = new FormData();
-      data.append("file", file);
-      data.append("upload_preset", "scalonetapp");
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "scalonetapp");
 
       const response = await fetch(
         "https://api.cloudinary.com/v1_1/cristhianjavierduran/image/upload",
         {
           method: "POST",
-          body: data,
+          body: formData,
         }
       ).then(async (response) => await response.json());
 

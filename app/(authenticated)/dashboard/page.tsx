@@ -9,13 +9,12 @@ const Page: FC = async () => {
   return (
     <div className="py-4 md:py-8">
       <div className="max-w-7xl mx-auto px-4 w-full">
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="md:col-span-1">
+        <div className="grid gap-4">
+          <div className="flex gap-4 items-center justify-between">
+            <h2 className="font-bold text-xl">Tus partidos</h2>
             <AddMatch />
           </div>
-          <div className="md:col-span-2">
-            <MatchesList matches={matches} />
-          </div>
+          {/* TODO: List */}
         </div>
       </div>
     </div>

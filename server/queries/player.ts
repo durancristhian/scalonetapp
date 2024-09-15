@@ -7,8 +7,12 @@ import { auth } from "@clerk/nextjs/server";
 const getMatch = async (userId: string, matchId: number) => {
   const match = await prisma.match.findFirst({
     where: {
-      id: matchId,
-      userId,
+      id: {
+        equals: matchId,
+      },
+      userId: {
+        equals: userId,
+      },
     },
     include: {
       players: true,
@@ -24,9 +28,13 @@ const namesAlreadyInMatch: (
 ) => Promise<boolean> = async (matchId, names) => {
   const coincidences = await prisma.player.findMany({
     where: {
-      matchId,
+      matchId: {
+        equals: matchId,
+      },
       OR: names.map((name) => ({
-        name,
+        name: {
+          contains: name,
+        },
       })),
     },
   });

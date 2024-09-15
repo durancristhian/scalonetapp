@@ -13,7 +13,9 @@ export const getMatches = async () => {
 
   return await prisma.match.findMany({
     where: {
-      userId,
+      userId: {
+        equals: userId,
+      },
     },
     orderBy: {
       createdAt: "desc",
@@ -32,8 +34,12 @@ export const getMatchById = async (id: number) => {
 
   const match = await prisma.match.findFirst({
     where: {
-      id,
-      userId,
+      id: {
+        equals: id,
+      },
+      userId: {
+        equals: userId,
+      },
     },
     include: {
       players: true,
@@ -47,21 +53,23 @@ export const getMatchById = async (id: number) => {
 };
 
 export const addMatch: (data: MatchSchema) => Promise<void> = async (data) => {
+  const parsedData = MATCH_SCHEMA.parse(data);
+
   const { userId } = auth();
   if (!userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
 
   const nextMatch = {
-    ...data,
+    ...parsedData,
     userId,
   };
 
-  MATCH_SCHEMA.parse(nextMatch);
-
   const userMatches = await prisma.match.findMany({
     where: {
-      userId,
+      userId: {
+        equals: userId,
+      },
     },
   });
 
@@ -70,6 +78,8 @@ export const addMatch: (data: MatchSchema) => Promise<void> = async (data) => {
   ) {
     throw new Error(ERROR_MESSAGES.matches_limit_reached);
   }
+
+  /* TODO: validate we don't have an existing match named the same */
 
   await prisma.match.create({
     data: nextMatch,
@@ -88,7 +98,7 @@ export const editMatch: (
   await prisma.match.update({
     where: {
       id,
-      userId: userId,
+      userId,
     },
     data,
   });
