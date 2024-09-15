@@ -1,10 +1,11 @@
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
+import { AddPlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/add-player";
 import { DeletePlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/delete-player";
 import { PlayerForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/player-form";
 import { AnimatedListItem } from "@/components/animated-list-item";
 import { EmptyState } from "@/components/empty-state";
 import { PlayerAvatar } from "@/components/player-avatar";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -16,7 +17,7 @@ import { PlayerSchema } from "@/schemas/player";
 import { editPlayer } from "@/server/actions/player";
 import { byName } from "@/utils/by-name";
 import { Player } from "@prisma/client";
-import { AlertCircleIcon, PencilIcon } from "lucide-react";
+import { PencilIcon } from "lucide-react";
 import { FC, useState } from "react";
 import { ZodError } from "zod";
 
@@ -67,40 +68,46 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
 
   return (
     <>
-      {canListPlayers ? (
-        <div className="grid gap-6">
-          {players.length >=
-          Number(process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH) ? (
-            <Alert variant="destructive">
-              <AlertCircleIcon className="h-4 w-4" />
-              <AlertTitle>¡No hay más espacio en el banco!</AlertTitle>
-              <AlertDescription>
-                ¡Has alcanzado el máximo de{" "}
-                {process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH} jugadores! Si
-                necesitas añadir más estrellas, considera liberar espacio
-                eliminando un jugador existente.
-              </AlertDescription>
-            </Alert>
-          ) : null}
-          <ul className="grid gap-2">
-            {players.sort(byName).map((player, idx) => {
-              return (
-                <AnimatedListItem key={player.id} listIndex={idx}>
-                  <MatchPlayer
-                    player={player}
-                    onPlayerSubmit={onPlayerSubmit}
-                  />
-                </AnimatedListItem>
-              );
-            })}
-          </ul>
+      <Card>
+        {/* Instead of using CardHeader and overwriting too many classes I decided to write my own */}
+        <div className="flex gap-2 items-center justify-between p-6">
+          <CardTitle>
+            Jugadores
+            {players.length
+              ? `: ${players.length} de ${process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH}`
+              : ""}
+          </CardTitle>
+          <AddPlayer
+            disabled={
+              players.length >=
+              Number(process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH)
+            }
+          />
         </div>
-      ) : (
-        <EmptyState>
-          Parece que aún no has agregado a nadie. ¡Es hora de llenar la
-          plantilla!
-        </EmptyState>
-      )}
+        <CardContent>
+          {canListPlayers ? (
+            <div className="grid gap-6">
+              <ul className="grid gap-2">
+                {players.sort(byName).map((player, idx) => {
+                  return (
+                    <AnimatedListItem key={player.id} listIndex={idx}>
+                      <MatchPlayer
+                        player={player}
+                        onPlayerSubmit={onPlayerSubmit}
+                      />
+                    </AnimatedListItem>
+                  );
+                })}
+              </ul>
+            </div>
+          ) : (
+            <EmptyState>
+              Parece que aún no has agregado a nadie. ¡Es hora de llenar la
+              plantilla!
+            </EmptyState>
+          )}
+        </CardContent>
+      </Card>
     </>
   );
 };

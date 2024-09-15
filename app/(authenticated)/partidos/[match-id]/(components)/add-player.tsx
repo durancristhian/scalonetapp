@@ -1,7 +1,7 @@
 "use client";
 
-import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
-import { MatchForm } from "@/app/(authenticated)/dashboard/(components)/match-form";
+import { MultiplePlayersForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/multiple-players-form";
+import { PlayerForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/player-form";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,16 +20,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { MatchSchema } from "@/schemas/match";
-import { addMatch } from "@/server/actions/match";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PlayerSchema } from "@/schemas/player";
+import { addMultiplePlayers, addPlayer } from "@/server/actions/player";
 import { InfoIcon } from "lucide-react";
+import { useParams } from "next/navigation";
 import { FC, useState } from "react";
 
-type AddMatchProps = {
+type AddPlayerProps = {
   disabled?: boolean;
 };
 
-export const AddMatch: FC<AddMatchProps> = ({ disabled }) => {
+export const AddPlayer: FC<AddPlayerProps> = ({ disabled }) => {
   if (disabled) {
     return <DisabledContent />;
   }
@@ -58,12 +60,13 @@ const DisabledContent = () => {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              ¡Alto ahí, entrenador! ¡Llegaste al límite!
+              ¡No hay más espacio en el banco!
             </AlertDialogTitle>
             <AlertDialogDescription className="max-md:text-balance">
-              Ya tienes {process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER} partidos
-              creados. Te sugerimos despedir a uno de tus encuentros más
-              viejitos para darle lugar a nuevas glorias futbolísticas!
+              ¡Has alcanzado el máximo de{" "}
+              {process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH} jugadores! Si
+              necesitas añadir más estrellas, considera liberar espacio
+              eliminando un jugador existente.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -77,33 +80,17 @@ const DisabledContent = () => {
 
 const EnabledContent: FC = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { errorAlert, successAlert } = useAlerts();
+  const params = useParams();
+  const matchId = Number(params["match-id"]);
 
-  const onMatchSubmit: (values: MatchSchema) => Promise<void> = (values) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await addMatch(values);
+  const onPlayerSubmit: (values: PlayerSchema) => Promise<void> = (values) => {
+    return addPlayer(matchId, values);
+  };
 
-        successAlert({
-          title: "¡Partido creado!",
-        });
-
-        setDialogOpen(false);
-
-        resolve();
-      } catch (error) {
-        console.error(error);
-
-        if (error instanceof Error) {
-          errorAlert({
-            title: "Error en la creación del partido",
-            description: error.message,
-          });
-        }
-
-        reject(error);
-      }
-    });
+  const onMultiplePlayersSubmit: (values: PlayerSchema[]) => Promise<void> = (
+    values
+  ) => {
+    return addMultiplePlayers(matchId, values);
   };
 
   return (
@@ -113,13 +100,23 @@ const EnabledContent: FC = () => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>El primer paso hacia la gloria</DialogTitle>
+          <DialogTitle>¡Convoca a los galácticos!</DialogTitle>
           <DialogDescription className="max-md:text-balance">
-            Todo DT necesita de un partido para demostrar su habilidad. Empieza
-            por crear uno.
+            Es el momento de traer a los mejores jugadores al campo de juego.
           </DialogDescription>
         </DialogHeader>
-        <MatchForm onSubmit={onMatchSubmit} />
+        <Tabs defaultValue="single">
+          <TabsList className="grid grid-cols-2">
+            <TabsTrigger value="single">Agregar uno</TabsTrigger>
+            <TabsTrigger value="multiple">Agregar muchos</TabsTrigger>
+          </TabsList>
+          <TabsContent value="single">
+            <PlayerForm onSubmit={onPlayerSubmit} />
+          </TabsContent>
+          <TabsContent value="multiple">
+            <MultiplePlayersForm onSubmit={onMultiplePlayersSubmit} />
+          </TabsContent>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );
