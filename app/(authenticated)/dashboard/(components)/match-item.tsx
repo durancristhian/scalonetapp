@@ -28,7 +28,7 @@ export const MatchItem: FC<MatchItemProps> = ({ match }) => {
   return (
     <div className="flex items-center gap-2">
       <div className="grow">
-        <div className="bg-white border border-border hover:bg-accent px-4 py-2 rounded-md transition-colors">
+        <div className="bg-white border border-border hover:bg-accent px-4 py-2 rounded-md shadow-sm transition-colors">
           <div className="flex items-center justify-between gap-4">
             <div className="grow">
               <Link href={`/partidos/${match.id}`}>
