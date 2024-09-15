@@ -114,6 +114,8 @@ export const addMultiplePlayers: (
     throw new Error(ERROR_MESSAGES.players_per_match_limit_reached);
   }
 
+  /* TODO: Check that if we add the players, we don't pass the limit as well */
+
   const nextPlayers = data.map((player) => ({
     ...player,
     matchId,

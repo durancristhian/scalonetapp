@@ -5,6 +5,7 @@ import { PlayerForm } from "@/app/(authenticated)/partidos/[match-id]/(component
 import { AnimatedListItem } from "@/components/animated-list-item";
 import { EmptyState } from "@/components/empty-state";
 import { PlayerAvatar } from "@/components/player-avatar";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
@@ -127,35 +128,31 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player, onPlayerSubmit }) => {
   };
 
   return (
-    <div className="flex items-center gap-2">
-      <DeletePlayer id={player.id} />
+    <div className="flex gap-2 items-center">
+      <PlayerAvatar src={player.avatar} name={player.name} size="sm" />
       <div className="grow">
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger className="w-full">
-            <div className="border border-border hover:bg-accent px-4 py-2 rounded-md transition-colors">
-              <div className="flex gap-2 items-center">
-                <div className="grow">
-                  <div className="flex gap-2 items-center">
-                    <PlayerAvatar
-                      src={player.avatar}
-                      name={player.name}
-                      size="sm"
-                    />
-                    <p>{player.name}</p>
-                  </div>
-                </div>
-                <PencilIcon className="h-4 text-muted-foreground w-4" />
-              </div>
-            </div>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Editar ficha del jugador</DialogTitle>
-            </DialogHeader>
-            <PlayerForm onSubmit={onSubmit} values={player} />
-          </DialogContent>
-        </Dialog>
+        <p>{player.name}</p>
       </div>
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogTrigger asChild>
+          <Button
+            onClick={() => {
+              setDialogOpen(true);
+            }}
+            variant="ghost"
+            size="icon"
+          >
+            <PencilIcon className="h-4 text-muted-foreground w-4" />
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Editar ficha del jugador</DialogTitle>
+          </DialogHeader>
+          <PlayerForm onSubmit={onSubmit} values={player} />
+        </DialogContent>
+      </Dialog>
+      <DeletePlayer id={player.id} />
     </div>
   );
 };

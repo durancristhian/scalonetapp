@@ -57,7 +57,7 @@ export const TeamCard: FC<TeamCardProps> = ({
                       variant="ghost"
                       size="icon"
                     >
-                      <TrashIcon className="h-4 text-red-700 w-4" />
+                      <TrashIcon className="h-4 text-destructive w-4" />
                     </Button>
                   </div>
                 </TooltipTrigger>
@@ -95,7 +95,7 @@ export const TeamCard: FC<TeamCardProps> = ({
                                 removePlayerFromTeam(player.id, team.id);
                               }}
                             >
-                              <XIcon className="h-4 text-red-700 w-4" />
+                              <XIcon className="h-4 text-destructive w-4" />
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>

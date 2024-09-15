@@ -57,7 +57,7 @@ export const DeletePlayer: FC<DeletePlayerProps> = ({ id }) => {
               variant="ghost"
               size="icon"
             >
-              <TrashIcon className="h-4 text-red-700 w-4" />
+              <TrashIcon className="h-4 text-destructive w-4" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>
