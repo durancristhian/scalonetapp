@@ -12,12 +12,7 @@ import {
 import { Match } from "@prisma/client";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale/es";
-import {
-  ChevronRightIcon,
-  EllipsisVerticalIcon,
-  PencilIcon,
-  TrashIcon,
-} from "lucide-react";
+import { EllipsisVerticalIcon, PencilIcon, TrashIcon } from "lucide-react";
 import Link from "next/link";
 import { FC, useState } from "react";
 
@@ -26,57 +21,17 @@ type MatchItemProps = {
 };
 
 export const MatchItem: FC<MatchItemProps> = ({ match }) => {
+  const [menuOpened, setMenuOpened] = useState(false);
+  /* This is not great at all but enough for now due to the small amout of options we have in the dropdown menu */
   const [dialogId, setDialogId] = useState<"edit" | "delete" | null>(null);
 
   return (
     <div className="flex items-center gap-2">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon">
-            <EllipsisVerticalIcon className="h-4 text-muted-foreground w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        {/* margin here helps to detach the menu from the limit of the screen (specially in mobile) */}
-        <DropdownMenuContent className="ml-4">
-          <DropdownMenuItem
-            onSelect={() => {
-              setDialogId("edit");
-            }}
-          >
-            <PencilIcon className="h-4 mr-2 text-muted-foreground w-4" />
-            Editar
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onSelect={() => {
-              setDialogId("delete");
-            }}
-          >
-            <TrashIcon className="h-4 mr-2 text-destructive w-4" />
-            Eliminar
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-      {dialogId === "edit" ? (
-        <EditMatch
-          match={match}
-          onClose={() => {
-            setDialogId(null);
-          }}
-        />
-      ) : null}
-      {dialogId === "delete" ? (
-        <DeleteMatch
-          id={match.id}
-          onClose={() => {
-            setDialogId(null);
-          }}
-        />
-      ) : null}
       <div className="grow">
-        <Link href={`/partidos/${match.id}`}>
-          <div className="bg-white border border-border hover:bg-accent px-4 py-2 rounded-md transition-colors">
-            <div className="flex items-center justify-between gap-4">
-              <div>
+        <div className="bg-white border border-border hover:bg-accent px-4 py-2 rounded-md transition-colors">
+          <div className="flex items-center justify-between gap-4">
+            <div className="grow">
+              <Link href={`/partidos/${match.id}`}>
                 <p>{match.name}</p>
                 <p className="text-muted-foreground text-sm">
                   Última actualización:{" "}
@@ -84,11 +39,54 @@ export const MatchItem: FC<MatchItemProps> = ({ match }) => {
                     locale: es,
                   })}
                 </p>
-              </div>
-              <ChevronRightIcon className="h-4 text-muted-foreground w-4" />
+              </Link>
             </div>
+            <DropdownMenu open={menuOpened} onOpenChange={setMenuOpened}>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <EllipsisVerticalIcon className="h-4 text-muted-foreground w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              {/* margin here helps to detach the menu from the limit of the screen (specially in mobile) */}
+              <DropdownMenuContent className="mr-4">
+                <DropdownMenuItem
+                  onClick={() => {
+                    setDialogId("edit");
+                  }}
+                >
+                  <PencilIcon className="h-4 mr-2 text-muted-foreground w-4" />
+                  Editar
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setDialogId("delete");
+                  }}
+                >
+                  <TrashIcon className="h-4 mr-2 text-destructive w-4" />
+                  Eliminar
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            {dialogId === "edit" ? (
+              <EditMatch
+                match={match}
+                onClose={() => {
+                  setDialogId(null);
+                  setMenuOpened(false);
+                }}
+              />
+            ) : null}
+            {dialogId === "delete" ? (
+              <DeleteMatch
+                id={match.id}
+                onClose={() => {
+                  setDialogId(null);
+                  setMenuOpened(false);
+                }}
+              />
+            ) : null}
           </div>
-        </Link>
+        </div>
       </div>
     </div>
   );

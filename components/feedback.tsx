@@ -55,7 +55,9 @@ export const Feedback = () => {
           afterSubmit={() => {
             setDialogOpen(false);
 
-            successAlert({ title: "¡Su feedback fue enviado!" });
+            successAlert({
+              title: "¡Su feedback fue enviado!",
+            });
           }}
         />
       </DialogContent>

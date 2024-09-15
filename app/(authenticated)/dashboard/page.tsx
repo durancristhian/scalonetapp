@@ -12,9 +12,14 @@ const Page: FC = async () => {
         <div className="grid gap-4">
           <div className="flex gap-4 items-center justify-between">
             <h2 className="font-bold text-xl">Tus partidos</h2>
-            <AddMatch />
+            <AddMatch
+              disabled={
+                matches.length >=
+                Number(process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER)
+              }
+            />
           </div>
-          {/* TODO: List */}
+          <MatchesList matches={matches} />
         </div>
       </div>
     </div>

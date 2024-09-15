@@ -2,6 +2,15 @@
 
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { MatchForm } from "@/app/(authenticated)/dashboard/(components)/match-form";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,9 +22,60 @@ import {
 } from "@/components/ui/dialog";
 import { MatchSchema } from "@/schemas/match";
 import { addMatch } from "@/server/actions/match";
+import { InfoIcon } from "lucide-react";
 import { FC, useState } from "react";
 
-export const AddMatch: FC = () => {
+type AddMatchProps = {
+  disabled?: boolean;
+};
+
+export const AddMatch: FC<AddMatchProps> = ({ disabled }) => {
+  if (disabled) {
+    return <DisabledContent />;
+  }
+
+  return <EnabledContent />;
+};
+
+const DisabledContent = () => {
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  return (
+    <>
+      <div className="inline-flex gap-2">
+        <Button disabled>Add match</Button>
+        <Button
+          onClick={() => {
+            setDialogOpen(true);
+          }}
+          variant="ghost"
+          size="icon"
+        >
+          <InfoIcon className="h-4 text-destructive w-4" />
+        </Button>
+      </div>
+      <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              ¡Alto ahí, entrenador! ¡Llegaste al límite!
+            </AlertDialogTitle>
+            <AlertDialogDescription className="max-md:text-balance">
+              Ya tienes {process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER} partidos
+              creados. Te sugerimos despedir a uno de tus encuentros más
+              viejitos para darle lugar a nuevas glorias futbolísticas!
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction>Ok, entendido</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+};
+
+const EnabledContent: FC<AddMatchProps> = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const { errorAlert, successAlert } = useAlerts();
 

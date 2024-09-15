@@ -29,7 +29,9 @@ export const DeleteMatch: FC<DeleteMatchProps> = ({ id, onClose }) => {
 
       onClose();
 
-      successAlert({ title: "¡Partido eliminado!" });
+      successAlert({
+        title: "¡Partido eliminado!",
+      });
     } catch (error) {
       console.error(error);
 
