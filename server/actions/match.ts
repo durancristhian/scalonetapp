@@ -2,16 +2,16 @@
 
 import { MatchSchema } from "@/schemas/match";
 import {
-  addMatch as addMatchQuery,
-  deleteMatch as deleteMatchQuery,
-  editMatch as editMatchQuery,
+  addMatchQuery,
+  deleteMatchQuery,
+  editMatchQuery,
 } from "@/server/queries/match";
 import { Match } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 type AddMatch = (data: MatchSchema) => Promise<void>;
 
-export const addMatch: AddMatch = async (data) => {
+export const addMatchAction: AddMatch = async (data) => {
   await addMatchQuery(data);
 
   revalidatePath("/dashboard");
@@ -23,7 +23,11 @@ type EditMatch = (
   pathToRevalidate: string
 ) => Promise<void>;
 
-export const editMatch: EditMatch = async (id, data, pathToRevalidate) => {
+export const editMatchAction: EditMatch = async (
+  id,
+  data,
+  pathToRevalidate
+) => {
   await editMatchQuery(id, data);
 
   revalidatePath(pathToRevalidate, "page");
@@ -31,7 +35,7 @@ export const editMatch: EditMatch = async (id, data, pathToRevalidate) => {
 
 type DeleteMatch = (id: number) => Promise<void>;
 
-export const deleteMatch: DeleteMatch = async (id) => {
+export const deleteMatchAction: DeleteMatch = async (id) => {
   await deleteMatchQuery(id);
 
   revalidatePath("/dashboard");

@@ -22,7 +22,10 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlayerSchema } from "@/schemas/player";
-import { addMultiplePlayers, addPlayer } from "@/server/actions/player";
+import {
+  addMultiplePlayersAction,
+  addPlayerAction,
+} from "@/server/actions/player";
 import { InfoIcon } from "lucide-react";
 import { useParams } from "next/navigation";
 import { FC, useState } from "react";
@@ -84,13 +87,13 @@ const EnabledContent: FC = () => {
   const matchId = Number(params["match-id"]);
 
   const onPlayerSubmit: (values: PlayerSchema) => Promise<void> = (values) => {
-    return addPlayer(matchId, values);
+    return addPlayerAction(matchId, values);
   };
 
   const onMultiplePlayersSubmit: (values: PlayerSchema[]) => Promise<void> = (
     values
   ) => {
-    return addMultiplePlayers(matchId, values);
+    return addMultiplePlayersAction(matchId, values);
   };
 
   return (

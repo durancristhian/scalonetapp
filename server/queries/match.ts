@@ -5,7 +5,7 @@ import prisma from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { Match } from "@prisma/client";
 
-export const getMatches = async () => {
+export const getMatchesQuery = async () => {
   const { userId } = auth();
   if (!userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
@@ -26,7 +26,7 @@ export const getMatches = async () => {
   });
 };
 
-export const getMatchById = async (id: number) => {
+export const getMatchByIdQuery = async (id: number) => {
   const { userId } = auth();
   if (!userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
@@ -52,7 +52,9 @@ export const getMatchById = async (id: number) => {
   return match;
 };
 
-export const addMatch: (data: MatchSchema) => Promise<void> = async (data) => {
+export const addMatchQuery: (data: MatchSchema) => Promise<void> = async (
+  data
+) => {
   const parsedData = MATCH_SCHEMA.parse(data);
 
   const { userId } = auth();
@@ -86,7 +88,7 @@ export const addMatch: (data: MatchSchema) => Promise<void> = async (data) => {
   });
 };
 
-export const editMatch: (
+export const editMatchQuery: (
   id: number,
   data: Partial<Match>
 ) => Promise<void> = async (id, data) => {
@@ -104,7 +106,7 @@ export const editMatch: (
   });
 };
 
-export const deleteMatch: (id: number) => Promise<void> = async (id) => {
+export const deleteMatchQuery: (id: number) => Promise<void> = async (id) => {
   const { userId } = auth();
   if (!userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);

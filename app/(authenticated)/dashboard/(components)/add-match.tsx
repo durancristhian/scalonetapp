@@ -21,7 +21,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { MatchSchema } from "@/schemas/match";
-import { addMatch } from "@/server/actions/match";
+import { addMatchAction } from "@/server/actions/match";
 import { InfoIcon } from "lucide-react";
 import { FC, useState } from "react";
 
@@ -82,7 +82,7 @@ const EnabledContent: FC = () => {
   const onMatchSubmit: (values: MatchSchema) => Promise<void> = (values) => {
     return new Promise(async (resolve, reject) => {
       try {
-        await addMatch(values);
+        await addMatchAction(values);
 
         successAlert({
           title: "¡Partido creado!",

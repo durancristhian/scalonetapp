@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { MatchSchema } from "@/schemas/match";
-import { editMatch } from "@/server/actions/match";
+import { editMatchAction } from "@/server/actions/match";
 import { Match } from "@prisma/client";
 import { FC } from "react";
 import { ZodError } from "zod";
@@ -26,7 +26,7 @@ export const EditMatch: FC<EditMatchProps> = ({ match, onClose }) => {
   const onMatchSubmit: (values: MatchSchema) => Promise<void> = (values) => {
     return new Promise(async (resolve, reject) => {
       try {
-        await editMatch(match.id, values, "/dashboard");
+        await editMatchAction(match.id, values, "/dashboard");
 
         onClose();
 

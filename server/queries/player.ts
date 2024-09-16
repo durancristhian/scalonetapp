@@ -42,7 +42,7 @@ const namesAlreadyInMatch: (
   return !!coincidences.length;
 };
 
-export const addPlayer: (
+export const addPlayerQuery: (
   matchId: number,
   data: PlayerSchema
 ) => Promise<void> = async (matchId, data) => {
@@ -83,7 +83,7 @@ export const addPlayer: (
   });
 };
 
-export const addMultiplePlayers: (
+export const addMultiplePlayersQuery: (
   matchId: number,
   data: PlayerSchema[]
 ) => Promise<void> = async (matchId, data) => {
@@ -128,7 +128,7 @@ export const addMultiplePlayers: (
   });
 };
 
-export const editPlayer: (
+export const editPlayerQuery: (
   id: number,
   data: Partial<PlayerSchema>
 ) => Promise<void> = async (id, data) => {
@@ -147,7 +147,7 @@ export const editPlayer: (
   });
 };
 
-export const deletePlayer: (id: number) => Promise<void> = async (id) => {
+export const deletePlayerQuery: (id: number) => Promise<void> = async (id) => {
   const { userId } = auth();
   if (!userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);

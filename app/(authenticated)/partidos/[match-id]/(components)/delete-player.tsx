@@ -11,7 +11,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { deletePlayer } from "@/server/actions/player";
+import { deletePlayerAction } from "@/server/actions/player";
 import { useAction } from "next-safe-action/hooks";
 import { FC } from "react";
 
@@ -21,7 +21,7 @@ type DeletePlayerProps = {
 };
 
 export const DeletePlayer: FC<DeletePlayerProps> = ({ id, onClose }) => {
-  const { executeAsync, isExecuting } = useAction(deletePlayer);
+  const { executeAsync, isExecuting } = useAction(deletePlayerAction);
   const { errorAlert } = useAlerts();
 
   const onSubmitAction = async (values: FormData) => {

@@ -1,10 +1,10 @@
 import { AddMatch } from "@/app/(authenticated)/dashboard/(components)/add-match";
 import { MatchesList } from "@/app/(authenticated)/dashboard/(components)/matches-list";
-import { getMatches } from "@/server/queries/match";
+import { getMatchesQuery } from "@/server/queries/match";
 import { FC } from "react";
 
 const Page: FC = async () => {
-  const matches = await getMatches();
+  const matches = await getMatchesQuery();
 
   return (
     <div className="py-4 md:py-8">

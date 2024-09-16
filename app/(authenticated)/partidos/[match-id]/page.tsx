@@ -7,7 +7,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { getMatchById } from "@/server/queries/match";
+import { getMatchByIdQuery } from "@/server/queries/match";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FC } from "react";
@@ -19,7 +19,7 @@ type PageProps = {
 };
 
 const Page: FC<PageProps> = async ({ params }) => {
-  const match = await getMatchById(Number(params["match-id"]));
+  const match = await getMatchByIdQuery(Number(params["match-id"]));
 
   if (!match) {
     return notFound();

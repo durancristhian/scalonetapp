@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { PlayerSchema } from "@/schemas/player";
-import { editPlayer } from "@/server/actions/player";
+import { editPlayerAction } from "@/server/actions/player";
 import { Player } from "@prisma/client";
 import { FC } from "react";
 import { ZodError } from "zod";
@@ -23,7 +23,7 @@ export const EditPlayer: FC<EditPlayerProps> = ({ player, onClose }) => {
   const onSubmit: (values: PlayerSchema) => Promise<void> = async (values) => {
     return new Promise(async (resolve, reject) => {
       try {
-        await editPlayer(player.id, values);
+        await editPlayerAction(player.id, values);
 
         onClose();
 

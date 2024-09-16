@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { PlayerSchema } from "@/schemas/player";
-import { editPlayer } from "@/server/actions/player";
+import { editPlayerAction } from "@/server/actions/player";
 import { byName } from "@/utils/by-name";
 import { Player } from "@prisma/client";
 import { EllipsisVerticalIcon, PencilIcon, TrashIcon } from "lucide-react";
@@ -42,7 +42,7 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
   ) => {
     return new Promise(async (resolve, reject) => {
       try {
-        await editPlayer(id, values);
+        await editPlayerAction(id, values);
 
         resolve();
       } catch (error) {

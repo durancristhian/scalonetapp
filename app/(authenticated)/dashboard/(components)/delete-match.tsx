@@ -12,7 +12,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { deleteMatch } from "@/server/actions/match";
+import { deleteMatchAction } from "@/server/actions/match";
 import { FC } from "react";
 
 type DeleteMatchProps = {
@@ -25,7 +25,7 @@ export const DeleteMatch: FC<DeleteMatchProps> = ({ id, onClose }) => {
 
   const onDeleteMatch: () => Promise<void> = async () => {
     try {
-      await deleteMatch(id);
+      await deleteMatchAction(id);
 
       onClose();
 

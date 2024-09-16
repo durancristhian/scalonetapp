@@ -9,7 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { editMatch } from "@/server/actions/match";
+import { editMatchAction } from "@/server/actions/match";
 import { Team } from "@/types/team";
 import { getTeamsToSave } from "@/utils/get-teams-to-save";
 import { FC, useState } from "react";
@@ -28,7 +28,7 @@ export const SaveTeams: FC<SaveTeamsProps> = ({ disabled, matchId, teams }) => {
     try {
       setIsProcessing(true);
 
-      await editMatch(
+      await editMatchAction(
         matchId,
         {
           teams: getTeamsToSave(teams),
