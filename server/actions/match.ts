@@ -8,13 +8,16 @@ import {
 } from "@/server/queries/match";
 import { Match } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 type AddMatch = (data: MatchSchema) => Promise<void>;
 
 export const addMatchAction: AddMatch = async (data) => {
-  await addMatchQuery(data);
+  const newMatch = await addMatchQuery(data);
 
   revalidatePath("/dashboard");
+
+  redirect(`/partidos/${newMatch.id}`);
 };
 
 type EditMatch = (

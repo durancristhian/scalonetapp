@@ -5,6 +5,7 @@ import { EditPlayer } from "@/app/(authenticated)/partidos/[match-id]/(component
 import { AnimatedListItem } from "@/components/animated-list-item";
 import { EmptyState } from "@/components/empty-state";
 import { PlayerAvatar } from "@/components/player-avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -77,12 +78,13 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
       {/* Instead of using CardHeader and overwriting too many classes I decided to write my own */}
       <div className="flex gap-2 items-center justify-between p-6">
         <div className="space-y-1">
-          <CardTitle>Jugadores</CardTitle>
-          <CardDescription>
-            {players.length
-              ? `${players.length} de ${process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH}`
-              : ""}
-          </CardDescription>
+          <CardTitle>Jugadores convocados</CardTitle>
+          {players.length ? (
+            <CardDescription>
+              {players.length} de{" "}
+              {process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH}
+            </CardDescription>
+          ) : null}
         </div>
         <AddPlayer
           disabled={
@@ -109,10 +111,7 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
             </ul>
           </ScrollArea>
         ) : (
-          <EmptyState>
-            Parece que aún no has agregado a nadie. ¡Es hora de llenar la
-            plantilla!
-          </EmptyState>
+          <EmptyState>Parece que aún no has llamado a nadie.</EmptyState>
         )}
       </CardContent>
     </Card>
@@ -135,6 +134,9 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player, onPlayerSubmit }) => {
         <PlayerAvatar src={player.avatar} name={player.name} size="sm" />
         <div className="grow">
           <p>{player.name}</p>
+        </div>
+        <div className="flex-shrink-0">
+          <Badge variant="secondary">{player.level}</Badge>
         </div>
         <div className="flex-shrink-0">
           <DropdownMenu open={menuOpened} onOpenChange={setMenuOpened}>

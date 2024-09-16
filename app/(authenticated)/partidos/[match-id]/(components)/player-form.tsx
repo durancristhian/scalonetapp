@@ -129,7 +129,6 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
     try {
       await onSubmit(values);
 
-      form.setFocus("name");
       form.reset();
     } catch (error) {
       console.error(error);
@@ -196,9 +195,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
                           <TrashIcon className="h-4 text-red-700 w-4" />
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Eliminar</p>
-                      </TooltipContent>
+                      <TooltipContent>Eliminar</TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                 ) : (

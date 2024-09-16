@@ -73,7 +73,7 @@ const DisabledContent = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction>Ok, entendido</AlertDialogAction>
+            <AlertDialogAction>Entendido</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -86,14 +86,24 @@ const EnabledContent: FC = () => {
   const params = useParams();
   const matchId = Number(params["match-id"]);
 
+  /* TODO: improve */
   const onPlayerSubmit: (values: PlayerSchema) => Promise<void> = (values) => {
-    return addPlayerAction(matchId, values);
+    addPlayerAction(matchId, values);
+
+    setDialogOpen(false);
+
+    return Promise.resolve();
   };
 
+  /* TODO: improve */
   const onMultiplePlayersSubmit: (values: PlayerSchema[]) => Promise<void> = (
     values
   ) => {
-    return addMultiplePlayersAction(matchId, values);
+    addMultiplePlayersAction(matchId, values);
+
+    setDialogOpen(false);
+
+    return Promise.resolve();
   };
 
   return (
@@ -103,7 +113,7 @@ const EnabledContent: FC = () => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>¡Convoca a los galácticos!</DialogTitle>
+          <DialogTitle>Convocando a los galácticos</DialogTitle>
           <DialogDescription className="max-md:text-balance">
             Es el momento de traer a los mejores jugadores al campo de juego.
           </DialogDescription>

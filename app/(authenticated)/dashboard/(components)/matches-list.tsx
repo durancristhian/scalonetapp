@@ -16,7 +16,7 @@ export const MatchesList: FC<MatchsListProps> = ({ matches }) => {
   if (!canListMatches) {
     return (
       <EmptyState>
-        Silencio atroz... hasta que crees tu primer partido. ¡Vamos, empieza ya!
+        Silencio atroz... hasta que crees tu primer partido.
       </EmptyState>
     );
   }

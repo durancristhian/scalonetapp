@@ -62,12 +62,12 @@ const DisabledContent = () => {
             </AlertDialogTitle>
             <AlertDialogDescription className="max-md:text-balance">
               Ya tienes {process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER} partidos
-              creados. Te sugerimos despedir a uno de tus encuentros más
-              viejitos para darle lugar a nuevas glorias futbolísticas!
+              creados. Te sugerimos eliminar alguno para darle lugar a nuevas
+              glorias futbolísticas!
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction>Ok, entendido</AlertDialogAction>
+            <AlertDialogAction>Entendido</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

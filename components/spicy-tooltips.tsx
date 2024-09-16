@@ -32,9 +32,7 @@ export const SpicyTooltips: FC<PropsWithChildren> = ({ children }) => {
           {/* We need this div here with a listener so we don't pollute children with extra event handlers */}
           <div onMouseEnter={handleMouseEnter}>{children}</div>
         </TooltipTrigger>
-        <TooltipContent>
-          <p>{TOOLTIP_MESSAGES[tooltipIndex]}</p>
-        </TooltipContent>
+        <TooltipContent>{TOOLTIP_MESSAGES[tooltipIndex]}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );

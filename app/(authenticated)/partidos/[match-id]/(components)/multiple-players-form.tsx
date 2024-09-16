@@ -59,7 +59,6 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
 
       await onSubmit(nextPlayers);
 
-      form.setFocus("players");
       form.reset();
     } catch (error) {
       console.error(error);

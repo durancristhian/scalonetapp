@@ -52,7 +52,7 @@ export const getMatchByIdQuery = async (id: number) => {
   return match;
 };
 
-export const addMatchQuery: (data: MatchSchema) => Promise<void> = async (
+export const addMatchQuery: (data: MatchSchema) => Promise<Match> = async (
   data
 ) => {
   const parsedData = MATCH_SCHEMA.parse(data);
@@ -83,7 +83,7 @@ export const addMatchQuery: (data: MatchSchema) => Promise<void> = async (
 
   /* TODO: validate we don't have an existing match named the same */
 
-  await prisma.match.create({
+  return await prisma.match.create({
     data: nextMatch,
   });
 };

@@ -49,7 +49,6 @@ export const MatchForm: FC<MatchFormProps> = ({ onSubmit, values }) => {
     try {
       await onSubmit(values);
 
-      form.setFocus("name");
       form.reset();
     } catch (error) {
       console.error(error);
@@ -71,7 +70,7 @@ export const MatchForm: FC<MatchFormProps> = ({ onSubmit, values }) => {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nombre</FormLabel>
+              <FormLabel>Nombre del partido</FormLabel>
               <FormControl>
                 <Input
                   placeholder={`Partido de los ${

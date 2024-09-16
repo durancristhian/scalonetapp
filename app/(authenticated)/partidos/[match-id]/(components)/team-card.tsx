@@ -54,30 +54,18 @@ export const TeamCard: FC<TeamCardProps> = ({
                 }}
               />
             </div>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  {/* Putting this empty div here so the tooltip works even if the button is disabled (it can't receive focus hence the tooltip won't be shown) */}
-                  <div>
-                    <Button
-                      onClick={onTeamRemove}
-                      disabled={!canBeDeleted}
-                      variant="ghost"
-                      size="icon"
-                    >
+            {canBeDeleted ? (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button onClick={onTeamRemove} variant="ghost" size="icon">
                       <TrashIcon className="h-4 text-destructive w-4" />
                     </Button>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>
-                    {canBeDeleted
-                      ? "Eliminar"
-                      : "Se necesitan al menos 2 equipos para armar una buena competencia"}
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+                  </TooltipTrigger>
+                  <TooltipContent>Eliminar</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ) : null}
           </div>
           {Boolean(team.players.length) ? (
             <>
@@ -109,9 +97,7 @@ export const TeamCard: FC<TeamCardProps> = ({
                                 <XIcon className="h-4 text-destructive w-4" />
                               </Button>
                             </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Sacar del equipo</p>
-                            </TooltipContent>
+                            <TooltipContent>Sacar del equipo</TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
                       </div>

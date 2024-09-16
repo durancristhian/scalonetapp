@@ -48,7 +48,8 @@ export const Feedback = () => {
         <DialogHeader>
           <DialogTitle>¿Que te gustaría decirme?</DialogTitle>
           <DialogDescription className="text-balance">
-            Todo feedback, idea y/o sugerencia es bienvenida (:
+            Todo feedback es bienvenido. No te garantizo que este mensaje sea
+            contestado pero si te aseguro que lo voy a leer.
           </DialogDescription>
         </DialogHeader>
         <FeedbackForm
@@ -111,7 +112,7 @@ const FeedbackForm: FC<FeedbackFormProps> = ({ afterSubmit }) => {
           name="message"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Mensaje</FormLabel>
+              <FormLabel>Tu mensaje</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Hola Cris, me gustaría que..."

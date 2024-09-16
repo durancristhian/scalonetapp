@@ -15,7 +15,7 @@ import { Player } from "@prisma/client";
 import clsx from "clsx";
 import { FC, useState } from "react";
 
-type PlayersListProps = {
+type AssignPlayersProps = {
   assignSelectionToTeam: (teamId: string) => void;
   canAssignSelection: boolean;
   players: Player[];
@@ -24,8 +24,7 @@ type PlayersListProps = {
   togglePlayer: (id: number) => void;
 };
 
-/* TODO: rename this component */
-export const PlayersList: FC<PlayersListProps> = ({
+export const AssignPlayers: FC<AssignPlayersProps> = ({
   assignSelectionToTeam,
   canAssignSelection,
   players,
@@ -36,8 +35,8 @@ export const PlayersList: FC<PlayersListProps> = ({
   const [selectedTeamId, setSelectedTeamId] = useState("");
 
   return (
-    <div className="space-y-4">
-      <p>Elige alguno de los jugadores que aparecen a continuación:</p>
+    <div className="space-y-2">
+      <p>Elige jugadores:</p>
       <div className="flex flex-wrap gap-2">
         {players.map((player) => (
           <Toggle
@@ -58,10 +57,10 @@ export const PlayersList: FC<PlayersListProps> = ({
           </Toggle>
         ))}
       </div>
-      <p>Luego selecciona el equipo al que estos jugadores se unirán.</p>
+      <p>Selecciona el equipo al que se unirán:</p>
       <Select
         value={selectedTeamId}
-        disabled={canAssignSelection}
+        disabled={!canAssignSelection}
         onValueChange={(selectedTeamId) => {
           assignSelectionToTeam(selectedTeamId);
 
@@ -72,8 +71,8 @@ export const PlayersList: FC<PlayersListProps> = ({
           <SelectValue
             placeholder={
               canAssignSelection
-                ? "Selecciona al menos un jugador"
-                : "Elegí un equipo"
+                ? "Elegí un equipo"
+                : "Selecciona al menos un jugador"
             }
           />
         </SelectTrigger>
