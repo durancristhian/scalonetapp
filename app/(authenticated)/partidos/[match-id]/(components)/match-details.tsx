@@ -56,7 +56,9 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
           {match.players.length ? (
             <>
               <h1 className="font-bold text-xl">
-                ¡Es hora de armar los equipos!
+                {unselectedPlayers.length
+                  ? "¡Es hora de armar los equipos!"
+                  : "¡Terminaste!"}
               </h1>
               {unselectedPlayers.length ? (
                 <>

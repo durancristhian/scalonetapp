@@ -1,19 +1,14 @@
 import { ConfirmTeamsUpdate } from "@/app/(authenticated)/partidos/[match-id]/(components)/confirm-teams-update";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import clsx from "clsx";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@radix-ui/react-label";
 import { FC, useState } from "react";
 
 type Preset = "random" | "balanced";
@@ -38,43 +33,40 @@ export const BuildTeams: FC<BuildTeamsProps> = ({
         </DialogTrigger>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <div className="space-y-4">
+            <div className="space-y-8">
               <DialogTitle>Armar equipos</DialogTitle>
-              <Card
-                className={clsx(
-                  "cursor-pointer hover:bg-accent",
-                  preset === "random" ? "bg-accent" : undefined
-                )}
-                onClick={() => {
-                  setPreset(preset === "random" ? null : "random");
+              <RadioGroup
+                defaultValue="random"
+                onValueChange={(nextPreset: Preset) => {
+                  setPreset(nextPreset);
                 }}
+                className="space-y-4"
               >
-                <CardHeader>
-                  <CardTitle>Equipos aleatorios</CardTitle>
-                  <CardDescription>
-                    Usa esta opción para separar a los jugadores al azar. ¡La
-                    suerte está echada!
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-              <Card
-                className={clsx(
-                  "cursor-pointer hover:bg-accent",
-                  preset === "balanced" ? "bg-accent" : undefined
-                )}
-                onClick={() => {
-                  setPreset(preset === "balanced" ? null : "balanced");
-                }}
-              >
-                <CardHeader>
-                  {/* TODO: make sure this is enabled only when at leaast 1 player has different level from the default player level */}
-                  <CardTitle>Equipos balanceados</CardTitle>
-                  <CardDescription>
-                    Haremos los equipos teniendo en cuenta el nivel de los
-                    jugadores. ¡Prepárate para el desafío!
-                  </CardDescription>
-                </CardHeader>
-              </Card>
+                <div className="flex gap-2">
+                  <div className="flex-shrink-0 mt-[2px]">
+                    <RadioGroupItem value="random" id="random" />
+                  </div>
+                  <Label htmlFor="random">
+                    <p className="font-semibold">Equipos aleatorios</p>
+                    <p className="text-sm">
+                      Usa esta opción para separar a los jugadores al azar. ¡La
+                      suerte está echada!
+                    </p>
+                  </Label>
+                </div>
+                <div className="flex gap-2">
+                  <div className="flex-shrink-0 mt-[2px]">
+                    <RadioGroupItem value="balanced" id="balanced" />
+                  </div>
+                  <Label htmlFor="balanced">
+                    <p className="font-semibold">Equipos balanceados</p>
+                    <p className="text-sm">
+                      Haremos los equipos teniendo en cuenta el nivel de los
+                      jugadores. ¡Prepárate para el desafío!
+                    </p>
+                  </Label>
+                </div>
+              </RadioGroup>
               <div className="text-right">
                 <ConfirmTeamsUpdate
                   disabled={!preset}
