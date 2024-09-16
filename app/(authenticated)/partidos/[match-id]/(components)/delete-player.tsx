@@ -41,22 +41,22 @@ export const DeletePlayer: FC<DeletePlayerProps> = ({ id, onClose }) => {
   return (
     <AlertDialog open>
       <AlertDialogContent onEscapeKeyDown={onClose}>
-        <form action={onSubmitAction}>
-          <input type="hidden" name="id" value={id} />
-          <AlertDialogHeader>
-            <AlertDialogTitle>¿Eliminar este jugador?</AlertDialogTitle>
-            <AlertDialogDescription className="max-md:text-balance">
-              Ten en cuenta que se eliminará toda la información asociada a él.
-              Esta acción no tiene vuelta atrás.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={onClose}>Cancelar</AlertDialogCancel>
+        <AlertDialogHeader>
+          <AlertDialogTitle>¿Eliminar este jugador?</AlertDialogTitle>
+          <AlertDialogDescription className="max-md:text-balance">
+            Ten en cuenta que se eliminará toda la información asociada a él.
+            Esta acción no tiene vuelta atrás.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={onClose}>Cancelar</AlertDialogCancel>
+          <form action={onSubmitAction}>
+            <input type="hidden" name="id" value={id} />
             <AlertDialogAction asChild>
               <Button type="submit">
                 {isExecuting ? (
                   <>
-                    <SoccerBall className="animate-spin h-4 opacity-50 w-4" />
+                    <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
                     Eliminando...
                   </>
                 ) : (
@@ -64,8 +64,8 @@ export const DeletePlayer: FC<DeletePlayerProps> = ({ id, onClose }) => {
                 )}
               </Button>
             </AlertDialogAction>
-          </AlertDialogFooter>
-        </form>
+          </form>
+        </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );

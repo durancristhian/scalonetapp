@@ -1,6 +1,7 @@
 import { SpicyTooltips } from "@/components/spicy-tooltips";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { default as BoringAvatar } from "boring-avatars";
+import clsx from "clsx";
 import { FC } from "react";
 
 type AvatarSize = "sm" | "md" | "lg";
@@ -24,9 +25,11 @@ export const PlayerAvatar: FC<PlayerAvatarProps> = ({
 }) => {
   return (
     <Avatar
-      className={
-        size === "sm" ? "h-6 w-6" : size === "md" ? "h-12 w-12" : "h-16 w-16"
-      }
+      className={clsx(
+        size === "sm" && "h-6 w-6",
+        size === "md" && "h-12 w-12",
+        size === "lg" && "h-16 w-16"
+      )}
     >
       <AvatarImage src={src} alt={`Avatar de ${name}`} />
       <AvatarFallback>

@@ -113,15 +113,17 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
           )}
         />
         <FormRootError />
-        <Button
-          type="submit"
-          disabled={!form.formState.isValid || form.formState.isSubmitting}
-        >
-          {form.formState.isSubmitting ? (
-            <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
-          ) : null}
-          {form.formState.isSubmitting ? "Guardando..." : "Guardar"}
-        </Button>
+        <div className="text-right">
+          <Button
+            type="submit"
+            disabled={!form.formState.isValid || form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting ? (
+              <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
+            ) : null}
+            {form.formState.isSubmitting ? "Guardando..." : "Guardar"}
+          </Button>
+        </div>
       </form>
     </Form>
   );

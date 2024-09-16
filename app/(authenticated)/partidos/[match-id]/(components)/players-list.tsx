@@ -24,6 +24,7 @@ type PlayersListProps = {
   togglePlayer: (id: number) => void;
 };
 
+/* TODO: rename this component */
 export const PlayersList: FC<PlayersListProps> = ({
   assignSelectionToTeam,
   canAssignSelection,
@@ -33,10 +34,6 @@ export const PlayersList: FC<PlayersListProps> = ({
   togglePlayer,
 }) => {
   const [selectedTeamId, setSelectedTeamId] = useState("");
-
-  if (!Array.isArray(players) || !players.length) {
-    return null;
-  }
 
   return (
     <div className="space-y-4">

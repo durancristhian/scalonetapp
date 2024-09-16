@@ -58,15 +58,19 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
               <h1 className="font-bold text-xl">
                 ¡Es hora de armar los equipos!
               </h1>
-              <PlayersList
-                assignSelectionToTeam={assignSelectionToTeam}
-                canAssignSelection={!selectedIds.length}
-                players={unselectedPlayers}
-                selectedIds={selectedIds}
-                teams={teams}
-                togglePlayer={togglePlayer}
-              />
-              <Separator />
+              {unselectedPlayers.length ? (
+                <>
+                  <PlayersList
+                    assignSelectionToTeam={assignSelectionToTeam}
+                    canAssignSelection={!selectedIds.length}
+                    players={unselectedPlayers}
+                    selectedIds={selectedIds}
+                    teams={teams}
+                    togglePlayer={togglePlayer}
+                  />
+                  <Separator />
+                </>
+              ) : null}
               <div className="space-y-4">
                 <div className="flex gap-2 items-center justify-between">
                   <p className="font-semibold">Los equipos</p>
@@ -113,9 +117,9 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                 </div>
               </div>
               <Separator />
-              <div className="space-y-4 text-center">
+              <div className="space-y-2 text-center">
                 <p className="font-semibold">¿Listo para la acción?</p>
-                <div className="flex gap-4 items-center justify-center">
+                <div className="flex gap-2 items-center justify-center">
                   <SaveTeams
                     disabled={!areTeamsValid}
                     matchId={match.id}

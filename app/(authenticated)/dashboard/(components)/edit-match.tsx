@@ -60,7 +60,7 @@ export const EditMatch: FC<EditMatchProps> = ({ match, onClose }) => {
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>¿Listo para un cambio?</DialogTitle>
           <DialogDescription className="max-md:text-balance">

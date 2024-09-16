@@ -46,6 +46,14 @@ export const TeamCard: FC<TeamCardProps> = ({
       <CardContent className="pt-6">
         <div className="space-y-4">
           <div className="flex gap-2 items-center">
+            <div className="grow">
+              <TeamForm
+                onSubmit={onTeamNameChange}
+                values={{
+                  name: team.name,
+                }}
+              />
+            </div>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -70,14 +78,6 @@ export const TeamCard: FC<TeamCardProps> = ({
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            <div className="grow">
-              <TeamForm
-                onSubmit={onTeamNameChange}
-                values={{
-                  name: team.name,
-                }}
-              />
-            </div>
           </div>
           {Boolean(team.players.length) ? (
             <>
@@ -85,24 +85,6 @@ export const TeamCard: FC<TeamCardProps> = ({
                 {team.players.sort(byName).map((player, idx) => (
                   <AnimatedListItem key={player.id} listIndex={idx}>
                     <div className="flex gap-2 items-center">
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => {
-                                removePlayerFromTeam(player.id, team.id);
-                              }}
-                            >
-                              <XIcon className="h-4 text-destructive w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Sacar del equipo</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
                       <div className="grow">
                         <div className="flex gap-2 items-center">
                           <PlayerAvatar
@@ -112,6 +94,26 @@ export const TeamCard: FC<TeamCardProps> = ({
                           />
                           <p>{player.name}</p>
                         </div>
+                      </div>
+                      <div className="flex-shrink-0">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => {
+                                  removePlayerFromTeam(player.id, team.id);
+                                }}
+                              >
+                                <XIcon className="h-4 text-destructive w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Sacar del equipo</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </div>
                     </div>
                   </AnimatedListItem>

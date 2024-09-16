@@ -123,15 +123,17 @@ const FeedbackForm: FC<FeedbackFormProps> = ({ afterSubmit }) => {
           )}
         />
         <FormRootError />
-        <Button
-          type="submit"
-          disabled={!form.formState.isValid || form.formState.isSubmitting}
-        >
-          {form.formState.isSubmitting ? (
-            <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
-          ) : null}
-          {form.formState.isSubmitting ? "Enviando..." : "Enviar"}
-        </Button>
+        <div className="text-right">
+          <Button
+            type="submit"
+            disabled={!form.formState.isValid || form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting ? (
+              <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
+            ) : null}
+            {form.formState.isSubmitting ? "Enviando..." : "Enviar"}
+          </Button>
+        </div>
       </form>
     </Form>
   );

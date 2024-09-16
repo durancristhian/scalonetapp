@@ -5,9 +5,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import clsx from "clsx";
 import { MailIcon } from "lucide-react";
+import { FC } from "react";
 
-export const ShowOff = () => {
+type ShowOffProps = {
+  popoverSeparation?: boolean;
+};
+
+export const ShowOff: FC<ShowOffProps> = ({ popoverSeparation }) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -17,8 +23,8 @@ export const ShowOff = () => {
         </Button>
       </PopoverTrigger>
       {/* margin here helps to detach the menu from the limit of the screen (specially in mobile) */}
-      <PopoverContent className="mr-4">
-        <div className="space-y-4">
+      <PopoverContent className={clsx(popoverSeparation && "mr-4")}>
+        <div className="flex gap-4">
           <Avatar>
             <AvatarImage
               src="/me.jpg"
@@ -27,12 +33,14 @@ export const ShowOff = () => {
             <AvatarFallback>CD</AvatarFallback>
           </Avatar>
           <div className="grow">
-            <div className="space-y-1">
-              <h4 className="font-bold">Cristhian Duran</h4>
-              <p className="text-sm">
-                Programador front-end de Buenos Aires, Argentina.
-              </p>
-              <div className="mt-4 space-x-2">
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-bold">Cristhian Duran</h4>
+                <p className="text-sm">
+                  Programador front-end de Buenos Aires, Argentina.
+                </p>
+              </div>
+              <div className="flex gap-2 items-center">
                 <MailIcon className="h-4 text-muted-foreground w-4" />
                 <span className="text-muted-foreground text-xs">
                   durancristhian@gmail.com
