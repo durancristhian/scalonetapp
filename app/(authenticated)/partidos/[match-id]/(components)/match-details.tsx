@@ -78,6 +78,11 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                   <p className="font-semibold">Los equipos</p>
                   <div className="space-x-2">
                     <BuildTeams
+                      disableBalanceTeams={match.players.every(
+                        (player) =>
+                          player.level ===
+                          Number(process.env.NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL)
+                      )}
                       onSave={(preset) => {
                         switch (preset) {
                           case "random": {

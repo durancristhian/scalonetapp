@@ -9,21 +9,24 @@ import {
 } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@radix-ui/react-label";
+import clsx from "clsx";
 import { FC, useState } from "react";
 
 type Preset = "random" | "balanced";
 
 type BuildTeamsProps = {
+  disableBalanceTeams: boolean;
   onSave: (preset: Preset) => void;
   showConfirmation: boolean;
 };
 
 export const BuildTeams: FC<BuildTeamsProps> = ({
+  disableBalanceTeams,
   onSave,
   showConfirmation,
 }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [preset, setPreset] = useState<Preset | null>(null);
+  const [preset, setPreset] = useState<Preset>("random");
 
   return (
     <>
@@ -33,14 +36,14 @@ export const BuildTeams: FC<BuildTeamsProps> = ({
         </DialogTrigger>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <div className="space-y-8">
+            <div className="space-y-4">
               <DialogTitle>Armar equipos</DialogTitle>
               <RadioGroup
-                defaultValue="random"
+                value={preset}
                 onValueChange={(nextPreset: Preset) => {
                   setPreset(nextPreset);
                 }}
-                className="space-y-4"
+                className="space-y-2"
               >
                 <div className="flex gap-2">
                   <div className="flex-shrink-0 mt-[2px]">
@@ -49,20 +52,36 @@ export const BuildTeams: FC<BuildTeamsProps> = ({
                   <Label htmlFor="random">
                     <p className="font-semibold">Equipos aleatorios</p>
                     <p className="text-sm">
-                      Usa esta opción para separar a los jugadores al azar. ¡La
-                      suerte está echada!
+                      Usa esta opción para separar a los jugadores al azar.
                     </p>
                   </Label>
                 </div>
                 <div className="flex gap-2">
                   <div className="flex-shrink-0 mt-[2px]">
-                    <RadioGroupItem value="balanced" id="balanced" />
+                    <RadioGroupItem
+                      value="balanced"
+                      disabled={disableBalanceTeams}
+                      id="balanced"
+                    />
                   </div>
                   <Label htmlFor="balanced">
-                    <p className="font-semibold">Equipos balanceados</p>
-                    <p className="text-sm">
-                      Haremos los equipos teniendo en cuenta el nivel de los
-                      jugadores. ¡Prepárate para el desafío!
+                    <p
+                      className={clsx(
+                        "font-semibold",
+                        disableBalanceTeams && "text-muted-foreground"
+                      )}
+                    >
+                      Equipos balanceados
+                    </p>
+                    <p
+                      className={clsx(
+                        "text-sm",
+                        disableBalanceTeams && "text-muted-foreground"
+                      )}
+                    >
+                      {disableBalanceTeams
+                        ? "Esta opción está deshabilitada porque todos tus jugadores tienen el mismo nivel, dejando sin efecto su uso."
+                        : "Haremos los equipos teniendo en cuenta el nivel de los jugadores."}
                     </p>
                   </Label>
                 </div>
