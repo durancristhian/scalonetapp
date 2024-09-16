@@ -8,10 +8,11 @@ import copy from "copy-to-clipboard";
 import { FC } from "react";
 
 type CopyTeamsProps = {
+  disabled: boolean;
   teams: Team[];
 };
 
-export const CopyTeams: FC<CopyTeamsProps> = ({ teams }) => {
+export const CopyTeams: FC<CopyTeamsProps> = ({ disabled, teams }) => {
   const { successAlert } = useAlerts();
 
   const copyTeams = () => {
@@ -34,8 +35,8 @@ export const CopyTeams: FC<CopyTeamsProps> = ({ teams }) => {
   };
 
   return (
-    <Button onClick={copyTeams} variant="outline">
-      Copiar
+    <Button onClick={copyTeams} disabled={disabled} variant="outline">
+      Copiar equipos
     </Button>
   );
 };

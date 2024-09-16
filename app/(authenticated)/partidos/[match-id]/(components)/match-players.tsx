@@ -93,8 +93,8 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
       </div>
       <CardContent>
         {canListPlayers ? (
-          /* This 435 is a magical number. It's the height of 9.5 items (+ the margin separating them) so we show those items and there is some sort of visual guidance for scrolling if you want to see more */
-          <ScrollArea className="h-[435px]">
+          /* 435 is a magical number. It's the height of 9.5 items (+ the margin separating them) so we only show those items and there is some sort of visual guidance to scroll if you want to see more */
+          <ScrollArea className={players.length > 10 ? "h-[435px]" : "h-auto"}>
             <ul className="grid gap-2">
               {players.sort(byName).map((player, idx) => {
                 return (

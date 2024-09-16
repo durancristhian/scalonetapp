@@ -39,11 +39,8 @@ export const PlayersList: FC<PlayersListProps> = ({
   }
 
   return (
-    <div className="grid gap-4">
-      <div className="grid gap-2">
-        <p className="font-semibold">¡Aún tienes jugadores en el banco!</p>
-        <p>Elige alguno de los jugadores que aparecen a continuación:</p>
-      </div>
+    <div className="space-y-4">
+      <p>Elige alguno de los jugadores que aparecen a continuación:</p>
       <div className="flex flex-wrap gap-2">
         {players.map((player) => (
           <Toggle
@@ -64,37 +61,35 @@ export const PlayersList: FC<PlayersListProps> = ({
           </Toggle>
         ))}
       </div>
-      <div className="grid gap-2">
-        <p>Luego selecciona el equipo al que estos jugadores se unirán.</p>
-        <Select
-          value={selectedTeamId}
-          disabled={canAssignSelection}
-          onValueChange={(selectedTeamId) => {
-            assignSelectionToTeam(selectedTeamId);
+      <p>Luego selecciona el equipo al que estos jugadores se unirán.</p>
+      <Select
+        value={selectedTeamId}
+        disabled={canAssignSelection}
+        onValueChange={(selectedTeamId) => {
+          assignSelectionToTeam(selectedTeamId);
 
-            setSelectedTeamId("");
-          }}
-        >
-          <SelectTrigger className="bg-white">
-            <SelectValue
-              placeholder={
-                canAssignSelection
-                  ? "Selecciona al menos un jugador"
-                  : "Elegí un equipo"
-              }
-            />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {teams.map((team) => (
-                <SelectItem key={team.id} value={team.id}>
-                  {team.name}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </div>
+          setSelectedTeamId("");
+        }}
+      >
+        <SelectTrigger className="bg-white">
+          <SelectValue
+            placeholder={
+              canAssignSelection
+                ? "Selecciona al menos un jugador"
+                : "Elegí un equipo"
+            }
+          />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            {teams.map((team) => (
+              <SelectItem key={team.id} value={team.id}>
+                {team.name}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
     </div>
   );
 };

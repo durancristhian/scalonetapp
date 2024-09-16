@@ -1,6 +1,6 @@
 "use client";
 
-import { ConfirmTeamsUpdate } from "@/app/(authenticated)/partidos/[match-id]/(components)/confirm-teams-update";
+import { BuildTeams } from "@/app/(authenticated)/partidos/[match-id]/(components)/build-teams";
 import { CopyTeams } from "@/app/(authenticated)/partidos/[match-id]/(components)/copy-teams";
 import { ExportTeams } from "@/app/(authenticated)/partidos/[match-id]/(components)/export-teams";
 import { MatchPlayers } from "@/app/(authenticated)/partidos/[match-id]/(components)/match-players";
@@ -11,7 +11,6 @@ import { useTeamsBuilderState } from "@/app/(authenticated)/partidos/[match-id]/
 import { EmptyState } from "@/components/empty-state";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MatchWithPlayers } from "@/types/match";
 import { getTeamsToSave } from "@/utils/get-teams-to-save";
 import { FC, useMemo } from "react";
@@ -62,78 +61,42 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                 <h1 className="font-bold text-xl">
                   ¡Es hora de armar los equipos!
                 </h1>
-                <p>
-                  ¡Puedes comenzar con uno de nuestros equipos sugeridos y luego
-                  jugar al entrenador a tu manera! Ajusta y cambia lo que
-                  quieras, porque en el fútbol, ¡siempre hay espacio para una
-                  jugada maestra!
-                </p>
               </div>
-              <Tabs
-                defaultValue="suggested-teams"
-                value={
-                  !unselectedPlayers.length ? "suggested-teams" : undefined
-                }
-              >
-                <TabsList className="grid grid-cols-2 mb-4">
-                  <TabsTrigger value="suggested-teams">
-                    Equipos sugeridos
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="custom-teams"
-                    disabled={!unselectedPlayers.length}
-                  >
-                    Personalizar equipos
-                  </TabsTrigger>
-                </TabsList>
-                <TabsContent value="suggested-teams">
-                  <div className="grid gap-8 md:grid-cols-2 md:items-start">
-                    <div className="grid gap-2">
-                      <p className="font-semibold">Lo que toca, toca</p>
-                      <p>
-                        Usa esta opción para separar a los jugadores al azar.
-                        ¡La suerte está echada!
-                      </p>
-                      <ConfirmTeamsUpdate
-                        onConfirm={randomizeTeams}
-                        showConfirmation={
-                          unselectedPlayers.length !== match.players.length
-                        }
-                        disableTrigger={!match.players.length}
-                        triggerText="Armar equipos aleatorios"
-                      />
-                    </div>
-                    <div className="grid gap-2">
-                      <p className="font-semibold">Usando la razón</p>
-                      <p>
-                        Haremos los equipos teniendo en cuenta el nivel de los
-                        jugadores. ¡Prepárate para el desafío!
-                      </p>
-                      <ConfirmTeamsUpdate
-                        onConfirm={balanceTeams}
-                        showConfirmation={
-                          unselectedPlayers.length !== match.players.length
-                        }
-                        disableTrigger={!match.players.length}
-                        triggerText="Armar equipos balanceados"
-                      />
-                    </div>
-                  </div>
-                </TabsContent>
-                <TabsContent value="custom-teams">
-                  <PlayersList
-                    assignSelectionToTeam={assignSelectionToTeam}
-                    canAssignSelection={!selectedIds.length}
-                    players={unselectedPlayers}
-                    selectedIds={selectedIds}
-                    teams={teams}
-                    togglePlayer={togglePlayer}
-                  />
-                </TabsContent>
-              </Tabs>
+              <PlayersList
+                assignSelectionToTeam={assignSelectionToTeam}
+                canAssignSelection={!selectedIds.length}
+                players={unselectedPlayers}
+                selectedIds={selectedIds}
+                teams={teams}
+                togglePlayer={togglePlayer}
+              />
               <Separator />
               <div className="grid gap-4">
-                <p className="font-semibold">Los equipos</p>
+                <div className="flex gap-2 items-center justify-between">
+                  <p className="font-semibold">Los equipos</p>
+                  <div className="flex gap-2">
+                    <BuildTeams
+                      onSave={(preset) => {
+                        switch (preset) {
+                          case "random": {
+                            randomizeTeams();
+
+                            break;
+                          }
+                          case "balanced": {
+                            balanceTeams();
+
+                            break;
+                          }
+                        }
+                      }}
+                      showConfirmation={
+                        unselectedPlayers.length < match.players.length
+                      }
+                    />
+                    <Button onClick={createNewTeam}>Agregar</Button>
+                  </div>
+                </div>
                 <div className="grid md:grid-cols-2 gap-4">
                   {teams.map((team) => (
                     <TeamCard
@@ -146,11 +109,11 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                     />
                   ))}
                 </div>
-                <div className="flex gap-2 items-center justify-between">
-                  <Button onClick={createNewTeam} variant="outline">
-                    Nuevo equipo
-                  </Button>
-                  <CopyTeams teams={teams} />
+                <div className="text-right">
+                  <CopyTeams
+                    disabled={unselectedPlayers.length === match.players.length}
+                    teams={teams}
+                  />
                 </div>
               </div>
               <Separator />
