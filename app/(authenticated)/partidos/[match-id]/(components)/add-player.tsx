@@ -44,7 +44,7 @@ const DisabledContent = () => {
 
   return (
     <>
-      <div className="inline-flex gap-2">
+      <div className="inline-flex space-x-2">
         <Button disabled>Agregar</Button>
         <Button
           onClick={() => {

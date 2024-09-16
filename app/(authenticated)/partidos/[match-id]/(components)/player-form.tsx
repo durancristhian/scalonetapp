@@ -153,15 +153,12 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmitHandler)}
-        className="flex flex-col gap-4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmitHandler)} className="space-y-4">
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
-            <div className="grid gap-4">
+            <div className="space-y-4">
               <FormItem>
                 <FormLabel>Nombre</FormLabel>
                 <FormControl>

@@ -26,7 +26,7 @@ const Page: FC<PageProps> = async ({ params }) => {
   }
 
   return (
-    <div className="grid gap-4 py-4 md:py-8">
+    <div className="py-4 md:py-8 space-y-4">
       <div className="max-w-7xl mx-auto px-4 w-full">
         <Breadcrumb>
           <BreadcrumbList>

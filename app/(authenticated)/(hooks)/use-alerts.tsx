@@ -34,7 +34,7 @@ export const useAlerts: UseAlerts = () => {
   };
 
   return {
-    successAlert,
     errorAlert,
+    successAlert,
   };
 };

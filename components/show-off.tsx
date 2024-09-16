@@ -18,7 +18,7 @@ export const ShowOff = () => {
       </PopoverTrigger>
       {/* margin here helps to detach the menu from the limit of the screen (specially in mobile) */}
       <PopoverContent className="mr-4">
-        <div className="flex gap-4">
+        <div className="space-y-4">
           <Avatar>
             <AvatarImage
               src="/me.jpg"
@@ -27,12 +27,12 @@ export const ShowOff = () => {
             <AvatarFallback>CD</AvatarFallback>
           </Avatar>
           <div className="grow">
-            <div className="flex flex-col gap-1">
+            <div className="space-y-1">
               <h4 className="font-bold">Cristhian Duran</h4>
               <p className="text-sm">
                 Programador front-end de Buenos Aires, Argentina.
               </p>
-              <div className="flex gap-2 items-center mt-4">
+              <div className="mt-4 space-x-2">
                 <MailIcon className="h-4 text-muted-foreground w-4" />
                 <span className="text-muted-foreground text-xs">
                   durancristhian@gmail.com

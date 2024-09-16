@@ -80,6 +80,7 @@ const FeedbackForm: FC<FeedbackFormProps> = ({ afterSubmit }) => {
   const onSubmitHandler: (values: FeedbackSchema) => Promise<void> = async (
     values
   ) => {
+    /* Make this a form action instead of an endpoint */
     return fetch("/api/feedback", {
       method: "POST",
       headers: {
@@ -104,10 +105,7 @@ const FeedbackForm: FC<FeedbackFormProps> = ({ afterSubmit }) => {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmitHandler)}
-        className="grid gap-4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmitHandler)} className="space-y-4">
         <FormField
           control={form.control}
           name="message"

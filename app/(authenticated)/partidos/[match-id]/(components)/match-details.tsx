@@ -49,19 +49,15 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
   return (
     <div className="grid md:grid-cols-3 gap-8">
       <div className="md:col-span-1">
-        <div className="grid gap-8">
-          <MatchPlayers players={match.players} />
-        </div>
+        <MatchPlayers players={match.players} />
       </div>
       <div className="md:col-span-2">
-        <div className="grid gap-8">
+        <div className="space-y-4">
           {match.players.length ? (
             <>
-              <div className="grid gap-2">
-                <h1 className="font-bold text-xl">
-                  ¡Es hora de armar los equipos!
-                </h1>
-              </div>
+              <h1 className="font-bold text-xl">
+                ¡Es hora de armar los equipos!
+              </h1>
               <PlayersList
                 assignSelectionToTeam={assignSelectionToTeam}
                 canAssignSelection={!selectedIds.length}
@@ -71,10 +67,10 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                 togglePlayer={togglePlayer}
               />
               <Separator />
-              <div className="grid gap-4">
+              <div className="space-y-4">
                 <div className="flex gap-2 items-center justify-between">
                   <p className="font-semibold">Los equipos</p>
-                  <div className="flex gap-2">
+                  <div className="space-x-2">
                     <BuildTeams
                       onSave={(preset) => {
                         switch (preset) {
@@ -117,7 +113,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                 </div>
               </div>
               <Separator />
-              <div className="grid gap-4 place-items-center">
+              <div className="space-y-4 text-center">
                 <p className="font-semibold">¿Listo para la acción?</p>
                 <div className="flex gap-4 items-center justify-center">
                   <SaveTeams
@@ -134,7 +130,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
               </div>
             </>
           ) : (
-            <div className="grid gap-2">
+            <div className="space-y-2">
               <h1 className="font-bold text-xl">
                 Sin jugadores, ni Messi podría ganar...
               </h1>

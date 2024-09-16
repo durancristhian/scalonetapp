@@ -38,7 +38,7 @@ export const BuildTeams: FC<BuildTeamsProps> = ({
         </DialogTrigger>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <div className="grid gap-4">
+            <div className="space-y-4">
               <DialogTitle>Armar equipos</DialogTitle>
               <Card
                 className={clsx(

@@ -44,8 +44,8 @@ export const TeamCard: FC<TeamCardProps> = ({
   return (
     <Card>
       <CardContent className="pt-6">
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-2">
+        <div className="space-y-4">
+          <div className="flex gap-2 items-center">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -81,10 +81,10 @@ export const TeamCard: FC<TeamCardProps> = ({
           </div>
           {Boolean(team.players.length) ? (
             <>
-              <div className="grid gap-2">
+              <div className="space-y-2">
                 {team.players.sort(byName).map((player, idx) => (
                   <AnimatedListItem key={player.id} listIndex={idx}>
-                    <div className="flex items-center gap-2">
+                    <div className="flex gap-2 items-center">
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>

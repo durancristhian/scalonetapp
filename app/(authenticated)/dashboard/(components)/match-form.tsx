@@ -65,10 +65,7 @@ export const MatchForm: FC<MatchFormProps> = ({ onSubmit, values }) => {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmitHandler)}
-        className="grid gap-4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmitHandler)} className="space-y-4">
         <FormField
           control={form.control}
           name="name"

@@ -85,10 +85,7 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmitHandler)}
-        className="flex flex-col gap-4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmitHandler)} className="space-y-4">
         <FormField
           control={form.control}
           name="players"

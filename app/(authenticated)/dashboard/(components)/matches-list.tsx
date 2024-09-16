@@ -22,7 +22,7 @@ export const MatchesList: FC<MatchsListProps> = ({ matches }) => {
   }
 
   return (
-    <div className="grid gap-4">
+    <div className="space-y-4">
       {matches.map((match, idx) => (
         <AnimatedListItem key={match.id} listIndex={idx}>
           <MatchItem match={match} />
