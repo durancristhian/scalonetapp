@@ -18,7 +18,7 @@ export const getMatches = async () => {
       },
     },
     orderBy: {
-      createdAt: "desc",
+      updatedAt: "desc",
     },
     include: {
       players: true,

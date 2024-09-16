@@ -18,13 +18,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { PlayerSchema } from "@/schemas/player";
 import { editPlayer } from "@/server/actions/player";
 import { byName } from "@/utils/by-name";
 import { Player } from "@prisma/client";
 import { EllipsisVerticalIcon, PencilIcon, TrashIcon } from "lucide-react";
-import { FC, Fragment, useState } from "react";
+import { FC, useState } from "react";
 import { ZodError } from "zod";
 
 type MatchPlayersProps = {
@@ -73,27 +73,28 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
   };
 
   return (
-    <>
-      <Card>
-        {/* Instead of using CardHeader and overwriting too many classes I decided to write my own */}
-        <div className="flex gap-2 items-center justify-between p-6">
-          <div className="space-y-1">
-            <CardTitle>Jugadores</CardTitle>
-            <CardDescription>
-              {players.length
-                ? `${players.length} de ${process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH}`
-                : ""}
-            </CardDescription>
-          </div>
-          <AddPlayer
-            disabled={
-              players.length >=
-              Number(process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH)
-            }
-          />
+    <Card>
+      {/* Instead of using CardHeader and overwriting too many classes I decided to write my own */}
+      <div className="flex gap-2 items-center justify-between p-6">
+        <div className="space-y-1">
+          <CardTitle>Jugadores</CardTitle>
+          <CardDescription>
+            {players.length
+              ? `${players.length} de ${process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH}`
+              : ""}
+          </CardDescription>
         </div>
-        <CardContent>
-          {canListPlayers ? (
+        <AddPlayer
+          disabled={
+            players.length >=
+            Number(process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH)
+          }
+        />
+      </div>
+      <CardContent>
+        {canListPlayers ? (
+          /* This 435 is a magical number. It's the height of 9.5 items (+ the margin separating them) so we show those items and there is some sort of visual guidance for scrolling if you want to see more */
+          <ScrollArea className="h-[435px]">
             <ul className="grid gap-2">
               {players.sort(byName).map((player, idx) => {
                 return (
@@ -106,15 +107,15 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
                 );
               })}
             </ul>
-          ) : (
-            <EmptyState>
-              Parece que aún no has agregado a nadie. ¡Es hora de llenar la
-              plantilla!
-            </EmptyState>
-          )}
-        </CardContent>
-      </Card>
-    </>
+          </ScrollArea>
+        ) : (
+          <EmptyState>
+            Parece que aún no has agregado a nadie. ¡Es hora de llenar la
+            plantilla!
+          </EmptyState>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 
