@@ -113,7 +113,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
 
       errorAlert({
         title: "Error al procesar la foto",
-        description: "Por favor, prueba otra vez.",
+        description: "Por favor, prueba nuevamente.",
       });
 
       /* We clean the input value */
@@ -140,7 +140,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
       } else if (error instanceof Error) {
         errorMessage =
           error.message ||
-          "No pudimos agregar el jugador. Por favor, verifica la información y prueba otra vez.";
+          "No pudimos agregar el jugador. Por favor, verifica la información y prueba nuevamente.";
       }
 
       form.setError("root", {

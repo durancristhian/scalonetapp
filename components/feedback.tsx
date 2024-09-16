@@ -22,14 +22,15 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { FEEDBACK_SCHEMA, FeedbackSchema } from "@/schemas/feedback";
-import { unfoldZodError } from "@/utils/errors";
+import { feedbackAction } from "@/server/actions/feedback";
+import { getErrorMessage } from "@/utils/get-error-message";
+import { valuesToFormData } from "@/utils/values-to-formdata";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAction } from "next-safe-action/hooks";
 import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
-import { ZodError } from "zod";
 
 export const Feedback = () => {
-  const { successAlert } = useAlerts();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   return (
@@ -55,10 +56,6 @@ export const Feedback = () => {
         <FeedbackForm
           afterSubmit={() => {
             setDialogOpen(false);
-
-            successAlert({
-              title: "¡Su feedback fue enviado!",
-            });
           }}
         />
       </DialogContent>
@@ -71,6 +68,8 @@ type FeedbackFormProps = {
 };
 
 const FeedbackForm: FC<FeedbackFormProps> = ({ afterSubmit }) => {
+  const { successAlert, errorAlert } = useAlerts();
+  const { executeAsync: submitFeedback } = useAction(feedbackAction);
   const form = useForm<FeedbackSchema>({
     defaultValues: {
       message: "",
@@ -78,30 +77,26 @@ const FeedbackForm: FC<FeedbackFormProps> = ({ afterSubmit }) => {
     resolver: zodResolver(FEEDBACK_SCHEMA),
   });
 
-  const onSubmitHandler: (values: FeedbackSchema) => Promise<void> = async (
-    values
-  ) => {
-    /* Make this a form action instead of an endpoint */
-    return fetch("/api/feedback", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    })
-      .then(() => {
-        afterSubmit();
-      })
-      .catch((error) => {
-        console.error(error);
+  const onSubmitHandler: (values: FeedbackSchema) => void = async (values) => {
+    const formData = valuesToFormData(values);
+    const result = await submitFeedback(formData);
 
-        if (error instanceof ZodError) {
-          form.setError("root", {
-            message: unfoldZodError(error).join(". "),
-            type: "validate",
-          });
-        }
+    if (!result?.data?.ok) {
+      errorAlert({
+        title: "Error al enviar su feedback",
+        description: result?.data?.reason
+          ? getErrorMessage(result.data.reason)
+          : null,
       });
+
+      return;
+    }
+
+    afterSubmit();
+
+    successAlert({
+      title: "¡Su feedback fue enviado!",
+    });
   };
 
   return (

@@ -64,7 +64,7 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
           errorAlert({
             title: "Error en la edición del jugador",
             description:
-              "Por favor, verifica la información y prueba otra vez.",
+              "Por favor, verifica la información y prueba nuevamente.",
           });
         }
 

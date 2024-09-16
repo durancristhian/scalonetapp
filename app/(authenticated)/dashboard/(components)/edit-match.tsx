@@ -49,7 +49,7 @@ export const EditMatch: FC<EditMatchProps> = ({ match, onClose }) => {
           errorAlert({
             title: "Error en la edición del partido",
             description:
-              "Por favor, verifica la información y prueba otra vez.",
+              "Por favor, verifica la información y prueba nuevamente.",
           });
         }
 

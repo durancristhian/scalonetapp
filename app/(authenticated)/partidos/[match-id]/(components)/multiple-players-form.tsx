@@ -72,7 +72,7 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
           error.message ||
           `No pudimos agregar ${
             lines.length > 1 ? "el jugador" : "los jugadores"
-          }. Por favor, verifica la información y prueba otra vez.`;
+          }. Por favor, verifica la información y prueba nuevamente.`;
       }
 
       form.setError("root", {

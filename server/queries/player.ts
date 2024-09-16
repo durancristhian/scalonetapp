@@ -1,7 +1,6 @@
 import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import prisma from "@/utils/prisma";
-import { VALIDATION_MESSAGES } from "@/utils/validation-messages";
 import { auth } from "@clerk/nextjs/server";
 
 const getMatch = async (userId: string, matchId: number) => {
@@ -60,7 +59,7 @@ export const addPlayerQuery: (
   /* We check that we don't have a player named the same in the match already */
   const coincidences = await namesAlreadyInMatch(matchId, [data.name]);
   if (coincidences) {
-    throw new Error(VALIDATION_MESSAGES.player_repeated);
+    throw new Error(ERROR_MESSAGES.player_repeated);
   }
 
   /* We check we haven't reached the players in match limit */
@@ -103,7 +102,7 @@ export const addMultiplePlayersQuery: (
     data.map((player) => player.name)
   );
   if (coincidences) {
-    throw new Error(VALIDATION_MESSAGES.at_least_one_player_repeated);
+    throw new Error(ERROR_MESSAGES.at_least_one_player_repeated);
   }
 
   /* We check we haven't reached the players in match limit */
