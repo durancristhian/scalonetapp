@@ -3,6 +3,7 @@
 import { DeleteMatch } from "@/app/(authenticated)/dashboard/(components)/delete-match";
 import { EditMatch } from "@/app/(authenticated)/dashboard/(components)/edit-match";
 import { Button } from "@/components/ui/button";
+import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,68 +27,68 @@ export const MatchItem: FC<MatchItemProps> = ({ match }) => {
   const [dialogId, setDialogId] = useState<"edit" | "delete" | null>(null);
 
   return (
-    <div className="flex items-center gap-2">
-      <div className="grow">
-        <div className="bg-white border border-border hover:bg-accent px-4 py-2 rounded-md shadow-sm transition-colors">
-          <div className="flex items-center justify-between gap-4">
-            <div className="grow">
-              <Link href={`/partidos/${match.id}`}>
-                <p>{match.name}</p>
-                <p className="text-muted-foreground text-sm">
-                  Última actualización:{" "}
-                  {formatDistanceToNow(match.updatedAt, {
-                    locale: es,
-                  })}
-                </p>
-              </Link>
+    <Card className="hover:bg-accent transition-colors">
+      <div className="flex items-center justify-between">
+        <div className="grow">
+          <Link href={`/partidos/${match.id}`}>
+            <div className="p-4 space-y-1">
+              <CardTitle>{match.name}</CardTitle>
+              <CardDescription>
+                Última actualización:{" "}
+                {formatDistanceToNow(match.updatedAt, {
+                  locale: es,
+                })}
+              </CardDescription>
             </div>
-            <DropdownMenu open={menuOpened} onOpenChange={setMenuOpened}>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <EllipsisVerticalIcon className="h-4 text-muted-foreground w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              {/* margin here helps to detach the menu from the limit of the screen (specially in mobile) */}
-              <DropdownMenuContent className="mr-4">
-                <DropdownMenuItem
-                  onClick={() => {
-                    setDialogId("edit");
-                  }}
-                >
-                  <PencilIcon className="h-4 mr-2 text-muted-foreground w-4" />
-                  Editar
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    setDialogId("delete");
-                  }}
-                >
-                  <TrashIcon className="h-4 mr-2 text-destructive w-4" />
-                  Eliminar
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            {dialogId === "edit" ? (
-              <EditMatch
-                match={match}
-                onClose={() => {
-                  setDialogId(null);
-                  setMenuOpened(false);
+          </Link>
+        </div>
+        <div className="flex-shrink-0">
+          <DropdownMenu open={menuOpened} onOpenChange={setMenuOpened}>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <EllipsisVerticalIcon className="h-4 text-muted-foreground w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            {/* margin here helps to detach the menu from the limit of the screen (specially in mobile) */}
+            <DropdownMenuContent className="mr-4">
+              <DropdownMenuItem
+                onClick={() => {
+                  setDialogId("edit");
                 }}
-              />
-            ) : null}
-            {dialogId === "delete" ? (
-              <DeleteMatch
-                id={match.id}
-                onClose={() => {
-                  setDialogId(null);
-                  setMenuOpened(false);
+              >
+                <PencilIcon className="h-4 mr-2 text-muted-foreground w-4" />
+                Editar
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  setDialogId("delete");
                 }}
-              />
-            ) : null}
-          </div>
+              >
+                <TrashIcon className="h-4 mr-2 text-destructive w-4" />
+                Eliminar
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {dialogId === "edit" ? (
+            <EditMatch
+              match={match}
+              onClose={() => {
+                setDialogId(null);
+                setMenuOpened(false);
+              }}
+            />
+          ) : null}
+          {dialogId === "delete" ? (
+            <DeleteMatch
+              id={match.id}
+              onClose={() => {
+                setDialogId(null);
+                setMenuOpened(false);
+              }}
+            />
+          ) : null}
         </div>
       </div>
-    </div>
+    </Card>
   );
 };
