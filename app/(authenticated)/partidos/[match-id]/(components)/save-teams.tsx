@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { editMatchAction } from "@/server/actions/match";
 import { Team } from "@/types/team";
+import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { getTeamsToSave } from "@/utils/get-teams-to-save";
 import { InfoIcon } from "lucide-react";
 import { FC, useState } from "react";
@@ -95,13 +96,13 @@ export const EnabledContent: FC<EnabledContentProps> = ({ matchId, teams }) => {
         title: "¡Equipos guardados con éxito!",
       });
     } catch (error) {
-      console.error(error);
+      if (error instanceof Error) {
+        errorAlert({
+          title: error.message || ERROR_MESSAGES.server_error,
+        });
+      }
 
       setIsProcessing(false);
-
-      errorAlert({
-        title: "Ha ocurrido un error",
-      });
     }
   };
 

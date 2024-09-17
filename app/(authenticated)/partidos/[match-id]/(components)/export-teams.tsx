@@ -40,13 +40,13 @@ export const ExportTeams: FC<ExportTeamsProps> = ({ matchId }) => {
         });
       })
       .catch((error) => {
-        setIsProcessing(false);
-
         if (error instanceof Error) {
           errorAlert({
             title: error.message || ERROR_MESSAGES.export_failed,
           });
         }
+
+        setIsProcessing(false);
       });
   };
 
