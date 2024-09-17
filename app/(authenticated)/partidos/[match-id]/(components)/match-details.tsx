@@ -10,7 +10,6 @@ import { TeamCard } from "@/app/(authenticated)/partidos/[match-id]/(components)
 import { useTeamsBuilderState } from "@/app/(authenticated)/partidos/[match-id]/(hooks)/use-team-builder-state";
 import { EmptyState } from "@/components/empty-state";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { MatchWithPlayers } from "@/types/match";
 import { getTeamsToSave } from "@/utils/get-teams-to-save";
 import { FC, useMemo } from "react";
@@ -53,12 +52,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
       </div>
       <div className="md:col-span-2">
         {match.players.length ? (
-          <div className="space-y-4">
-            <h1 className="font-bold text-xl">
-              {unselectedPlayers.length
-                ? "¡Es hora de armar los equipos!"
-                : "¡Terminaste!"}
-            </h1>
+          <div className="space-y-8">
             {unselectedPlayers.length ? (
               <AssignPlayers
                 assignSelectionToTeam={assignSelectionToTeam}
@@ -68,63 +62,62 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                 teams={teams}
                 togglePlayer={togglePlayer}
               />
-            ) : (
-              <p>Todos los jugadores están en un equipo.</p>
-            )}
-            <Separator />
-            <div className="flex gap-2 items-center justify-between">
-              <p className="font-semibold">Los equipos</p>
-              <div className="space-x-2">
-                <BuildTeams
-                  disableBalanceTeams={match.players.every(
-                    (player) =>
-                      player.level ===
-                      Number(process.env.NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL)
-                  )}
-                  onSave={(preset) => {
-                    switch (preset) {
-                      case "random": {
-                        randomizeTeams();
+            ) : null}
+            <div className="space-y-4">
+              <div className="flex gap-2 items-center justify-between">
+                <h1 className="font-bold text-xl">Los equipos</h1>
+                <div className="space-x-2">
+                  <BuildTeams
+                    disableBalanceTeams={match.players.every(
+                      (player) =>
+                        player.level ===
+                        Number(process.env.NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL)
+                    )}
+                    onSave={(preset) => {
+                      switch (preset) {
+                        case "random": {
+                          randomizeTeams();
 
-                        break;
-                      }
-                      case "balanced": {
-                        balanceTeams();
+                          break;
+                        }
+                        case "balanced": {
+                          balanceTeams();
 
-                        break;
+                          break;
+                        }
                       }
+                    }}
+                    showConfirmation={
+                      unselectedPlayers.length < match.players.length
                     }
-                  }}
-                  showConfirmation={
-                    unselectedPlayers.length < match.players.length
-                  }
-                />
-                <Button onClick={createNewTeam}>Agregar</Button>
+                  />
+                  <Button onClick={createNewTeam}>Agregar</Button>
+                </div>
               </div>
-            </div>
-            <div className="grid md:grid-cols-2 gap-4">
-              {teams.map((team) => (
-                <TeamCard
-                  key={team.id}
-                  canBeDeleted={teams.length > 2}
-                  removePlayerFromTeam={removePlayerFromTeam}
-                  removeTeam={removeTeam}
-                  team={team}
-                  updateTeamName={updateTeamName}
-                />
-              ))}
-            </div>
-            <div className="flex gap-2 justify-between">
-              <CopyTeams teams={teams} />
-              <div className="space-x-2">
-                <SaveTeams
-                  disabled={!areTeamsValid}
-                  matchId={match.id}
-                  teams={teams}
-                />
-                {areTeamsValid && areTeamsSaved ? (
-                  <ExportTeams matchId={match.id} />
-                ) : null}
+              <div className="grid md:grid-cols-2 gap-4">
+                {teams.map((team) => (
+                  <TeamCard
+                    key={team.id}
+                    canBeDeleted={teams.length > 2}
+                    removePlayerFromTeam={removePlayerFromTeam}
+                    removeTeam={removeTeam}
+                    team={team}
+                    updateTeamName={updateTeamName}
+                  />
+                ))}
+              </div>
+              <div className="flex gap-2 justify-between">
+                <CopyTeams teams={teams} />
+                <div className="space-x-2">
+                  <SaveTeams
+                    disabled={!areTeamsValid}
+                    matchId={match.id}
+                    teams={teams}
+                  />
+                  {areTeamsValid && areTeamsSaved ? (
+                    <ExportTeams matchId={match.id} />
+                  ) : null}
+                </div>
               </div>
             </div>
           </div>

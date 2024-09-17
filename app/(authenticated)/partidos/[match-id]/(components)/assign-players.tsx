@@ -2,6 +2,13 @@
 
 import { PlayerAvatar } from "@/components/player-avatar";
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
   Select,
   SelectContent,
   SelectGroup,
@@ -12,7 +19,6 @@ import {
 import { Toggle } from "@/components/ui/toggle";
 import { Team } from "@/types/team";
 import { Player } from "@prisma/client";
-import clsx from "clsx";
 import { FC, useState } from "react";
 
 type AssignPlayersProps = {
@@ -35,57 +41,64 @@ export const AssignPlayers: FC<AssignPlayersProps> = ({
   const [selectedTeamId, setSelectedTeamId] = useState("");
 
   return (
-    <div className="space-y-2">
-      <p>Elige jugadores:</p>
-      <div className="flex flex-wrap gap-2">
-        {players.map((player) => (
-          <Toggle
-            key={player.id}
-            onPressedChange={() => {
-              togglePlayer(player.id);
-            }}
-            pressed={selectedIds.includes(player.id)}
-            variant="outline"
-            className={clsx(
-              selectedIds.includes(player.id)
-                ? "data-[state=on]:bg-white"
-                : undefined
-            )}
-          >
-            <PlayerAvatar src={player.avatar} name={player.name} size="sm" />
-            <p className="ml-2">{player.name}</p>
-          </Toggle>
-        ))}
-      </div>
-      <p>Selecciona el equipo al que se unirán:</p>
-      <Select
-        value={selectedTeamId}
-        disabled={!canAssignSelection}
-        onValueChange={(selectedTeamId) => {
-          assignSelectionToTeam(selectedTeamId);
-
-          setSelectedTeamId("");
-        }}
-      >
-        <SelectTrigger className="bg-white">
-          <SelectValue
-            placeholder={
-              canAssignSelection
-                ? "Elegí un equipo"
-                : "Selecciona al menos un jugador"
-            }
-          />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            {teams.map((team) => (
-              <SelectItem key={team.id} value={team.id}>
-                {team.name}
-              </SelectItem>
+    <Card>
+      <CardHeader>
+        <CardTitle>Todavía esperan un lugar</CardTitle>
+        <CardDescription>
+          Selecciona uno o varios jugadores para asignalos a uno de los equipos.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-6">
+          <div className="flex flex-wrap gap-2">
+            {players.map((player) => (
+              <Toggle
+                key={player.id}
+                onPressedChange={() => {
+                  togglePlayer(player.id);
+                }}
+                pressed={selectedIds.includes(player.id)}
+                variant="outline"
+              >
+                <PlayerAvatar
+                  src={player.avatar}
+                  name={player.name}
+                  size="sm"
+                />
+                <p className="ml-2">{player.name}</p>
+              </Toggle>
             ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-    </div>
+          </div>
+          <Select
+            value={selectedTeamId}
+            disabled={!canAssignSelection}
+            onValueChange={(selectedTeamId) => {
+              assignSelectionToTeam(selectedTeamId);
+
+              setSelectedTeamId("");
+            }}
+          >
+            <SelectTrigger className="bg-white">
+              <SelectValue
+                placeholder={
+                  canAssignSelection
+                    ? "Elegí un equipo"
+                    : "Selecciona al menos un jugador"
+                }
+              />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {teams.map((team) => (
+                  <SelectItem key={team.id} value={team.id}>
+                    {team.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
