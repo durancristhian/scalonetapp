@@ -43,9 +43,9 @@ export const AssignPlayers: FC<AssignPlayersProps> = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Todavía esperan un lugar</CardTitle>
+        <CardTitle>Esperan un lugar</CardTitle>
         <CardDescription>
-          Selecciona uno o varios jugadores para asignalos a uno de los equipos.
+          Selecciona jugadores para asignalos a uno de los equipos.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -69,34 +69,29 @@ export const AssignPlayers: FC<AssignPlayersProps> = ({
               </Toggle>
             ))}
           </div>
-          <Select
-            value={selectedTeamId}
-            disabled={!canAssignSelection}
-            onValueChange={(selectedTeamId) => {
-              assignSelectionToTeam(selectedTeamId);
+          {canAssignSelection ? (
+            <Select
+              value={selectedTeamId}
+              onValueChange={(selectedTeamId) => {
+                assignSelectionToTeam(selectedTeamId);
 
-              setSelectedTeamId("");
-            }}
-          >
-            <SelectTrigger className="bg-white">
-              <SelectValue
-                placeholder={
-                  canAssignSelection
-                    ? "Elegí un equipo"
-                    : "Selecciona al menos un jugador"
-                }
-              />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {teams.map((team) => (
-                  <SelectItem key={team.id} value={team.id}>
-                    {team.name}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+                setSelectedTeamId("");
+              }}
+            >
+              <SelectTrigger className="bg-white">
+                <SelectValue placeholder="Elige un equipo..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {teams.map((team) => (
+                    <SelectItem key={team.id} value={team.id}>
+                      {team.name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          ) : null}
         </div>
       </CardContent>
     </Card>
