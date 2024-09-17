@@ -100,10 +100,7 @@ const EnabledContent: FC = () => {
       } catch (error) {
         if (error instanceof Error) {
           errorAlert({
-            title:
-              error.message in ERROR_MESSAGES
-                ? ERROR_MESSAGES[error.message as keyof typeof ERROR_MESSAGES]
-                : ERROR_MESSAGES.player_add_error,
+            title: error.message || ERROR_MESSAGES.player_add_error,
           });
         }
 

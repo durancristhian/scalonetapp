@@ -34,10 +34,7 @@ export const EditMatch: FC<EditMatchProps> = ({ match, onClose }) => {
       } catch (error) {
         if (error instanceof Error) {
           errorAlert({
-            title:
-              error.message in ERROR_MESSAGES
-                ? ERROR_MESSAGES[error.message as keyof typeof ERROR_MESSAGES]
-                : ERROR_MESSAGES.match_edit_error,
+            title: error.message || ERROR_MESSAGES.match_edit_error,
           });
         }
 

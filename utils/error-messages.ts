@@ -1,14 +1,15 @@
 export const ERROR_MESSAGES = {
+  /* feedback */
+  feedback_submit_error:
+    "Ocurrió un error al enviar su feedback. Por favor, intente nuevamente.",
+
   /* general */
+  export_failed: "Ocurrió un error al exportar la imágen.",
   not_found: "No encontrado.",
   required: "Campo requerido.",
   server_error: "Ocurrió un error.",
   too_large: "40 caracteres máximo.",
   unauthorized: "No autorizado.",
-
-  /* feedback */
-  feedback_submit_error:
-    "Ocurrió un error al enviar su feedback. Por favor, intente nuevamente.",
 
   /* match */
   match_add_error:

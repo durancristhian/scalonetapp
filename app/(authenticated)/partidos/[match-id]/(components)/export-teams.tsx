@@ -3,6 +3,7 @@
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { SoccerBall } from "@/components/soccer-ball";
 import { Button } from "@/components/ui/button";
+import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { FC, useState } from "react";
 
 type ExportTeamsProps = {
@@ -16,6 +17,7 @@ export const ExportTeams: FC<ExportTeamsProps> = ({ matchId }) => {
   const exportTeams = () => {
     setIsProcessing(true);
 
+    /* TODO: This should be a util fn */
     fetch(`/download/${matchId}`)
       .then((response) => response.blob())
       .then((blob) => {
@@ -38,13 +40,13 @@ export const ExportTeams: FC<ExportTeamsProps> = ({ matchId }) => {
         });
       })
       .catch((error) => {
-        console.error(error);
-
         setIsProcessing(false);
 
-        errorAlert({
-          title: "Ha ocurrido un error",
-        });
+        if (error instanceof Error) {
+          errorAlert({
+            title: error.message || ERROR_MESSAGES.export_failed,
+          });
+        }
       });
   };
 
