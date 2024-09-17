@@ -44,6 +44,8 @@ export async function GET(request: NextRequest) {
       /* Height here is pointless (but needed) since we take a fullpage screenshot */
       height: 300,
       width: 1080,
+      /* So images get a better resolution */
+      deviceScaleFactor: 2,
     });
     await page.goto(`${getAppDomain()}/download/${matchId}/ui`);
     /* We add the match data to localStorage */
