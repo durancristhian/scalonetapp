@@ -69,10 +69,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                 togglePlayer={togglePlayer}
               />
             ) : (
-              <p>
-                Todos los jugadores están en un equipo. Ya puedes guardar los
-                cambios.
-              </p>
+              <p>Todos los jugadores están en un equipo.</p>
             )}
             <Separator />
             <div className="flex gap-2 items-center justify-between">
