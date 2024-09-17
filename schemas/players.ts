@@ -12,7 +12,7 @@ export const PLAYERS_SCHEMA = z.object({
         getLinesFromString(value).length <=
         Number(process.env.NEXT_PUBLIC_MAX_PLAYERS_BATCH),
       {
-        message: ERROR_MESSAGES.max_players_per_save,
+        message: ERROR_MESSAGES.match_max_players_per_batch,
       }
     ),
 });

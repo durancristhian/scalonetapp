@@ -1,5 +1,6 @@
 "use client";
 
+import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { MultiplePlayersForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/multiple-players-form";
 import { PlayerForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/player-form";
 import {
@@ -26,6 +27,7 @@ import {
   addMultiplePlayersAction,
   addPlayerAction,
 } from "@/server/actions/player";
+import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { InfoIcon } from "lucide-react";
 import { useParams } from "next/navigation";
 import { FC, useState } from "react";
@@ -85,25 +87,54 @@ const EnabledContent: FC = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const params = useParams();
   const matchId = Number(params["match-id"]);
+  const { errorAlert } = useAlerts();
 
-  /* TODO: improve */
   const onPlayerSubmit: (values: PlayerSchema) => Promise<void> = (values) => {
-    addPlayerAction(matchId, values);
+    return new Promise(async (resolve, reject) => {
+      try {
+        await addPlayerAction(matchId, values);
 
-    setDialogOpen(false);
+        setDialogOpen(false);
 
-    return Promise.resolve();
+        resolve();
+      } catch (error) {
+        if (error instanceof Error) {
+          errorAlert({
+            title:
+              error.message in ERROR_MESSAGES
+                ? ERROR_MESSAGES[error.message as keyof typeof ERROR_MESSAGES]
+                : ERROR_MESSAGES.player_add_error,
+          });
+        }
+
+        reject(error);
+      }
+    });
   };
 
-  /* TODO: improve */
   const onMultiplePlayersSubmit: (values: PlayerSchema[]) => Promise<void> = (
     values
   ) => {
-    addMultiplePlayersAction(matchId, values);
+    return new Promise(async (resolve, reject) => {
+      try {
+        await addMultiplePlayersAction(matchId, values);
 
-    setDialogOpen(false);
+        setDialogOpen(false);
 
-    return Promise.resolve();
+        resolve();
+      } catch (error) {
+        if (error instanceof Error) {
+          errorAlert({
+            title:
+              error.message in ERROR_MESSAGES
+                ? ERROR_MESSAGES[error.message as keyof typeof ERROR_MESSAGES]
+                : ERROR_MESSAGES.player_multiple_add_error,
+          });
+        }
+
+        reject(error);
+      }
+    });
   };
 
   return (

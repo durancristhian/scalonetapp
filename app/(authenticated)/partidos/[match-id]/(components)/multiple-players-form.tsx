@@ -12,15 +12,13 @@ import {
   FormRootError,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
+import { PlayerSchema } from "@/schemas/player";
 import { PLAYERS_SCHEMA, PlayersSchema } from "@/schemas/players";
-import { unfoldZodError } from "@/utils/errors";
 import { getLinesFromString } from "@/utils/get-lines-from-string";
 import { getPlayersFromLines } from "@/utils/get-players-from-lines";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FC, useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { ZodError } from "zod";
 
 const PLACEHOLDER = `Juan, 2
 Roman
@@ -54,32 +52,10 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
     try {
       const nextPlayers = getPlayersFromLines(lines);
 
-      /* This seems redundant but it's not since each item in the array should be a valid player */
-      nextPlayers.map((nextPlayer) => PLAYER_SCHEMA.parse(nextPlayer));
-
       await onSubmit(nextPlayers);
 
       form.reset();
-    } catch (error) {
-      console.error(error);
-
-      let errorMessage = "";
-
-      if (error instanceof ZodError) {
-        errorMessage = unfoldZodError(error).join(". ");
-      } else if (error instanceof Error) {
-        errorMessage =
-          error.message ||
-          `No pudimos agregar ${
-            lines.length > 1 ? "el jugador" : "los jugadores"
-          }. Por favor, verifica la información y prueba nuevamente.`;
-      }
-
-      form.setError("root", {
-        message: errorMessage,
-        type: "validate",
-      });
-    }
+    } catch (error) {}
   };
 
   return (

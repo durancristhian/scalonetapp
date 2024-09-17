@@ -1,5 +1,4 @@
-import { MATCH_SCHEMA, MatchSchema } from "@/schemas/match";
-import { byName } from "@/utils/by-name";
+import { MatchSchema } from "@/schemas/match";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import prisma from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
@@ -7,6 +6,7 @@ import { Match } from "@prisma/client";
 
 export const getMatchesQuery = async () => {
   const { userId } = auth();
+
   if (!userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
@@ -28,6 +28,7 @@ export const getMatchesQuery = async () => {
 
 export const getMatchByIdQuery = async (id: number) => {
   const { userId } = auth();
+
   if (!userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
@@ -46,58 +47,28 @@ export const getMatchByIdQuery = async (id: number) => {
     },
   });
 
-  /* We sort players by name */
-  match?.players.sort(byName);
-
   return match;
 };
 
-export const addMatchQuery: (data: MatchSchema) => Promise<Match> = async (
-  data
-) => {
-  const parsedData = MATCH_SCHEMA.parse(data);
-
-  const { userId } = auth();
-  if (!userId) {
-    throw new Error(ERROR_MESSAGES.unauthorized);
-  }
-
-  const nextMatch = {
-    ...parsedData,
-    userId,
-  };
-
-  const userMatches = await prisma.match.findMany({
-    where: {
-      userId: {
-        equals: userId,
-      },
-    },
-  });
-
-  if (
-    userMatches.length >= Number(process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER)
-  ) {
-    throw new Error(ERROR_MESSAGES.matches_limit_reached);
-  }
-
-  /* TODO: validate we don't have an existing match named the same */
-
+export const addMatchQuery: (
+  data: MatchSchema,
+  userId: string
+) => Promise<Match> = async (data, userId) => {
   return await prisma.match.create({
-    data: nextMatch,
+    data: {
+      ...data,
+      userId,
+    },
   });
 };
 
 export const editMatchQuery: (
   id: number,
-  data: Partial<Match>
-) => Promise<void> = async (id, data) => {
-  const { userId } = auth();
-  if (!userId) {
-    throw new Error(ERROR_MESSAGES.unauthorized);
-  }
-
-  await prisma.match.update({
+  /* TODO: This typing is incorrect since we use this method to update the match.teams and we should use the MatchSchema */
+  data: Partial<Match>,
+  userId: string
+) => Promise<Match> = async (id, data, userId) => {
+  return await prisma.match.update({
     where: {
       id,
       userId,
@@ -106,13 +77,11 @@ export const editMatchQuery: (
   });
 };
 
-export const deleteMatchQuery: (id: number) => Promise<void> = async (id) => {
-  const { userId } = auth();
-  if (!userId) {
-    throw new Error(ERROR_MESSAGES.unauthorized);
-  }
-
-  await prisma.match.delete({
+export const deleteMatchQuery: (
+  id: number,
+  userId: string
+) => Promise<Match> = async (id, userId) => {
+  return await prisma.match.delete({
     where: {
       id,
       userId,

@@ -1,4 +1,3 @@
-import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { AddPlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/add-player";
 import { DeletePlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/delete-player";
 import { EditPlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/edit-player";
@@ -20,58 +19,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { PlayerSchema } from "@/schemas/player";
-import { editPlayerAction } from "@/server/actions/player";
 import { byName } from "@/utils/by-name";
 import { Player } from "@prisma/client";
 import { EllipsisVerticalIcon, PencilIcon, TrashIcon } from "lucide-react";
 import { FC, useState } from "react";
-import { ZodError } from "zod";
 
 type MatchPlayersProps = {
   players: Player[];
 };
 
 export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
-  const { errorAlert } = useAlerts();
-
   const canListPlayers = Array.isArray(players) && players.length;
-
-  const onPlayerSubmit: (id: number, values: PlayerSchema) => Promise<void> = (
-    id,
-    values
-  ) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await editPlayerAction(id, values);
-
-        resolve();
-      } catch (error) {
-        console.error(error);
-
-        if (error instanceof ZodError) {
-          errorAlert({
-            title: "Error en la edición del jugador",
-            description: (
-              <ul className="list-disc list-inside">
-                {error.errors.map(({ message }, idx) => (
-                  <li key={idx}>{message}</li>
-                ))}
-              </ul>
-            ),
-          });
-        } else {
-          errorAlert({
-            title: "Error en la edición del jugador",
-            description:
-              "Por favor, verifica la información y prueba nuevamente.",
-          });
-        }
-
-        reject(error);
-      }
-    });
-  };
 
   return (
     <Card>
@@ -101,10 +59,7 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
               {players.sort(byName).map((player, idx) => {
                 return (
                   <AnimatedListItem key={player.id} listIndex={idx}>
-                    <MatchPlayer
-                      player={player}
-                      onPlayerSubmit={onPlayerSubmit}
-                    />
+                    <MatchPlayer player={player} />
                   </AnimatedListItem>
                 );
               })}
@@ -120,10 +75,9 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
 
 type MatchPlayerProps = {
   player: Player;
-  onPlayerSubmit: (id: number, values: PlayerSchema) => Promise<void>;
 };
 
-const MatchPlayer: FC<MatchPlayerProps> = ({ player, onPlayerSubmit }) => {
+const MatchPlayer: FC<MatchPlayerProps> = ({ player }) => {
   const [menuOpened, setMenuOpened] = useState(false);
   /* This is not great at all but enough for now due to the small amout of options we have in the dropdown menu */
   const [dialogId, setDialogId] = useState<"edit" | "delete" | null>(null);

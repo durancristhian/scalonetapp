@@ -11,9 +11,9 @@ import {
 } from "@/components/ui/dialog";
 import { MatchSchema } from "@/schemas/match";
 import { editMatchAction } from "@/server/actions/match";
+import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { Match } from "@prisma/client";
 import { FC } from "react";
-import { ZodError } from "zod";
 
 type EditMatchProps = {
   match: Match;
@@ -32,24 +32,12 @@ export const EditMatch: FC<EditMatchProps> = ({ match, onClose }) => {
 
         resolve();
       } catch (error) {
-        console.error(error);
-
-        if (error instanceof ZodError) {
+        if (error instanceof Error) {
           errorAlert({
-            title: "Error en la edición del partido",
-            description: (
-              <ul className="list-disc list-inside">
-                {error.errors.map(({ message }, idx) => (
-                  <li key={idx}>{message}</li>
-                ))}
-              </ul>
-            ),
-          });
-        } else {
-          errorAlert({
-            title: "Error en la edición del partido",
-            description:
-              "Por favor, verifica la información y prueba nuevamente.",
+            title:
+              error.message in ERROR_MESSAGES
+                ? ERROR_MESSAGES[error.message as keyof typeof ERROR_MESSAGES]
+                : ERROR_MESSAGES.match_edit_error,
           });
         }
 

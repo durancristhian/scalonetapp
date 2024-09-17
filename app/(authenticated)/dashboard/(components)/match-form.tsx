@@ -13,11 +13,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { MATCH_SCHEMA, MatchSchema } from "@/schemas/match";
-import { unfoldZodError } from "@/utils/errors";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
-import { ZodError } from "zod";
 
 const DAY_LABELS = [
   "domingos",
@@ -50,16 +48,7 @@ export const MatchForm: FC<MatchFormProps> = ({ onSubmit, values }) => {
       await onSubmit(values);
 
       form.reset();
-    } catch (error) {
-      console.error(error);
-
-      if (error instanceof ZodError) {
-        form.setError("root", {
-          message: unfoldZodError(error).join(". "),
-          type: "validate",
-        });
-      }
-    }
+    } catch (error) {}
   };
 
   return (

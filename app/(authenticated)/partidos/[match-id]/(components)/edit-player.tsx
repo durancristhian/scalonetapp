@@ -8,9 +8,9 @@ import {
 } from "@/components/ui/dialog";
 import { PlayerSchema } from "@/schemas/player";
 import { editPlayerAction } from "@/server/actions/player";
+import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { Player } from "@prisma/client";
 import { FC } from "react";
-import { ZodError } from "zod";
 
 type EditPlayerProps = {
   player: Player;
@@ -29,24 +29,12 @@ export const EditPlayer: FC<EditPlayerProps> = ({ player, onClose }) => {
 
         resolve();
       } catch (error) {
-        console.error(error);
-
-        if (error instanceof ZodError) {
+        if (error instanceof Error) {
           errorAlert({
-            title: "Error en la edición del jugador",
-            description: (
-              <ul className="list-disc list-inside">
-                {error.errors.map(({ message }, idx) => (
-                  <li key={idx}>{message}</li>
-                ))}
-              </ul>
-            ),
-          });
-        } else {
-          errorAlert({
-            title: "Error en la edición del jugador",
-            description:
-              "Por favor, verifica la información y prueba nuevamente.",
+            title:
+              error.message in ERROR_MESSAGES
+                ? ERROR_MESSAGES[error.message as keyof typeof ERROR_MESSAGES]
+                : ERROR_MESSAGES.player_edit_error,
           });
         }
 

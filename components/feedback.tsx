@@ -23,10 +23,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { FEEDBACK_SCHEMA, FeedbackSchema } from "@/schemas/feedback";
 import { feedbackAction } from "@/server/actions/feedback";
-import { getErrorMessage } from "@/utils/get-error-message";
-import { valuesToFormData } from "@/utils/values-to-formdata";
+import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAction } from "next-safe-action/hooks";
 import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -69,7 +67,6 @@ type FeedbackFormProps = {
 
 const FeedbackForm: FC<FeedbackFormProps> = ({ afterSubmit }) => {
   const { successAlert, errorAlert } = useAlerts();
-  const { executeAsync: submitFeedback } = useAction(feedbackAction);
   const form = useForm<FeedbackSchema>({
     defaultValues: {
       message: "",
@@ -78,25 +75,24 @@ const FeedbackForm: FC<FeedbackFormProps> = ({ afterSubmit }) => {
   });
 
   const onSubmitHandler: (values: FeedbackSchema) => void = async (values) => {
-    const formData = valuesToFormData(values);
-    const result = await submitFeedback(formData);
+    try {
+      await feedbackAction(values);
 
-    if (!result?.data?.ok) {
-      errorAlert({
-        title: "Error al enviar su feedback",
-        description: result?.data?.reason
-          ? getErrorMessage(result.data.reason)
-          : null,
+      afterSubmit();
+
+      successAlert({
+        title: "¡Su feedback fue enviado!",
       });
-
-      return;
+    } catch (error) {
+      if (error instanceof Error) {
+        errorAlert({
+          title:
+            error.message in ERROR_MESSAGES
+              ? ERROR_MESSAGES[error.message as keyof typeof ERROR_MESSAGES]
+              : ERROR_MESSAGES.feedback_submit_error,
+        });
+      }
     }
-
-    afterSubmit();
-
-    successAlert({
-      title: "¡Su feedback fue enviado!",
-    });
   };
 
   return (

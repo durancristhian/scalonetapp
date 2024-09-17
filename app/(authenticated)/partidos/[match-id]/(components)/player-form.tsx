@@ -22,12 +22,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
-import { unfoldZodError } from "@/utils/errors";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TrashIcon } from "lucide-react";
 import { ChangeEventHandler, FC, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { ZodError } from "zod";
 
 /* Players are categorized from 1 to 10 */
 const PLAYER_LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -87,10 +85,13 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
       /* This is safe to do since we don't accept multiple images in the file input */
       const file = files[0];
 
+      /* TODO: Validate image weight */
+
       const formData = new FormData();
       formData.append("file", file);
       formData.append("upload_preset", "scalonetapp");
 
+      /* TODO: Move this to a form action */
       const response = await fetch(
         "https://api.cloudinary.com/v1_1/cristhianjavierduran/image/upload",
         {
@@ -130,24 +131,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
       await onSubmit(values);
 
       form.reset();
-    } catch (error) {
-      console.error(error);
-
-      let errorMessage = "";
-
-      if (error instanceof ZodError) {
-        errorMessage = unfoldZodError(error).join(". ");
-      } else if (error instanceof Error) {
-        errorMessage =
-          error.message ||
-          "No pudimos agregar el jugador. Por favor, verifica la información y prueba nuevamente.";
-      }
-
-      form.setError("root", {
-        message: errorMessage,
-        type: "validate",
-      });
-    }
+    } catch (error) {}
   };
 
   return (

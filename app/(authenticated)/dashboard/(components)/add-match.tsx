@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import { MatchSchema } from "@/schemas/match";
 import { addMatchAction } from "@/server/actions/match";
+import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { InfoIcon } from "lucide-react";
 import { FC, useState } from "react";
 
@@ -77,9 +78,11 @@ const DisabledContent = () => {
 
 const EnabledContent: FC = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { errorAlert, successAlert } = useAlerts();
+  const { successAlert, errorAlert } = useAlerts();
 
-  const onMatchSubmit: (values: MatchSchema) => Promise<void> = (values) => {
+  const onMatchSubmit: (values: MatchSchema) => Promise<void> = async (
+    values
+  ) => {
     return new Promise(async (resolve, reject) => {
       try {
         await addMatchAction(values);
@@ -92,12 +95,12 @@ const EnabledContent: FC = () => {
 
         resolve();
       } catch (error) {
-        console.error(error);
-
         if (error instanceof Error) {
           errorAlert({
-            title: "Error en la creación del partido",
-            description: error.message,
+            title:
+              error.message in ERROR_MESSAGES
+                ? ERROR_MESSAGES[error.message as keyof typeof ERROR_MESSAGES]
+                : ERROR_MESSAGES.match_add_error,
           });
         }
 
