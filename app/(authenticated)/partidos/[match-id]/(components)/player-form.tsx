@@ -4,6 +4,7 @@ import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { PlayerAvatar } from "@/components/player-avatar";
 import { SoccerBall } from "@/components/soccer-ball";
 import { Button } from "@/components/ui/button";
+import { DialogFooter } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -238,7 +239,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
           )}
         />
         <FormRootError />
-        <div className="text-right">
+        <DialogFooter>
           <Button
             type="submit"
             disabled={
@@ -252,7 +253,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
             ) : null}
             {form.formState.isSubmitting ? "Guardando..." : "Guardar"}
           </Button>
-        </div>
+        </DialogFooter>
       </form>
     </Form>
   );

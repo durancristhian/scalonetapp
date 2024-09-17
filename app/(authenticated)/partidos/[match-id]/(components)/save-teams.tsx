@@ -56,7 +56,7 @@ const DisabledContent = () => {
               No se cumple alguno de estos requisitos:
             </AlertDialogTitle>
             <AlertDialogDescription asChild>
-              <ul className="list-disc list-inside">
+              <ul className="list-disc list-inside text-left">
                 <li>Los nombres de los equipos no pueden estar vacíos.</li>
                 <li>No puedes tener jugadores sin equipo.</li>
               </ul>

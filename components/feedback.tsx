@@ -7,6 +7,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -112,7 +113,7 @@ const FeedbackForm: FC<FeedbackFormProps> = ({ afterSubmit }) => {
           )}
         />
         <FormRootError />
-        <div className="text-right">
+        <DialogFooter>
           <Button
             type="submit"
             disabled={!form.formState.isValid || form.formState.isSubmitting}
@@ -122,7 +123,7 @@ const FeedbackForm: FC<FeedbackFormProps> = ({ afterSubmit }) => {
             ) : null}
             {form.formState.isSubmitting ? "Enviando..." : "Enviar"}
           </Button>
-        </div>
+        </DialogFooter>
       </form>
     </Form>
   );

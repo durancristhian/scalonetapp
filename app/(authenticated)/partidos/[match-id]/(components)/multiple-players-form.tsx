@@ -2,6 +2,7 @@
 
 import { SoccerBall } from "@/components/soccer-ball";
 import { Button } from "@/components/ui/button";
+import { DialogFooter } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -88,7 +89,7 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
           )}
         />
         <FormRootError />
-        <div className="text-right">
+        <DialogFooter>
           <Button
             type="submit"
             disabled={!form.formState.isValid || form.formState.isSubmitting}
@@ -98,7 +99,7 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
             ) : null}
             {form.formState.isSubmitting ? "Guardando..." : "Guardar"}
           </Button>
-        </div>
+        </DialogFooter>
       </form>
     </Form>
   );
