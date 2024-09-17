@@ -3,6 +3,7 @@
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { SoccerBall } from "@/components/soccer-ball";
 import { Button } from "@/components/ui/button";
+import { downloadBlob } from "@/utils/download-blob";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { FC, useState } from "react";
 
@@ -14,40 +15,30 @@ export const ExportTeams: FC<ExportTeamsProps> = ({ matchId }) => {
   const { errorAlert, successAlert } = useAlerts();
   const [processing, setIsProcessing] = useState(false);
 
-  const exportTeams = () => {
+  const exportTeams = async () => {
     setIsProcessing(true);
 
-    /* TODO: This should be a util fn */
-    fetch(`/download/${matchId}`)
-      .then((response) => response.blob())
-      .then((blob) => {
-        const url = window.URL.createObjectURL(new Blob([blob]));
+    try {
+      const blob = await fetch(`/download/${matchId}`).then((response) =>
+        response.blob()
+      );
 
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", "equipos.png");
+      downloadBlob(blob, "equipos.png");
 
-        document.body.appendChild(link);
+      setIsProcessing(false);
 
-        link.click();
-
-        window.URL.revokeObjectURL(url);
-
-        setIsProcessing(false);
-
-        successAlert({
-          title: "¡Equipos descargados!",
-        });
-      })
-      .catch((error) => {
-        if (error instanceof Error) {
-          errorAlert({
-            title: error.message || ERROR_MESSAGES.export_failed,
-          });
-        }
-
-        setIsProcessing(false);
+      successAlert({
+        title: "¡Equipos descargados!",
       });
+    } catch (error) {
+      if (error instanceof Error) {
+        errorAlert({
+          title: error.message || ERROR_MESSAGES.export_failed,
+        });
+      }
+
+      setIsProcessing(false);
+    }
   };
 
   return (
