@@ -109,7 +109,6 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
       formData.append("file", file);
       formData.append("upload_preset", "scalonetapp");
 
-      /* TODO: Move this to a form action */
       const response = await fetch(
         "https://api.cloudinary.com/v1_1/cristhianjavierduran/image/upload",
         {
@@ -119,7 +118,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
       ).then(async (response) => await response.json());
 
       if (response.error?.message) {
-        throw new Error(`Cloudinary error: ${response.error.message}`);
+        throw new Error(response.error.message);
       }
 
       const imageUrl = response.secure_url;
@@ -131,8 +130,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
       console.error(error);
 
       errorAlert({
-        title: "Error al procesar la foto",
-        description: "Por favor, prueba nuevamente.",
+        title: "Error al subir la foto.",
       });
 
       /* We clean the input value */
