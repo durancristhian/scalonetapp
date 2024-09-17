@@ -57,7 +57,6 @@ export const addMatchAction: (data: MatchSchema) => Promise<void> = async (
 
 export const editMatchAction: (
   id: number,
-  /* TODO: This typing is incorrect since we use this method to update the match.teams and we should use the MatchSchema */
   data: Partial<Match>,
   pathToRevalidate: string
 ) => Promise<void> = async (id, data, pathToRevalidate) => {

@@ -86,7 +86,24 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
       /* This is safe to do since we don't accept multiple images in the file input */
       const file = files[0];
 
-      /* TODO: Validate image weight */
+      const fileSizeInMb = file.size / 1024 / 1024;
+
+      if (fileSizeInMb >= 3) {
+        errorAlert({
+          title: "La foto excede el tamaño máximo permitido (3 MB).",
+        });
+
+        /* We clean the input value */
+        if (inputFileRef.current) {
+          inputFileRef.current.value = "";
+
+          form.setValue("avatar", "");
+        }
+
+        setUploadingImage(false);
+
+        return;
+      }
 
       const formData = new FormData();
       formData.append("file", file);
@@ -119,7 +136,11 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
       });
 
       /* We clean the input value */
-      form.setValue("avatar", "");
+      if (inputFileRef.current) {
+        inputFileRef.current.value = "";
+
+        form.setValue("avatar", "");
+      }
 
       setUploadingImage(false);
     }
@@ -172,7 +193,11 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
                         <Button
                           onClick={() => {
                             /* We clean the input value */
-                            form.setValue("avatar", "");
+                            if (inputFileRef.current) {
+                              inputFileRef.current.value = "";
+
+                              form.setValue("avatar", "");
+                            }
                           }}
                           variant="ghost"
                           size="icon"

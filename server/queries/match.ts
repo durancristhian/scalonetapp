@@ -64,7 +64,6 @@ export const addMatchQuery: (
 
 export const editMatchQuery: (
   id: number,
-  /* TODO: This typing is incorrect since we use this method to update the match.teams and we should use the MatchSchema */
   data: Partial<Match>,
   userId: string
 ) => Promise<Match> = async (id, data, userId) => {
