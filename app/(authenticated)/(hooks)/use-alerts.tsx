@@ -1,4 +1,3 @@
-import { BugIcon, PartyPopperIcon } from "lucide-react";
 import { ReactNode } from "react";
 import { toast } from "sonner";
 
@@ -17,9 +16,8 @@ export const useAlerts: UseAlerts = () => {
     title,
     description,
   }) => {
-    toast(title, {
+    toast.success(title, {
       description,
-      icon: <PartyPopperIcon className="h-4 opacity-50 w-4" />,
     });
   };
 
@@ -27,9 +25,8 @@ export const useAlerts: UseAlerts = () => {
     title,
     description,
   }) => {
-    toast(title, {
+    toast.error(title, {
       description,
-      icon: <BugIcon className="h-4 opacity-50 w-4" />,
     });
   };
 
