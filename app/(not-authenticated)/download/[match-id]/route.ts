@@ -1,4 +1,4 @@
-import { getMatchById } from "@/server/queries/match";
+import { getMatchByIdQuery } from "@/server/queries/match";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { NextRequest, NextResponse } from "next/server";
 import puppeteer, { Browser } from "puppeteer";
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     const matchId = Number(matchIdStr);
 
     /* We look for the match data in the db */
-    const match = await getMatchById(matchId);
+    const match = await getMatchByIdQuery(matchId);
 
     if (!match) {
       return NextResponse.json(

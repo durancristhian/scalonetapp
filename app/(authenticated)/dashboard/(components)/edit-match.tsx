@@ -10,10 +10,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { MatchSchema } from "@/schemas/match";
-import { editMatch } from "@/server/actions/match";
+import { editMatchAction } from "@/server/actions/match";
+import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { Match } from "@prisma/client";
 import { FC } from "react";
-import { ZodError } from "zod";
 
 type EditMatchProps = {
   match: Match;
@@ -26,30 +26,15 @@ export const EditMatch: FC<EditMatchProps> = ({ match, onClose }) => {
   const onMatchSubmit: (values: MatchSchema) => Promise<void> = (values) => {
     return new Promise(async (resolve, reject) => {
       try {
-        await editMatch(match.id, values, "/dashboard");
+        await editMatchAction(match.id, values, "/dashboard");
 
         onClose();
 
         resolve();
       } catch (error) {
-        console.error(error);
-
-        if (error instanceof ZodError) {
+        if (error instanceof Error) {
           errorAlert({
-            title: "Error en la edición del partido",
-            description: (
-              <ul className="list-disc list-inside">
-                {error.errors.map(({ message }, idx) => (
-                  <li key={idx}>{message}</li>
-                ))}
-              </ul>
-            ),
-          });
-        } else {
-          errorAlert({
-            title: "Error en la edición del partido",
-            description:
-              "Por favor, verifica la información y prueba otra vez.",
+            title: error.message || ERROR_MESSAGES.match_edit_error,
           });
         }
 
@@ -60,7 +45,7 @@ export const EditMatch: FC<EditMatchProps> = ({ match, onClose }) => {
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>¿Listo para un cambio?</DialogTitle>
           <DialogDescription className="max-md:text-balance">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
+import { SoccerBall } from "@/components/soccer-ball";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,8 +13,9 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { deleteMatch } from "@/server/actions/match";
-import { FC } from "react";
+import { deleteMatchAction } from "@/server/actions/match";
+import { ERROR_MESSAGES } from "@/utils/error-messages";
+import { FC, useState } from "react";
 
 type DeleteMatchProps = {
   id: number;
@@ -21,39 +23,52 @@ type DeleteMatchProps = {
 };
 
 export const DeleteMatch: FC<DeleteMatchProps> = ({ id, onClose }) => {
+  const [processing, setIsProcessing] = useState(false);
   const { errorAlert, successAlert } = useAlerts();
 
   const onDeleteMatch: () => Promise<void> = async () => {
     try {
-      await deleteMatch(id);
+      setIsProcessing(true);
+
+      await deleteMatchAction(id);
+
+      setIsProcessing(false);
+
+      successAlert({
+        title: "¡Partido eliminado!",
+      });
 
       onClose();
-
-      successAlert({ title: "¡Partido eliminado!" });
     } catch (error) {
-      console.error(error);
+      if (error instanceof Error) {
+        errorAlert({
+          title: error.message || ERROR_MESSAGES.match_delete_error,
+        });
+      }
 
-      errorAlert({
-        title: "Error en la eliminación del partido",
-        description: "¿Podrías volver a intentarlo?.",
-      });
+      setIsProcessing(false);
     }
   };
 
   return (
-    <AlertDialog open onOpenChange={onClose}>
-      <AlertDialogContent>
+    <AlertDialog open>
+      <AlertDialogContent onEscapeKeyDown={onClose}>
         <AlertDialogHeader>
           <AlertDialogTitle>¿Eliminar este partido?</AlertDialogTitle>
           <AlertDialogDescription className="max-md:text-balance">
-            Ten en cuenta que se eliminará toda la información asociada a él.
-            Esta acción no tiene vuelta atrás.
+            Ten en cuenta que se eliminará toda su información asociada. Esta
+            acción no tiene vuelta atrás.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogCancel onClick={onClose}>Cancelar</AlertDialogCancel>
           <AlertDialogAction asChild>
-            <Button onClick={onDeleteMatch}>Sí, eliminar</Button>
+            <Button onClick={onDeleteMatch} disabled={processing}>
+              {processing ? (
+                <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
+              ) : null}
+              {processing ? "Eliminando..." : "Sí, eliminar"}
+            </Button>
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

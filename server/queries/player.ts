@@ -1,135 +1,38 @@
-import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
-import { ERROR_MESSAGES } from "@/utils/error-messages";
+import { PlayerSchema } from "@/schemas/player";
 import prisma from "@/utils/prisma";
-import { VALIDATION_MESSAGES } from "@/utils/validation-messages";
-import { auth } from "@clerk/nextjs/server";
+import { Player, Prisma } from "@prisma/client";
 
-const getMatch = async (userId: string, matchId: number) => {
-  const match = await prisma.match.findFirst({
-    where: {
-      id: matchId,
-      userId,
-    },
-    include: {
-      players: true,
-    },
-  });
-
-  return match;
-};
-
-const namesAlreadyInMatch: (
-  matchId: number,
-  names: string[]
-) => Promise<boolean> = async (matchId, names) => {
-  const coincidences = await prisma.player.findMany({
-    where: {
-      matchId,
-      OR: names.map((name) => ({
-        name,
-      })),
-    },
-  });
-
-  return !!coincidences.length;
-};
-
-export const addPlayer: (
+export const addPlayerQuery: (
   matchId: number,
   data: PlayerSchema
-) => Promise<void> = async (matchId, data) => {
-  const { userId } = auth();
-  if (!userId) {
-    throw new Error(ERROR_MESSAGES.unauthorized);
-  }
-
-  /* We check the current user owns the match we're trying to add a player to */
-  const match = await getMatch(userId, matchId);
-  if (!match) {
-    throw new Error(ERROR_MESSAGES.unauthorized);
-  }
-
-  /* We check that we don't have a player named the same in the match already */
-  const coincidences = await namesAlreadyInMatch(matchId, [data.name]);
-  if (coincidences) {
-    throw new Error(VALIDATION_MESSAGES.player_repeated);
-  }
-
-  /* We check we haven't reached the players in match limit */
-  if (
-    match.players.length >=
-    Number(process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH)
-  ) {
-    throw new Error(ERROR_MESSAGES.players_per_match_limit_reached);
-  }
-
-  const nextPlayer = {
-    ...data,
-    matchId,
-  };
-
-  PLAYER_SCHEMA.parse(nextPlayer);
-
-  await prisma.player.create({
-    data: nextPlayer,
+) => Promise<Player> = async (matchId, data) => {
+  return await prisma.player.create({
+    data: {
+      ...data,
+      matchId,
+    },
   });
 };
 
-export const addMultiplePlayers: (
+export const addMultiplePlayersQuery: (
   matchId: number,
   data: PlayerSchema[]
-) => Promise<void> = async (matchId, data) => {
-  const { userId } = auth();
-  if (!userId) {
-    throw new Error(ERROR_MESSAGES.unauthorized);
-  }
-
-  /* We check the current user owns the match we're trying to add a player to */
-  const match = await getMatch(userId, matchId);
-  if (!match) {
-    throw new Error(ERROR_MESSAGES.unauthorized);
-  }
-
-  const coincidences = await namesAlreadyInMatch(
-    matchId,
-    data.map((player) => player.name)
-  );
-  if (coincidences) {
-    throw new Error(VALIDATION_MESSAGES.at_least_one_player_repeated);
-  }
-
-  /* We check we haven't reached the players in match limit */
-  if (
-    match.players.length >=
-    Number(process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH)
-  ) {
-    throw new Error(ERROR_MESSAGES.players_per_match_limit_reached);
-  }
-
+) => Promise<Prisma.BatchPayload> = async (matchId, data) => {
   const nextPlayers = data.map((player) => ({
     ...player,
     matchId,
   }));
 
-  nextPlayers.map((player) => PLAYER_SCHEMA.parse(player));
-
-  await prisma.player.createMany({
+  return await prisma.player.createMany({
     data: nextPlayers,
   });
 };
 
-export const editPlayer: (
+export const editPlayerQuery: (
   id: number,
-  data: Partial<PlayerSchema>
-) => Promise<void> = async (id, data) => {
-  const { userId } = auth();
-  if (!userId) {
-    throw new Error(ERROR_MESSAGES.unauthorized);
-  }
-
-  PLAYER_SCHEMA.parse(data);
-
-  await prisma.player.update({
+  data: PlayerSchema
+) => Promise<Player> = async (id, data) => {
+  return await prisma.player.update({
     where: {
       id,
     },
@@ -137,13 +40,10 @@ export const editPlayer: (
   });
 };
 
-export const deletePlayer: (id: number) => Promise<void> = async (id) => {
-  const { userId } = auth();
-  if (!userId) {
-    throw new Error(ERROR_MESSAGES.unauthorized);
-  }
-
-  await prisma.player.delete({
+export const deletePlayerQuery: (id: number) => Promise<Player> = async (
+  id
+) => {
+  return await prisma.player.delete({
     where: {
       id,
     },

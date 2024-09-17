@@ -33,7 +33,7 @@ export const TeamForm: FC<TeamFormProps> = ({ onSubmit, values }) => {
         /* This form is special since we also submit data on each form change */
         onChange={form.handleSubmit(onSubmit)}
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-4"
+        className="space-y-4"
       >
         <FormField
           control={form.control}

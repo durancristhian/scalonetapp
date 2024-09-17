@@ -2,6 +2,7 @@
 
 import { SoccerBall } from "@/components/soccer-ball";
 import { Button } from "@/components/ui/button";
+import { DialogFooter } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -12,15 +13,13 @@ import {
   FormRootError,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
+import { PlayerSchema } from "@/schemas/player";
 import { PLAYERS_SCHEMA, PlayersSchema } from "@/schemas/players";
-import { unfoldZodError } from "@/utils/errors";
 import { getLinesFromString } from "@/utils/get-lines-from-string";
 import { getPlayersFromLines } from "@/utils/get-players-from-lines";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FC, useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { ZodError } from "zod";
 
 const PLACEHOLDER = `Juan, 2
 Roman
@@ -54,41 +53,15 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
     try {
       const nextPlayers = getPlayersFromLines(lines);
 
-      /* This seems redundant but it's not since each item in the array should be a valid player */
-      nextPlayers.map((nextPlayer) => PLAYER_SCHEMA.parse(nextPlayer));
-
       await onSubmit(nextPlayers);
 
-      form.setFocus("players");
       form.reset();
-    } catch (error) {
-      console.error(error);
-
-      let errorMessage = "";
-
-      if (error instanceof ZodError) {
-        errorMessage = unfoldZodError(error).join(". ");
-      } else if (error instanceof Error) {
-        errorMessage =
-          error.message ||
-          `No pudimos agregar ${
-            lines.length > 1 ? "el jugador" : "los jugadores"
-          }. Por favor, verifica la información y prueba otra vez.`;
-      }
-
-      form.setError("root", {
-        message: errorMessage,
-        type: "validate",
-      });
-    }
+    } catch (error) {}
   };
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmitHandler)}
-        className="flex flex-col gap-4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmitHandler)} className="space-y-4">
         <FormField
           control={form.control}
           name="players"
@@ -116,15 +89,17 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
           )}
         />
         <FormRootError />
-        <Button
-          type="submit"
-          disabled={!form.formState.isValid || form.formState.isSubmitting}
-        >
-          {form.formState.isSubmitting ? (
-            <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
-          ) : null}
-          {form.formState.isSubmitting ? "Guardando..." : "Guardar"}
-        </Button>
+        <DialogFooter>
+          <Button
+            type="submit"
+            disabled={!form.formState.isValid || form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting ? (
+              <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
+            ) : null}
+            {form.formState.isSubmitting ? "Guardando..." : "Guardar"}
+          </Button>
+        </DialogFooter>
       </form>
     </Form>
   );

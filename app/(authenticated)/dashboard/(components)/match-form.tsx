@@ -2,6 +2,7 @@
 
 import { SoccerBall } from "@/components/soccer-ball";
 import { Button } from "@/components/ui/button";
+import { DialogFooter } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -13,11 +14,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { MATCH_SCHEMA, MatchSchema } from "@/schemas/match";
-import { unfoldZodError } from "@/utils/errors";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
-import { ZodError } from "zod";
 
 const DAY_LABELS = [
   "domingos",
@@ -49,51 +48,43 @@ export const MatchForm: FC<MatchFormProps> = ({ onSubmit, values }) => {
     try {
       await onSubmit(values);
 
-      form.setFocus("name");
       form.reset();
-    } catch (error) {
-      console.error(error);
-
-      if (error instanceof ZodError) {
-        form.setError("root", {
-          message: unfoldZodError(error).join(". "),
-          type: "validate",
-        });
-      }
-    }
+    } catch (error) {}
   };
-
-  const placeholder = `Partido de los ${DAY_LABELS[new Date().getDay()]}`;
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmitHandler)}
-        className="grid gap-4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmitHandler)} className="space-y-4">
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nombre</FormLabel>
+              <FormLabel>Nombre del partido</FormLabel>
               <FormControl>
-                <Input placeholder={placeholder} {...field} />
+                <Input
+                  placeholder={`Partido de los ${
+                    DAY_LABELS[new Date().getDay()]
+                  }`}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
         <FormRootError />
-        <Button
-          type="submit"
-          disabled={!form.formState.isValid || form.formState.isSubmitting}
-        >
-          {form.formState.isSubmitting ? (
-            <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
-          ) : null}
-          {form.formState.isSubmitting ? "Guardando..." : "Guardar"}
-        </Button>
+        <DialogFooter>
+          <Button
+            type="submit"
+            disabled={!form.formState.isValid || form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting ? (
+              <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
+            ) : null}
+            {form.formState.isSubmitting ? "Guardando..." : "Guardar"}
+          </Button>
+        </DialogFooter>
       </form>
     </Form>
   );

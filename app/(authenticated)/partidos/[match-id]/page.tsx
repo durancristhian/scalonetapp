@@ -7,7 +7,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { getMatchById } from "@/server/queries/match";
+import { getMatchByIdQuery } from "@/server/queries/match";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FC } from "react";
@@ -19,14 +19,14 @@ type PageProps = {
 };
 
 const Page: FC<PageProps> = async ({ params }) => {
-  const match = await getMatchById(Number(params["match-id"]));
+  const match = await getMatchByIdQuery(Number(params["match-id"]));
 
   if (!match) {
     return notFound();
   }
 
   return (
-    <div className="grid gap-4 py-4 md:py-8">
+    <div className="py-4 md:py-8 space-y-4">
       <div className="max-w-7xl mx-auto px-4 w-full">
         <Breadcrumb>
           <BreadcrumbList>

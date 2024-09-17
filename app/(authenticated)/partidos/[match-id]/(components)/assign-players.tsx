@@ -15,7 +15,7 @@ import { Player } from "@prisma/client";
 import clsx from "clsx";
 import { FC, useState } from "react";
 
-type PlayersListProps = {
+type AssignPlayersProps = {
   assignSelectionToTeam: (teamId: string) => void;
   canAssignSelection: boolean;
   players: Player[];
@@ -24,7 +24,7 @@ type PlayersListProps = {
   togglePlayer: (id: number) => void;
 };
 
-export const PlayersList: FC<PlayersListProps> = ({
+export const AssignPlayers: FC<AssignPlayersProps> = ({
   assignSelectionToTeam,
   canAssignSelection,
   players,
@@ -34,16 +34,9 @@ export const PlayersList: FC<PlayersListProps> = ({
 }) => {
   const [selectedTeamId, setSelectedTeamId] = useState("");
 
-  if (!Array.isArray(players) || !players.length) {
-    return null;
-  }
-
   return (
-    <div className="grid gap-4">
-      <div className="grid gap-2">
-        <p className="font-semibold">¡Aún tienes jugadores en el banco!</p>
-        <p>Elige alguno de los jugadores que aparecen a continuación:</p>
-      </div>
+    <div className="space-y-2">
+      <p>Elige jugadores:</p>
       <div className="flex flex-wrap gap-2">
         {players.map((player) => (
           <Toggle
@@ -64,37 +57,35 @@ export const PlayersList: FC<PlayersListProps> = ({
           </Toggle>
         ))}
       </div>
-      <div className="grid gap-2">
-        <p>Luego selecciona el equipo al que estos jugadores se unirán.</p>
-        <Select
-          value={selectedTeamId}
-          disabled={canAssignSelection}
-          onValueChange={(selectedTeamId) => {
-            assignSelectionToTeam(selectedTeamId);
+      <p>Selecciona el equipo al que se unirán:</p>
+      <Select
+        value={selectedTeamId}
+        disabled={!canAssignSelection}
+        onValueChange={(selectedTeamId) => {
+          assignSelectionToTeam(selectedTeamId);
 
-            setSelectedTeamId("");
-          }}
-        >
-          <SelectTrigger className="bg-white">
-            <SelectValue
-              placeholder={
-                canAssignSelection
-                  ? "Selecciona al menos un jugador"
-                  : "Elegí un equipo"
-              }
-            />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {teams.map((team) => (
-                <SelectItem key={team.id} value={team.id}>
-                  {team.name}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </div>
+          setSelectedTeamId("");
+        }}
+      >
+        <SelectTrigger className="bg-white">
+          <SelectValue
+            placeholder={
+              canAssignSelection
+                ? "Elegí un equipo"
+                : "Selecciona al menos un jugador"
+            }
+          />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            {teams.map((team) => (
+              <SelectItem key={team.id} value={team.id}>
+                {team.name}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
     </div>
   );
 };

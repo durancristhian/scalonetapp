@@ -4,6 +4,7 @@ import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { PlayerAvatar } from "@/components/player-avatar";
 import { SoccerBall } from "@/components/soccer-ball";
 import { Button } from "@/components/ui/button";
+import { DialogFooter } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -22,12 +23,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
-import { unfoldZodError } from "@/utils/errors";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TrashIcon } from "lucide-react";
 import { ChangeEventHandler, FC, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { ZodError } from "zod";
 
 /* Players are categorized from 1 to 10 */
 const PLAYER_LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -87,15 +86,18 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
       /* This is safe to do since we don't accept multiple images in the file input */
       const file = files[0];
 
-      const data = new FormData();
-      data.append("file", file);
-      data.append("upload_preset", "scalonetapp");
+      /* TODO: Validate image weight */
 
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "scalonetapp");
+
+      /* TODO: Move this to a form action */
       const response = await fetch(
         "https://api.cloudinary.com/v1_1/cristhianjavierduran/image/upload",
         {
           method: "POST",
-          body: data,
+          body: formData,
         }
       ).then(async (response) => await response.json());
 
@@ -113,7 +115,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
 
       errorAlert({
         title: "Error al procesar la foto",
-        description: "Por favor, prueba otra vez.",
+        description: "Por favor, prueba nuevamente.",
       });
 
       /* We clean the input value */
@@ -129,39 +131,18 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
     try {
       await onSubmit(values);
 
-      form.setFocus("name");
       form.reset();
-    } catch (error) {
-      console.error(error);
-
-      let errorMessage = "";
-
-      if (error instanceof ZodError) {
-        errorMessage = unfoldZodError(error).join(". ");
-      } else if (error instanceof Error) {
-        errorMessage =
-          error.message ||
-          "No pudimos agregar el jugador. Por favor, verifica la información y prueba otra vez.";
-      }
-
-      form.setError("root", {
-        message: errorMessage,
-        type: "validate",
-      });
-    }
+    } catch (error) {}
   };
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmitHandler)}
-        className="flex flex-col gap-4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmitHandler)} className="space-y-4">
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
-            <div className="grid gap-4">
+            <div className="space-y-4">
               <FormItem>
                 <FormLabel>Nombre</FormLabel>
                 <FormControl>
@@ -199,9 +180,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
                           <TrashIcon className="h-4 text-red-700 w-4" />
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Eliminar</p>
-                      </TooltipContent>
+                      <TooltipContent>Eliminar</TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                 ) : (
@@ -260,19 +239,21 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
           )}
         />
         <FormRootError />
-        <Button
-          type="submit"
-          disabled={
-            !form.formState.isValid ||
-            form.formState.isSubmitting ||
-            uploadingImage
-          }
-        >
-          {form.formState.isSubmitting ? (
-            <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
-          ) : null}
-          {form.formState.isSubmitting ? "Guardando..." : "Guardar"}
-        </Button>
+        <DialogFooter>
+          <Button
+            type="submit"
+            disabled={
+              !form.formState.isValid ||
+              form.formState.isSubmitting ||
+              uploadingImage
+            }
+          >
+            {form.formState.isSubmitting ? (
+              <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
+            ) : null}
+            {form.formState.isSubmitting ? "Guardando..." : "Guardar"}
+          </Button>
+        </DialogFooter>
       </form>
     </Form>
   );

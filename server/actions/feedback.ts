@@ -1,26 +1,21 @@
-import { FEEDBACK_SCHEMA } from "@/schemas/feedback";
+"use server";
+
+import { FeedbackSchema } from "@/schemas/feedback";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { Telegram } from "@/utils/telegram";
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
 
-export async function POST(request: Request) {
+export const feedbackAction: (data: FeedbackSchema) => Promise<void> = async (
+  data
+) => {
   try {
     const { userId } = auth();
     const user = await currentUser();
 
     /* We check auth */
     if (!userId || !user) {
-      return NextResponse.json(
-        { ok: false, error: ERROR_MESSAGES.unauthorized },
-        { status: 500 }
-      );
+      throw new Error(ERROR_MESSAGES.unauthorized);
     }
-
-    const body = await request.json();
-
-    /* We parse the body so we can confirm it's in the form of the expected shape of data */
-    const feedbackData = FEEDBACK_SCHEMA.parse(body);
 
     /* We generate the expected message format */
     const message = [
@@ -34,19 +29,12 @@ export async function POST(request: Request) {
             : emailAddress
         )
         .join(", ")}`,
-      `Message: ${feedbackData.message}`,
+      `Message: ${data.message}`,
     ].join("\n");
 
     const telegram = new Telegram();
     await telegram.sendMessage(message);
-
-    return NextResponse.json({ ok: true }, { status: 200 });
   } catch (error) {
-    console.error(error);
-
-    return NextResponse.json(
-      { ok: false, error: "No se pudo enviar el mensaje. Intente nuevamente." },
-      { status: 500 }
-    );
+    throw new Error(ERROR_MESSAGES.feedback_submit_error);
   }
-}
+};

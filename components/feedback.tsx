@@ -7,6 +7,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -22,40 +23,38 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { FEEDBACK_SCHEMA, FeedbackSchema } from "@/schemas/feedback";
-import { unfoldZodError } from "@/utils/errors";
+import { feedbackAction } from "@/server/actions/feedback";
+import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
-import { ZodError } from "zod";
 
 export const Feedback = () => {
-  const { successAlert } = useAlerts();
-  const [popoverOpen, setPopoverOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   return (
-    <Dialog open={popoverOpen} onOpenChange={setPopoverOpen}>
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
         <Button
           onClick={() => {
-            setPopoverOpen(true);
+            setDialogOpen(true);
           }}
           variant="outline"
         >
           Feedback
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>¿Que te gustaría decirme?</DialogTitle>
-          <DialogDescription className="max-md:text-balance">
-            Todo feedback, idea y/o sugerencia es bienvenida (:
+          <DialogDescription className="text-balance">
+            Todo feedback es bienvenido. No te garantizo que este mensaje sea
+            contestado pero si te aseguro que lo voy a leer.
           </DialogDescription>
         </DialogHeader>
         <FeedbackForm
           afterSubmit={() => {
-            setPopoverOpen(false);
-
-            successAlert({ title: "¡Su feedback fue enviado!" });
+            setDialogOpen(false);
           }}
         />
       </DialogContent>
@@ -68,6 +67,7 @@ type FeedbackFormProps = {
 };
 
 const FeedbackForm: FC<FeedbackFormProps> = ({ afterSubmit }) => {
+  const { successAlert, errorAlert } = useAlerts();
   const form = useForm<FeedbackSchema>({
     defaultValues: {
       message: "",
@@ -75,43 +75,33 @@ const FeedbackForm: FC<FeedbackFormProps> = ({ afterSubmit }) => {
     resolver: zodResolver(FEEDBACK_SCHEMA),
   });
 
-  const onSubmitHandler: (values: FeedbackSchema) => Promise<void> = async (
-    values
-  ) => {
-    return fetch("/api/feedback", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    })
-      .then(() => {
-        afterSubmit();
-      })
-      .catch((error) => {
-        console.error(error);
+  const onSubmitHandler: (values: FeedbackSchema) => void = async (values) => {
+    try {
+      await feedbackAction(values);
 
-        if (error instanceof ZodError) {
-          form.setError("root", {
-            message: unfoldZodError(error).join(". "),
-            type: "validate",
-          });
-        }
+      afterSubmit();
+
+      successAlert({
+        title: "¡Su feedback fue enviado!",
       });
+    } catch (error) {
+      if (error instanceof Error) {
+        errorAlert({
+          title: error.message || ERROR_MESSAGES.feedback_submit_error,
+        });
+      }
+    }
   };
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmitHandler)}
-        className="grid gap-4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmitHandler)} className="space-y-4">
         <FormField
           control={form.control}
           name="message"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Mensaje</FormLabel>
+              <FormLabel>Tu mensaje</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Hola Cris, me gustaría que..."
@@ -123,15 +113,17 @@ const FeedbackForm: FC<FeedbackFormProps> = ({ afterSubmit }) => {
           )}
         />
         <FormRootError />
-        <Button
-          type="submit"
-          disabled={!form.formState.isValid || form.formState.isSubmitting}
-        >
-          {form.formState.isSubmitting ? (
-            <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
-          ) : null}
-          {form.formState.isSubmitting ? "Enviando..." : "Enviar"}
-        </Button>
+        <DialogFooter>
+          <Button
+            type="submit"
+            disabled={!form.formState.isValid || form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting ? (
+              <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
+            ) : null}
+            {form.formState.isSubmitting ? "Enviando..." : "Enviar"}
+          </Button>
+        </DialogFooter>
       </form>
     </Form>
   );

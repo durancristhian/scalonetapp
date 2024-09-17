@@ -1,154 +1,144 @@
-import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
+import { AddPlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/add-player";
 import { DeletePlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/delete-player";
-import { PlayerForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/player-form";
+import { EditPlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/edit-player";
 import { AnimatedListItem } from "@/components/animated-list-item";
 import { EmptyState } from "@/components/empty-state";
 import { PlayerAvatar } from "@/components/player-avatar";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { PlayerSchema } from "@/schemas/player";
-import { editPlayer } from "@/server/actions/player";
+  Card,
+  CardContent,
+  CardDescription,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { byName } from "@/utils/by-name";
 import { Player } from "@prisma/client";
-import { AlertCircleIcon, PencilIcon } from "lucide-react";
+import { EllipsisVerticalIcon, PencilIcon, TrashIcon } from "lucide-react";
 import { FC, useState } from "react";
-import { ZodError } from "zod";
 
 type MatchPlayersProps = {
   players: Player[];
 };
 
 export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
-  const { errorAlert } = useAlerts();
-
   const canListPlayers = Array.isArray(players) && players.length;
 
-  const onPlayerSubmit: (id: number, values: PlayerSchema) => Promise<void> = (
-    id,
-    values
-  ) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await editPlayer(id, values);
-
-        resolve();
-      } catch (error) {
-        console.error(error);
-
-        if (error instanceof ZodError) {
-          errorAlert({
-            title: "Error en la edición del jugador",
-            description: (
-              <ul className="list-disc list-inside">
-                {error.errors.map(({ message }, idx) => (
-                  <li key={idx}>{message}</li>
-                ))}
-              </ul>
-            ),
-          });
-        } else {
-          errorAlert({
-            title: "Error en la edición del jugador",
-            description:
-              "Por favor, verifica la información y prueba otra vez.",
-          });
-        }
-
-        reject(error);
-      }
-    });
-  };
-
   return (
-    <>
-      {canListPlayers ? (
-        <div className="grid gap-6">
-          {players.length >=
-          Number(process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH) ? (
-            <Alert variant="destructive">
-              <AlertCircleIcon className="h-4 w-4" />
-              <AlertTitle>¡No hay más espacio en el banco!</AlertTitle>
-              <AlertDescription>
-                ¡Has alcanzado el máximo de{" "}
-                {process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH} jugadores! Si
-                necesitas añadir más estrellas, considera liberar espacio
-                eliminando un jugador existente.
-              </AlertDescription>
-            </Alert>
+    <Card>
+      {/* Instead of using CardHeader and overwriting too many classes I decided to write my own */}
+      <div className="flex gap-2 items-center justify-between p-6">
+        <div className="space-y-1">
+          <CardTitle>Jugadores convocados</CardTitle>
+          {players.length ? (
+            <CardDescription>
+              {players.length} de{" "}
+              {process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH}
+            </CardDescription>
           ) : null}
-          <ul className="grid gap-2">
-            {players.sort(byName).map((player, idx) => {
-              return (
-                <AnimatedListItem key={player.id} listIndex={idx}>
-                  <MatchPlayer
-                    player={player}
-                    onPlayerSubmit={onPlayerSubmit}
-                  />
-                </AnimatedListItem>
-              );
-            })}
-          </ul>
         </div>
-      ) : (
-        <EmptyState>
-          Parece que aún no has agregado a nadie. ¡Es hora de llenar la
-          plantilla!
-        </EmptyState>
-      )}
-    </>
+        <AddPlayer
+          disabled={
+            players.length >=
+            Number(process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH)
+          }
+        />
+      </div>
+      <CardContent>
+        {canListPlayers ? (
+          /* 435 is a magical number. It's the height of 9.5 items (+ the margin separating them) so we only show those items and there is some sort of visual guidance to scroll if you want to see more */
+          <ScrollArea className={players.length > 10 ? "h-[435px]" : "h-auto"}>
+            <ul className="space-y-2">
+              {players.sort(byName).map((player, idx) => {
+                return (
+                  <AnimatedListItem key={player.id} listIndex={idx}>
+                    <MatchPlayer player={player} />
+                  </AnimatedListItem>
+                );
+              })}
+            </ul>
+          </ScrollArea>
+        ) : (
+          <EmptyState>Parece que aún no has llamado a nadie.</EmptyState>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 
 type MatchPlayerProps = {
   player: Player;
-  onPlayerSubmit: (id: number, values: PlayerSchema) => Promise<void>;
 };
 
-const MatchPlayer: FC<MatchPlayerProps> = ({ player, onPlayerSubmit }) => {
-  const [dialogOpen, setDialogOpen] = useState(false);
-
-  const onSubmit: (values: PlayerSchema) => Promise<void> = async (values) => {
-    await onPlayerSubmit(player.id, values);
-
-    setDialogOpen(false);
-  };
+const MatchPlayer: FC<MatchPlayerProps> = ({ player }) => {
+  const [menuOpened, setMenuOpened] = useState(false);
+  /* This is not great at all but enough for now due to the small amout of options we have in the dropdown menu */
+  const [dialogId, setDialogId] = useState<"edit" | "delete" | null>(null);
 
   return (
-    <div className="flex items-center gap-2">
-      <DeletePlayer id={player.id} />
-      <div className="grow">
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger className="w-full">
-            <div className="border border-border hover:bg-accent px-4 py-2 rounded-md transition-colors">
-              <div className="flex gap-2 items-center">
-                <div className="grow">
-                  <div className="flex gap-2 items-center">
-                    <PlayerAvatar
-                      src={player.avatar}
-                      name={player.name}
-                      size="sm"
-                    />
-                    <p>{player.name}</p>
-                  </div>
-                </div>
-                <PencilIcon className="h-4 text-muted-foreground w-4" />
-              </div>
-            </div>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Editar ficha del jugador</DialogTitle>
-            </DialogHeader>
-            <PlayerForm onSubmit={onSubmit} values={player} />
-          </DialogContent>
-        </Dialog>
+    <Card>
+      <div className="flex gap-2 items-center pl-4">
+        <PlayerAvatar src={player.avatar} name={player.name} size="sm" />
+        <div className="grow">
+          <p>{player.name}</p>
+        </div>
+        <div className="flex-shrink-0">
+          <Badge variant="secondary">{player.level}</Badge>
+        </div>
+        <div className="flex-shrink-0">
+          <DropdownMenu open={menuOpened} onOpenChange={setMenuOpened}>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <EllipsisVerticalIcon className="h-4 text-muted-foreground w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            {/* margin here helps to detach the menu from the limit of the screen (specially in mobile) */}
+            <DropdownMenuContent className="mr-4">
+              <DropdownMenuItem
+                onClick={() => {
+                  setDialogId("edit");
+                }}
+              >
+                <PencilIcon className="h-4 mr-2 text-muted-foreground w-4" />
+                Editar
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  setDialogId("delete");
+                }}
+              >
+                <TrashIcon className="h-4 mr-2 text-destructive w-4" />
+                Eliminar
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        {dialogId === "edit" ? (
+          <EditPlayer
+            player={player}
+            onClose={() => {
+              setDialogId(null);
+              setMenuOpened(false);
+            }}
+          />
+        ) : null}
+        {dialogId === "delete" ? (
+          <DeletePlayer
+            id={player.id}
+            onClose={() => {
+              setDialogId(null);
+              setMenuOpened(false);
+            }}
+          />
+        ) : null}
       </div>
-    </div>
+    </Card>
   );
 };
