@@ -23,6 +23,7 @@ export const getMatchesQuery = async () => {
     include: {
       players: true,
     },
+    take: 10,
   });
 };
 

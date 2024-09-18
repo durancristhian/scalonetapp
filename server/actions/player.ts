@@ -28,7 +28,7 @@ const getMatch = async (matchId: number, userId: string) => {
   });
 };
 
-const namesAlreadyInMatch: (
+const namesInMatch: (
   matchId: number,
   names: string[]
 ) => Promise<boolean> = async (matchId, names) => {
@@ -67,7 +67,7 @@ export const addPlayerAction: (
       throw new Error(ERROR_MESSAGES.not_found);
     }
 
-    const coincidences = await namesAlreadyInMatch(matchId, [data.name]);
+    const coincidences = await namesInMatch(matchId, [data.name]);
 
     /* We check that we don't have a player named the same in the match already */
     if (coincidences) {
@@ -109,7 +109,7 @@ export const addMultiplePlayersAction: (
       throw new Error(ERROR_MESSAGES.not_found);
     }
 
-    const coincidences = await namesAlreadyInMatch(
+    const coincidences = await namesInMatch(
       matchId,
       data.map((player) => player.name)
     );
