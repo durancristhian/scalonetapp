@@ -11,6 +11,7 @@ export const getPlayersFromLines: (lines: string[]) => PlayerSchema[] = (
       return {
         name: line,
         level: Number(process.env.NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL),
+        position: "mid",
       };
     }
 
@@ -25,6 +26,7 @@ export const getPlayersFromLines: (lines: string[]) => PlayerSchema[] = (
     return {
       name: line.substring(0, lastCommaIdx).trim(),
       level,
+      position: "mid",
     };
   });
 };
