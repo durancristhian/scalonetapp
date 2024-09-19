@@ -17,6 +17,7 @@ model Player {
   updatedAt DateTime @updatedAt
   level     Int      @default(5)
   avatar    String   @default("")
+  position  String   @default("mid")
 
   // Relationships
   matchId Int

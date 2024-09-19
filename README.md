@@ -12,8 +12,22 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 
 ## My notes
 
-Create an empty sqlite db by executing:
+- Create an empty sqlite db by executing:
 
-```bash
-sqlite3 scalonetapp.db "VACUUM;"
-```
+  ```bash
+  sqlite3 scalonetapp.db "VACUUM;"
+  ```
+
+- Updating local DB
+
+  ```bash
+    # Update prisma/schema.prisma, then run:
+    npx prisma generate && npx prisma db push
+  ```
+
+- Updating prod DB from local
+
+  ```bash
+    # Update prisma/prod.schema.prisma, then run:
+    npx prisma migrate dev --name MIGRATION_NAME --schema=./prisma/prod.schema.prisma
+  ```
