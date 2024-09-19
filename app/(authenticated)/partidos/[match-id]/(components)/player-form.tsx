@@ -23,6 +23,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
+import { PLAYER_POSITIONS } from "@/utils/player-positions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TrashIcon } from "lucide-react";
 import { ChangeEventHandler, FC, useRef, useState } from "react";
@@ -59,6 +60,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
       avatar: "",
       name: "",
       level: Number(process.env.NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL),
+      position: "mid",
     },
     resolver: zodResolver(PLAYER_SCHEMA),
     values,
@@ -246,6 +248,34 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
                 La foto puede pesar hasta{" "}
                 {process.env.NEXT_PUBLIC_IMAGE_UPLOAD_SIZE_LIMIT} MB.
               </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="position"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Posición</FormLabel>
+              <FormControl>
+                <div className="auto-cols-max gap-1 grid grid-cols-4">
+                  {Object.entries(PLAYER_POSITIONS).map(([key, value]) => (
+                    <Button
+                      key={key}
+                      type="button"
+                      variant={field.value === key ? "outline" : "ghost"}
+                      /* We remove the horizontal padding in favor of getting space from the parent auto-cols-max */
+                      className="px-0"
+                      onClick={() => {
+                        field.onChange(key);
+                      }}
+                    >
+                      {value}
+                    </Button>
+                  ))}
+                </div>
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
