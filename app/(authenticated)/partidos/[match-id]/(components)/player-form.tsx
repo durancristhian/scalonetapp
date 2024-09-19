@@ -88,9 +88,9 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
 
       const fileSizeInMb = file.size / 1024 / 1024;
 
-      if (fileSizeInMb >= 3) {
+      if (fileSizeInMb >= Number(process.env.IMAGE_UPLOAD_SIZE_LIMIT)) {
         errorAlert({
-          title: "La foto excede el tamaño máximo permitido (3 MB).",
+          title: `La foto excede el tamaño máximo permitido (${process.env.IMAGE_UPLOAD_SIZE_LIMIT} MB).`,
         });
 
         /* We clean the input value */
