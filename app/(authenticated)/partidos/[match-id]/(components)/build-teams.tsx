@@ -92,7 +92,7 @@ export const BuildTeams: FC<BuildTeamsProps> = ({
                 >
                   {disableBalanceTeams
                     ? `Esta opción está deshabilitada porque todos tus jugadores tienen el nivel asignado por defecto (${process.env.NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL}), dejando sin efecto su uso.`
-                    : "Haremos los equipos lo más parejo posible teniendo en cuenta el nivel de los jugadores."}
+                    : "Haremos los equipos lo más parejo posible teniendo en cuenta la posición y el nivel de los jugadores."}
                 </p>
               </Label>
             </div>
