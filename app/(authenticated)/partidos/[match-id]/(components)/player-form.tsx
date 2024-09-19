@@ -71,6 +71,8 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
   const avatar = form.watch("avatar");
   const avatarFieldProps = form.register("avatar");
 
+  const name = form.watch("name");
+
   const onUploadAvatar: ChangeEventHandler<HTMLInputElement> = async (
     event
   ) => {
@@ -163,75 +165,89 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
           control={form.control}
           name="name"
           render={({ field }) => (
-            <div className="space-y-4">
-              <FormItem>
-                <FormLabel>Nombre</FormLabel>
-                <FormControl>
-                  <Input placeholder={INPUT_PLACEHOLDER} {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-              <div className="flex gap-4 items-center justify-center">
-                <PlayerAvatar
-                  src={avatar || ""}
-                  name={field.value || INPUT_PLACEHOLDER}
-                  size="lg"
-                />
-                <input
-                  hidden
-                  type="file"
-                  /* We only accept jpg, jpeg and png extensions */
-                  accept=".jpg,.jpeg,.png"
-                  {...avatarFieldProps}
-                  ref={inputFileRef}
-                  onChange={onUploadAvatar}
-                />
-                {avatar ? (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          onClick={() => {
-                            /* We clean the input value */
-                            if (inputFileRef.current) {
-                              inputFileRef.current.value = "";
+            <FormItem>
+              <FormLabel>Nombre</FormLabel>
+              <FormControl>
+                <Input placeholder={INPUT_PLACEHOLDER} {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="avatar"
+          render={() => (
+            <FormItem>
+              <FormLabel>Avatar</FormLabel>
+              <FormControl>
+                <div className="flex gap-4 items-center justify-center">
+                  <PlayerAvatar
+                    src={avatar || ""}
+                    name={name || INPUT_PLACEHOLDER}
+                    size="lg"
+                  />
+                  <input
+                    hidden
+                    type="file"
+                    /* We only accept jpg, jpeg and png extensions */
+                    accept=".jpg,.jpeg,.png"
+                    {...avatarFieldProps}
+                    ref={inputFileRef}
+                    onChange={onUploadAvatar}
+                  />
+                  {avatar ? (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            onClick={() => {
+                              /* We clean the input value */
+                              if (inputFileRef.current) {
+                                inputFileRef.current.value = "";
 
-                              form.setValue("avatar", "");
-                            }
-                          }}
-                          variant="ghost"
-                          size="icon"
-                        >
-                          <TrashIcon className="h-4 text-red-700 w-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>Eliminar</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                ) : (
-                  <Button
-                    /* We trigger the input file click with this button */
-                    onClick={() => {
-                      if (inputFileRef.current) {
-                        inputFileRef.current.click();
-                      }
-                    }}
-                    disabled={uploadingImage}
-                    type="button"
-                    variant="outline"
-                  >
-                    {uploadingImage ? (
-                      <>
-                        <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
-                        Subiendo foto...
-                      </>
-                    ) : (
-                      "Subir una foto"
-                    )}
-                  </Button>
-                )}
-              </div>
-            </div>
+                                form.setValue("avatar", "");
+                              }
+                            }}
+                            variant="ghost"
+                            size="icon"
+                          >
+                            <TrashIcon className="h-4 text-red-700 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Eliminar</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  ) : (
+                    <Button
+                      /* We trigger the input file click with this button */
+                      onClick={() => {
+                        if (inputFileRef.current) {
+                          inputFileRef.current.click();
+                        }
+                      }}
+                      disabled={uploadingImage}
+                      type="button"
+                      variant="outline"
+                    >
+                      {uploadingImage ? (
+                        <>
+                          <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
+                          Subiendo foto...
+                        </>
+                      ) : (
+                        "Subir una foto"
+                      )}
+                    </Button>
+                  )}
+                </div>
+              </FormControl>
+              <FormDescription>
+                La foto puede pesar hasta{" "}
+                {process.env.NEXT_PUBLIC_IMAGE_UPLOAD_SIZE_LIMIT} MB.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
           )}
         />
         <FormField
