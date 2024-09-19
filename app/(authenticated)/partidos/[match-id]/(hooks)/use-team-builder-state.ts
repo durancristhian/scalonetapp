@@ -1,3 +1,4 @@
+import { PlayerSchema } from "@/schemas/player";
 import { MatchWithPlayers } from "@/types/match";
 import { BaseTeam, Team } from "@/types/team";
 import { byName } from "@/utils/by-name";
@@ -212,7 +213,78 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
   };
 
   const randomizeTeams: UseTeamsBuilderStateResult["randomizeTeams"] = () => {
-    const shuffledPlayers = shuffle([...match.players]);
+    const playersByPositionAndLevel = [...match.players].reduce<
+      Record<PlayerSchema["position"], Record<PlayerSchema["level"], Player[]>>
+    >(
+      (acc, curr) => {
+        acc[curr.position][curr.level].push(curr);
+
+        return acc;
+      },
+      /* TODO: We can get rid of this */
+      {
+        goa: {
+          1: [],
+          2: [],
+          3: [],
+          4: [],
+          5: [],
+          6: [],
+          7: [],
+          8: [],
+          9: [],
+          10: [],
+        },
+        def: {
+          1: [],
+          2: [],
+          3: [],
+          4: [],
+          5: [],
+          6: [],
+          7: [],
+          8: [],
+          9: [],
+          10: [],
+        },
+        mid: {
+          1: [],
+          2: [],
+          3: [],
+          4: [],
+          5: [],
+          6: [],
+          7: [],
+          8: [],
+          9: [],
+          10: [],
+        },
+        for: {
+          1: [],
+          2: [],
+          3: [],
+          4: [],
+          5: [],
+          6: [],
+          7: [],
+          8: [],
+          9: [],
+          10: [],
+        },
+      }
+    );
+
+    /* Looping over each player position */
+    const playersList = Object.values(playersByPositionAndLevel).flatMap(
+      (playersByLevel) =>
+        /* Looping over each player level */
+        Object.values(playersByLevel).flatMap((players) =>
+          /* Returning a shuffled list of players within the same position and level */
+          shuffle([...players])
+        )
+    );
+
+    const shuffledPlayers = shuffle(playersList);
 
     updateTeamsWithPlayerChunks(shuffledPlayers);
   };
@@ -292,3 +364,247 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
     updateTeamName,
   };
 };
+
+/* TODO: Delete meee */
+const TEST_PLAYERS = [
+  {
+    id: 21,
+    name: "Agus",
+    createdAt: "2024-09-19T14:33:32.600Z",
+    updatedAt: "2024-09-19T14:33:32.600Z",
+    level: 5,
+    avatar: "",
+    position: "mid",
+    matchId: 1,
+  },
+  {
+    id: 15,
+    name: "Andrés",
+    createdAt: "2024-09-19T14:33:32.600Z",
+    updatedAt: "2024-09-19T14:33:32.600Z",
+    level: 5,
+    avatar: "",
+    position: "mid",
+    matchId: 1,
+  },
+  {
+    id: 2,
+    name: "Ari",
+    createdAt: "2024-09-19T14:33:32.600Z",
+    updatedAt: "2024-09-19T14:33:32.600Z",
+    level: 5,
+    avatar: "",
+    position: "mid",
+    matchId: 1,
+  },
+  {
+    id: 13,
+    name: "Cami S",
+    createdAt: "2024-09-19T14:33:32.600Z",
+    updatedAt: "2024-09-19T14:33:32.600Z",
+    level: 5,
+    avatar: "",
+    position: "mid",
+    matchId: 1,
+  },
+  {
+    id: 5,
+    name: "Charly",
+    createdAt: "2024-09-19T14:33:32.600Z",
+    updatedAt: "2024-09-19T14:33:32.600Z",
+    level: 5,
+    avatar: "",
+    position: "mid",
+    matchId: 1,
+  },
+  {
+    id: 22,
+    name: "Chino (Juan)",
+    createdAt: "2024-09-19T14:33:32.600Z",
+    updatedAt: "2024-09-19T14:33:32.600Z",
+    level: 5,
+    avatar: "",
+    position: "mid",
+    matchId: 1,
+  },
+  {
+    id: 18,
+    name: "Clari B",
+    createdAt: "2024-09-19T14:33:32.600Z",
+    updatedAt: "2024-09-19T14:33:32.600Z",
+    level: 5,
+    avatar: "",
+    position: "mid",
+    matchId: 1,
+  },
+  {
+    id: 4,
+    name: "Cris",
+    createdAt: "2024-09-19T14:33:32.600Z",
+    updatedAt: "2024-09-19T14:33:32.600Z",
+    level: 5,
+    avatar: "",
+    position: "mid",
+    matchId: 1,
+  },
+  {
+    id: 14,
+    name: "Dami",
+    createdAt: "2024-09-19T14:33:32.600Z",
+    updatedAt: "2024-09-19T14:33:32.600Z",
+    level: 5,
+    avatar: "",
+    position: "mid",
+    matchId: 1,
+  },
+  {
+    id: 24,
+    name: "Fiore (Juan)",
+    createdAt: "2024-09-19T14:33:32.600Z",
+    updatedAt: "2024-09-19T14:33:32.600Z",
+    level: 5,
+    avatar: "",
+    position: "mid",
+    matchId: 1,
+  },
+  {
+    id: 8,
+    name: "Juan",
+    createdAt: "2024-09-19T14:33:32.600Z",
+    updatedAt: "2024-09-19T14:33:32.600Z",
+    level: 5,
+    avatar: "",
+    position: "mid",
+    matchId: 1,
+  },
+  {
+    id: 20,
+    name: "Juli (lilo) ",
+    createdAt: "2024-09-19T14:33:32.600Z",
+    updatedAt: "2024-09-19T14:33:32.600Z",
+    level: 5,
+    avatar: "",
+    position: "mid",
+    matchId: 1,
+  },
+  {
+    id: 12,
+    name: "Kari",
+    createdAt: "2024-09-19T14:33:32.600Z",
+    updatedAt: "2024-09-19T14:33:32.600Z",
+    level: 5,
+    avatar: "",
+    position: "mid",
+    matchId: 1,
+  },
+  {
+    id: 11,
+    name: "Lauti",
+    createdAt: "2024-09-19T14:33:32.600Z",
+    updatedAt: "2024-09-19T14:33:32.600Z",
+    level: 5,
+    avatar: "",
+    position: "mid",
+    matchId: 1,
+  },
+  {
+    id: 17,
+    name: "Lilo",
+    createdAt: "2024-09-19T14:33:32.600Z",
+    updatedAt: "2024-09-19T14:33:32.600Z",
+    level: 5,
+    avatar: "",
+    position: "mid",
+    matchId: 1,
+  },
+  {
+    id: 16,
+    name: "Lu",
+    createdAt: "2024-09-19T14:33:32.600Z",
+    updatedAt: "2024-09-19T14:33:32.600Z",
+    level: 5,
+    avatar: "",
+    position: "mid",
+    matchId: 1,
+  },
+  {
+    id: 6,
+    name: "Luz ",
+    createdAt: "2024-09-19T14:33:32.600Z",
+    updatedAt: "2024-09-19T14:33:32.600Z",
+    level: 5,
+    avatar: "",
+    position: "mid",
+    matchId: 1,
+  },
+  {
+    id: 3,
+    name: "Marcos",
+    createdAt: "2024-09-19T14:33:32.600Z",
+    updatedAt: "2024-09-19T14:33:32.600Z",
+    level: 5,
+    avatar: "",
+    position: "mid",
+    matchId: 1,
+  },
+  {
+    id: 25,
+    name: "Mateo (Mili)",
+    createdAt: "2024-09-19T14:33:32.600Z",
+    updatedAt: "2024-09-19T14:33:32.600Z",
+    level: 5,
+    avatar: "",
+    position: "mid",
+    matchId: 1,
+  },
+  {
+    id: 19,
+    name: "Mili",
+    createdAt: "2024-09-19T14:33:32.600Z",
+    updatedAt: "2024-09-19T14:33:32.600Z",
+    level: 5,
+    avatar: "",
+    position: "mid",
+    matchId: 1,
+  },
+  {
+    id: 9,
+    name: "Nadia",
+    createdAt: "2024-09-19T14:33:32.600Z",
+    updatedAt: "2024-09-19T14:33:32.600Z",
+    level: 5,
+    avatar: "",
+    position: "mid",
+    matchId: 1,
+  },
+  {
+    id: 23,
+    name: "Orne (Juan)",
+    createdAt: "2024-09-19T14:33:32.600Z",
+    updatedAt: "2024-09-19T14:33:32.600Z",
+    level: 5,
+    avatar: "",
+    position: "mid",
+    matchId: 1,
+  },
+  {
+    id: 7,
+    name: "Oso",
+    createdAt: "2024-09-19T14:33:32.600Z",
+    updatedAt: "2024-09-19T14:33:32.600Z",
+    level: 5,
+    avatar: "",
+    position: "mid",
+    matchId: 1,
+  },
+  {
+    id: 10,
+    name: "San",
+    createdAt: "2024-09-19T14:33:32.600Z",
+    updatedAt: "2024-09-19T14:33:32.600Z",
+    level: 5,
+    avatar: "",
+    position: "mid",
+    matchId: 1,
+  },
+];
