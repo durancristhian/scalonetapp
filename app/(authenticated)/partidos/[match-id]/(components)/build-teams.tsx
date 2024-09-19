@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -43,6 +44,9 @@ export const BuildTeams: FC<BuildTeamsProps> = ({
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Armar equipos</DialogTitle>
+          <div className="hidden">
+            <DialogDescription />
+          </div>
         </DialogHeader>
         <div className="space-y-4">
           <RadioGroup

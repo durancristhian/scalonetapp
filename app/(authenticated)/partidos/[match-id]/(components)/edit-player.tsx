@@ -3,6 +3,7 @@ import { PlayerForm } from "@/app/(authenticated)/partidos/[match-id]/(component
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -45,6 +46,9 @@ export const EditPlayer: FC<EditPlayerProps> = ({ player, onClose }) => {
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Editar ficha del jugador</DialogTitle>
+          <div className="hidden">
+            <DialogDescription />
+          </div>
         </DialogHeader>
         <PlayerForm onSubmit={onSubmit} values={player} />
       </DialogContent>
