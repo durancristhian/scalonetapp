@@ -52,19 +52,21 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
           }
         />
       </div>
-      <CardContent>
+      <CardContent className="pr-3">
         {canListPlayers ? (
           /* 435 is a magical number. It's the height of 9.5 items (+ the margin separating them) so we only show those items and there is some sort of visual guidance to scroll if you want to see more */
           <ScrollArea className={players.length > 10 ? "h-[435px]" : "h-auto"}>
-            <ul className="space-y-2">
-              {players.sort(byName).map((player, idx) => {
-                return (
-                  <AnimatedListItem key={player.id} listIndex={idx}>
-                    <MatchPlayer player={player} />
-                  </AnimatedListItem>
-                );
-              })}
-            </ul>
+            <div className="mr-3">
+              <ul className="space-y-2">
+                {players.sort(byName).map((player, idx) => {
+                  return (
+                    <AnimatedListItem key={player.id} listIndex={idx}>
+                      <MatchPlayer player={player} />
+                    </AnimatedListItem>
+                  );
+                })}
+              </ul>
+            </div>
           </ScrollArea>
         ) : (
           <EmptyState>Parece que aún no has llamado a nadie.</EmptyState>
