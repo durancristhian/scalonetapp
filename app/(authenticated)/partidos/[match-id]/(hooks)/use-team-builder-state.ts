@@ -4,11 +4,11 @@ import { BaseTeam, Team } from "@/types/team";
 import { byName } from "@/utils/by-name";
 import { Player } from "@prisma/client";
 import shuffle from "lodash.shuffle";
-import uniqueId from "lodash.uniqueid";
 import { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 const createEmptyTeam: (name: string) => Team = (name) => ({
-  id: uniqueId("team-"),
+  id: uuidv4(),
   name,
   players: [],
 });
