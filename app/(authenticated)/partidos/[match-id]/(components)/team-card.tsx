@@ -4,6 +4,7 @@ import { TeamForm } from "@/app/(authenticated)/partidos/[match-id]/(components)
 import { AnimatedListItem } from "@/components/animated-list-item";
 import { EmptyState } from "@/components/empty-state";
 import { PlayerAvatar } from "@/components/player-avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -15,6 +16,7 @@ import {
 import { TeamSchema } from "@/schemas/team";
 import { Team } from "@/types/team";
 import { byName } from "@/utils/by-name";
+import { PLAYER_POSITIONS } from "@/utils/player-positions";
 import { TrashIcon, XIcon } from "lucide-react";
 import { FC } from "react";
 
@@ -82,6 +84,14 @@ export const TeamCard: FC<TeamCardProps> = ({
                           />
                           <p>{player.name}</p>
                         </div>
+                      </div>
+                      <div className="flex-shrink-0">
+                        <Badge variant="secondary" className="uppercase">
+                          {PLAYER_POSITIONS[player.position].substring(0, 3)}
+                        </Badge>
+                      </div>
+                      <div className="flex-shrink-0">
+                        <Badge variant="secondary">{player.level}</Badge>
                       </div>
                       <div className="flex-shrink-0">
                         <TooltipProvider>
