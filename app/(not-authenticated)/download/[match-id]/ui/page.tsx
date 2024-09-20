@@ -2,7 +2,6 @@
 
 import { PlayerAvatar } from "@/components/player-avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { MatchWithPlayers } from "@/types/match";
 import { BaseTeam } from "@/types/team";
 import { byName } from "@/utils/by-name";
@@ -33,14 +32,13 @@ const Page: FC = () => {
         <div className="grid grid-cols-2 gap-8">
           {formattedTeams.map((team) => (
             <Card key={team.id}>
-              <CardHeader>
+              <CardHeader className="border-b">
                 <CardTitle className="text-center text-2xl">
                   {team.name}
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 <div className="space-y-6">
-                  <Separator />
                   <div className="grid grid-cols-2 gap-4">
                     {team.players
                       /* We look for the player data in the match */
@@ -59,6 +57,7 @@ const Page: FC = () => {
                           <PlayerAvatar
                             src={player.avatar}
                             name={player.name}
+                            size="lg"
                           />
                           <div className="grow">
                             <p className="text-xl">{player.name}</p>
