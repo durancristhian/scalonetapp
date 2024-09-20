@@ -93,12 +93,17 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player }) => {
           <p>{player.name}</p>
         </div>
         <div className="flex-shrink-0">
-          <Badge variant="secondary" className="uppercase">
+          <Badge
+            variant="secondary"
+            className="justify-center uppercase w-[50px]"
+          >
             {PLAYER_POSITIONS[player.position].substring(0, 3)}
           </Badge>
         </div>
         <div className="flex-shrink-0">
-          <Badge variant="secondary">{player.level}</Badge>
+          <Badge variant="secondary" className="justify-center w-[38px]">
+            {player.level}
+          </Badge>
         </div>
         <div className="flex-shrink-0">
           <DropdownMenu open={menuOpened} onOpenChange={setMenuOpened}>
