@@ -123,8 +123,11 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
       setSelectedIds([]);
     };
 
-  const createBalancedTeams: (players: Player[]) => Player[] = (players) => {
-    const getEmptyPositionByLevel = () => ({
+  const createBalancedTeams: (
+    players: Player[],
+    numberOfChunks: number
+  ) => Player[] = (players, numberOfChunks) => {
+    const getEmptyLevels = () => ({
       1: [],
       2: [],
       3: [],
@@ -136,36 +139,53 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
       9: [],
       10: [],
     });
-    const emptyPlayersByPositionAndLevel = {
-      goa: getEmptyPositionByLevel(),
-      def: getEmptyPositionByLevel(),
-      mid: getEmptyPositionByLevel(),
-      for: getEmptyPositionByLevel(),
-    };
 
     const playersByPositionAndLevel = [...players].reduce<
       Record<PlayerSchema["position"], Record<PlayerSchema["level"], Player[]>>
-    >((acc, curr) => {
-      acc[curr.position][curr.level].push(curr);
+    >(
+      (acc, curr) => {
+        acc[curr.position][curr.level].push(curr);
 
-      return acc;
-    }, emptyPlayersByPositionAndLevel);
+        return acc;
+      },
+      {
+        goa: getEmptyLevels(),
+        def: getEmptyLevels(),
+        mid: getEmptyLevels(),
+        for: getEmptyLevels(),
+      }
+    );
 
-    /* Looping over each player position */
+    /* We loop over each player position and level to shuffle players within that group. The result is an array of players sorted by position (goa, def, mid, for) and level (1 to 10). Players within the same position and level are randomized so we get different combinations each time */
     const shuffledPlayersByPositionAndLevel = Object.values(
       playersByPositionAndLevel
     ).flatMap((playersByLevel) =>
-      /* Looping over each player level */
       Object.values(playersByLevel).flatMap((sortedPlayers) =>
         shuffle([...sortedPlayers])
       )
     );
 
-    return shuffledPlayersByPositionAndLevel;
+    const teams: Player[][] = Array.from({ length: numberOfChunks }).map(
+      () => []
+    );
+    let teamIdx = 0;
+
+    /* We loop over the players and we split them in teams based on the teamIdx which is increasing on each loop run. By doing this we're distributing players sorted by position and level one by one on each different team */
+    for (
+      let playerIdx = 0;
+      playerIdx < shuffledPlayersByPositionAndLevel.length;
+      playerIdx++
+    ) {
+      teams[teamIdx].push(shuffledPlayersByPositionAndLevel[playerIdx]);
+
+      teamIdx = teamIdx + 1 === numberOfChunks ? 0 : teamIdx + 1;
+    }
+
+    return teams.flatMap((team) => team);
   };
 
   const balanceTeams: UseTeamsBuilderStateResult["balanceTeams"] = () => {
-    const balancedTeams = createBalancedTeams([...match.players]);
+    const balancedTeams = createBalancedTeams([...match.players], teams.length);
 
     updateTeamsWithPlayerChunks(balancedTeams);
   };
@@ -198,9 +218,13 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
     let start = 0;
 
     for (let i = 0; i < numberOfChunks; i++) {
-      /* Distribute remainder as +1 to the first "remainder" number of chunks */
+      /* Distribute remainder as +1 to the first remainder number of chunks */
       const size = chunkSize + (i < remainder ? 1 : 0);
-      result.push(array.slice(start, start + size));
+      /* We take a group of {size} elements from the array */
+      const chunk = array.slice(start, start + size);
+      /* We append them as an array to the result array */
+      result.push(chunk);
+      /* We move the index {size} positions further */
       start += size;
     }
 
