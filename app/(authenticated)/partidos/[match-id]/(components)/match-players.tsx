@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { byName } from "@/utils/by-name";
+import { PLAYER_POSITIONS } from "@/utils/player-positions";
 import { Player } from "@prisma/client";
 import { EllipsisVerticalIcon, PencilIcon, TrashIcon } from "lucide-react";
 import { FC, useState } from "react";
@@ -88,6 +89,11 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player }) => {
         <PlayerAvatar src={player.avatar} name={player.name} size="sm" />
         <div className="grow">
           <p>{player.name}</p>
+        </div>
+        <div className="flex-shrink-0">
+          <Badge variant="secondary" className="uppercase">
+            {PLAYER_POSITIONS[player.position].substring(0, 3)}
+          </Badge>
         </div>
         <div className="flex-shrink-0">
           <Badge variant="secondary">{player.level}</Badge>

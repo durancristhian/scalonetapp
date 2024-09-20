@@ -21,9 +21,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FC, useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
 
-const PLACEHOLDER = `Juan, 2
+const PLACEHOLDER = `Juan
 Roman
-Riquelme, 10`;
+Riquelme`;
 
 type MultiplePlayersFormProps = {
   onSubmit: (values: PlayerSchema[]) => Promise<void>;
@@ -71,11 +71,8 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
                 <Textarea rows={10} placeholder={PLACEHOLDER} {...field} />
               </FormControl>
               <FormDescription>
-                Agrega un nombre (obligatorio) y un nivel (opcional) por línea,
-                separados por coma. Si no pones nivel, asignamos{" "}
-                {process.env.NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL} por defecto.
-                ¡Puedes añadir hasta {process.env.NEXT_PUBLIC_MAX_PLAYERS_BATCH}{" "}
-                jugadores de una sola vez!
+                Agrega un nombre por línea.¡Puedes añadir hasta{" "}
+                {process.env.NEXT_PUBLIC_MAX_PLAYERS_BATCH} al mismo tiempo.
               </FormDescription>
               {lines.length > 0 ? (
                 <FormDescription>

@@ -1,9 +1,7 @@
-// SCHEMA USED IN DEV
-// It should match prod.schema.prisma but have a different datasource
-
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 generator client {
@@ -17,10 +15,18 @@ model Player {
   updatedAt DateTime @updatedAt
   level     Int      @default(5)
   avatar    String   @default("")
+  position  Position @default(mid)
 
   // Relationships
   matchId Int
   match   Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
+}
+
+enum Position {
+  goa
+  def
+  mid
+  for
 }
 
 model Match {
@@ -29,7 +35,6 @@ model Match {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId    String
-  // Since Prisma's sqlite integration doesn't support JSON fields, we need to workaround this by converting the teams array to an stringified version back and forth. It's really ugly, I know
   teams     String   @default("[]")
 
   // Relationships
