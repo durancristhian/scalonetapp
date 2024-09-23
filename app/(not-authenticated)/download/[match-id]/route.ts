@@ -13,6 +13,8 @@ const getBrowser: () => Promise<Browser> = async () => {
       (mod) => mod.default
     );
 
+    chromium.setGraphicsMode = true;
+
     const puppeteerCore = await import("puppeteer-core").then(
       (mod) => mod.default
     );
@@ -22,7 +24,7 @@ const getBrowser: () => Promise<Browser> = async () => {
     );
 
     const browser = await puppeteerCore.launch({
-      args: chromium.args,
+      args: [...chromium.args, "--disable-gpu"],
       defaultViewport: chromium.defaultViewport,
       executablePath,
       headless: chromium.headless,
@@ -89,7 +91,10 @@ export async function GET(request: NextRequest) {
       type: "png",
     });
 
-    /* We close the browser since we don't need it anymore */
+    /* We close the pages and the browser since we don't need it anymore */
+    for (const page of await browser.pages()) {
+      await page.close();
+    }
     await browser.close();
 
     const response = new NextResponse(screenshot);
@@ -106,7 +111,8 @@ export async function GET(request: NextRequest) {
     console.error(error);
 
     if (browser) {
-      browser.close();
+      /* https://github.com/Sparticuz/chromium?tab=readme-ov-file#im-experiencing-timeouts-or-failures-closing-chromium */
+      await Promise.race([browser.close(), browser.close(), browser.close()]);
     }
 
     return NextResponse.json(
