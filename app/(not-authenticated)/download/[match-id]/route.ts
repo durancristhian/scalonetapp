@@ -25,7 +25,6 @@ const getBrowser: () => Promise<Browser> = async () => {
       defaultViewport: chromium.defaultViewport,
       executablePath,
       headless: chromium.headless,
-      ignoreDefaultArgs: ["--enable-automation"],
     });
 
     return browser;
