@@ -14,7 +14,6 @@ import prisma from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { Match } from "@prisma/client";
 import { format } from "date-fns";
-import { es } from "date-fns/locale/es";
 import { revalidatePath } from "next/cache";
 
 export const addMatchAction: (
@@ -146,9 +145,7 @@ export const duplicateMatchAction: (id: number) => Promise<void> = async (
     /* We create a new match */
     const newMatch = await addMatchAction(
       {
-        name: `Copia de ${existingMatch.name} (${format(new Date(), "Pp", {
-          locale: es,
-        })})`,
+        name: `Copia de ${existingMatch.name} (${format(new Date(), "t")})`,
       },
       { revalidatePath: false }
     );
