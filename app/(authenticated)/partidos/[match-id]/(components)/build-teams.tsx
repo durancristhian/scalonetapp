@@ -18,11 +18,13 @@ type Preset = "random" | "balanced";
 type BuildTeamsProps = {
   onSave: (preset: Preset) => void;
   showConfirmation: boolean;
+  showPing: boolean;
 };
 
 export const BuildTeams: FC<BuildTeamsProps> = ({
   onSave,
   showConfirmation,
+  showPing,
 }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [preset, setPreset] = useState<Preset>("random");
@@ -30,7 +32,15 @@ export const BuildTeams: FC<BuildTeamsProps> = ({
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Armar equipos</Button>
+        <Button variant="outline" className="relative">
+          Armar equipos
+          {showPing ? (
+            <span className="absolute flex h-3 -right-1.5 -top-1.5 w-3">
+              <span className="absolute animate-ping bg-amber-400 h-full inline-flex opacity-75 rounded-full w-full" />
+              <span className="bg-amber-500 h-3 inline-flex relative rounded-full w-3" />
+            </span>
+          ) : null}
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>

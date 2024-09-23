@@ -85,6 +85,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                     showConfirmation={
                       unselectedPlayers.length < match.players.length
                     }
+                    showPing={unselectedPlayers.length === match.players.length}
                   />
                   <Button onClick={createNewTeam}>Agregar</Button>
                 </div>
