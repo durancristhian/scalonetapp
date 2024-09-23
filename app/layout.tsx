@@ -76,7 +76,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
           )}
         >
           {children}
-          <Toaster gap={8} offset={24} position="bottom-center" />
+          <Toaster gap={8} offset={24} />
         </body>
       </html>
     </ClerkProvider>
