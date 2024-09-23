@@ -49,7 +49,7 @@ export const MatchItem: FC<MatchItemProps> = ({ match }) => {
                 <EllipsisVerticalIcon className="h-4 text-muted-foreground w-4" />
               </Button>
             </DropdownMenuTrigger>
-            {/* margin here helps to detach the menu from the limit of the screen (specially in mobile) */}
+            {/* Margin here helps to detach the menu from the limit of the screen (specially in mobile) */}
             <DropdownMenuContent className="mr-4">
               <DropdownMenuItem
                 onClick={() => {

@@ -94,7 +94,7 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player }) => {
         </div>
         <div className="flex-shrink-0">
           <Badge
-            variant="secondary"
+            variant={player.position}
             className="justify-center uppercase w-[50px]"
           >
             {PLAYER_POSITIONS[player.position].substring(0, 3)}
@@ -112,7 +112,7 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player }) => {
                 <EllipsisVerticalIcon className="h-4 text-muted-foreground w-4" />
               </Button>
             </DropdownMenuTrigger>
-            {/* margin here helps to detach the menu from the limit of the screen (specially in mobile) */}
+            {/* Margin here helps to detach the menu from the limit of the screen (specially in mobile) */}
             <DropdownMenuContent className="mr-4">
               <DropdownMenuItem
                 onClick={() => {

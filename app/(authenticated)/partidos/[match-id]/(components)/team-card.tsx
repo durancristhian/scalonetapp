@@ -15,8 +15,8 @@ import {
 } from "@/components/ui/tooltip";
 import { TeamSchema } from "@/schemas/team";
 import { Team } from "@/types/team";
-import { byName } from "@/utils/by-name";
 import { PLAYER_POSITIONS } from "@/utils/player-positions";
+import { Player } from "@prisma/client";
 import { TrashIcon, XIcon } from "lucide-react";
 import { FC } from "react";
 
@@ -42,6 +42,22 @@ export const TeamCard: FC<TeamCardProps> = ({
   const onTeamRemove: () => void = () => {
     removeTeam(team.id);
   };
+
+  const {
+    goa,
+    def,
+    mid,
+    for: forwards,
+  } = team.players.reduce<{
+    goa: Player[];
+    def: Player[];
+    mid: Player[];
+    for: Player[];
+  }>(
+    /* Players are already sorted by name, so we just group them by position */
+    (acc, curr) => ({ ...acc, [curr.position]: [...acc[curr.position], curr] }),
+    { goa: [], def: [], mid: [], for: [] }
+  );
 
   return (
     <Card>
@@ -72,7 +88,7 @@ export const TeamCard: FC<TeamCardProps> = ({
           {Boolean(team.players.length) ? (
             <>
               <div className="space-y-2">
-                {team.players.sort(byName).map((player, idx) => (
+                {[...goa, ...def, ...mid, ...forwards].map((player, idx) => (
                   <AnimatedListItem key={player.id} listIndex={idx}>
                     <div className="flex gap-2 items-center">
                       <div className="grow">
@@ -87,7 +103,7 @@ export const TeamCard: FC<TeamCardProps> = ({
                       </div>
                       <div className="flex-shrink-0">
                         <Badge
-                          variant="secondary"
+                          variant={player.position}
                           className="justify-center uppercase w-[50px]"
                         >
                           {PLAYER_POSITIONS[player.position].substring(0, 3)}

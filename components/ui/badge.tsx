@@ -14,6 +14,11 @@ const badgeVariants = cva(
         destructive:
           "border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80",
         outline: "text-foreground",
+        /* Player position variants */
+        goa: "border-transparent bg-purple-200 text-purple-foreground hover:bg-purple-200/80",
+        def: "border-transparent bg-yellow-200 text-yellow-foreground hover:bg-yellow-200/80",
+        mid: "border-transparent bg-green-200 text-green-foreground hover:bg-green-200/80",
+        for: "border-transparent bg-orange-200 text-orange-foreground hover:bg-orange-200/80",
       },
     },
     defaultVariants: {
