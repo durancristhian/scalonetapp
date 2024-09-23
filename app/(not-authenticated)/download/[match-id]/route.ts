@@ -1,19 +1,16 @@
-/* This code was written inspired in https://github.com/gruckion/puppeteer-running-in-vercel/blob/main/src/app/api/route.ts */
-
 import { getMatchByIdQuery } from "@/server/queries/match";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { NextRequest, NextResponse } from "next/server";
 import { Browser } from "puppeteer-core";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 const getBrowser: () => Promise<Browser> = async () => {
   if (process.env.NODE_ENV === "production") {
     const chromium = await import("@sparticuz/chromium-min").then(
       (mod) => mod.default
     );
-
-    chromium.setGraphicsMode = true;
 
     const puppeteerCore = await import("puppeteer-core").then(
       (mod) => mod.default
@@ -24,10 +21,11 @@ const getBrowser: () => Promise<Browser> = async () => {
     );
 
     const browser = await puppeteerCore.launch({
-      args: [...chromium.args, "--disable-gpu"],
+      args: chromium.args,
       defaultViewport: chromium.defaultViewport,
       executablePath,
       headless: chromium.headless,
+      ignoreDefaultArgs: ["--enable-automation"],
     });
 
     return browser;
