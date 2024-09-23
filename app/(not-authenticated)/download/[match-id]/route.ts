@@ -1,16 +1,43 @@
+/* This code was written inspired in https://github.com/gruckion/puppeteer-running-in-vercel/blob/main/src/app/api/route.ts */
+
 import { getMatchByIdQuery } from "@/server/queries/match";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { NextRequest, NextResponse } from "next/server";
-import puppeteer, { Browser } from "puppeteer";
+import { Browser } from "puppeteer-core";
 
-const getBrowser: () => Promise<Browser> = async () =>
-  process.env.NODE_ENV === "production"
-    ? /* We connect to browserless in prod */
-      puppeteer.connect({
-        browserWSEndpoint: `wss://chrome.browserless.io?token=${process.env.BROWSERLESS_API_TOKEN}`,
-      })
-    : /* We use the puppeteer's bundled version of Chromium in other environments */
-      puppeteer.launch();
+export const dynamic = "force-dynamic";
+
+const getBrowser: () => Promise<Browser> = async () => {
+  if (process.env.NODE_ENV === "production") {
+    const chromium = await import("@sparticuz/chromium-min").then(
+      (mod) => mod.default
+    );
+
+    const puppeteerCore = await import("puppeteer-core").then(
+      (mod) => mod.default
+    );
+
+    const executablePath = await chromium.executablePath(
+      process.env.CHROMIUM_PATH
+    );
+
+    const browser = await puppeteerCore.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath,
+      headless: chromium.headless,
+    });
+
+    return browser;
+  } else {
+    const puppeteer = await import("puppeteer").then((mod) => mod.default);
+
+    const browser = await puppeteer.launch();
+
+    /* puppeteer's Browser type difers from puppeteer-core's Browser type so we force-cast this return to make TS happy */
+    return browser as unknown as Browser;
+  }
+};
 
 const getAppDomain: () => string = () =>
   process.env.NODE_ENV === "production"
@@ -18,7 +45,7 @@ const getAppDomain: () => string = () =>
     : "http://localhost:3000";
 
 export async function GET(request: NextRequest) {
-  let browser: Browser | null = null;
+  let browser;
 
   try {
     /* pathname here will be /download/[match-id] */
