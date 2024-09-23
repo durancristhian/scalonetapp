@@ -25,7 +25,13 @@ export const MatchesList: FC<MatchsListProps> = ({ matches }) => {
     <div className="space-y-4">
       {matches.map((match, idx) => (
         <AnimatedListItem key={match.id} listIndex={idx}>
-          <MatchItem match={match} />
+          <MatchItem
+            match={match}
+            disableDuplication={
+              matches.length >=
+              Number(process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER)
+            }
+          />
         </AnimatedListItem>
       ))}
     </div>

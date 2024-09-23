@@ -1,6 +1,7 @@
 "use client";
 
 import { DeleteMatch } from "@/app/(authenticated)/dashboard/(components)/delete-match";
+import { DuplicateMatch } from "@/app/(authenticated)/dashboard/(components)/duplicate-match";
 import { EditMatch } from "@/app/(authenticated)/dashboard/(components)/edit-match";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
@@ -13,18 +14,29 @@ import {
 import { Match } from "@prisma/client";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale/es";
-import { EllipsisVerticalIcon, PencilIcon, TrashIcon } from "lucide-react";
+import {
+  CopyIcon,
+  EllipsisVerticalIcon,
+  PencilIcon,
+  TrashIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { FC, useState } from "react";
 
 type MatchItemProps = {
+  disableDuplication: boolean;
   match: Match;
 };
 
-export const MatchItem: FC<MatchItemProps> = ({ match }) => {
+export const MatchItem: FC<MatchItemProps> = ({
+  match,
+  disableDuplication,
+}) => {
   const [menuOpened, setMenuOpened] = useState(false);
   /* This is not great at all but enough for now due to the small amout of options we have in the dropdown menu */
-  const [dialogId, setDialogId] = useState<"edit" | "delete" | null>(null);
+  const [dialogId, setDialogId] = useState<
+    "duplicate" | "edit" | "delete" | null
+  >(null);
 
   return (
     <Card className="hover:bg-accent transition-colors">
@@ -53,6 +65,15 @@ export const MatchItem: FC<MatchItemProps> = ({ match }) => {
             <DropdownMenuContent className="mr-4">
               <DropdownMenuItem
                 onClick={() => {
+                  setDialogId("duplicate");
+                }}
+                disabled={disableDuplication}
+              >
+                <CopyIcon className="h-4 mr-2 text-muted-foreground w-4" />
+                Duplicar
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
                   setDialogId("edit");
                 }}
               >
@@ -69,6 +90,15 @@ export const MatchItem: FC<MatchItemProps> = ({ match }) => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          {dialogId === "duplicate" ? (
+            <DuplicateMatch
+              id={match.id}
+              onClose={() => {
+                setDialogId(null);
+                setMenuOpened(false);
+              }}
+            />
+          ) : null}
           {dialogId === "edit" ? (
             <EditMatch
               match={match}

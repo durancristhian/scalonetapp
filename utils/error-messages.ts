@@ -16,6 +16,8 @@ export const ERROR_MESSAGES = {
     "Ocurrió un error al crear el partido. Por favor, intente nuevamente.",
   match_delete_error:
     "Ocurrió un error al eliminar el partido. Por favor, intente nuevamente.",
+  match_duplicate_error:
+    "Ocurrió un error al duplicar el partido. Por favor, intente nuevamente.",
   match_edit_error:
     "Ocurrió un error al editar el partido. Por favor, intente nuevamente.",
   match_limit_reached:

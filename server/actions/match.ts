@@ -5,15 +5,26 @@ import {
   addMatchQuery,
   deleteMatchQuery,
   editMatchQuery,
+  getMatchByIdQuery,
 } from "@/server/queries/match";
+import { addMultiplePlayersQuery } from "@/server/queries/player";
+import { BaseTeam } from "@/types/team";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import prisma from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { Match } from "@prisma/client";
+import { format } from "date-fns";
+import { es } from "date-fns/locale/es";
 import { revalidatePath } from "next/cache";
 
-export const addMatchAction: (data: MatchSchema) => Promise<void> = async (
-  data
+export const addMatchAction: (
+  data: MatchSchema,
+  options?: { revalidatePath: boolean }
+) => Promise<Match> = async (
+  data,
+  options = {
+    revalidatePath: true,
+  }
 ) => {
   try {
     const { userId } = auth();
@@ -47,9 +58,13 @@ export const addMatchAction: (data: MatchSchema) => Promise<void> = async (
       throw new Error(ERROR_MESSAGES.match_name_repeated);
     }
 
-    await addMatchQuery(data, userId);
+    const newMatch = await addMatchQuery(data, userId);
 
-    revalidatePath("/dashboard");
+    if (options.revalidatePath) {
+      revalidatePath("/dashboard");
+    }
+
+    return newMatch;
   } catch (error) {
     throw new Error(ERROR_MESSAGES.match_add_error);
   }
@@ -108,5 +123,86 @@ export const deleteMatchAction: (id: number) => Promise<void> = async (id) => {
     revalidatePath("/dashboard");
   } catch (error) {
     throw new Error(ERROR_MESSAGES.match_delete_error);
+  }
+};
+
+export const duplicateMatchAction: (id: number) => Promise<void> = async (
+  id
+) => {
+  try {
+    const { userId } = auth();
+
+    /* We check auth */
+    if (!userId) {
+      throw new Error(ERROR_MESSAGES.unauthorized);
+    }
+
+    const existingMatch = await getMatchByIdQuery(id);
+
+    if (!existingMatch) {
+      throw new Error(ERROR_MESSAGES.not_found);
+    }
+
+    /* We create a new match */
+    const newMatch = await addMatchAction(
+      {
+        name: `Copia de ${existingMatch.name} (${format(new Date(), "Pp", {
+          locale: es,
+        })})`,
+      },
+      { revalidatePath: false }
+    );
+
+    if (existingMatch.players.length) {
+      /* We add the existing players to the new match as well */
+      await addMultiplePlayersQuery(
+        newMatch.id,
+        existingMatch.players.map(({ name, level, position, avatar }) => ({
+          name,
+          level,
+          position,
+          avatar,
+        }))
+      );
+
+      const updatedNewMatch = await getMatchByIdQuery(newMatch.id);
+
+      if (!updatedNewMatch) {
+        throw new Error(ERROR_MESSAGES.not_found);
+      }
+
+      if (existingMatch.teams) {
+        /* We create a map to get the recently created player id based on the existing one */
+        const existingPlayersMap: Record<number, number> =
+          existingMatch.players.reduce(
+            (acc, curr) => ({
+              ...acc,
+              [curr.id]: updatedNewMatch.players.find(
+                (player) => player.name === curr.name
+                /* It's safe to use ? here since we just duplicated the players and names should match */
+              )?.id,
+            }),
+            {}
+          );
+
+        /* We iterate over the existing teams and we replace the ids */
+        const parsedTeams: BaseTeam[] = JSON.parse(existingMatch.teams);
+        const nextTeams: BaseTeam[] = parsedTeams.map((team) => ({
+          ...team,
+          players: team.players.map((playerId) => existingPlayersMap[playerId]),
+        }));
+
+        /* We edit the match so we copy the same teams */
+        await editMatchQuery(
+          newMatch.id,
+          { teams: JSON.stringify(nextTeams) },
+          userId
+        );
+      }
+    }
+
+    revalidatePath("/dashboard");
+  } catch (error) {
+    throw new Error(ERROR_MESSAGES.match_duplicate_error);
   }
 };
