@@ -65,7 +65,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
             ) : null}
             <div className="space-y-4">
               <div className="flex gap-2 items-center justify-between">
-                <h1 className="font-bold text-xl">Los equipos</h1>
+                <h1 className="font-bold text-xl">Equipos</h1>
                 <div className="space-x-2">
                   <BuildTeams
                     onSave={(preset) => {

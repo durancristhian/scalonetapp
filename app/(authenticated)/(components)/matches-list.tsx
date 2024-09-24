@@ -1,6 +1,6 @@
 "use client";
 
-import { MatchItem } from "@/app/(authenticated)/dashboard/(components)/match-item";
+import { MatchItem } from "@/app/(authenticated)/(components)/match-item";
 import { AnimatedListItem } from "@/components/animated-list-item";
 import { EmptyState } from "@/components/empty-state";
 import { Match } from "@prisma/client";

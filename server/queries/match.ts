@@ -4,7 +4,9 @@ import prisma from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { Match } from "@prisma/client";
 
-export const getMatchesQuery = async () => {
+export const getMatchesQuery: (options?: {
+  take: number;
+}) => Promise<Match[]> = async (options) => {
   const { userId } = auth();
 
   if (!userId) {
@@ -23,7 +25,7 @@ export const getMatchesQuery = async () => {
     include: {
       players: true,
     },
-    take: 10,
+    take: options?.take || 10,
   });
 };
 

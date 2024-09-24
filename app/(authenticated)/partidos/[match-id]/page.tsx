@@ -1,13 +1,7 @@
 import { MatchDetails } from "@/app/(authenticated)/partidos/[match-id]/(components)/match-details";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
 import { getMatchByIdQuery } from "@/server/queries/match";
+import { ChevronLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FC } from "react";
@@ -28,22 +22,19 @@ const Page: FC<PageProps> = async ({ params }) => {
   return (
     <div className="py-4 md:py-8 space-y-4">
       <div className="max-w-7xl mx-auto px-4 w-full">
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/dashboard">Tus partidos</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>{match.name}</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      </div>
-      <div className="max-w-7xl mx-auto px-4 w-full">
-        <MatchDetails match={match} />
+        <div className="space-y-4">
+          <div className="flex gap-4 items-center">
+            <div className="flex-shrink-0">
+              <Button variant="outline" size="icon" asChild>
+                <Link href="/partidos">
+                  <ChevronLeftIcon className="h-4 text-muted-foreground w-4" />
+                </Link>
+              </Button>
+            </div>
+            <h2 className="font-bold text-xl">{match.name}</h2>
+          </div>
+          <MatchDetails match={match} />
+        </div>
       </div>
     </div>
   );

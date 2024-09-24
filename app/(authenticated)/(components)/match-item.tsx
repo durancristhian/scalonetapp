@@ -1,8 +1,8 @@
 "use client";
 
-import { DeleteMatch } from "@/app/(authenticated)/dashboard/(components)/delete-match";
-import { DuplicateMatch } from "@/app/(authenticated)/dashboard/(components)/duplicate-match";
-import { EditMatch } from "@/app/(authenticated)/dashboard/(components)/edit-match";
+import { DeleteMatch } from "@/app/(authenticated)/(components)/delete-match";
+import { DuplicateMatch } from "@/app/(authenticated)/(components)/duplicate-match";
+import { EditMatch } from "@/app/(authenticated)/(components)/edit-match";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import {
