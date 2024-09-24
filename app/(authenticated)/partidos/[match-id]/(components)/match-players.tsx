@@ -2,7 +2,6 @@ import { AddPlayer } from "@/app/(authenticated)/partidos/[match-id]/(components
 import { DeletePlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/delete-player";
 import { EditPlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/edit-player";
 import { AnimatedListItem } from "@/components/animated-list-item";
-import { EmptyState } from "@/components/empty-state";
 import { PlayerAvatar } from "@/components/player-avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -52,9 +51,11 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
           }
         />
       </div>
-      <CardContent className="pr-3">
-        {canListPlayers ? (
-          /* 435 is a magical number. It's the height of 9.5 items (+ the margin separating them) so we only show those items and there is some sort of visual guidance to scroll if you want to see more */
+      {canListPlayers ? (
+        <CardContent className="pr-3">
+          {/* 435 is a magical number. It's the height of 9.5 items (+ the margin
+          separating them) so we only show those items and there is some sort of
+          visual guidance to scroll if you want to see more */}
           <ScrollArea className={players.length > 10 ? "h-[435px]" : "h-auto"}>
             <div className="mr-3">
               <ul className="space-y-2">
@@ -68,10 +69,8 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
               </ul>
             </div>
           </ScrollArea>
-        ) : (
-          <EmptyState>Parece que aún no has llamado a nadie.</EmptyState>
-        )}
-      </CardContent>
+        </CardContent>
+      ) : null}
     </Card>
   );
 };

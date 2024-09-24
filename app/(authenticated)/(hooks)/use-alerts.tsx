@@ -1,3 +1,4 @@
+import { CircleAlertIcon, CircleCheckIcon } from "lucide-react";
 import { ReactNode } from "react";
 import { toast } from "sonner";
 
@@ -18,6 +19,7 @@ export const useAlerts: UseAlerts = () => {
   }) => {
     toast.success(title, {
       description,
+      icon: <CircleCheckIcon className="h-5 opacity-50 w-5" />,
     });
   };
 
@@ -27,6 +29,7 @@ export const useAlerts: UseAlerts = () => {
   }) => {
     toast.error(title, {
       description,
+      icon: <CircleAlertIcon className="h-5 opacity-50 w-5" />,
     });
   };
 
