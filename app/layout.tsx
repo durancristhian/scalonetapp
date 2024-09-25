@@ -68,11 +68,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
         <body
           className={clsx(
             fontFamily.className,
-            "antialiased min-h-dvh slashed-zero tabular-nums text-foreground",
-            /*
-              This custom bg color was taken from https://coolors.co/palette/fafaf9-f5f5f4-e7e5e4-d6d3d1-a8a29e-78716c-57534e-44403c-292524-1c1917 This is a color palette we searched based on the --accent color. We were looking for a lighter one.
-            */
-            "bg-[#fafaf9]"
+            "antialiased bg-pattern min-h-dvh slashed-zero tabular-nums text-foreground"
           )}
         >
           {children}
