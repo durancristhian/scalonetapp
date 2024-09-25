@@ -4,27 +4,40 @@ import prisma from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { Match } from "@prisma/client";
 
-export const getMatchesQuery = async () => {
+export const getMatchesQuery: (options?: {
+  take: number;
+}) => Promise<[Match[], number]> = async (options) => {
   const { userId } = auth();
 
   if (!userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
 
-  return await prisma.match.findMany({
-    where: {
-      userId: {
-        equals: userId,
+  const take = options?.take || 10;
+
+  return await prisma.$transaction([
+    prisma.match.findMany({
+      where: {
+        userId: {
+          equals: userId,
+        },
       },
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
-    include: {
-      players: true,
-    },
-    take: 10,
-  });
+      orderBy: {
+        updatedAt: "desc",
+      },
+      include: {
+        players: true,
+      },
+      take,
+    }),
+    prisma.match.count({
+      where: {
+        userId: {
+          equals: userId,
+        },
+      },
+    }),
+  ]);
 };
 
 export const getMatchByIdQuery = async (id: number) => {

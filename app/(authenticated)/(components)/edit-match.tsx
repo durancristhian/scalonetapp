@@ -1,7 +1,7 @@
 "use client";
 
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
-import { MatchForm } from "@/app/(authenticated)/dashboard/(components)/match-form";
+import { MatchForm } from "@/app/(authenticated)/(components)/match-form";
 import {
   Dialog,
   DialogContent,
