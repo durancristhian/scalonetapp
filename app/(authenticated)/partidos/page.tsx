@@ -4,7 +4,7 @@ import { getMatchesQuery } from "@/server/queries/match";
 import { FC } from "react";
 
 const Page: FC = async () => {
-  const matches = await getMatchesQuery();
+  const [matches, totalCount] = await getMatchesQuery();
 
   return (
     <div className="py-4 md:py-8">
@@ -14,7 +14,7 @@ const Page: FC = async () => {
             <h2 className="font-bold text-xl">Tus partidos</h2>
             <AddMatch
               disabled={
-                matches.length >=
+                totalCount >=
                 Number(process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER)
               }
             />
