@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
     page.setViewport({
       /* Height here is pointless (but needed) since we take a fullpage screenshot */
       height: 300,
-      width: 1080,
+      width: 1280,
       /* So images get a better resolution */
       deviceScaleFactor: 2,
     });
