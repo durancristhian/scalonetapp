@@ -57,7 +57,7 @@ const Page: FC = () => {
                           <PlayerAvatar
                             src={player.avatar}
                             name={player.name}
-                            size="lg"
+                            size="xl"
                           />
                           <div className="grow">
                             <p className="text-xl">{player.name}</p>

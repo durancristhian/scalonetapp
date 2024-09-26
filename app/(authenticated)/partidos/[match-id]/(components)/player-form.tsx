@@ -187,7 +187,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
                   <PlayerAvatar
                     src={avatar || ""}
                     name={name || INPUT_PLACEHOLDER}
-                    size="lg"
+                    size="xl"
                   />
                   <input
                     hidden

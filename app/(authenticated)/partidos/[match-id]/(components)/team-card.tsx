@@ -96,7 +96,6 @@ export const TeamCard: FC<TeamCardProps> = ({
                           <PlayerAvatar
                             src={player.avatar}
                             name={player.name}
-                            size="sm"
                           />
                           <p>{player.name}</p>
                         </div>
