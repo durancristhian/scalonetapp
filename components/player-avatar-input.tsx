@@ -1,9 +1,3 @@
-import ReactCrop, {
-  centerCrop,
-  makeAspectCrop,
-  type Crop,
-  type PixelCrop,
-} from "react-image-crop";
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { PlayerAvatar } from "@/components/player-avatar";
 import { SoccerBall } from "@/components/soccer-ball";
@@ -20,6 +14,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { CropIcon, TrashIcon } from "lucide-react";
 import {
   ChangeEventHandler,
@@ -29,7 +24,12 @@ import {
   useState,
 } from "react";
 import { useFormContext } from "react-hook-form";
-import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import ReactCrop, {
+  centerCrop,
+  makeAspectCrop,
+  type Crop,
+  type PixelCrop,
+} from "react-image-crop";
 
 const ASPECT = 1;
 

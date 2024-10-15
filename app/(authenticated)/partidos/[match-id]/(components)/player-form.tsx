@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
 import { PLAYER_POSITIONS } from "@/utils/player-positions";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC, useRef, useState } from "react";
+import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
 
 /* Players are categorized from 1 to 10 */
@@ -57,7 +57,6 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
     resolver: zodResolver(PLAYER_SCHEMA),
     values,
   });
-  const inputFileRef = useRef<HTMLInputElement>(null);
   const { errorAlert } = useAlerts();
   const [uploadingImage, setUploadingImage] = useState(false);
 
@@ -65,6 +64,8 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
     nextAvatar
   ) => {
     try {
+      setUploadingImage(true);
+
       const formData = new FormData();
       formData.append("file", nextAvatar);
       formData.append("upload_preset", "scalonetapp");
@@ -93,12 +94,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
         title: "Error al subir la foto.",
       });
 
-      /* We clean the input value */
-      if (inputFileRef.current) {
-        inputFileRef.current.value = "";
-
-        form.setValue("avatar", "");
-      }
+      form.setValue("avatar", "");
 
       setUploadingImage(false);
     }
