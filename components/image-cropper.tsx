@@ -12,7 +12,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { FileWithPreview } from "@/types/file-with-preview";
 import React, { useRef, useState, type SyntheticEvent } from "react";
 import ReactCrop, {
   centerCrop,
@@ -27,17 +26,17 @@ const aspect = 1;
 type ImageCropperProps = {
   dialogOpen: boolean;
   onImageCropped: (croppedImageFile: Blob) => Promise<void>;
-  selectedFile: FileWithPreview | null;
+  preview: string | null;
+  removePreview: () => void;
   setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setSelectedFile: React.Dispatch<React.SetStateAction<FileWithPreview | null>>;
 };
 
 export function ImageCropper({
   dialogOpen,
   onImageCropped,
-  selectedFile,
+  preview,
+  removePreview,
   setDialogOpen,
-  setSelectedFile,
 }: ImageCropperProps) {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [crop, setCrop] = useState<Crop>();
@@ -134,7 +133,7 @@ export function ImageCropper({
           <Avatar className="rounded-none size-full">
             <AvatarImage
               className="aspect-auto rounded-none size-full"
-              src={selectedFile?.preview}
+              src={preview || ""}
               onLoad={onImageLoad}
               ref={imgRef}
             />
@@ -144,7 +143,7 @@ export function ImageCropper({
           <DialogClose asChild>
             <Button
               onClick={() => {
-                setSelectedFile(null);
+                removePreview();
               }}
               disabled={uploadingImage}
               type="reset"

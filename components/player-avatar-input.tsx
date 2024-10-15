@@ -9,7 +9,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { FileWithPreview } from "@/types/file-with-preview";
 import { TrashIcon } from "lucide-react";
 import { ChangeEventHandler, FC, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
@@ -23,9 +22,7 @@ export const PlayerAvatarInput: FC<PlayerAvatarInputProps> = ({
   defaultName,
   updateAvatar,
 }) => {
-  const [selectedFile, setSelectedFile] = useState<FileWithPreview | null>(
-    null
-  );
+  const [preview, setPreview] = useState<string | null>(null);
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const inputFileRef = useRef<HTMLInputElement>(null);
@@ -63,11 +60,7 @@ export const PlayerAvatarInput: FC<PlayerAvatarInputProps> = ({
       return;
     }
 
-    const fileWithPreview = Object.assign(file, {
-      preview: URL.createObjectURL(file),
-    });
-
-    setSelectedFile(fileWithPreview);
+    setPreview(URL.createObjectURL(file));
     setDialogOpen(true);
   };
 
@@ -79,7 +72,7 @@ export const PlayerAvatarInput: FC<PlayerAvatarInputProps> = ({
     try {
       await updateAvatar(croppedImage);
 
-      setSelectedFile(null);
+      setPreview(null);
     } catch {}
 
     setUploadingImage(false);
@@ -150,9 +143,11 @@ export const PlayerAvatarInput: FC<PlayerAvatarInputProps> = ({
       <ImageCropper
         dialogOpen={isDialogOpen}
         onImageCropped={onImageCropped}
-        selectedFile={selectedFile}
+        preview={preview}
+        removePreview={() => {
+          setPreview(null);
+        }}
         setDialogOpen={setDialogOpen}
-        setSelectedFile={setSelectedFile}
       />
     </>
   );
