@@ -39,7 +39,7 @@ const namesInMatch: (
       },
       OR: names.map((name) => ({
         name: {
-          contains: name,
+          equals: name,
         },
       })),
     },
