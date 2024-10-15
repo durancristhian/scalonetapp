@@ -60,12 +60,12 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
   const { errorAlert } = useAlerts();
   const [uploadingImage, setUploadingImage] = useState(false);
 
-  const updateAvatar: (nextAvatar: File) => Promise<void> = async (
+  const updateAvatar: (nextAvatar: Blob) => Promise<void> = async (
     nextAvatar
   ) => {
-    try {
-      setUploadingImage(true);
+    setUploadingImage(true);
 
+    try {
       const formData = new FormData();
       formData.append("file", nextAvatar);
       formData.append("upload_preset", "scalonetapp");
@@ -85,8 +85,6 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
       const imageUrl = response.secure_url;
 
       form.setValue("avatar", imageUrl);
-
-      setUploadingImage(false);
     } catch (error) {
       console.error(error);
 
@@ -95,9 +93,9 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
       });
 
       form.setValue("avatar", "");
-
-      setUploadingImage(false);
     }
+
+    setUploadingImage(false);
   };
 
   const onSubmitHandler: (values: PlayerSchema) => Promise<void> = async (
