@@ -11,7 +11,7 @@ const Page: FC = async () => {
       <div className="max-w-7xl mx-auto px-4 w-full">
         <div className="space-y-4">
           <div className="flex gap-4 items-center justify-between">
-            <h2 className="font-bold text-xl">Tus partidos</h2>
+            <h2 className="font-bold text-xl">Tus partidos ({totalCount})</h2>
             <AddMatch
               disabled={
                 totalCount >=
