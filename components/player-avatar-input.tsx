@@ -160,14 +160,19 @@ export const PlayerAvatarInput: FC<PlayerAvatarInputProps> = ({
 
   async function onCrop() {
     try {
+      setUploadingImage(true);
+
       setSelectedFile(null);
 
       const nextAvatar: File = base64ToFile(croppedImageUrl, "avatar");
 
       updateAvatar(nextAvatar);
     } catch (error) {
+      /* TODO: improve this? */
       alert("Something went wrong!");
     }
+
+    setUploadingImage(false);
   }
 
   return (
