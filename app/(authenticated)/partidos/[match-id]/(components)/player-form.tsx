@@ -1,7 +1,7 @@
 "use client";
 
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
-import { PlayerAvatar } from "@/components/player-avatar";
+import { PlayerAvatarInput } from "@/components/player-avatar-input";
 import { SoccerBall } from "@/components/soccer-ball";
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
@@ -16,17 +16,10 @@ import {
   FormRootError,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
 import { PLAYER_POSITIONS } from "@/utils/player-positions";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TrashIcon } from "lucide-react";
-import { ChangeEventHandler, FC, useRef, useState } from "react";
+import { FC, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 
 /* Players are categorized from 1 to 10 */
@@ -46,7 +39,6 @@ const LEVEL_MESSAGES: Record<number, string> = {
   10: "La verdadera máquina.",
 };
 
-/* Input placeholder */
 const INPUT_PLACEHOLDER = "Juan Roman Riquelme";
 
 type PlayerFormProps = {
@@ -69,50 +61,12 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
   const { errorAlert } = useAlerts();
   const [uploadingImage, setUploadingImage] = useState(false);
 
-  /* We register the field manually because of our custom UI for it. This also means listening for its changes */
-  const avatar = form.watch("avatar");
-  const avatarFieldProps = form.register("avatar");
-
-  const name = form.watch("name");
-
-  const onUploadAvatar: ChangeEventHandler<HTMLInputElement> = async (
-    event
+  const updateAvatar: (nextAvatar: File) => Promise<void> = async (
+    nextAvatar
   ) => {
     try {
-      const files = Array.from(event.target.files || []);
-
-      if (!files.length) {
-        return;
-      }
-
-      setUploadingImage(true);
-
-      /* This is safe to do since we don't accept multiple images in the file input */
-      const file = files[0];
-
-      const fileSizeInMb = file.size / 1024 / 1024;
-
-      if (
-        fileSizeInMb >= Number(process.env.NEXT_PUBLIC_IMAGE_UPLOAD_SIZE_LIMIT)
-      ) {
-        errorAlert({
-          title: `La foto excede el tamaño máximo permitido (${process.env.NEXT_PUBLIC_IMAGE_UPLOAD_SIZE_LIMIT} MB).`,
-        });
-
-        /* We clean the input value */
-        if (inputFileRef.current) {
-          inputFileRef.current.value = "";
-
-          form.setValue("avatar", "");
-        }
-
-        setUploadingImage(false);
-
-        return;
-      }
-
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", nextAvatar);
       formData.append("upload_preset", "scalonetapp");
 
       const response = await fetch(
@@ -183,66 +137,10 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
             <FormItem>
               <FormLabel>Avatar</FormLabel>
               <FormControl>
-                <div className="flex gap-4 items-center justify-center">
-                  <PlayerAvatar
-                    src={avatar || ""}
-                    name={name || INPUT_PLACEHOLDER}
-                    size="xl"
-                  />
-                  <input
-                    hidden
-                    type="file"
-                    /* We only accept jpg, jpeg and png extensions */
-                    accept=".jpg,.jpeg,.png"
-                    {...avatarFieldProps}
-                    ref={inputFileRef}
-                    onChange={onUploadAvatar}
-                  />
-                  {avatar ? (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            onClick={() => {
-                              /* We clean the input value */
-                              if (inputFileRef.current) {
-                                inputFileRef.current.value = "";
-
-                                form.setValue("avatar", "");
-                              }
-                            }}
-                            variant="ghost"
-                            size="icon"
-                          >
-                            <TrashIcon className="h-4 text-red-700 w-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>Eliminar</TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  ) : (
-                    <Button
-                      /* We trigger the input file click with this button */
-                      onClick={() => {
-                        if (inputFileRef.current) {
-                          inputFileRef.current.click();
-                        }
-                      }}
-                      disabled={uploadingImage}
-                      type="button"
-                      variant="outline"
-                    >
-                      {uploadingImage ? (
-                        <>
-                          <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
-                          Subiendo foto...
-                        </>
-                      ) : (
-                        "Subir una foto"
-                      )}
-                    </Button>
-                  )}
-                </div>
+                <PlayerAvatarInput
+                  defaultName={INPUT_PLACEHOLDER}
+                  updateAvatar={updateAvatar}
+                />
               </FormControl>
               <FormDescription>
                 La foto puede pesar hasta{" "}
