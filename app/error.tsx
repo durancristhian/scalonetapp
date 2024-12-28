@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { FC, useEffect } from "react";
+import { type FC, useEffect } from "react";
 
 type ErrorProps = {
   error: Error & { digest?: string };

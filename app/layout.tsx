@@ -4,7 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import clsx from "clsx";
 import type { Metadata, Viewport } from "next";
 import { Work_Sans } from "next/font/google";
-import { FC, PropsWithChildren } from "react";
+import { type FC, type PropsWithChildren } from "react";
 
 export const viewport: Viewport = {
   initialScale: 1,
@@ -57,6 +57,7 @@ export const metadata: Metadata = {
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <ClerkProvider
+      dynamic
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
       /* After login we redirect to the dashboard */
       signInForceRedirectUrl="/dashboard"

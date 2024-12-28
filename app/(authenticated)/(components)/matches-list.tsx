@@ -3,8 +3,8 @@
 import { MatchItem } from "@/app/(authenticated)/(components)/match-item";
 import { AnimatedListItem } from "@/components/animated-list-item";
 import { EmptyState } from "@/components/empty-state";
-import { Match } from "@prisma/client";
-import { FC } from "react";
+import { type Match } from "@prisma/client";
+import { type FC } from "react";
 
 type MatchsListProps = {
   matches: Match[];

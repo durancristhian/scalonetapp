@@ -13,11 +13,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { editMatchAction } from "@/server/actions/match";
-import { Team } from "@/types/team";
+import { type Team } from "@/types/team";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { getTeamsToSave } from "@/utils/get-teams-to-save";
 import { InfoIcon } from "lucide-react";
-import { FC, useState } from "react";
+import { type FC, useState } from "react";
 
 type SaveTeamsProps = {
   disabled?: boolean;

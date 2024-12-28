@@ -10,7 +10,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { TrashIcon } from "lucide-react";
-import { ChangeEventHandler, FC, useRef, useState } from "react";
+import { type ChangeEventHandler, type FC, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 type PlayerAvatarInputProps = {
@@ -36,12 +36,12 @@ export const PlayerAvatarInput: FC<PlayerAvatarInputProps> = ({
   const onImageChange: ChangeEventHandler<HTMLInputElement> = async (event) => {
     const files = Array.from(event.target.files || []);
 
-    if (!files.length) {
-      return;
-    }
-
     /* This is safe to do since we don't accept multiple images in the file input */
     const file = files[0];
+
+    if (!file) {
+      return;
+    }
 
     const fileSizeInMb = file.size / 1024 / 1024;
 

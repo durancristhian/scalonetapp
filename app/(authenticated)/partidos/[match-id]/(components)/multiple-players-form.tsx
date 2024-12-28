@@ -13,12 +13,12 @@ import {
   FormRootError,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { PlayerSchema } from "@/schemas/player";
-import { PLAYERS_SCHEMA, PlayersSchema } from "@/schemas/players";
+import { type PlayerSchema } from "@/schemas/player";
+import { PLAYERS_SCHEMA, type PlayersSchema } from "@/schemas/players";
 import { getLinesFromString } from "@/utils/get-lines-from-string";
 import { getPlayersFromLines } from "@/utils/get-players-from-lines";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC, useMemo } from "react";
+import { type FC, useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
 
 const PLACEHOLDER = `Juan

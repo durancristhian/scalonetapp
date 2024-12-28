@@ -1,6 +1,6 @@
 "use server";
 
-import { FeedbackSchema } from "@/schemas/feedback";
+import { type FeedbackSchema } from "@/schemas/feedback";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { Telegram } from "@/utils/telegram";
 import { auth, currentUser } from "@clerk/nextjs/server";
@@ -9,7 +9,7 @@ export const feedbackAction: (data: FeedbackSchema) => Promise<void> = async (
   data
 ) => {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     const user = await currentUser();
 
     /* We check auth */

@@ -1,4 +1,4 @@
-import { Player } from "@prisma/client";
+import { type Player } from "@prisma/client";
 
 /* This is the object version of the Match.teams Prisma field (Which is an string in the DB) */
 export type BaseTeam = {

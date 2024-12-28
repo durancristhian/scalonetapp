@@ -17,9 +17,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Toggle } from "@/components/ui/toggle";
-import { Team } from "@/types/team";
-import { Player } from "@prisma/client";
-import { FC, useState } from "react";
+import type { Team } from "@/types/team";
+import type { Player } from "@prisma/client";
+import { type FC, useState } from "react";
 
 type AssignPlayersProps = {
   assignSelectionToTeam: (teamId: string) => void;

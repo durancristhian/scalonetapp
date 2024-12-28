@@ -15,7 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { deleteMatchAction } from "@/server/actions/match";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
-import { FC, useState } from "react";
+import { type FC, useState } from "react";
 
 type DeleteMatchProps = {
   id: number;

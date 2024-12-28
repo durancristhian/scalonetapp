@@ -1,7 +1,7 @@
 import { getMatchByIdQuery } from "@/server/queries/match";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
-import { NextRequest, NextResponse } from "next/server";
-import { Browser } from "puppeteer-core";
+import { type NextRequest, NextResponse } from "next/server";
+import { type Browser } from "puppeteer-core";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -40,7 +40,7 @@ const getBrowser: () => Promise<Browser> = async () => {
 
 const getAppDomain: () => string = () =>
   process.env.NODE_ENV === "production"
-    ? "https://www.scalonet.app"
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
     : "http://localhost:3000";
 
 export async function GET(request: NextRequest) {

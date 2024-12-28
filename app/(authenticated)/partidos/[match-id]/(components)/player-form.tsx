@@ -16,10 +16,10 @@ import {
   FormRootError,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { PLAYER_SCHEMA, PlayerSchema } from "@/schemas/player";
+import { PLAYER_SCHEMA, type PlayerSchema } from "@/schemas/player";
 import { PLAYER_POSITIONS } from "@/utils/player-positions";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC, useState } from "react";
+import { type FC, useState } from "react";
 import { useForm } from "react-hook-form";
 
 /* Players are categorized from 1 to 10 */

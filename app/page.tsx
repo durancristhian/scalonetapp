@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut, SignInButton, useAuth } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { FC, useEffect } from "react";
+import { type FC, useEffect } from "react";
 
 const Page: FC = () => {
   const { isLoaded, userId } = useAuth();

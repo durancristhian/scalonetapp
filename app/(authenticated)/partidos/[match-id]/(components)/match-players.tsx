@@ -20,9 +20,9 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { byName } from "@/utils/by-name";
 import { PLAYER_POSITIONS } from "@/utils/player-positions";
-import { Player } from "@prisma/client";
+import { type Player } from "@prisma/client";
 import { EllipsisVerticalIcon, PencilIcon, TrashIcon } from "lucide-react";
-import { FC, useState } from "react";
+import { type FC, useState } from "react";
 
 type MatchPlayersProps = {
   players: Player[];

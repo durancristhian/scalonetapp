@@ -13,9 +13,9 @@ import {
   FormRootError,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { MATCH_SCHEMA, MatchSchema } from "@/schemas/match";
+import { MATCH_SCHEMA, type MatchSchema } from "@/schemas/match";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC } from "react";
+import { type FC } from "react";
 import { useForm } from "react-hook-form";
 
 const DAY_LABELS = [

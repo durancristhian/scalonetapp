@@ -1,13 +1,13 @@
-import { MatchSchema } from "@/schemas/match";
+import { type MatchSchema } from "@/schemas/match";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import prisma from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { Match } from "@prisma/client";
+import { type Match } from "@prisma/client";
 
 export const getMatchesQuery: (options?: {
   take: number;
 }) => Promise<[Match[], number]> = async (options) => {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);
@@ -41,7 +41,7 @@ export const getMatchesQuery: (options?: {
 };
 
 export const getMatchByIdQuery = async (id: number) => {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) {
     throw new Error(ERROR_MESSAGES.unauthorized);

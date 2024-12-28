@@ -1,6 +1,6 @@
 "use server";
 
-import { PlayerSchema } from "@/schemas/player";
+import type { PlayerSchema } from "@/schemas/player";
 import {
   addMultiplePlayersQuery,
   addPlayerQuery,
@@ -53,7 +53,7 @@ export const addPlayerAction: (
   data: PlayerSchema
 ) => Promise<void> = async (matchId, data) => {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
 
     /* We check auth */
     if (!userId) {
@@ -95,7 +95,7 @@ export const addMultiplePlayersAction: (
   data: PlayerSchema[]
 ) => Promise<void> = async (matchId, data) => {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
 
     /* We check auth */
     if (!userId) {
@@ -140,7 +140,7 @@ export const editPlayerAction: (
   data: PlayerSchema
 ) => Promise<void> = async (id, data) => {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
 
     /* We check auth */
     if (!userId) {
@@ -157,7 +157,7 @@ export const editPlayerAction: (
 
 export const deletePlayerAction: (id: number) => Promise<void> = async (id) => {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
 
     /* We check auth */
     if (!userId) {

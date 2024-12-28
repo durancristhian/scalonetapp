@@ -8,9 +8,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { TEAM_SCHEMA, TeamSchema } from "@/schemas/team";
+import { TEAM_SCHEMA, type TeamSchema } from "@/schemas/team";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC } from "react";
+import { type FC } from "react";
 import { useForm } from "react-hook-form";
 
 type TeamFormProps = {

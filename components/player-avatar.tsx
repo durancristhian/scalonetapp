@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { default as BoringAvatar } from "boring-avatars";
 import clsx from "clsx";
-import { FC } from "react";
+import { type FC } from "react";
 
 type AvatarSize = "sm" | "md" | "lg" | "xl";
 

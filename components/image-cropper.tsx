@@ -93,7 +93,7 @@ export function ImageCropper({
     try {
       /* Transform croppedImage (base64) to Blob */
       const array = [];
-      const blobBin = atob(croppedImageUrl.split(",")[1]);
+      const blobBin = atob(croppedImageUrl?.split(",")[1] || "");
 
       for (let i = 0; i < blobBin.length; i++) {
         array.push(blobBin.charCodeAt(i));

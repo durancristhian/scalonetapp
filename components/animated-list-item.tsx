@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FC, PropsWithChildren } from "react";
+import { type FC, type PropsWithChildren } from "react";
 
 type AnimatedListItemProps = {
   listIndex: number;

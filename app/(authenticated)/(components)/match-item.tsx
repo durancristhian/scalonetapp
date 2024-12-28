@@ -11,7 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Match } from "@prisma/client";
+import { type Match } from "@prisma/client";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale/es";
 import {
@@ -21,7 +21,7 @@ import {
   TrashIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { FC, useState } from "react";
+import { type FC, useState } from "react";
 
 type MatchItemProps = {
   disableDuplication: boolean;

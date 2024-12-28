@@ -4,7 +4,7 @@
     Example: <IconPhSoccerBallFill width="24px" height="24px" style={{color: "#000000"}} />
 */
 
-import { SVGProps } from "react";
+import { type SVGProps } from "react";
 
 export const SoccerBall = ({
   height = "1em",
