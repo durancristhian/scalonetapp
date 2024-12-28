@@ -40,7 +40,7 @@ const getBrowser: () => Promise<Browser> = async () => {
 
 const getAppDomain: () => string = () =>
   process.env.NODE_ENV === "production"
-    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    ? "https://www.scalonet.app"
     : "http://localhost:3000";
 
 export async function GET(request: NextRequest) {
