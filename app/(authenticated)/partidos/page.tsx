@@ -1,7 +1,7 @@
 import { AddMatch } from "@/app/(authenticated)/(components)/add-match";
 import { MatchesList } from "@/app/(authenticated)/(components)/matches-list";
 import { getMatchesQuery } from "@/server/queries/match";
-import { FC } from "react";
+import { type FC } from "react";
 
 const Page: FC = async () => {
   const [matches, totalCount] = await getMatchesQuery();

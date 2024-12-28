@@ -3,7 +3,7 @@ import { MatchesList } from "@/app/(authenticated)/(components)/matches-list";
 import { Button } from "@/components/ui/button";
 import { getMatchesQuery } from "@/server/queries/match";
 import Link from "next/link";
-import { FC } from "react";
+import { type FC } from "react";
 
 const TAKE_LIMIT = 3;
 

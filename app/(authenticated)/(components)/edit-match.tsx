@@ -9,11 +9,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { MatchSchema } from "@/schemas/match";
+import { type MatchSchema } from "@/schemas/match";
 import { editMatchAction } from "@/server/actions/match";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
-import { Match } from "@prisma/client";
-import { FC } from "react";
+import { type Match } from "@prisma/client";
+import { type FC } from "react";
 
 type EditMatchProps = {
   match: Match;

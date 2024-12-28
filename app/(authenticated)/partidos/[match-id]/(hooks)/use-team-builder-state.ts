@@ -1,7 +1,7 @@
-import { MatchWithPlayers } from "@/types/match";
-import { BaseTeam, Team } from "@/types/team";
+import { type MatchWithPlayers } from "@/types/match";
+import { type BaseTeam, type Team } from "@/types/team";
 import { byName } from "@/utils/by-name";
-import { Player } from "@prisma/client";
+import { type Player } from "@prisma/client";
 import shuffle from "lodash.shuffle";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";

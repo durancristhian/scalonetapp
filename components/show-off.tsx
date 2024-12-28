@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/popover";
 import clsx from "clsx";
 import { MailIcon } from "lucide-react";
-import { FC } from "react";
+import { type FC } from "react";
 
 type ShowOffProps = {
   popoverSeparation?: boolean;

@@ -2,10 +2,10 @@
 
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { Button } from "@/components/ui/button";
-import { Team } from "@/types/team";
+import { type Team } from "@/types/team";
 import { byName } from "@/utils/by-name";
 import copy from "copy-to-clipboard";
-import { FC } from "react";
+import { type FC } from "react";
 
 type CopyTeamsProps = {
   teams: Team[];

@@ -22,11 +22,11 @@ import {
   FormRootError,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { FEEDBACK_SCHEMA, FeedbackSchema } from "@/schemas/feedback";
+import { FEEDBACK_SCHEMA, type FeedbackSchema } from "@/schemas/feedback";
 import { feedbackAction } from "@/server/actions/feedback";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC, useState } from "react";
+import { type FC, useState } from "react";
 import { useForm } from "react-hook-form";
 
 export const Feedback = () => {

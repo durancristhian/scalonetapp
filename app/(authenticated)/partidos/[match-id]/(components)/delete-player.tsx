@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { deletePlayerAction } from "@/server/actions/player";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
-import { FC, useState } from "react";
+import { type FC, useState } from "react";
 
 type DeletePlayerProps = {
   id: number;

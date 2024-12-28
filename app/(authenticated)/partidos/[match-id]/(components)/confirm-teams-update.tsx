@@ -12,7 +12,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { FC } from "react";
+import { type FC } from "react";
 
 type ConfirmTeamsUpdateProps = {
   disabled: boolean;

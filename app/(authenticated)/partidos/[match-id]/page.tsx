@@ -4,15 +4,16 @@ import { getMatchByIdQuery } from "@/server/queries/match";
 import { ChevronLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { FC } from "react";
+import { type FC } from "react";
 
 type PageProps = {
-  params: {
+  params: Promise<{
     ["match-id"]: string;
-  };
+  }>;
 };
 
-const Page: FC<PageProps> = async ({ params }) => {
+const Page: FC<PageProps> = async (props) => {
+  const params = await props.params;
   const match = await getMatchByIdQuery(Number(params["match-id"]));
 
   if (!match) {

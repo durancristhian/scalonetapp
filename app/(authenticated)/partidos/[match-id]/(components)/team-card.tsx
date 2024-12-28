@@ -13,12 +13,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { TeamSchema } from "@/schemas/team";
-import { Team } from "@/types/team";
+import { type TeamSchema } from "@/schemas/team";
+import { type Team } from "@/types/team";
 import { PLAYER_POSITIONS } from "@/utils/player-positions";
-import { Player } from "@prisma/client";
+import { type Player } from "@prisma/client";
 import { TrashIcon, XIcon } from "lucide-react";
-import { FC } from "react";
+import { type FC } from "react";
 
 type TeamCardProps = {
   canBeDeleted: boolean;

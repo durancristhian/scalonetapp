@@ -2,11 +2,11 @@
 
 import { PlayerAvatar } from "@/components/player-avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MatchWithPlayers } from "@/types/match";
-import { BaseTeam } from "@/types/team";
+import { type MatchWithPlayers } from "@/types/match";
+import { type BaseTeam } from "@/types/team";
 import { byName } from "@/utils/by-name";
-import { Player } from "@prisma/client";
-import { FC, useEffect, useState } from "react";
+import { type Player } from "@prisma/client";
+import { type FC, useEffect, useState } from "react";
 
 const Page: FC = () => {
   const [match, setMatch] = useState<MatchWithPlayers>();

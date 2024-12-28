@@ -5,7 +5,7 @@ import { SoccerBall } from "@/components/soccer-ball";
 import { Button } from "@/components/ui/button";
 import { downloadBlob } from "@/utils/download-blob";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
-import { FC, useState } from "react";
+import { type FC, useState } from "react";
 
 type ExportTeamsProps = {
   matchId: number;

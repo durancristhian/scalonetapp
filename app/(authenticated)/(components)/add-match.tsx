@@ -20,11 +20,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { MatchSchema } from "@/schemas/match";
+import { type MatchSchema } from "@/schemas/match";
 import { addMatchAction } from "@/server/actions/match";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { InfoIcon } from "lucide-react";
-import { FC, useState } from "react";
+import { type FC, useState } from "react";
 
 type AddMatchProps = {
   disabled?: boolean;

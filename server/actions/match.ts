@@ -1,6 +1,6 @@
 "use server";
 
-import { MatchSchema } from "@/schemas/match";
+import { type MatchSchema } from "@/schemas/match";
 import {
   addMatchQuery,
   deleteMatchQuery,
@@ -8,11 +8,11 @@ import {
   getMatchByIdQuery,
 } from "@/server/queries/match";
 import { addMultiplePlayersQuery } from "@/server/queries/player";
-import { BaseTeam } from "@/types/team";
+import { type BaseTeam } from "@/types/team";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import prisma from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { Match } from "@prisma/client";
+import { type Match } from "@prisma/client";
 import { format } from "date-fns";
 import { revalidatePath } from "next/cache";
 
@@ -26,7 +26,7 @@ export const addMatchAction: (
   }
 ) => {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
 
     /* We check auth */
     if (!userId) {
@@ -75,7 +75,7 @@ export const editMatchAction: (
   pathToRevalidate: string
 ) => Promise<void> = async (id, data, pathToRevalidate) => {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
 
     /* We check auth */
     if (!userId) {
@@ -110,7 +110,7 @@ export const editMatchAction: (
 
 export const deleteMatchAction: (id: number) => Promise<void> = async (id) => {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
 
     /* We check auth */
     if (!userId) {
@@ -129,7 +129,7 @@ export const duplicateMatchAction: (id: number) => Promise<void> = async (
   id
 ) => {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
 
     /* We check auth */
     if (!userId) {
@@ -186,7 +186,9 @@ export const duplicateMatchAction: (id: number) => Promise<void> = async (
         const parsedTeams: BaseTeam[] = JSON.parse(existingMatch.teams);
         const nextTeams: BaseTeam[] = parsedTeams.map((team) => ({
           ...team,
-          players: team.players.map((playerId) => existingPlayersMap[playerId]),
+          players: team.players
+            .map((playerId) => existingPlayersMap[playerId])
+            .filter((id): id is number => id !== undefined),
         }));
 
         /* We edit the match so we copy the same teams */

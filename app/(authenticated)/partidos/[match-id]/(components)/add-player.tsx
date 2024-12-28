@@ -22,7 +22,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PlayerSchema } from "@/schemas/player";
+import { type PlayerSchema } from "@/schemas/player";
 import {
   addMultiplePlayersAction,
   addPlayerAction,
@@ -30,7 +30,7 @@ import {
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { InfoIcon } from "lucide-react";
 import { useParams } from "next/navigation";
-import { FC, useState } from "react";
+import { type FC, useState } from "react";
 
 type AddPlayerProps = {
   disabled?: boolean;

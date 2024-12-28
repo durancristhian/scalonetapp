@@ -1,4 +1,4 @@
-import { Team } from "@/types/team";
+import { type Team } from "@/types/team";
 
 export const getTeamsToSave: (teams: Team[]) => string = (teams) => {
   const formattedTeams = teams.map((team) => ({

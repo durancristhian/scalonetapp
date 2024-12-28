@@ -1,5 +1,5 @@
 import { CircleAlertIcon, CircleCheckIcon } from "lucide-react";
-import { ReactNode } from "react";
+import { type ReactNode } from "react";
 import { toast } from "sonner";
 
 type AlertProps = {

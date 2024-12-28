@@ -10,9 +10,9 @@ import { TeamCard } from "@/app/(authenticated)/partidos/[match-id]/(components)
 import { useTeamsBuilderState } from "@/app/(authenticated)/partidos/[match-id]/(hooks)/use-team-builder-state";
 import { EmptyState } from "@/components/empty-state";
 import { Button } from "@/components/ui/button";
-import { MatchWithPlayers } from "@/types/match";
+import { type MatchWithPlayers } from "@/types/match";
 import { getTeamsToSave } from "@/utils/get-teams-to-save";
-import { FC, useMemo } from "react";
+import { type FC, useMemo } from "react";
 
 type MatchDetailsProps = {
   match: MatchWithPlayers;

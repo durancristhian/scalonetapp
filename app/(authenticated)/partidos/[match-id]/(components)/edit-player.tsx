@@ -7,11 +7,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { PlayerSchema } from "@/schemas/player";
+import { type PlayerSchema } from "@/schemas/player";
 import { editPlayerAction } from "@/server/actions/player";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
-import { Player } from "@prisma/client";
-import { FC } from "react";
+import { type Player } from "@prisma/client";
+import { type FC } from "react";
 
 type EditPlayerProps = {
   player: Player;

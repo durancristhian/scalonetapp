@@ -1,6 +1,6 @@
-import { PlayerSchema } from "@/schemas/player";
+import { type PlayerSchema } from "@/schemas/player";
 import prisma from "@/utils/prisma";
-import { Player, Prisma } from "@prisma/client";
+import { type Player, Prisma } from "@prisma/client";
 
 export const addPlayerQuery: (
   matchId: number,
