@@ -71,7 +71,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
       formData.append("upload_preset", "scalonetapp");
 
       const response = await fetch(
-        "https://api.cloudinary.com/v1_1/cristhianjavierduran/image/upload",
+        "https://api.cloudinary.com/v1_1/dwmee8t3e/image/upload",
         {
           method: "POST",
           body: formData,
