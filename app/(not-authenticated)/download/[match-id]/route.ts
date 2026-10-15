@@ -1,5 +1,10 @@
 import { getMatchByIdQuery } from "@/server/queries/match";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
+import {
+  getImageExportRequestHeaders,
+  getImageExportTarget,
+  ImageExportConfigurationError,
+} from "@/utils/image-export-target";
 import { type NextRequest, NextResponse } from "next/server";
 import { type Browser } from "puppeteer-core";
 
@@ -38,15 +43,11 @@ const getBrowser: () => Promise<Browser> = async () => {
   }
 };
 
-const getAppDomain: () => string = () =>
-  process.env.NODE_ENV === "production"
-    ? "https://www.scalonet.app"
-    : "http://localhost:3000";
-
 export async function GET(request: NextRequest) {
   let browser;
 
   try {
+    const exportTarget = getImageExportTarget();
     /* pathname here will be /download/[match-id] */
     const pathname = request.nextUrl.pathname;
     /* We split the string by / and we grab the matchId */
@@ -66,6 +67,18 @@ export async function GET(request: NextRequest) {
     browser = await getBrowser();
 
     const page = await browser.newPage();
+    if (exportTarget.bypassSecret) {
+      await page.setRequestInterception(true);
+      page.on("request", (browserRequest) =>
+        browserRequest.continue({
+          headers: getImageExportRequestHeaders(
+            browserRequest.url(),
+            browserRequest.headers(),
+            exportTarget
+          ),
+        })
+      );
+    }
     page.setViewport({
       /* Height here is pointless (but needed) since we take a fullpage screenshot */
       height: 300,
@@ -73,13 +86,25 @@ export async function GET(request: NextRequest) {
       /* So images get a better resolution */
       deviceScaleFactor: 2,
     });
-    await page.goto(`${getAppDomain()}/download/${matchId}/ui`);
+    const exportUrl = `${exportTarget.origin}/download/${matchId}/ui`;
+    const navigateToExport = async () => {
+      const response = await page.goto(exportUrl);
+      if (
+        process.env.VERCEL_ENV === "preview" &&
+        (!response?.ok() || new URL(page.url()).origin !== exportTarget.origin)
+      ) {
+        throw new ImageExportConfigurationError(
+          "Preview image export could not access its deployment. Check deployment protection and VERCEL_AUTOMATION_BYPASS_SECRET."
+        );
+      }
+    };
+    await navigateToExport();
     /* We add the match data to localStorage */
     await page.evaluate((data) => {
       window.localStorage.setItem("match", JSON.stringify(data));
     }, match);
     /* We navigate AGAIN to the same page so we have access to the localStorage data :) YES, IT'S A HACK */
-    await page.goto(`${getAppDomain()}/download/${matchId}/ui`);
+    await navigateToExport();
     await page.waitForNetworkIdle();
 
     const screenshot = await page.screenshot({
@@ -110,6 +135,10 @@ export async function GET(request: NextRequest) {
     if (browser) {
       /* https://github.com/Sparticuz/chromium?tab=readme-ov-file#im-experiencing-timeouts-or-failures-closing-chromium */
       await Promise.race([browser.close(), browser.close(), browser.close()]);
+    }
+
+    if (error instanceof ImageExportConfigurationError) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
     return NextResponse.json(

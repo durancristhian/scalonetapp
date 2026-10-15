@@ -10,7 +10,7 @@
     "dev": "next dev --turbopack",
     "lint": "next lint",
     "start": "next start",
-    "vercel-build": "prisma generate && if [ \"$VERCEL_ENV\" = \"production\" ]; then prisma migrate deploy; fi && next build"
+    "vercel-build": "prisma generate && prisma migrate deploy && next build"
   },
   "dependencies": {
     "next": "15.1.11",
