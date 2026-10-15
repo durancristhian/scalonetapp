@@ -1,5 +1,6 @@
 import { getMatchByIdQuery } from "@/server/queries/match";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
+import { getPreviewChromiumEnv } from "@/utils/preview-chromium-env";
 import {
   getImageExportRequestHeaders,
   getImageExportTarget,
@@ -13,7 +14,7 @@ export const maxDuration = 60;
 
 const getBrowser: () => Promise<Browser> = async () => {
   if (process.env.NODE_ENV === "production") {
-    const chromium = await import("@sparticuz/chromium").then(
+    const chromium = await import("@sparticuz/chromium-min").then(
       (mod) => mod.default
     );
 
@@ -21,12 +22,25 @@ const getBrowser: () => Promise<Browser> = async () => {
       (mod) => mod.default
     );
 
-    const executablePath = await chromium.executablePath();
+    const executablePath = await chromium.executablePath(
+      process.env.CHROMIUM_PATH
+    );
+
+    if (process.env.VERCEL_ENV === "preview") {
+      return puppeteerCore.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath,
+        headless: chromium.headless,
+        env: await getPreviewChromiumEnv(),
+      });
+    }
 
     const browser = await puppeteerCore.launch({
-      args: puppeteerCore.defaultArgs({ args: chromium.args, headless: "shell" }),
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
       executablePath,
-      headless: "shell",
+      headless: chromium.headless,
     });
 
     return browser;
@@ -76,7 +90,7 @@ export async function GET(request: NextRequest) {
         })
       );
     }
-    await page.setViewport({
+    page.setViewport({
       /* Height here is pointless (but needed) since we take a fullpage screenshot */
       height: 300,
       width: 1280,
@@ -116,7 +130,7 @@ export async function GET(request: NextRequest) {
     }
     await browser.close();
 
-    const response = new NextResponse(Buffer.from(screenshot));
+    const response = new NextResponse(screenshot);
     response.headers.set("content-type", "image/png");
     /* This header makes the response to be downloaded automatically by the user's browser */
     response.headers.set(
