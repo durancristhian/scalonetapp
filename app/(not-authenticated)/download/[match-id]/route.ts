@@ -1,6 +1,7 @@
 import { getMatchByIdQuery } from "@/server/queries/match";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { getPreviewChromiumEnv } from "@/utils/preview-chromium-env";
+import { waitForPreviewExport } from "@/utils/wait-for-preview-export";
 import {
   getImageExportRequestHeaders,
   getImageExportTarget,
@@ -116,7 +117,15 @@ export async function GET(request: NextRequest) {
     }, match);
     /* We navigate AGAIN to the same page so we have access to the localStorage data :) YES, IT'S A HACK */
     await navigateToExport();
-    await page.waitForNetworkIdle();
+    if (process.env.VERCEL_ENV === "preview") {
+      await waitForPreviewExport(
+        page,
+        match.name,
+        match.players.map((player) => player.avatar)
+      );
+    } else {
+      await page.waitForNetworkIdle();
+    }
 
     const screenshot = await page.screenshot({
       captureBeyondViewport: true,
