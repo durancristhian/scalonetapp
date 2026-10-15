@@ -1,6 +1,6 @@
 import { type Page } from "puppeteer-core";
 
-export async function waitForPreviewExport(
+export async function waitForImageExport(
   page: Page,
   matchName: string,
   avatarUrls: string[]
@@ -14,7 +14,7 @@ export async function waitForPreviewExport(
   await page.evaluate(async (urls) => {
     const fonts = new Promise<void>((resolve, reject) => {
       const timer = setTimeout(
-        () => reject(new Error("Preview export fonts did not finish loading.")),
+        () => reject(new Error("Image export fonts did not finish loading.")),
         10_000
       );
       document.fonts.ready.then(

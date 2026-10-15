@@ -3,9 +3,9 @@ import { createServer } from "node:http";
 import { once } from "node:events";
 import test from "node:test";
 import puppeteer from "puppeteer";
-import { waitForPreviewExport } from "../utils/wait-for-preview-export.ts";
+import { waitForImageExport } from "../utils/wait-for-image-export.ts";
 
-test("Preview waits for rendered content and assets despite ongoing background requests", async () => {
+test("Image export waits for rendered content and assets despite ongoing background requests", async () => {
   const requests = [];
   const server = createServer((request, response) => {
     requests.push(request.url);
@@ -54,7 +54,7 @@ test("Preview waits for rendered content and assets despite ongoing background r
     const origin = `http://127.0.0.1:${server.address().port}`;
     await page.goto(origin, { waitUntil: "domcontentloaded" });
     const started = Date.now();
-    await waitForPreviewExport(page, "Preview fixture", [
+    await waitForImageExport(page, "Preview fixture", [
       `${origin}/slow.svg`,
       `${origin}/missing.svg`,
       `${origin}/stalled.svg`,

@@ -1,7 +1,6 @@
 import { getMatchByIdQuery } from "@/server/queries/match";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
-import { getPreviewChromiumEnv } from "@/utils/preview-chromium-env";
-import { waitForPreviewExport } from "@/utils/wait-for-preview-export";
+import { waitForImageExport } from "@/utils/wait-for-image-export";
 import {
   getImageExportRequestHeaders,
   getImageExportTarget,
@@ -13,6 +12,11 @@ import { type Browser } from "puppeteer-core";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
+// Keep the external browser pack pinned to @sparticuz/chromium-min.
+const CHROMIUM_PACK_URL =
+  "https://github.com/Sparticuz/chromium/releases/download/v138.0.2/chromium-v138.0.2-pack.x64.tar";
+let chromiumExecutablePath: Promise<string> | undefined;
+
 const getBrowser: () => Promise<Browser> = async () => {
   if (process.env.NODE_ENV === "production") {
     const chromium = await import("@sparticuz/chromium-min").then(
@@ -23,28 +27,19 @@ const getBrowser: () => Promise<Browser> = async () => {
       (mod) => mod.default
     );
 
-    const executablePath = await chromium.executablePath(
-      process.env.CHROMIUM_PATH
+    // Concurrent cold exports must share extraction, not partially unpacked files.
+    chromiumExecutablePath ??= chromium.executablePath(CHROMIUM_PACK_URL).catch(
+      (error) => {
+        chromiumExecutablePath = undefined;
+        throw error;
+      }
     );
 
-    if (process.env.VERCEL_ENV === "preview") {
-      return puppeteerCore.launch({
-        args: chromium.args,
-        defaultViewport: chromium.defaultViewport,
-        executablePath,
-        headless: chromium.headless,
-        env: await getPreviewChromiumEnv(),
-      });
-    }
-
-    const browser = await puppeteerCore.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath,
-      headless: chromium.headless,
+    return puppeteerCore.launch({
+      args: puppeteerCore.defaultArgs({ args: chromium.args, headless: "shell" }),
+      executablePath: await chromiumExecutablePath,
+      headless: "shell",
     });
-
-    return browser;
   } else {
     const puppeteer = await import("puppeteer").then((mod) => mod.default);
 
@@ -91,7 +86,7 @@ export async function GET(request: NextRequest) {
         })
       );
     }
-    page.setViewport({
+    await page.setViewport({
       /* Height here is pointless (but needed) since we take a fullpage screenshot */
       height: 300,
       width: 1280,
@@ -117,15 +112,11 @@ export async function GET(request: NextRequest) {
     }, match);
     /* We navigate AGAIN to the same page so we have access to the localStorage data :) YES, IT'S A HACK */
     await navigateToExport();
-    if (process.env.VERCEL_ENV === "preview") {
-      await waitForPreviewExport(
-        page,
-        match.name,
-        match.players.map((player) => player.avatar)
-      );
-    } else {
-      await page.waitForNetworkIdle();
-    }
+    await waitForImageExport(
+      page,
+      match.name,
+      match.players.map((player) => player.avatar)
+    );
 
     const screenshot = await page.screenshot({
       captureBeyondViewport: true,
@@ -139,7 +130,7 @@ export async function GET(request: NextRequest) {
     }
     await browser.close();
 
-    const response = new NextResponse(screenshot);
+    const response = new NextResponse(Buffer.from(screenshot));
     response.headers.set("content-type", "image/png");
     /* This header makes the response to be downloaded automatically by the user's browser */
     response.headers.set(
