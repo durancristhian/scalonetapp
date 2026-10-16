@@ -72,7 +72,6 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values, avatar }) =>
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmitHandler)} className="space-y-4">
-        <PlayerAvatarInput name={form.watch("name")} src={avatar} disabled={form.formState.isSubmitting} onChange={setPhoto} onPreparingChange={setPhotoPreparing} />
         <FormField
           control={form.control}
           name="name"
@@ -86,6 +85,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values, avatar }) =>
             </FormItem>
           )}
         />
+        <PlayerAvatarInput name={form.watch("name")} src={avatar} disabled={form.formState.isSubmitting} onChange={setPhoto} onPreparingChange={setPhotoPreparing} />
         <FormField
           control={form.control}
           name="position"
