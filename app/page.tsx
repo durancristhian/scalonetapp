@@ -1,7 +1,6 @@
 "use client";
 
 import { Loader } from "@/components/loader";
-import { LicenseLink } from "@/components/license-link";
 import { ShowOff } from "@/components/show-off";
 import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut, SignInButton, useAuth } from "@clerk/nextjs";
@@ -69,7 +68,6 @@ const Page: FC = () => {
             transition={{ ease: "easeInOut", duration: 0.5, delay: 2 }}
           >
             <ShowOff />
-            <LicenseLink />
           </motion.div>
         </footer>
       </SignedOut>

@@ -19,7 +19,7 @@ https://github.com/strukturag/libheif/tree/v1.23.6
 https://github.com/strukturag/libde265/tree/v1.0.16
 
 Application integration source:
-https://github.com/durancristhian/scalonetapp/tree/feat/player-photo-hosting
+https://github.com/durancristhian/scalonetapp/tree/feat/generated-player-avatars
 The package lock pins the library. Run npm ci and npm run build to rebuild the
 application; an interface-compatible replacement may be linked in its place.
 Modification of the LGPL-covered library and reverse engineering for debugging
