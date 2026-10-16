@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import React, { useRef, useState, type SyntheticEvent } from "react";
+import React, { useEffect, useRef, useState, type SyntheticEvent } from "react";
 import ReactCrop, {
   centerCrop,
   makeAspectCrop,
@@ -45,6 +45,7 @@ export function ImageCropper({
   const [crop, setCrop] = useState<Crop>();
   const [croppedImageUrl, setCroppedImageUrl] = useState<string>("");
   const imgRef = useRef<HTMLImageElement | null>(null);
+  useEffect(() => { setCrop(undefined); setCroppedImageUrl(""); }, [preview]);
 
   function onImageLoad(event: SyntheticEvent<HTMLImageElement>) {
     const { width, height } = event.currentTarget;
