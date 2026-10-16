@@ -3,4 +3,4 @@ export const normalizePlayerAvatarName = (name: string): string =>
   Array.from(name.trim()).slice(0, 40).join("") || "Jugador";
 
 export const getPlayerAvatarUrl = (name: string): string =>
-  `/api/player-avatars/v1?name=${encodeURIComponent(normalizePlayerAvatarName(name))}`;
+  `/api/player-avatars/v2?name=${encodeURIComponent(normalizePlayerAvatarName(name))}`;

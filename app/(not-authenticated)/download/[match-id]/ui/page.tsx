@@ -70,11 +70,6 @@ const Page: FC = () => {
           Hecho con{" "}
           <span className="underline underline-offset-2">scalonet.app</span>
         </p>
-        <p className="text-center text-muted-foreground text-sm">
-          Avatares adaptados de Dylan, por Natalia Spivak · CC BY 4.0
-          <br />
-          dicebear.com/styles/dylan · creativecommons.org/licenses/by/4.0
-        </p>
       </div>
     </div>
   );
