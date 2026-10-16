@@ -6,11 +6,13 @@ import { type FC } from "react";
 type AvatarSize = "sm" | "md" | "lg" | "xl";
 
 type PlayerAvatarProps = {
+  src?: string;
   name: string;
   size?: AvatarSize;
 };
 
 export const PlayerAvatar: FC<PlayerAvatarProps> = ({
+  src,
   name,
   size = "md",
 }) => {
@@ -24,7 +26,7 @@ export const PlayerAvatar: FC<PlayerAvatarProps> = ({
         size === "xl" && "h-24 w-24"
       )}
     >
-      <AvatarImage src={getPlayerAvatarUrl(name)} alt={`Avatar de ${name}`} />
+      <AvatarImage src={src || getPlayerAvatarUrl(name)} alt={`Avatar de ${name}`} />
       <AvatarFallback role="img" aria-label={`Avatar de ${name}`}>
         {Array.from(name.trim())[0]?.toLocaleUpperCase("es") || "?"}
       </AvatarFallback>
