@@ -1,3 +1,4 @@
+import { savePlayerPhoto } from "@/utils/save-player-photo";
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { PlayerForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/player-form";
 import {
@@ -21,10 +22,13 @@ type EditPlayerProps = {
 export const EditPlayer: FC<EditPlayerProps> = ({ player, onClose }) => {
   const { errorAlert } = useAlerts();
 
-  const onSubmit: (values: PlayerSchema) => Promise<void> = async (values) => {
+  const onSubmit: (values: PlayerSchema, photo?: Blob | null) => Promise<void> = async (values, photo) => {
     return new Promise(async (resolve, reject) => {
       try {
         await editPlayerAction(player.id, values);
+        const id = player.id;
+        const photoError = await savePlayerPhoto(id, photo);
+        if (photoError) errorAlert({ title: photoError });
 
         onClose();
 
@@ -50,7 +54,7 @@ export const EditPlayer: FC<EditPlayerProps> = ({ player, onClose }) => {
             <DialogDescription />
           </div>
         </DialogHeader>
-        <PlayerForm onSubmit={onSubmit} values={player} />
+        <PlayerForm onSubmit={onSubmit} values={player} avatar={player.avatar} />
       </DialogContent>
     </Dialog>
   );

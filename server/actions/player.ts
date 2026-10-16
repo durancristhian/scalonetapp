@@ -2,6 +2,7 @@
 
 import { PLAYER_SCHEMA, type PlayerSchema } from "@/schemas/player";
 import { z } from "zod";
+import { removeUnusedPhoto } from "@/server/player-photos";
 import {
   addMultiplePlayersQuery,
   addPlayerQuery,
@@ -54,7 +55,7 @@ const namesInMatch: (
 export const addPlayerAction: (
   matchId: number,
   data: PlayerSchema
-) => Promise<void> = async (matchId, data) => {
+) => Promise<number> = async (matchId, data) => {
   try {
     const { userId } = await auth();
 
@@ -87,9 +88,10 @@ export const addPlayerAction: (
       throw new Error(ERROR_MESSAGES.match_players_per_match_limit_reached);
     }
 
-    await addPlayerQuery(matchId, player);
+    const created = await addPlayerQuery(matchId, player);
 
     revalidatePath("/partidos/[match-id]", "page");
+    return created.id;
   } catch (error) {
     throw new Error(ERROR_MESSAGES.player_add_error);
   }
@@ -176,7 +178,8 @@ export const deletePlayerAction: (id: number) => Promise<void> = async (id) => {
 
     const playerId = PLAYER_ID_SCHEMA.parse(id);
 
-    await deletePlayerQuery(playerId, userId);
+    const deleted = await deletePlayerQuery(playerId, userId);
+    await removeUnusedPhoto(deleted.avatar);
 
     revalidatePath("/partidos/[match-id]", "page");
   } catch (error) {
