@@ -116,7 +116,7 @@ export async function GET(request: NextRequest) {
     await waitForImageExport(
       page,
       match.name,
-      match.players.map((player) => getPlayerAvatarUrl(player.name))
+      match.players.flatMap((player) => [player.avatar, getPlayerAvatarUrl(player.name)])
     );
 
     const screenshot = await page.screenshot({

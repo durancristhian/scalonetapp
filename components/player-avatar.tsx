@@ -1,7 +1,9 @@
+"use client";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getPlayerAvatarUrl } from "@/utils/player-avatar";
 import clsx from "clsx";
-import { type FC } from "react";
+import { useEffect, useState, type FC } from "react";
 
 type AvatarSize = "sm" | "md" | "lg" | "xl";
 
@@ -16,6 +18,17 @@ export const PlayerAvatar: FC<PlayerAvatarProps> = ({
   name,
   size = "md",
 }) => {
+  const [failed, setFailed] = useState<string | undefined>();
+  useEffect(() => {
+    if (!src) return;
+    const probe = new Image();
+    const timer = setTimeout(() => setFailed(src), 5000);
+    probe.onload = () => clearTimeout(timer);
+    probe.onerror = () => { clearTimeout(timer); setFailed(src); };
+    probe.src = src;
+    return () => { clearTimeout(timer); probe.onload = null; probe.onerror = null; };
+  }, [src]);
+  const image = src && failed !== src ? src : getPlayerAvatarUrl(name);
   return (
     <Avatar
       className={clsx(
@@ -26,7 +39,7 @@ export const PlayerAvatar: FC<PlayerAvatarProps> = ({
         size === "xl" && "h-24 w-24"
       )}
     >
-      <AvatarImage src={src || getPlayerAvatarUrl(name)} alt={`Avatar de ${name}`} />
+      <AvatarImage src={image} onLoadingStatusChange={status => { if (status === "error" && src) setFailed(src); }} alt={`Avatar de ${name}`} />
       <AvatarFallback role="img" aria-label={`Avatar de ${name}`}>
         {Array.from(name.trim())[0]?.toLocaleUpperCase("es") || "?"}
       </AvatarFallback>

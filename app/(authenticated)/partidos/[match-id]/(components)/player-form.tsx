@@ -1,5 +1,6 @@
 "use client";
 
+import { PlayerAvatarInput } from "@/components/player-avatar-input";
 import { SoccerBall } from "@/components/soccer-ball";
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
@@ -17,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import { PLAYER_SCHEMA, type PlayerSchema } from "@/schemas/player";
 import { PLAYER_POSITIONS } from "@/utils/player-positions";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type FC } from "react";
+import { useState, type FC } from "react";
 import { useForm } from "react-hook-form";
 
 /* Players are categorized from 1 to 10 */
@@ -40,11 +41,13 @@ const LEVEL_MESSAGES: Record<number, string> = {
 const INPUT_PLACEHOLDER = "Juan Roman Riquelme";
 
 type PlayerFormProps = {
-  onSubmit: (values: PlayerSchema) => Promise<void>;
+  onSubmit: (values: PlayerSchema, photo?: Blob | null) => Promise<void>;
+  avatar?: string;
   values?: PlayerSchema;
 };
 
-export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
+export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values, avatar }) => {
+  const [photo, setPhoto] = useState<Blob | null | undefined>();
   const form = useForm<PlayerSchema>({
     defaultValues: values || {
       name: "",
@@ -58,7 +61,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
     values
   ) => {
     try {
-      await onSubmit(values);
+      await onSubmit(values, photo);
 
       form.reset();
     } catch (error) {}
@@ -67,6 +70,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmitHandler)} className="space-y-4">
+        <PlayerAvatarInput name={form.watch("name")} src={avatar} disabled={form.formState.isSubmitting} onChange={setPhoto} />
         <FormField
           control={form.control}
           name="name"

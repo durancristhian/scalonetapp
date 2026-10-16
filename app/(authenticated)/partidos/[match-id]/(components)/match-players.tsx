@@ -87,7 +87,7 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player }) => {
   return (
     <Card>
       <div className="flex gap-2 items-center pl-4">
-        <PlayerAvatar name={player.name} size="sm" />
+        <PlayerAvatar src={player.avatar} name={player.name} size="sm" />
         <div className="grow">
           <p>{player.name}</p>
         </div>
