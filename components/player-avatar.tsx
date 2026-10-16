@@ -1,27 +1,18 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { default as BoringAvatar } from "boring-avatars";
+import { getPlayerAvatarUrl } from "@/utils/player-avatar";
 import clsx from "clsx";
 import { type FC } from "react";
 
 type AvatarSize = "sm" | "md" | "lg" | "xl";
 
-const AVATAR_SIZE: Record<AvatarSize, number> = {
-  sm: 24,
-  md: 48,
-  lg: 64,
-  xl: 96,
-};
-
 type PlayerAvatarProps = {
   name: string;
   size?: AvatarSize;
-  src: string;
 };
 
 export const PlayerAvatar: FC<PlayerAvatarProps> = ({
   name,
   size = "md",
-  src,
 }) => {
   return (
     <Avatar
@@ -33,9 +24,9 @@ export const PlayerAvatar: FC<PlayerAvatarProps> = ({
         size === "xl" && "h-24 w-24"
       )}
     >
-      <AvatarImage src={src} alt={`Avatar de ${name}`} />
-      <AvatarFallback>
-        <BoringAvatar variant="beam" name={name} size={AVATAR_SIZE[size]} />
+      <AvatarImage src={getPlayerAvatarUrl(name)} alt={`Avatar de ${name}`} />
+      <AvatarFallback role="img" aria-label={`Avatar de ${name}`}>
+        {Array.from(name.trim())[0]?.toLocaleUpperCase("es") || "?"}
       </AvatarFallback>
     </Avatar>
   );

@@ -54,11 +54,7 @@ const Page: FC = () => {
                           key={player.id}
                           className="flex gap-4 items-center"
                         >
-                          <PlayerAvatar
-                            src={player.avatar}
-                            name={player.name}
-                            size="xl"
-                          />
+                          <PlayerAvatar name={player.name} size="xl" />
                           <div className="grow">
                             <p className="text-xl">{player.name}</p>
                           </div>
@@ -73,6 +69,11 @@ const Page: FC = () => {
         <p className="text-center text-muted-foreground text-sm">
           Hecho con{" "}
           <span className="underline underline-offset-2">scalonet.app</span>
+        </p>
+        <p className="text-center text-muted-foreground text-sm">
+          Avatares adaptados de Dylan, por Natalia Spivak · CC BY 4.0
+          <br />
+          dicebear.com/styles/dylan · creativecommons.org/licenses/by/4.0
         </p>
       </div>
     </div>

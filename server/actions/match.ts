@@ -154,11 +154,10 @@ export const duplicateMatchAction: (id: number) => Promise<void> = async (
       /* We add the existing players to the new match as well */
       await addMultiplePlayersQuery(
         newMatch.id,
-        existingMatch.players.map(({ name, level, position, avatar }) => ({
+        existingMatch.players.map(({ name, level, position }) => ({
           name,
           level,
           position,
-          avatar,
         }))
       );
 

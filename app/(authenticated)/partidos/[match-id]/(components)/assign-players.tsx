@@ -61,7 +61,6 @@ export const AssignPlayers: FC<AssignPlayersProps> = ({
                 variant="outline"
               >
                 <PlayerAvatar
-                  src={player.avatar}
                   name={player.name}
                   size="sm"
                 />
