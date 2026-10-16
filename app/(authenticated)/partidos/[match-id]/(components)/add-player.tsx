@@ -1,5 +1,7 @@
 "use client";
 
+import { savePlayerPhoto } from "@/utils/save-player-photo";
+
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { MultiplePlayersForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/multiple-players-form";
 import { PlayerForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/player-form";
@@ -89,10 +91,12 @@ const EnabledContent: FC = () => {
   const matchId = Number(params["match-id"]);
   const { errorAlert } = useAlerts();
 
-  const onPlayerSubmit: (values: PlayerSchema) => Promise<void> = (values) => {
+  const onPlayerSubmit: (values: PlayerSchema, photo?: Blob | null) => Promise<void> = (values, photo) => {
     return new Promise(async (resolve, reject) => {
       try {
-        await addPlayerAction(matchId, values);
+        const id = await addPlayerAction(matchId, values);
+        const photoError = await savePlayerPhoto(id, photo);
+        if (photoError) errorAlert({ title: photoError });
 
         setDialogOpen(false);
 

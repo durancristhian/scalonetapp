@@ -1,6 +1,5 @@
 "use client";
 
-import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { PlayerAvatarInput } from "@/components/player-avatar-input";
 import { SoccerBall } from "@/components/soccer-ball";
 import { Button } from "@/components/ui/button";
@@ -19,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import { PLAYER_SCHEMA, type PlayerSchema } from "@/schemas/player";
 import { PLAYER_POSITIONS } from "@/utils/player-positions";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type FC, useState } from "react";
+import { useState, type FC } from "react";
 import { useForm } from "react-hook-form";
 
 /* Players are categorized from 1 to 10 */
@@ -42,14 +41,16 @@ const LEVEL_MESSAGES: Record<number, string> = {
 const INPUT_PLACEHOLDER = "Juan Roman Riquelme";
 
 type PlayerFormProps = {
-  onSubmit: (values: PlayerSchema) => Promise<void>;
+  onSubmit: (values: PlayerSchema, photo?: Blob | null) => Promise<void>;
+  avatar?: string;
   values?: PlayerSchema;
 };
 
-export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
+export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values, avatar }) => {
+  const [photoPreparing, setPhotoPreparing] = useState(false);
+  const [photo, setPhoto] = useState<Blob | null | undefined>();
   const form = useForm<PlayerSchema>({
     defaultValues: values || {
-      avatar: "",
       name: "",
       level: Number(process.env.NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL),
       position: "mid",
@@ -57,52 +58,12 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
     resolver: zodResolver(PLAYER_SCHEMA),
     values,
   });
-  const { errorAlert } = useAlerts();
-  const [uploadingImage, setUploadingImage] = useState(false);
-
-  const updateAvatar: (nextAvatar: Blob) => Promise<void> = async (
-    nextAvatar
-  ) => {
-    setUploadingImage(true);
-
-    try {
-      const formData = new FormData();
-      formData.append("file", nextAvatar);
-      formData.append("upload_preset", "scalonetapp");
-
-      const response = await fetch(
-        "https://api.cloudinary.com/v1_1/dwmee8t3e/image/upload",
-        {
-          method: "POST",
-          body: formData,
-        }
-      ).then(async (response) => await response.json());
-
-      if (response.error?.message) {
-        throw new Error(response.error.message);
-      }
-
-      const imageUrl = response.secure_url;
-
-      form.setValue("avatar", imageUrl);
-    } catch (error) {
-      console.error(error);
-
-      errorAlert({
-        title: "Error al subir la foto.",
-      });
-
-      form.setValue("avatar", "");
-    }
-
-    setUploadingImage(false);
-  };
-
   const onSubmitHandler: (values: PlayerSchema) => Promise<void> = async (
     values
   ) => {
+    if (photoPreparing) return;
     try {
-      await onSubmit(values);
+      await onSubmit(values, photo);
 
       form.reset();
     } catch (error) {}
@@ -124,26 +85,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="avatar"
-          render={() => (
-            <FormItem>
-              <FormLabel>Avatar</FormLabel>
-              <FormControl>
-                <PlayerAvatarInput
-                  defaultName={INPUT_PLACEHOLDER}
-                  updateAvatar={updateAvatar}
-                />
-              </FormControl>
-              <FormDescription>
-                La foto puede pesar hasta{" "}
-                {process.env.NEXT_PUBLIC_IMAGE_UPLOAD_SIZE_LIMIT} MB.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <PlayerAvatarInput name={form.watch("name")} src={avatar} disabled={form.formState.isSubmitting} onChange={setPhoto} onPreparingChange={setPhotoPreparing} />
         <FormField
           control={form.control}
           name="position"
@@ -206,9 +148,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values }) => {
           <Button
             type="submit"
             disabled={
-              !form.formState.isValid ||
-              form.formState.isSubmitting ||
-              uploadingImage
+              photoPreparing || !form.formState.isValid || form.formState.isSubmitting
             }
           >
             {form.formState.isSubmitting ? (

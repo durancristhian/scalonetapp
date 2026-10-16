@@ -60,8 +60,7 @@ export const AssignPlayers: FC<AssignPlayersProps> = ({
                 pressed={selectedIds.includes(player.id)}
                 variant="outline"
               >
-                <PlayerAvatar
-                  src={player.avatar}
+                <PlayerAvatar src={player.avatar}
                   name={player.name}
                   size="sm"
                 />

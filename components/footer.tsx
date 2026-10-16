@@ -3,13 +3,13 @@ import { ShowOff } from "@/components/show-off";
 
 export const Footer = () => {
   return (
-    <div className="bg-white border-border border-t">
+    <footer className="bg-white border-border border-t">
       <div className="max-w-7xl mx-auto px-4 w-full">
-        <div className="flex gap-4 h-12 md:h-14 items-center justify-between">
+        <div className="flex flex-col min-[480px]:flex-row gap-x-4 gap-y-1 min-h-12 md:min-h-14 items-center justify-center min-[480px]:justify-between py-1">
           <Feedback />
           <ShowOff popoverSeparation />
         </div>
       </div>
-    </div>
+    </footer>
   );
 };

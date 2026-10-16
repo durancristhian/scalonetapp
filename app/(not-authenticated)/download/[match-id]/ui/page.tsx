@@ -54,11 +54,7 @@ const Page: FC = () => {
                           key={player.id}
                           className="flex gap-4 items-center"
                         >
-                          <PlayerAvatar
-                            src={player.avatar}
-                            name={player.name}
-                            size="xl"
-                          />
+                          <PlayerAvatar src={player.avatar} name={player.name} size="xl" />
                           <div className="grow">
                             <p className="text-xl">{player.name}</p>
                           </div>

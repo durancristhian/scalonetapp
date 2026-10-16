@@ -1,5 +1,6 @@
 import { getMatchByIdQuery } from "@/server/queries/match";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
+import { getPlayerAvatarUrl } from "@/utils/player-avatar";
 import { waitForImageExport } from "@/utils/wait-for-image-export";
 import {
   getImageExportRequestHeaders,
@@ -115,7 +116,7 @@ export async function GET(request: NextRequest) {
     await waitForImageExport(
       page,
       match.name,
-      match.players.map((player) => player.avatar)
+      match.players.flatMap((player) => [player.avatar, getPlayerAvatarUrl(player.name)])
     );
 
     const screenshot = await page.screenshot({

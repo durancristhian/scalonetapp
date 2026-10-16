@@ -1,5 +1,6 @@
 "use client";
 
+import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { SoccerBall } from "@/components/soccer-ball";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -12,12 +13,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import React, { useRef, useState, type SyntheticEvent } from "react";
+import React, { useEffect, useRef, useState, type SyntheticEvent } from "react";
 import ReactCrop, {
   centerCrop,
   makeAspectCrop,
   type Crop,
   type PixelCrop,
+  convertToPixelCrop,
 } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 
@@ -38,15 +40,19 @@ export function ImageCropper({
   removePreview,
   setDialogOpen,
 }: ImageCropperProps) {
+  const { errorAlert } = useAlerts();
   const [uploadingImage, setUploadingImage] = useState(false);
   const [crop, setCrop] = useState<Crop>();
   const [croppedImageUrl, setCroppedImageUrl] = useState<string>("");
   const imgRef = useRef<HTMLImageElement | null>(null);
+  useEffect(() => { setCrop(undefined); setCroppedImageUrl(""); }, [preview]);
 
   function onImageLoad(event: SyntheticEvent<HTMLImageElement>) {
     const { width, height } = event.currentTarget;
 
-    setCrop(centerAspectCrop({ width, height, aspect }));
+    const initial = centerAspectCrop({ width, height, aspect });
+    setCrop(initial);
+    onCropComplete(convertToPixelCrop(initial, width, height));
   }
 
   function onCropComplete(crop: PixelCrop) {
@@ -63,13 +69,15 @@ export function ImageCropper({
     const scaleX = image.naturalWidth / image.width;
     const scaleY = image.naturalHeight / image.height;
 
-    canvas.width = crop.width * scaleX;
-    canvas.height = crop.height * scaleY;
+    const edge = Math.max(1, Math.min(512, Math.round(crop.width * scaleX), Math.round(crop.height * scaleY)));
+    canvas.width = edge;
+    canvas.height = edge;
 
     const ctx = canvas.getContext("2d");
 
     if (ctx) {
-      ctx.imageSmoothingEnabled = false;
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
 
       ctx.drawImage(
         image,
@@ -79,18 +87,19 @@ export function ImageCropper({
         crop.height * scaleY,
         0,
         0,
-        crop.width * scaleX,
-        crop.height * scaleY
+        canvas.width,
+        canvas.height
       );
     }
 
-    return canvas.toDataURL("image/png", 1.0);
+    return canvas.toDataURL("image/webp", 0.8);
   }
 
   async function onCrop() {
     setUploadingImage(true);
 
     try {
+      if (!croppedImageUrl) throw new Error("Crop not ready");
       /* Transform croppedImage (base64) to Blob */
       const array = [];
       const blobBin = atob(croppedImageUrl?.split(",")[1] || "");
@@ -99,12 +108,13 @@ export function ImageCropper({
         array.push(blobBin.charCodeAt(i));
       }
 
-      const file = new Blob([new Uint8Array(array)], { type: "image/png" });
+      const file = new Blob([new Uint8Array(array)], { type: "image/webp" });
 
+      if (file.size > 250_000) throw new Error("Crop too large");
       await onImageCropped(file);
 
       setDialogOpen(false);
-    } catch {}
+    } catch { errorAlert({ title: "No pudimos preparar esta foto. Prueba con otra." }); }
 
     setUploadingImage(false);
   }
@@ -133,7 +143,7 @@ export function ImageCropper({
           <Avatar className="rounded-none size-full">
             <AvatarImage
               className="aspect-auto rounded-none size-full"
-              src={preview || ""}
+              src={preview || undefined}
               onLoad={onImageLoad}
               ref={imgRef}
             />
@@ -146,13 +156,13 @@ export function ImageCropper({
                 removePreview();
               }}
               disabled={uploadingImage}
-              type="reset"
+              type="button"
               variant="outline"
             >
               Cancelar
             </Button>
           </DialogClose>
-          <Button onClick={onCrop} disabled={uploadingImage} type="submit">
+          <Button onClick={onCrop} disabled={uploadingImage || !croppedImageUrl} type="button">
             {uploadingImage ? (
               <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
             ) : null}

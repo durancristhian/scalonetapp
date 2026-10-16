@@ -2,6 +2,7 @@
 
 import { PLAYER_SCHEMA, type PlayerSchema } from "@/schemas/player";
 import { z } from "zod";
+import { removeUnusedPhoto } from "@/server/player-photos";
 import {
   addMultiplePlayersQuery,
   addPlayerQuery,
@@ -54,7 +55,7 @@ const namesInMatch: (
 export const addPlayerAction: (
   matchId: number,
   data: PlayerSchema
-) => Promise<void> = async (matchId, data) => {
+) => Promise<number> = async (matchId, data) => {
   try {
     const { userId } = await auth();
 
@@ -63,6 +64,8 @@ export const addPlayerAction: (
       throw new Error(ERROR_MESSAGES.unauthorized);
     }
 
+    const player = PLAYER_SCHEMA.strict().parse(data);
+
     const match = await getMatch(matchId, userId);
 
     /* We check the current user owns the match we're trying to add a player to */
@@ -70,7 +73,7 @@ export const addPlayerAction: (
       throw new Error(ERROR_MESSAGES.not_found);
     }
 
-    const coincidences = await namesInMatch(matchId, [data.name]);
+    const coincidences = await namesInMatch(matchId, [player.name]);
 
     /* We check that we don't have a player named the same in the match already */
     if (coincidences) {
@@ -85,9 +88,10 @@ export const addPlayerAction: (
       throw new Error(ERROR_MESSAGES.match_players_per_match_limit_reached);
     }
 
-    await addPlayerQuery(matchId, data);
+    const created = await addPlayerQuery(matchId, player);
 
     revalidatePath("/partidos/[match-id]", "page");
+    return created.id;
   } catch (error) {
     throw new Error(ERROR_MESSAGES.player_add_error);
   }
@@ -105,6 +109,8 @@ export const addMultiplePlayersAction: (
       throw new Error(ERROR_MESSAGES.unauthorized);
     }
 
+    const players = z.array(PLAYER_SCHEMA.strict()).parse(data);
+
     const match = await getMatch(matchId, userId);
 
     /* We check the current user owns the match we're trying to add a player to */
@@ -114,7 +120,7 @@ export const addMultiplePlayersAction: (
 
     const coincidences = await namesInMatch(
       matchId,
-      data.map((player) => player.name)
+      players.map((player) => player.name)
     );
 
     /* We check that we don't have a player named the same in the match already */
@@ -124,13 +130,13 @@ export const addMultiplePlayersAction: (
 
     /* We check we don't reach the players in match limit */
     if (
-      match.players.length + data.length >
+      match.players.length + players.length >
       Number(process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH)
     ) {
       throw new Error(ERROR_MESSAGES.match_players_per_match_limit_reached);
     }
 
-    await addMultiplePlayersQuery(matchId, data);
+    await addMultiplePlayersQuery(matchId, players);
 
     revalidatePath("/partidos/[match-id]", "page");
   } catch (error) {
@@ -172,7 +178,8 @@ export const deletePlayerAction: (id: number) => Promise<void> = async (id) => {
 
     const playerId = PLAYER_ID_SCHEMA.parse(id);
 
-    await deletePlayerQuery(playerId, userId);
+    const deleted = await deletePlayerQuery(playerId, userId);
+    await removeUnusedPhoto(deleted.avatar);
 
     revalidatePath("/partidos/[match-id]", "page");
   } catch (error) {

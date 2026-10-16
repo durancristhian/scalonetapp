@@ -1,28 +1,34 @@
+"use client";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { default as BoringAvatar } from "boring-avatars";
+import { getPlayerAvatarUrl } from "@/utils/player-avatar";
 import clsx from "clsx";
-import { type FC } from "react";
+import { useEffect, useState, type FC } from "react";
 
 type AvatarSize = "sm" | "md" | "lg" | "xl";
 
-const AVATAR_SIZE: Record<AvatarSize, number> = {
-  sm: 24,
-  md: 48,
-  lg: 64,
-  xl: 96,
-};
-
 type PlayerAvatarProps = {
+  src?: string;
   name: string;
   size?: AvatarSize;
-  src: string;
 };
 
 export const PlayerAvatar: FC<PlayerAvatarProps> = ({
+  src,
   name,
   size = "md",
-  src,
 }) => {
+  const [failed, setFailed] = useState<string | undefined>();
+  useEffect(() => {
+    if (!src) return;
+    const probe = new Image();
+    const timer = setTimeout(() => setFailed(src), 5000);
+    probe.onload = () => clearTimeout(timer);
+    probe.onerror = () => { clearTimeout(timer); setFailed(src); };
+    probe.src = src;
+    return () => { clearTimeout(timer); probe.onload = null; probe.onerror = null; };
+  }, [src]);
+  const image = src && failed !== src ? src : getPlayerAvatarUrl(name);
   return (
     <Avatar
       className={clsx(
@@ -33,9 +39,9 @@ export const PlayerAvatar: FC<PlayerAvatarProps> = ({
         size === "xl" && "h-24 w-24"
       )}
     >
-      <AvatarImage src={src} alt={`Avatar de ${name}`} />
-      <AvatarFallback>
-        <BoringAvatar variant="beam" name={name} size={AVATAR_SIZE[size]} />
+      <AvatarImage src={image} onLoadingStatusChange={status => { if (status === "error" && src) setFailed(src); }} alt={`Avatar de ${name}`} />
+      <AvatarFallback role="img" aria-label={`Avatar de ${name}`}>
+        {Array.from(name.trim())[0]?.toLocaleUpperCase("es") || "?"}
       </AvatarFallback>
     </Avatar>
   );

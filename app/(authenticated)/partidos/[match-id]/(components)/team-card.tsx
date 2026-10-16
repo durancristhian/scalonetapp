@@ -93,8 +93,7 @@ export const TeamCard: FC<TeamCardProps> = ({
                     <div className="flex gap-2 items-center">
                       <div className="grow">
                         <div className="flex gap-2 items-center">
-                          <PlayerAvatar
-                            src={player.avatar}
+                          <PlayerAvatar src={player.avatar}
                             name={player.name}
                           />
                           <p>{player.name}</p>

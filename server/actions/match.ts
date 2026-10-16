@@ -1,5 +1,7 @@
 "use server";
 
+import { removeUnusedPhoto } from "@/server/player-photos";
+
 import { type MatchSchema } from "@/schemas/match";
 import {
   addMatchQuery,
@@ -117,7 +119,9 @@ export const deleteMatchAction: (id: number) => Promise<void> = async (id) => {
       throw new Error(ERROR_MESSAGES.unauthorized);
     }
 
+    const photos = await prisma.player.findMany({ where: { matchId: id, match: { userId } }, select: { avatar: true } });
     await deleteMatchQuery(id, userId);
+    await Promise.all(photos.map(({ avatar }) => removeUnusedPhoto(avatar)));
 
     revalidatePath("/dashboard");
   } catch (error) {
@@ -154,11 +158,10 @@ export const duplicateMatchAction: (id: number) => Promise<void> = async (
       /* We add the existing players to the new match as well */
       await addMultiplePlayersQuery(
         newMatch.id,
-        existingMatch.players.map(({ name, level, position, avatar }) => ({
+        existingMatch.players.map(({ name, level, position }) => ({
           name,
           level,
           position,
-          avatar,
         }))
       );
 

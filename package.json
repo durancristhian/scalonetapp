@@ -13,9 +13,14 @@
     "vercel-build": "prisma generate && prisma migrate deploy && next build"
   },
   "dependencies": {
+    "@dicebear/core": "10.7.0",
+    "@dicebear/styles": "10.6.0",
+    "@vercel/blob": "2.8.2",
+    "heic-to": "1.6.6",
     "next": "15.1.11",
     "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "react-dom": "19.0.0",
+    "sharp": "0.35.5"
   },
   "devDependencies": {
     "@clerk/nextjs": "^6.9.6",
@@ -45,7 +50,6 @@
     "@types/react": "19.0.2",
     "@types/react-dom": "19.0.2",
     "@types/uuid": "^10.0.0",
-    "boring-avatars": "^1.11.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "copy-to-clipboard": "^3.3.3",
