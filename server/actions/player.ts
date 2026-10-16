@@ -1,6 +1,7 @@
 "use server";
 
-import type { PlayerSchema } from "@/schemas/player";
+import { PLAYER_SCHEMA, type PlayerSchema } from "@/schemas/player";
+import { z } from "zod";
 import {
   addMultiplePlayersQuery,
   addPlayerQuery,
@@ -11,6 +12,8 @@ import { ERROR_MESSAGES } from "@/utils/error-messages";
 import prisma from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+
+const PLAYER_ID_SCHEMA = z.number().int().positive().max(2147483647);
 
 const getMatch = async (matchId: number, userId: string) => {
   return await prisma.match.findFirst({
@@ -147,7 +150,10 @@ export const editPlayerAction: (
       throw new Error(ERROR_MESSAGES.unauthorized);
     }
 
-    await editPlayerQuery(id, data);
+    const playerId = PLAYER_ID_SCHEMA.parse(id);
+    const player = PLAYER_SCHEMA.strict().parse(data);
+
+    await editPlayerQuery(playerId, userId, player);
 
     revalidatePath("/partidos/[match-id]", "page");
   } catch (error) {
@@ -164,7 +170,9 @@ export const deletePlayerAction: (id: number) => Promise<void> = async (id) => {
       throw new Error(ERROR_MESSAGES.unauthorized);
     }
 
-    await deletePlayerQuery(id);
+    const playerId = PLAYER_ID_SCHEMA.parse(id);
+
+    await deletePlayerQuery(playerId, userId);
 
     revalidatePath("/partidos/[match-id]", "page");
   } catch (error) {
