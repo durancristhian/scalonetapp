@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader } from "@/components/loader";
+import { LicenseLink } from "@/components/license-link";
 import { ShowOff } from "@/components/show-off";
 import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut, SignInButton, useAuth } from "@clerk/nextjs";
@@ -60,15 +61,17 @@ const Page: FC = () => {
             </SignInButton>
           </motion.div>
         </div>
-        <div className="mt-16">
+        <footer className="mt-16">
           <motion.div
+            className="flex flex-wrap items-center justify-center gap-x-2"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ ease: "easeInOut", duration: 0.5, delay: 2 }}
           >
             <ShowOff />
+            <LicenseLink />
           </motion.div>
-        </div>
+        </footer>
       </SignedOut>
     </div>
   );

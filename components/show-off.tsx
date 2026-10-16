@@ -40,7 +40,6 @@ export const ShowOff: FC<ShowOffProps> = ({ popoverSeparation }) => {
                   Programador front-end de Buenos Aires, Argentina.
                 </p>
               </div>
-              <a href="/licenses/heic.txt" className="text-xs underline">Licencias de conversión HEIC</a>
               <div className="flex gap-2 items-center">
                 <MailIcon className="h-4 text-muted-foreground w-4" />
                 <span className="text-muted-foreground text-xs">

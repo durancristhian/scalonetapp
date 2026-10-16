@@ -1,15 +1,21 @@
 import { Feedback } from "@/components/feedback";
+import { LicenseLink } from "@/components/license-link";
 import { ShowOff } from "@/components/show-off";
 
 export const Footer = () => {
   return (
-    <div className="bg-white border-border border-t">
+    <footer className="bg-white border-border border-t">
       <div className="max-w-7xl mx-auto px-4 w-full">
-        <div className="flex gap-4 h-12 md:h-14 items-center justify-between">
-          <Feedback />
-          <ShowOff popoverSeparation />
+        <div className="flex flex-wrap gap-x-4 gap-y-1 min-h-12 md:min-h-14 items-center justify-between py-1">
+          <div className="flex items-center gap-2">
+            <Feedback />
+            <LicenseLink />
+          </div>
+          <div className="ms-auto">
+            <ShowOff popoverSeparation />
+          </div>
         </div>
       </div>
-    </div>
+    </footer>
   );
 };
