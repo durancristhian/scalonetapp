@@ -21,7 +21,7 @@ export function PlayerAvatarInput({ name, src, disabled, onChange }: Props) {
       <input ref={input} hidden type="file" accept="image/jpeg,image/png,image/webp" disabled={disabled} onChange={event => {
         const file = event.target.files?.[0]; event.target.value = "";
         if (!file) return;
-        if (file.size > 10_000_000 || !["image/jpeg", "image/png", "image/webp"].includes(file.type)) { errorAlert({ title: "Selecciona una foto JPG, PNG o WebP de hasta 10 MB." }); return; }
+        if (file.size > 50_000_000 || !["image/jpeg", "image/png", "image/webp"].includes(file.type)) { errorAlert({ title: "Selecciona una foto JPG, PNG o WebP de hasta 50 MB." }); return; }
         setPreview(URL.createObjectURL(file)); setOpen(true);
       }} />
       <Button type="button" variant="outline" disabled={disabled} onClick={() => input.current?.click()}>Elegir foto</Button>
