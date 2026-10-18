@@ -16,16 +16,13 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Image from "next/image";
+import { DEFAULT_IMAGE_EXPORT_STYLE, IMAGE_EXPORT_STYLES, isImageExportStyle, type ImageExportStyle } from "@/utils/image-export-style";
 import { type FC, useId, useState } from "react";
-
-const exportStyles = [
-  { id: "classic", name: "Clásico", preview: { src: "/images/export-styles/classic.png", width: 2560, height: 830 } },
-];
 
 type ExportTeamsProps = {
   disabled: boolean;
   processing: boolean;
-  onExport: () => void;
+  onExport: (style: ImageExportStyle) => void;
 };
 
 export const ExportTeams: FC<ExportTeamsProps> = ({
@@ -35,11 +32,17 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
   const styleId = useId();
-  const [selectedStyle, setSelectedStyle] = useState("classic");
-  const style = exportStyles.find((option) => option.id === selectedStyle) ?? exportStyles[0];
+  const [selectedStyle, setSelectedStyle] = useState<ImageExportStyle>(DEFAULT_IMAGE_EXPORT_STYLE);
+  const style = IMAGE_EXPORT_STYLES.find((option) => option.id === selectedStyle) ?? IMAGE_EXPORT_STYLES[0];
+  const selectStyle = (value: string) => {
+    if (isImageExportStyle(value)) setSelectedStyle(value);
+  };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(nextOpen) => {
+      if (nextOpen) setSelectedStyle(DEFAULT_IMAGE_EXPORT_STYLE);
+      setOpen(nextOpen);
+    }}>
       <DialogTrigger asChild>
         <Button disabled={disabled} variant="outline">
           {processing ? (
@@ -58,37 +61,37 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
         </DialogHeader>
         <div className="grid min-w-0 gap-4 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-6">
           <div className="md:hidden">
-            <Select value={selectedStyle} onValueChange={setSelectedStyle}>
+            <Select value={selectedStyle} onValueChange={selectStyle}>
               <SelectTrigger aria-label="Estilo de la imagen" className="min-h-11 text-base">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {exportStyles.map((option) => (
-                  <SelectItem key={option.id} value={option.id}>{option.name}</SelectItem>
+                {IMAGE_EXPORT_STYLES.map((option) => (
+                  <SelectItem key={option.id} value={option.id}>{option.label}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
           <RadioGroup
             value={selectedStyle}
-            onValueChange={setSelectedStyle}
+            onValueChange={selectStyle}
             aria-label="Estilo de la imagen"
             className="hidden content-start md:grid"
           >
-            {exportStyles.map((option) => (
+            {IMAGE_EXPORT_STYLES.map((option) => (
               <Label
                 key={option.id}
                 htmlFor={`${styleId}-${option.id}`}
                 className="flex min-h-11 cursor-pointer items-center gap-3 rounded-lg border p-4 text-base active:bg-muted has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-muted/50 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ring"
               >
                 <RadioGroupItem id={`${styleId}-${option.id}`} value={option.id} />
-                {option.name}
+                {option.label}
               </Label>
             ))}
           </RadioGroup>
           <Image
             {...style.preview}
-            alt={`Ejemplo del estilo ${style.name}: Fútbol con amigos, con Ana en el Equipo A y Nico en el Equipo B.`}
+            alt={`Ejemplo del estilo ${style.label}: Fútbol con amigos, con Ana en el Equipo A y Nico en el Equipo B.`}
             sizes="(max-width: 767px) calc(100vw - 82px), (max-width: 895px) calc(100vw - 266px), 662px"
             className="h-auto w-full min-w-0 rounded-lg border"
           />
@@ -106,7 +109,7 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
             onClick={() => {
               if (disabled) return;
               setOpen(false);
-              onExport();
+              onExport(selectedStyle);
             }}
           >
             Exportar
