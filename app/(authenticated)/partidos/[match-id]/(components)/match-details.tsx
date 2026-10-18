@@ -49,7 +49,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
   const busy = operation !== null;
 
   return (
-    <div className="grid md:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       <div className="md:col-span-1">
         <MatchPlayers players={match.players} />
       </div>
