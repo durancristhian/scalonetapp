@@ -34,7 +34,7 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
   return (
     <Card>
       {/* Instead of using CardHeader and overwriting too many classes I decided to write my own */}
-      <div className="flex gap-2 items-center justify-between p-6">
+      <div className="flex flex-wrap gap-2 items-center justify-between p-6">
         <div className="space-y-1">
           <CardTitle>Jugadores convocados</CardTitle>
           {players.length ? (

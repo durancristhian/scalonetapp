@@ -54,12 +54,12 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
     <fieldset
       disabled={busy}
       aria-busy={busy}
-      className="grid min-w-0 md:grid-cols-3 gap-8"
+      className="grid grid-cols-1 min-w-0 md:grid-cols-3 gap-8"
     >
-      <div className="md:col-span-1">
+      <div className="min-w-0 md:col-span-1">
         <MatchPlayers players={match.players} />
       </div>
-      <div className="md:col-span-2">
+      <div className="min-w-0 md:col-span-2">
         {match.players.length ? (
           <div className="space-y-8">
             {unselectedPlayers.length ? (
@@ -99,7 +99,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                   <Button onClick={createNewTeam}>Agregar</Button>
                 </div>
               </div>
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {teams.map((team) => (
                   <TeamCard
                     key={team.id}
