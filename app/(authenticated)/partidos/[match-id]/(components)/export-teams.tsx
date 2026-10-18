@@ -14,12 +14,13 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { DEFAULT_IMAGE_EXPORT_STYLE, IMAGE_EXPORT_STYLES, isImageExportStyle, type ImageExportStyle } from "@/utils/image-export-style";
 import { type FC, useId, useState } from "react";
 
 type ExportTeamsProps = {
   disabled: boolean;
   processing: boolean;
-  onExport: () => void;
+  onExport: (style: ImageExportStyle) => void;
 };
 
 export const ExportTeams: FC<ExportTeamsProps> = ({
@@ -28,10 +29,14 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
   onExport,
 }) => {
   const [open, setOpen] = useState(false);
-  const classicId = useId();
+  const styleId = useId();
+  const [style, setStyle] = useState<ImageExportStyle>(DEFAULT_IMAGE_EXPORT_STYLE);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(nextOpen) => {
+      if (nextOpen) setStyle(DEFAULT_IMAGE_EXPORT_STYLE);
+      setOpen(nextOpen);
+    }}>
       <DialogTrigger asChild>
         <Button disabled={disabled} variant="outline">
           {processing ? (
@@ -48,14 +53,21 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
           <DialogTitle>Exportar imagen</DialogTitle>
           <DialogDescription>Elegí el estilo de la imagen.</DialogDescription>
         </DialogHeader>
-        <RadioGroup defaultValue="classic" aria-label="Estilo de la imagen">
-          <Label
-            htmlFor={classicId}
-            className="flex cursor-pointer items-center gap-3 rounded-lg border border-primary bg-muted/50 p-4 text-base active:bg-muted has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ring"
-          >
-            <RadioGroupItem id={classicId} value="classic" />
-            Clásico
-          </Label>
+        <RadioGroup
+          value={style}
+          onValueChange={(value) => { if (isImageExportStyle(value)) setStyle(value); }}
+          aria-label="Estilo de la imagen"
+        >
+          {IMAGE_EXPORT_STYLES.map((option) => (
+            <Label
+              key={option.id}
+              htmlFor={`${styleId}-${option.id}`}
+              className="flex cursor-pointer items-center gap-3 rounded-lg border p-4 text-base active:bg-muted has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-muted/50 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ring"
+            >
+              <RadioGroupItem id={`${styleId}-${option.id}`} value={option.id} />
+              {option.label}
+            </Label>
+          ))}
         </RadioGroup>
         <DialogFooter className="flex-row gap-2 sm:space-x-0">
           <DialogClose asChild>
@@ -70,7 +82,7 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
             onClick={() => {
               if (disabled) return;
               setOpen(false);
-              onExport();
+              onExport(style);
             }}
           >
             Exportar

@@ -1,5 +1,7 @@
 "use client";
 
+import { DeportivoExport } from "./deportivo-export";
+import { DEFAULT_IMAGE_EXPORT_STYLE, type ImageExportStyle } from "@/utils/image-export-style";
 import { PlayerAvatar } from "@/components/player-avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { type ImageExportWindow } from "@/types/image-export";
@@ -10,6 +12,7 @@ import { type Player } from "@prisma/client";
 import { type FC, useEffect, useState } from "react";
 
 const Page: FC = () => {
+  const [style, setStyle] = useState<ImageExportStyle>(DEFAULT_IMAGE_EXPORT_STYLE);
   const [match, setMatch] = useState<MatchWithPlayers>();
 
   useEffect(() => {
@@ -17,12 +20,15 @@ const Page: FC = () => {
 
     if (data) {
       setMatch(data);
+      setStyle((window as ImageExportWindow).__SCALONETA_EXPORT_STYLE__ ?? DEFAULT_IMAGE_EXPORT_STYLE);
     }
   }, []);
 
   if (!match) {
     return null;
   }
+
+  if (style === "deportivo") return <DeportivoExport match={match} />;
 
   const formattedTeams: BaseTeam[] = JSON.parse(match.teams);
 

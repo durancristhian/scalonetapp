@@ -7,6 +7,7 @@ import { type Team } from "@/types/team";
 import { downloadBlob } from "@/utils/download-blob";
 import { fetchTeamExport } from "@/utils/fetch-team-export";
 import { getTeamsToSave } from "@/utils/get-teams-to-save";
+import { DEFAULT_IMAGE_EXPORT_STYLE, type ImageExportStyle } from "@/utils/image-export-style";
 import { useRef, useState } from "react";
 
 export const useTeamActions = (
@@ -18,7 +19,7 @@ export const useTeamActions = (
   const [operation, setOperation] = useState<"save" | "export" | null>(null);
   const operationLock = useRef(false);
 
-  const run = async (action: "save" | "export") => {
+  const run = async (action: "save" | "export", style: ImageExportStyle = DEFAULT_IMAGE_EXPORT_STYLE) => {
     // Block a second click before React commits the disabled state.
     if (operationLock.current || !valid) return;
     operationLock.current = true;
@@ -32,7 +33,7 @@ export const useTeamActions = (
       await editMatchAction(match.id, { teams: payload }, "/partidos/[match-id]");
 
       if (action === "export") {
-        const blob = await fetchTeamExport(match.id);
+        const blob = await fetchTeamExport(match.id, style);
         downloadBlob(blob, "equipos.png");
       }
 
@@ -45,5 +46,5 @@ export const useTeamActions = (
     }
   };
 
-  return { operation, save: () => run("save"), exportTeams: () => run("export") };
+  return { operation, save: () => run("save"), exportTeams: (style: ImageExportStyle) => run("export", style) };
 };
