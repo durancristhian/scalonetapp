@@ -57,7 +57,7 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
       >
         <DialogHeader className="pe-6 text-start">
           <DialogTitle>Exportar imagen</DialogTitle>
-          <DialogDescription className="sr-only">Elegí el estilo de la imagen.</DialogDescription>
+          <DialogDescription>Elegí el estilo de la imagen.</DialogDescription>
         </DialogHeader>
         <div className="grid min-w-0 gap-4 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-6">
           <div className="md:hidden">
