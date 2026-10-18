@@ -2,6 +2,7 @@
 
 import { PlayerAvatar } from "@/components/player-avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { type ImageExportWindow } from "@/types/image-export";
 import { type MatchWithPlayers } from "@/types/match";
 import { type BaseTeam } from "@/types/team";
 import { byName } from "@/utils/by-name";
@@ -12,10 +13,10 @@ const Page: FC = () => {
   const [match, setMatch] = useState<MatchWithPlayers>();
 
   useEffect(() => {
-    const data = window.localStorage.getItem("match");
+    const data = (window as ImageExportWindow).__SCALONETA_EXPORT_MATCH__;
 
     if (data) {
-      setMatch(JSON.parse(data));
+      setMatch(data);
     }
   }, []);
 

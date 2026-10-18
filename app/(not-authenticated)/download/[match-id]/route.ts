@@ -1,5 +1,6 @@
 import { getTeamExportSnapshot } from "@/utils/team-export-snapshot";
 import { getMatchByIdQuery } from "@/server/queries/match";
+import { type ImageExportWindow } from "@/types/image-export";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { getPlayerAvatarUrl } from "@/utils/player-avatar";
 import { waitForImageExport } from "@/utils/wait-for-image-export";
@@ -120,6 +121,12 @@ async function renderExport(request: NextRequest, expectedSnapshot?: string) {
       deviceScaleFactor: 2,
     });
     const exportUrl = `${exportTarget.origin}/download/${matchId}/ui`;
+    // Pass this export's data before the page scripts run, without storage or reload.
+    await page.evaluateOnNewDocument((data, url) => {
+      if (window === window.top && window.location.href === url) {
+        (window as ImageExportWindow).__SCALONETA_EXPORT_MATCH__ = data;
+      }
+    }, match, exportUrl);
     const navigateToExport = async () => {
       const response = await page.goto(exportUrl);
       if (
@@ -131,12 +138,6 @@ async function renderExport(request: NextRequest, expectedSnapshot?: string) {
         );
       }
     };
-    await navigateToExport();
-    /* We add the match data to localStorage */
-    await page.evaluate((data) => {
-      window.localStorage.setItem("match", JSON.stringify(data));
-    }, match);
-    /* We navigate AGAIN to the same page so we have access to the localStorage data :) YES, IT'S A HACK */
     await navigateToExport();
     await waitForImageExport(
       page,
