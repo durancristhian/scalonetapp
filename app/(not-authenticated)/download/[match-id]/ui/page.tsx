@@ -1,6 +1,6 @@
 "use client";
 
-import { DeportivoExport } from "./deportivo-export";
+import { SportyExport } from "./sporty-export";
 import { DEFAULT_IMAGE_EXPORT_STYLE, type ImageExportStyle } from "@/utils/image-export-style";
 import { PlayerAvatar } from "@/components/player-avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,7 +28,7 @@ const Page: FC = () => {
     return null;
   }
 
-  if (style === "deportivo") return <DeportivoExport match={match} />;
+  if (style === "sporty") return <SportyExport match={match} />;
 
   const formattedTeams: BaseTeam[] = JSON.parse(match.teams);
 

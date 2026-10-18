@@ -3,9 +3,9 @@ import { type MatchWithPlayers } from "@/types/match";
 import { type BaseTeam } from "@/types/team";
 import { byName } from "@/utils/by-name";
 import { type Player } from "@prisma/client";
-import styles from "./deportivo-export.module.css";
+import styles from "./sporty-export.module.css";
 
-export function DeportivoExport({ match }: { match: MatchWithPlayers }) {
+export function SportyExport({ match }: { match: MatchWithPlayers }) {
   const teams: BaseTeam[] = JSON.parse(match.teams);
 
   return (
