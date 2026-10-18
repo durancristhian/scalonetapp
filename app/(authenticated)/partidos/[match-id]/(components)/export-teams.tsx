@@ -89,12 +89,15 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
               </Label>
             ))}
           </RadioGroup>
-          <Image
-            {...style.preview}
-            alt={`Ejemplo del estilo ${style.label}: Fútbol con amigos, con Ana en el Equipo A y Nico en el Equipo B.`}
-            sizes="(max-width: 767px) calc(100vw - 82px), (max-width: 895px) calc(100vw - 266px), 662px"
-            className="h-auto w-full min-w-0 rounded-lg border"
-          />
+          <div className="relative aspect-[256/83] min-w-0 self-start rounded-lg border bg-white">
+            <Image
+              src={style.preview.src}
+              fill
+              alt={`Ejemplo del estilo ${style.label}: Fútbol con amigos, con Ana en el Equipo A y Nico en el Equipo B.`}
+              sizes="(max-width: 767px) calc(100vw - 82px), (max-width: 895px) calc(100vw - 266px), 662px"
+              className="rounded-lg object-contain"
+            />
+          </div>
         </div>
         <DialogFooter className="flex-row gap-2 sm:space-x-0">
           <DialogClose asChild>

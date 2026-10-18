@@ -14,10 +14,9 @@ export function SportyExport({ match }: { match: MatchWithPlayers }) {
         <h1>{match.name}</h1>
       </header>
       <div className={styles.teams}>
-        {teams.map((team, index) => (
+        {teams.map((team) => (
           <section key={team.id} className={styles.team}>
             <header className={styles.teamHeading}>
-              <span className={styles.number}>{String(index + 1).padStart(2, "0")}</span>
               <h2>{team.name}</h2>
             </header>
             <ul className={styles.players}>
