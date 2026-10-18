@@ -1,6 +1,5 @@
 "use client";
 
-import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { SoccerBall } from "@/components/soccer-ball";
 import {
   AlertDialog,
@@ -12,44 +11,48 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { editMatchAction } from "@/server/actions/match";
-import { type Team } from "@/types/team";
-import { ERROR_MESSAGES } from "@/utils/error-messages";
-import { getTeamsToSave } from "@/utils/get-teams-to-save";
 import { InfoIcon } from "lucide-react";
 import { type FC, useState } from "react";
 
 type SaveTeamsProps = {
-  disabled?: boolean;
-  matchId: number;
-  teams: Team[];
+  disabled: boolean;
+  invalid: boolean;
+  processing: boolean;
+  onSave: () => void;
 };
 
-export const SaveTeams: FC<SaveTeamsProps> = ({ disabled, matchId, teams }) => {
-  if (disabled) {
-    return <DisabledContent />;
-  }
-
-  return <EnabledContent matchId={matchId} teams={teams} />;
-};
+export const SaveTeams: FC<SaveTeamsProps> = ({
+  disabled,
+  invalid,
+  processing,
+  onSave,
+}) => (
+  <div className="inline-flex gap-2">
+    <Button onClick={onSave} disabled={disabled} variant="outline">
+      {processing ? (
+        <SoccerBall className="animate-spin h-4 [margin-inline-end:0.5rem] opacity-50 w-4" />
+      ) : null}
+      {processing ? "Guardando..." : "Guardar"}
+    </Button>
+    {invalid ? <DisabledContent /> : null}
+  </div>
+);
 
 const DisabledContent = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   return (
     <>
-      <div className="inline-flex space-x-2">
-        <Button disabled>Guardar</Button>
-        <Button
-          onClick={() => {
-            setDialogOpen(true);
-          }}
-          variant="ghost"
-          size="icon"
-        >
-          <InfoIcon className="h-4 text-destructive w-4" />
-        </Button>
-      </div>
+      <Button
+        onClick={() => {
+          setDialogOpen(true);
+        }}
+        variant="ghost"
+        size="icon"
+      >
+        <InfoIcon className="h-4 text-destructive w-4" />
+        <span className="sr-only">Requisitos para guardar o exportar</span>
+      </Button>
       <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -58,7 +61,7 @@ const DisabledContent = () => {
             </AlertDialogTitle>
             <AlertDialogDescription asChild>
               <ul className="list-disc list-inside text-left">
-                <li>Los nombres de los equipos no pueden estar vacíos.</li>
+                <li>Los nombres de los equipos deben tener entre 1 y 40 caracteres.</li>
                 <li>No puedes tener jugadores sin equipo.</li>
               </ul>
             </AlertDialogDescription>
@@ -69,49 +72,5 @@ const DisabledContent = () => {
         </AlertDialogContent>
       </AlertDialog>
     </>
-  );
-};
-
-type EnabledContentProps = Pick<SaveTeamsProps, "matchId" | "teams">;
-
-export const EnabledContent: FC<EnabledContentProps> = ({ matchId, teams }) => {
-  const { errorAlert, successAlert } = useAlerts();
-  const [processing, setIsProcessing] = useState(false);
-
-  const saveTeams = async () => {
-    try {
-      setIsProcessing(true);
-
-      await editMatchAction(
-        matchId,
-        {
-          teams: getTeamsToSave(teams),
-        },
-        "/partidos/[match-id]"
-      );
-
-      setIsProcessing(false);
-
-      successAlert({
-        title: "¡Equipos guardados con éxito!",
-      });
-    } catch (error) {
-      if (error instanceof Error) {
-        errorAlert({
-          title: error.message || ERROR_MESSAGES.server_error,
-        });
-      }
-
-      setIsProcessing(false);
-    }
-  };
-
-  return (
-    <Button onClick={saveTeams} disabled={processing}>
-      {processing ? (
-        <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
-      ) : null}
-      {processing ? "Guardando..." : "Guardar"}
-    </Button>
   );
 };

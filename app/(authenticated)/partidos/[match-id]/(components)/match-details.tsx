@@ -7,18 +7,20 @@ import { ExportTeams } from "@/app/(authenticated)/partidos/[match-id]/(componen
 import { MatchPlayers } from "@/app/(authenticated)/partidos/[match-id]/(components)/match-players";
 import { SaveTeams } from "@/app/(authenticated)/partidos/[match-id]/(components)/save-teams";
 import { TeamCard } from "@/app/(authenticated)/partidos/[match-id]/(components)/team-card";
+import { useTeamActions } from "@/app/(authenticated)/partidos/[match-id]/(hooks)/use-team-actions";
 import { useTeamsBuilderState } from "@/app/(authenticated)/partidos/[match-id]/(hooks)/use-team-builder-state";
 import { EmptyState } from "@/components/empty-state";
 import { Button } from "@/components/ui/button";
+import { TEAM_SCHEMA } from "@/schemas/team";
 import { type MatchWithPlayers } from "@/types/match";
-import { getTeamsToSave } from "@/utils/get-teams-to-save";
-import { type FC, useMemo } from "react";
+import { type FC, useMemo, useRef } from "react";
 
 type MatchDetailsProps = {
   match: MatchWithPlayers;
 };
 
 export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
+  const operationLock = useRef(false);
   const {
     assignSelectionToTeam,
     balanceTeams,
@@ -31,22 +33,29 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
     togglePlayer,
     unselectedPlayers,
     updateTeamName,
-  } = useTeamsBuilderState(match);
+  } = useTeamsBuilderState(match, operationLock);
 
   /* We consider teams are valid when there is no unselected players AND all teams have a valid name */
   const areTeamsValid = useMemo(() => {
-    const validTeamNames = teams.every((team) => Boolean(team.name));
+    const validTeamNames = teams.every((team) => TEAM_SCHEMA.safeParse({ name: team.name }).success);
 
     return !unselectedPlayers.length && validTeamNames;
   }, [teams, unselectedPlayers]);
 
-  /* We check if there is a difference between the local state and the db state */
-  const areTeamsSaved = useMemo(() => {
-    return match.teams === getTeamsToSave(teams);
-  }, [match, teams]);
+  const { operation, save, exportTeams } = useTeamActions(
+    match,
+    teams,
+    areTeamsValid,
+    operationLock
+  );
+  const busy = operation !== null;
 
   return (
-    <div className="grid md:grid-cols-3 gap-8">
+    <fieldset
+      disabled={busy}
+      aria-busy={busy}
+      className="grid min-w-0 md:grid-cols-3 gap-8"
+    >
       <div className="md:col-span-1">
         <MatchPlayers players={match.players} />
       </div>
@@ -64,9 +73,9 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
               />
             ) : null}
             <div className="space-y-4">
-              <div className="flex gap-2 items-center justify-between">
+              <div className="flex flex-wrap gap-2 items-center justify-between">
                 <h1 className="font-bold text-xl">Equipos</h1>
-                <div className="space-x-2">
+                <div className="flex flex-wrap gap-2">
                   <BuildTeams
                     onSave={(preset) => {
                       switch (preset) {
@@ -102,17 +111,20 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                   />
                 ))}
               </div>
-              <div className="flex gap-2 justify-between">
+              <div className="flex flex-wrap gap-2 justify-between">
                 <CopyTeams teams={teams} />
-                <div className="space-x-2">
+                <div className="flex flex-wrap gap-2">
                   <SaveTeams
-                    disabled={!areTeamsValid}
-                    matchId={match.id}
-                    teams={teams}
+                    disabled={busy || !areTeamsValid}
+                    invalid={!areTeamsValid}
+                    processing={operation === "save"}
+                    onSave={save}
                   />
-                  {areTeamsValid && areTeamsSaved ? (
-                    <ExportTeams matchId={match.id} />
-                  ) : null}
+                  <ExportTeams
+                    disabled={busy || !areTeamsValid}
+                    processing={operation === "export"}
+                    onExport={exportTeams}
+                  />
                 </div>
               </div>
             </div>
@@ -129,6 +141,6 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
           </div>
         )}
       </div>
-    </div>
+    </fieldset>
   );
 };

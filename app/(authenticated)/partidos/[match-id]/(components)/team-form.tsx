@@ -31,7 +31,6 @@ export const TeamForm: FC<TeamFormProps> = ({ onSubmit, values }) => {
     <Form {...form}>
       <form
         /* This form is special since we also submit data on each form change */
-        onChange={form.handleSubmit(onSubmit)}
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-4"
       >
@@ -41,7 +40,16 @@ export const TeamForm: FC<TeamFormProps> = ({ onSubmit, values }) => {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input placeholder="Nombre del equipo" {...field} />
+                <Input
+                  placeholder="Nombre del equipo"
+                  {...field}
+                  onChange={(event) => {
+                    field.onChange(event);
+                    const nextValue = { name: event.target.value };
+                    const parsed = TEAM_SCHEMA.safeParse(nextValue);
+                    onSubmit(parsed.success ? parsed.data : nextValue);
+                  }}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
