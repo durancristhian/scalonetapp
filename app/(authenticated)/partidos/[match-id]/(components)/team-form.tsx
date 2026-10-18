@@ -24,6 +24,8 @@ export const TeamForm: FC<TeamFormProps> = ({ onSubmit, values }) => {
       name: "",
     },
     resolver: zodResolver(TEAM_SCHEMA),
+    mode: "onChange",
+    resetOptions: { keepErrors: true },
     values,
   });
 
@@ -45,9 +47,7 @@ export const TeamForm: FC<TeamFormProps> = ({ onSubmit, values }) => {
                   {...field}
                   onChange={(event) => {
                     field.onChange(event);
-                    const nextValue = { name: event.target.value };
-                    const parsed = TEAM_SCHEMA.safeParse(nextValue);
-                    onSubmit(parsed.success ? parsed.data : nextValue);
+                    onSubmit({ name: event.target.value });
                   }}
                 />
               </FormControl>

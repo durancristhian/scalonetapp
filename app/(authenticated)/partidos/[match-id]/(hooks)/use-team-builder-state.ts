@@ -3,7 +3,7 @@ import { type BaseTeam, type Team } from "@/types/team";
 import { byName } from "@/utils/by-name";
 import { type Player } from "@prisma/client";
 import shuffle from "lodash.shuffle";
-import { useEffect, useState, type RefObject } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 const createEmptyTeam: (name: string) => Team = (name) => ({
@@ -48,11 +48,10 @@ type UseTeamsBuilderStateResult = {
 };
 
 type UseTeamsBuilderState = (
-  match: MatchWithPlayers,
-  operationLock: RefObject<boolean>
+  match: MatchWithPlayers
 ) => UseTeamsBuilderStateResult;
 
-export const useTeamsBuilderState: UseTeamsBuilderState = (match, operationLock) => {
+export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
   const [teams, setTeams] = useState<Team[]>(() => getInitialTeams(match));
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
@@ -319,32 +318,16 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match, operationLock)
   };
 
   return {
-    assignSelectionToTeam: (...args: Parameters<typeof assignSelectionToTeam>) => {
-      if (!operationLock.current) assignSelectionToTeam(...args);
-    },
-    balanceTeams: (...args: Parameters<typeof balanceTeams>) => {
-      if (!operationLock.current) balanceTeams(...args);
-    },
-    createNewTeam: (...args: Parameters<typeof createNewTeam>) => {
-      if (!operationLock.current) createNewTeam(...args);
-    },
-    randomizeTeams: (...args: Parameters<typeof randomizeTeams>) => {
-      if (!operationLock.current) randomizeTeams(...args);
-    },
-    removePlayerFromTeam: (...args: Parameters<typeof removePlayerFromTeam>) => {
-      if (!operationLock.current) removePlayerFromTeam(...args);
-    },
-    removeTeam: (...args: Parameters<typeof removeTeam>) => {
-      if (!operationLock.current) removeTeam(...args);
-    },
+    assignSelectionToTeam,
+    balanceTeams,
+    createNewTeam,
+    randomizeTeams,
+    removePlayerFromTeam,
+    removeTeam,
     selectedIds,
     teams,
-    togglePlayer: (...args: Parameters<typeof togglePlayer>) => {
-      if (!operationLock.current) togglePlayer(...args);
-    },
+    togglePlayer,
     unselectedPlayers: getUnselectedPlayers(),
-    updateTeamName: (...args: Parameters<typeof updateTeamName>) => {
-      if (!operationLock.current) updateTeamName(...args);
-    },
+    updateTeamName,
   };
 };

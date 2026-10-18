@@ -17,7 +17,7 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
 }) => (
   <Button onClick={onExport} disabled={disabled} variant="outline">
     {processing ? (
-      <SoccerBall className="animate-spin h-4 [margin-inline-end:0.5rem] opacity-50 w-4" />
+      <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
     ) : null}
     {processing ? "Exportando..." : "Exportar"}
   </Button>

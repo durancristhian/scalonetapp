@@ -13,14 +13,13 @@ import { EmptyState } from "@/components/empty-state";
 import { Button } from "@/components/ui/button";
 import { TEAM_SCHEMA } from "@/schemas/team";
 import { type MatchWithPlayers } from "@/types/match";
-import { type FC, useMemo, useRef } from "react";
+import { type FC, useMemo } from "react";
 
 type MatchDetailsProps = {
   match: MatchWithPlayers;
 };
 
 export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
-  const operationLock = useRef(false);
   const {
     assignSelectionToTeam,
     balanceTeams,
@@ -33,7 +32,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
     togglePlayer,
     unselectedPlayers,
     updateTeamName,
-  } = useTeamsBuilderState(match, operationLock);
+  } = useTeamsBuilderState(match);
 
   /* We consider teams are valid when there is no unselected players AND all teams have a valid name */
   const areTeamsValid = useMemo(() => {
@@ -45,21 +44,16 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
   const { operation, save, exportTeams } = useTeamActions(
     match,
     teams,
-    areTeamsValid,
-    operationLock
+    areTeamsValid
   );
   const busy = operation !== null;
 
   return (
-    <fieldset
-      disabled={busy}
-      aria-busy={busy}
-      className="grid grid-cols-1 min-w-0 md:grid-cols-3 gap-8"
-    >
-      <div className="min-w-0 md:col-span-1">
+    <div className="grid md:grid-cols-3 gap-8">
+      <div className="md:col-span-1">
         <MatchPlayers players={match.players} />
       </div>
-      <div className="min-w-0 md:col-span-2">
+      <div className="md:col-span-2">
         {match.players.length ? (
           <div className="space-y-8">
             {unselectedPlayers.length ? (
@@ -73,9 +67,9 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
               />
             ) : null}
             <div className="space-y-4">
-              <div className="flex flex-wrap gap-2 items-center justify-between">
+              <div className="flex gap-2 items-center justify-between">
                 <h1 className="font-bold text-xl">Equipos</h1>
-                <div className="flex flex-wrap gap-2">
+                <div className="space-x-2">
                   <BuildTeams
                     onSave={(preset) => {
                       switch (preset) {
@@ -99,7 +93,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                   <Button onClick={createNewTeam}>Agregar</Button>
                 </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid md:grid-cols-2 gap-4">
                 {teams.map((team) => (
                   <TeamCard
                     key={team.id}
@@ -141,6 +135,6 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
           </div>
         )}
       </div>
-    </fieldset>
+    </div>
   );
 };

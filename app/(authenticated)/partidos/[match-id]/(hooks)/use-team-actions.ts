@@ -7,39 +7,32 @@ import { type Team } from "@/types/team";
 import { downloadBlob } from "@/utils/download-blob";
 import { fetchTeamExport } from "@/utils/fetch-team-export";
 import { getTeamsToSave } from "@/utils/get-teams-to-save";
-import { getTeamExportSnapshot } from "@/utils/team-export-snapshot";
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { useRef, useState } from "react";
 
 export const useTeamActions = (
   match: MatchWithPlayers,
   teams: Team[],
   valid: boolean,
-  operationLock: RefObject<boolean>,
 ) => {
   const { errorAlert, successAlert } = useAlerts();
   const [operation, setOperation] = useState<"save" | "export" | null>(null);
-  const savedTeams = useRef(match.teams);
-
-  useEffect(() => {
-    savedTeams.current = match.teams;
-  }, [match.id, match.teams]);
+  const operationLock = useRef(false);
 
   const run = async (action: "save" | "export") => {
-    // The ref blocks a second click before React has committed the disabled state.
+    // Block a second click before React commits the disabled state.
     if (operationLock.current || !valid) return;
     operationLock.current = true;
     setOperation(action);
-    const payload = getTeamsToSave(teams);
-    const snapshot = getTeamExportSnapshot({ ...match, teams: payload });
 
     try {
-      if (action === "save" || savedTeams.current !== payload) {
-        await editMatchAction(match.id, { teams: payload }, "/partidos/[match-id]");
-        savedTeams.current = payload;
-      }
+      const payload = getTeamsToSave(teams.map((team) => ({
+        ...team,
+        name: team.name.trim(),
+      })));
+      await editMatchAction(match.id, { teams: payload }, "/partidos/[match-id]");
 
       if (action === "export") {
-        const blob = await fetchTeamExport(match.id, snapshot);
+        const blob = await fetchTeamExport(match.id);
         downloadBlob(blob, "equipos.png");
       }
 

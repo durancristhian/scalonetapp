@@ -28,9 +28,9 @@ export const SaveTeams: FC<SaveTeamsProps> = ({
   onSave,
 }) => (
   <div className="inline-flex gap-2">
-    <Button onClick={onSave} disabled={disabled} variant="outline">
+    <Button onClick={onSave} disabled={disabled}>
       {processing ? (
-        <SoccerBall className="animate-spin h-4 [margin-inline-end:0.5rem] opacity-50 w-4" />
+        <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
       ) : null}
       {processing ? "Guardando..." : "Guardar"}
     </Button>
@@ -51,7 +51,7 @@ const DisabledContent = () => {
         size="icon"
       >
         <InfoIcon className="h-4 text-destructive w-4" />
-        <span className="sr-only">Requisitos para guardar o exportar</span>
+        <span className="sr-only">Información</span>
       </Button>
       <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <AlertDialogContent>
@@ -61,7 +61,7 @@ const DisabledContent = () => {
             </AlertDialogTitle>
             <AlertDialogDescription asChild>
               <ul className="list-disc list-inside text-left">
-                <li>Los nombres de los equipos deben tener entre 1 y 40 caracteres.</li>
+                <li>Los nombres de los equipos no pueden estar vacíos.</li>
                 <li>No puedes tener jugadores sin equipo.</li>
               </ul>
             </AlertDialogDescription>

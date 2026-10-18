@@ -90,7 +90,7 @@ export const TeamCard: FC<TeamCardProps> = ({
               <div className="space-y-2">
                 {[...goa, ...def, ...mid, ...forwards].map((player, idx) => (
                   <AnimatedListItem key={player.id} listIndex={idx}>
-                    <div className="flex flex-wrap gap-2 items-center">
+                    <div className="flex gap-2 items-center">
                       <div className="grow">
                         <div className="flex gap-2 items-center">
                           <PlayerAvatar src={player.avatar}

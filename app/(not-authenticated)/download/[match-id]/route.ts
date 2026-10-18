@@ -1,4 +1,3 @@
-import { getTeamExportSnapshot } from "@/utils/team-export-snapshot";
 import { getMatchByIdQuery } from "@/server/queries/match";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { getPlayerAvatarUrl } from "@/utils/player-avatar";
@@ -53,26 +52,6 @@ const getBrowser: () => Promise<Browser> = async () => {
 };
 
 export async function GET(request: NextRequest) {
-  return renderExport(request);
-}
-
-export async function POST(request: NextRequest) {
-  try {
-    // The snapshot is only a precondition. Rendering always uses authenticated DB data.
-    if (Number(request.headers.get("content-length")) > 100_000) {
-      return NextResponse.json({ error: "Invalid export request" }, { status: 413 });
-    }
-    const body = await request.json();
-    if (typeof body?.snapshot !== "string" || body.snapshot.length > 100_000) {
-      return NextResponse.json({ error: "Invalid export request" }, { status: 400 });
-    }
-    return renderExport(request, body.snapshot);
-  } catch {
-    return NextResponse.json({ error: "Invalid export request" }, { status: 400 });
-  }
-}
-
-async function renderExport(request: NextRequest, expectedSnapshot?: string) {
   let browser;
 
   try {
@@ -91,10 +70,6 @@ async function renderExport(request: NextRequest, expectedSnapshot?: string) {
         { error: ERROR_MESSAGES.not_found },
         { status: 404 }
       );
-    }
-
-    if (expectedSnapshot !== undefined && expectedSnapshot !== getTeamExportSnapshot(match)) {
-      return NextResponse.json({ error: "Match changed before export" }, { status: 409 });
     }
 
     browser = await getBrowser();
