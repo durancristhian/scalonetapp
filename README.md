@@ -27,3 +27,7 @@ npm run dev
 
 Open [localhost:3000](http://localhost:3000). Keep this port for local image exports.
 Environment files are ignored by Git; use development credentials only.
+
+## UI contribution rules
+
+Follow the [responsive contract](docs/responsive.md) for new and ongoing UI work, including its viewport matrix and verification requirements.
