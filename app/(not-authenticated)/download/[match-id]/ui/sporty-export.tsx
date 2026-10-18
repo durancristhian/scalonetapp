@@ -11,7 +11,6 @@ export function SportyExport({ match }: { match: MatchWithPlayers }) {
   return (
     <main className={styles.sheet}>
       <header className={styles.heading}>
-        <p className={styles.eyebrow}>Los equipos</p>
         <h1>{match.name}</h1>
       </header>
       <div className={styles.teams}>
@@ -28,7 +27,7 @@ export function SportyExport({ match }: { match: MatchWithPlayers }) {
                 .sort(byName)
                 .map((player) => (
                   <li key={player.id} className={styles.player}>
-                    <PlayerAvatar src={player.avatar} name={player.name} size="xl" />
+                    <PlayerAvatar src={player.avatar} name={player.name} size="lg" />
                     <span>{player.name}</span>
                   </li>
                 ))}

@@ -1,68 +1,69 @@
 .sheet {
   min-block-size: 100dvh;
-  padding: 40px;
+  padding: 32px;
   background: oklch(1 0 none);
-  color: oklch(0.23 0 none);
-  overflow-wrap: break-word;
+  color: hsl(var(--foreground));
+  overflow-wrap: anywhere;
 }
 
 .heading {
   padding-block-end: 24px;
-  border-block-end: 2px solid currentColor;
+  border-block-end: 1px solid hsl(var(--border));
   margin-block-end: 32px;
 }
 
-.eyebrow {
-  margin-block-end: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
 .heading h1 {
-  font-size: 44px;
-  font-weight: 800;
-  font-style: italic;
-  letter-spacing: -0.035em;
-  line-height: 1.15;
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
 }
 
 .teams {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
   gap: 32px;
 }
 
 .team {
   min-inline-size: 0;
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
 }
 
 .teamHeading {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 16px;
-  border-block-end: 1px solid currentColor;
-  padding-block-end: 14px;
+  border-block-end: 1px solid hsl(var(--border));
+  padding: 24px;
 }
 
 .number {
+  display: grid;
+  place-items: center;
   flex: none;
-  font-size: 28px;
-  font-weight: 800;
-  font-style: italic;
+  min-inline-size: 44px;
+  block-size: 44px;
+  padding-inline: 8px;
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius) - 2px);
+  font-size: 20px;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 
 .teamHeading h2 {
   min-inline-size: 0;
-  font-size: 26px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
 }
 
 .players {
+  padding-inline: 24px;
   list-style: none;
 }
 
@@ -70,23 +71,28 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  padding-block: 14px;
-  border-block-end: 1px solid oklch(0.87 0 none);
+  padding-block: 16px;
+}
+
+.player + .player {
+  border-block-start: 1px solid hsl(var(--border));
 }
 
 .player > span:last-child {
   min-inline-size: 0;
   font-size: 22px;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.35;
 }
 
 .footer {
   margin-block-start: 32px;
+  color: hsl(var(--muted-foreground));
   font-size: 14px;
-  text-align: end;
+  text-align: center;
 }
 
 .footer span {
-  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
