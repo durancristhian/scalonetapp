@@ -1,6 +1,6 @@
 export const IMAGE_EXPORT_STYLES = [
   { id: "classic", label: "Clásico", preview: { src: "/images/export-styles/classic.png", width: 2560, height: 830 } },
-  { id: "sporty", label: "Deportivo", preview: { src: "/images/export-styles/sporty.png", width: 2560, height: 816 } },
+  { id: "sporty", label: "Deportivo", preview: { src: "/images/export-styles/sporty.png", width: 2560, height: 788 } },
 ] as const;
 
 export type ImageExportStyle = (typeof IMAGE_EXPORT_STYLES)[number]["id"];
