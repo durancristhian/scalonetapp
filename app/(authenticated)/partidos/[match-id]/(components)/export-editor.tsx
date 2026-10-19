@@ -5,7 +5,6 @@ import { SoccerBall } from "@/components/soccer-ball";
 import { exportFontClasses } from "@/components/team-export/fonts";
 import { Button } from "@/components/ui/button";
 import {
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogTitle,
@@ -19,6 +18,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { type Team } from "@/types/team";
+import { COLOR_PALETTES, getArtworkStyle, isColorPaletteId } from "@/utils/color-palettes";
+import { getImageExportBackgroundUrl } from "@/utils/image-export-background";
 import {
   DEFAULT_IMAGE_EXPORT_OPTIONS,
   IMAGE_EXPORT_BACKGROUNDS,
@@ -100,7 +101,7 @@ export default function ExportEditor({
             <legend className="sr-only">Opciones de la imagen</legend>
             <div className={styles.field}>
               <h3 id={`${id}-font`} className={styles.label}>
-                Fuente
+                Tipografía
               </h3>
               <Select
                 value={options.font}
@@ -123,10 +124,50 @@ export default function ExportEditor({
                       textValue={font.label}
                       className={styles.selectItem}
                     >
-                      <span
-                        className={`${styles.fontSample} ${exportFontClasses[font.id]}`}
-                      >
+                      <span className={exportFontClasses[font.id]}>
                         {font.label}
+                      </span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className={styles.field}>
+              <h3 id={`${id}-palette`} className={styles.label}>
+                Paleta de colores
+              </h3>
+              <Select
+                value={options.palette}
+                disabled={processing}
+                onValueChange={(palette) => {
+                  if (isColorPaletteId(palette)) updateOptions({ ...options, palette });
+                }}
+              >
+                <SelectTrigger
+                  aria-labelledby={`${id}-palette`}
+                  className={styles.selectTrigger}
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className={styles.selectContent}>
+                  {COLOR_PALETTES.map((palette) => (
+                    <SelectItem
+                      key={palette.id}
+                      value={palette.id}
+                      textValue={palette.label}
+                      className={styles.selectItem}
+                    >
+                      <span className={styles.paletteSample}>
+                        <span className={styles.paletteDots} aria-hidden="true">
+                          {palette.roles.slice(0, 5).map((color) => (
+                            <span
+                              key={color}
+                              className={styles.paletteDot}
+                              style={{ backgroundColor: color }}
+                            />
+                          ))}
+                        </span>
+                        <span className={styles.paletteLabel} title={palette.label}>{palette.label}</span>
                       </span>
                     </SelectItem>
                   ))}
@@ -161,12 +202,11 @@ export default function ExportEditor({
                       <span className={styles.backgroundSample}>
                         <span
                           aria-hidden="true"
-                          className={`${styles.swatch} ${background.src ? "" : "bg-pattern"}`}
-                          style={
-                            background.src
-                              ? { backgroundImage: `url("${background.src}")` }
-                              : undefined
-                          }
+                          className={styles.swatch}
+                          style={{
+                            ...getArtworkStyle(options.palette),
+                            backgroundImage: `url("${getImageExportBackgroundUrl(background.id, options.palette)}")`,
+                          }}
                         />
                         {background.label}
                       </span>
@@ -198,7 +238,7 @@ export default function ExportEditor({
                   >
                     <RadioGroupItem value={shape} aria-label={label} />
                     <span aria-hidden="true">
-                      <PlayerAvatar name="Alex" shape={shape} />
+                      <PlayerAvatar name="Alex" shape={shape} palette={options.palette} />
                     </span>
                     <span className={styles.avatarLabel}>{label}</span>
                   </label>
@@ -258,21 +298,15 @@ export default function ExportEditor({
                 : ""}
           </p>
         </div>
-        <Button
-          type="button"
-          variant="ghost"
-          className={styles.reset}
-          disabled={processing}
-          onClick={() => updateOptions({ ...DEFAULT_IMAGE_EXPORT_OPTIONS })}
-        >
-          Restablecer valores
-        </Button>
         <div className={styles.actions}>
-          <DialogClose asChild>
-            <Button type="button" variant="outline" disabled={processing}>
-              Cerrar
-            </Button>
-          </DialogClose>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={processing}
+            onClick={() => updateOptions({ ...DEFAULT_IMAGE_EXPORT_OPTIONS })}
+          >
+            Restablecer valores
+          </Button>
           <Button
             type="button"
             disabled={disabled || processing}

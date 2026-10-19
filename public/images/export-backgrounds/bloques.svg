@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="717" height="900" viewBox="0 0 717 900" preserveAspectRatio="xMidYMid slice" style="--background:#F6F6F6;--primary:#E30613;--secondary:#FFD500;--tertiary:#090909" overflow="hidden">
+<svg xmlns="http://www.w3.org/2000/svg" width="717" height="900" viewBox="0 0 717 900" preserveAspectRatio="xMidYMid slice" style="--background:#FFFFFF;--primary:#D62828;--secondary:#003049;--tertiary:#FCBF49" overflow="hidden">
   <!-- Palette: edit the root custom properties. External images do not inherit host CSS variables. -->
-  <rect width="717" height="900" fill="#F6F6F6" style="fill:var(--background)"/>
-  <path fill="#090909" style="fill:var(--tertiary)" d="M318,359 C474,377 605,458 655,598 V900 H318Z"/>
-  <path fill="#FFD500" style="fill:var(--secondary)" d="M118,-2 231,206 170,319 V900 H65 V319 L5,206Z"/>
-  <path fill="#E30613" style="fill:var(--primary)" d="M244,147 358,357 296,470 V900 H192 V470 L130,357Z"/>
+  <rect width="717" height="900" fill="#FFFFFF" style="fill:var(--background)"/>
+  <path fill="#FCBF49" style="fill:var(--tertiary)" d="M318,359 C474,377 605,458 655,598 V900 H318Z"/>
+  <path fill="#003049" style="fill:var(--secondary)" d="M118,-2 231,206 170,319 V900 H65 V319 L5,206Z"/>
+  <path fill="#D62828" style="fill:var(--primary)" d="M244,147 358,357 296,470 V900 H192 V470 L130,357Z"/>
 </svg>

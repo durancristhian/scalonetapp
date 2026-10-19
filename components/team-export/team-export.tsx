@@ -3,10 +3,9 @@
 import { PlayerAvatar } from "@/components/player-avatar";
 import { type Team } from "@/types/team";
 import { byName } from "@/utils/by-name";
-import {
-  IMAGE_EXPORT_BACKGROUNDS,
-  type ImageExportOptions,
-} from "@/utils/image-export-options";
+import { type ImageExportOptions } from "@/utils/image-export-options";
+import { getArtworkStyle } from "@/utils/color-palettes";
+import { getImageExportBackgroundUrl } from "@/utils/image-export-background";
 import { exportFontClasses } from "./fonts";
 import styles from "./team-export.module.css";
 
@@ -18,23 +17,18 @@ export type TeamExportProps = {
 
 // A fixed canvas shared by the live preview and the server-side PNG renderer.
 export function TeamExport({ name, teams, options }: TeamExportProps) {
-  const background = IMAGE_EXPORT_BACKGROUNDS.find(
-    ({ id }) => id === options.background,
-  )!;
+  const backgroundUrl = getImageExportBackgroundUrl(options.background, options.palette);
 
   return (
     <div
       data-team-export
-      className={`${styles.canvas} ${exportFontClasses[options.font]} ${background.src ? "" : "bg-pattern"}`}
-      style={
-        background.src
-          ? {
-              backgroundImage: `url("${background.src}")`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }
-          : undefined
-      }
+      className={`${styles.canvas} ${exportFontClasses[options.font]}`}
+      style={{
+        ...getArtworkStyle(options.palette),
+        backgroundImage: `url("${backgroundUrl}")`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
     >
       <h1 className={styles.title}>{name}</h1>
       <div className={styles.teams}>
@@ -54,6 +48,7 @@ export function TeamExport({ name, teams, options }: TeamExportProps) {
                     src={player.avatar}
                     size="xl"
                     shape={options.avatarShape}
+                    palette={options.palette}
                   />
                   <p className={styles.playerName} title={player.name}>
                     {player.name}

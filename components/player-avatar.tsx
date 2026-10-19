@@ -2,6 +2,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getPlayerAvatarUrl } from "@/utils/player-avatar";
+import { DEFAULT_COLOR_PALETTE, type ColorPaletteId } from "@/utils/color-palettes";
 import clsx from "clsx";
 import { useEffect, useState, type FC } from "react";
 
@@ -12,6 +13,7 @@ type PlayerAvatarProps = {
   name: string;
   size?: AvatarSize;
   shape?: "circle" | "square";
+  palette?: ColorPaletteId;
 };
 
 export const PlayerAvatar: FC<PlayerAvatarProps> = ({
@@ -19,6 +21,7 @@ export const PlayerAvatar: FC<PlayerAvatarProps> = ({
   name,
   size = "md",
   shape = "circle",
+  palette = DEFAULT_COLOR_PALETTE,
 }) => {
   const [failed, setFailed] = useState<string | undefined>();
   useEffect(() => {
@@ -30,7 +33,7 @@ export const PlayerAvatar: FC<PlayerAvatarProps> = ({
     probe.src = src;
     return () => { clearTimeout(timer); probe.onload = null; probe.onerror = null; };
   }, [src]);
-  const image = src && failed !== src ? src : getPlayerAvatarUrl(name);
+  const image = src && failed !== src ? src : getPlayerAvatarUrl(name, palette);
   return (
     <Avatar
       className={clsx(

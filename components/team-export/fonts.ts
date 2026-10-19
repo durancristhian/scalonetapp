@@ -1,16 +1,15 @@
 import { workSans } from "@/utils/fonts";
-import { Barlow_Condensed, Teko } from "next/font/google";
+import { Exo_2, Saira } from "next/font/google";
 
-const teko = Teko({ subsets: ["latin"], display: "swap", preload: false });
-const barlowCondensed = Barlow_Condensed({
+const exo2 = Exo_2({ subsets: ["latin"], display: "swap", preload: false });
+const saira = Saira({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
   display: "swap",
   preload: false,
 });
 
 export const exportFontClasses = {
   "work-sans": workSans.className,
-  teko: teko.className,
-  "barlow-condensed": barlowCondensed.className,
+  "exo-2": exo2.className,
+  saira: saira.className,
 };

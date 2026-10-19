@@ -11,17 +11,22 @@ import {
   storeImageExportOptions,
 } from "../utils/image-export-options.ts";
 import { fetchTeamExport } from "../utils/fetch-team-export.ts";
+import { COLOR_PALETTES, DEFAULT_COLOR_PALETTE } from "../utils/color-palettes.ts";
+import { getPlayerAvatarUrl } from "../utils/player-avatar.ts";
 
-test("defaults and all 60 combinations survive the download request boundary", () => {
+test("defaults and all 480 combinations survive the download request boundary", () => {
+  assert.equal(DEFAULT_IMAGE_EXPORT_OPTIONS.background, "germany");
+  assert.deepEqual(IMAGE_EXPORT_BACKGROUNDS.map(({ id }) => id), ["germany", "portugal", "croatia", "belgium"]);
   assert.deepEqual(
     parseImageExportOptions(new URLSearchParams()),
     DEFAULT_IMAGE_EXPORT_OPTIONS,
   );
   for (const { id: font } of IMAGE_EXPORT_FONTS)
     for (const { id: background } of IMAGE_EXPORT_BACKGROUNDS)
+      for (const { id: palette } of COLOR_PALETTES)
       for (const avatarShape of ["circle", "square"])
         for (const columns of [1, 2]) {
-          const options = { font, background, avatarShape, columns };
+          const options = { font, background, palette, avatarShape, columns };
           assert.deepEqual(
             parseImageExportOptions(imageExportSearchParams(options)),
             options,
@@ -32,9 +37,15 @@ test("defaults and all 60 combinations survive the download request boundary", (
 test("invalid and repeated options are rejected instead of changing the requested image", () => {
   for (const query of [
     "font=unknown",
-    "font=teko&font=work-sans",
+    "palette=unknown",
+    "palette=clasico-rojo&palette=fuego-de-estadio",
+    "palette=",
+    "font=teko",
+    "font=barlow-condensed",
+    "font=exo-2&font=work-sans",
     "background=https://evil.test/a.svg",
-    "background=dots&background=dots",
+    "background=dots",
+    "background=germany&background=germany",
     "avatarShape=rounded",
     "columns=3",
     "columns=1&columns=2",
@@ -66,13 +77,34 @@ test("preferences tolerate missing, corrupted and unavailable storage; reset per
       assert.deepEqual(readImageExportOptions(), DEFAULT_IMAGE_EXPORT_OPTIONS);
     }
     const custom = {
-      font: "teko",
+      palette: "fuego-de-estadio",
+      font: "exo-2",
       background: "belgium",
       avatarShape: "square",
       columns: 2,
     };
     storeImageExportOptions(custom);
     assert.deepEqual(readImageExportOptions(), custom);
+    for (const [retired, replacement] of [["teko", "exo-2"], ["barlow-condensed", "saira"]]) {
+      storage.set(IMAGE_EXPORT_STORAGE_KEY, JSON.stringify({ ...custom, font: retired }));
+      assert.deepEqual(readImageExportOptions(), { ...custom, font: replacement });
+    }
+    // Old preferences retain the user's settings and acquire the new default.
+    const { palette, ...legacy } = custom;
+    storage.set(IMAGE_EXPORT_STORAGE_KEY, JSON.stringify(legacy));
+    assert.deepEqual(readImageExportOptions(), { ...legacy, palette: DEFAULT_COLOR_PALETTE });
+    // Retired dots migrate without losing other choices, including older palettes.
+    for (const preferences of [custom, legacy]) {
+      storage.set(IMAGE_EXPORT_STORAGE_KEY, JSON.stringify({ ...preferences, background: "dots" }));
+      assert.deepEqual(readImageExportOptions(), {
+        ...preferences,
+        palette: preferences.palette ?? DEFAULT_COLOR_PALETTE,
+        background: "germany",
+      });
+    }
+    // Export preferences never change avatars in the rest of the application.
+    storeImageExportOptions(custom);
+    assert.equal(new URL(getPlayerAvatarUrl("Alex"), "https://example.test").searchParams.get("palette"), DEFAULT_COLOR_PALETTE);
     storeImageExportOptions(DEFAULT_IMAGE_EXPORT_OPTIONS);
     assert.deepEqual(readImageExportOptions(), DEFAULT_IMAGE_EXPORT_OPTIONS);
     Object.defineProperty(globalThis, "localStorage", {
@@ -111,6 +143,14 @@ test("download validates status, content type and nonempty PNG data", async () =
       });
     };
     assert.equal((await fetchTeamExport(1)).size, 4);
+    const selected = { ...DEFAULT_IMAGE_EXPORT_OPTIONS, palette: "pista-violeta", background: "croatia" };
+    globalThis.fetch = async (url) => {
+      assert.deepEqual(parseImageExportOptions(new URL(url, "https://example.test").searchParams), selected);
+      return new Response(new Uint8Array([137, 80, 78, 71]), {
+        headers: { "content-type": "image/png" },
+      });
+    };
+    assert.equal((await fetchTeamExport(1, selected)).size, 4);
   } finally {
     globalThis.fetch = original;
   }

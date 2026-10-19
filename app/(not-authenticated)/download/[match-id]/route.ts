@@ -9,10 +9,10 @@ import {
   ImageExportConfigurationError,
 } from "@/utils/image-export-target";
 import {
-  IMAGE_EXPORT_BACKGROUNDS,
   IMAGE_EXPORT_WIDTH,
   parseImageExportOptions,
 } from "@/utils/image-export-options";
+import { getImageExportBackgroundUrl } from "@/utils/image-export-background";
 import { type NextRequest, NextResponse } from "next/server";
 import { type Browser } from "puppeteer-core";
 
@@ -141,10 +141,9 @@ export async function GET(request: NextRequest) {
       match.name,
       match.players.flatMap((player) => [
         player.avatar,
-        getPlayerAvatarUrl(player.name),
+        getPlayerAvatarUrl(player.name, options.palette),
       ]),
-      IMAGE_EXPORT_BACKGROUNDS.find(({ id }) => id === options.background)
-        ?.src ?? undefined,
+      getImageExportBackgroundUrl(options.background, options.palette),
     );
 
     const canvas = await page.waitForSelector("[data-team-export]");
