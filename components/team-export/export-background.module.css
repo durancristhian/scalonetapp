@@ -1,0 +1,17 @@
+.layer {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+  pointer-events: none;
+  container-type: size;
+}
+
+.artwork {
+  position: absolute;
+  /* Cover a variable-height team sheet while preserving the SVG's 720:520 ratio. */
+  inline-size: max(100cqw, calc(100cqh * 720 / 520));
+  aspect-ratio: 720 / 520;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  transform-origin: center;
+}

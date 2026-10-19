@@ -6,7 +6,7 @@ export const IMAGE_EXPORT_FONTS = [
   { id: "saira", label: "Saira" },
 ] as const;
 
-// Stable IDs for the approved poster collection. Order also defines the picker.
+// Stable IDs for the approved poster collection. The editor sorts labels separately.
 export const IMAGE_EXPORT_BACKGROUNDS = [
   { id: "encuentro", label: "Encuentro", src: "/images/export-backgrounds/encuentro.svg" },
   { id: "aliento", label: "Aliento", src: "/images/export-backgrounds/aliento.svg" },
