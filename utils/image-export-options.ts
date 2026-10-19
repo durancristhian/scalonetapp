@@ -1,35 +1,37 @@
+import { DEFAULT_COLOR_PALETTE, isColorPaletteId, type ColorPaletteId } from "./color-palettes.ts";
+
 export const IMAGE_EXPORT_FONTS = [
   { id: "work-sans", label: "Work Sans" },
-  { id: "teko", label: "Teko" },
-  { id: "barlow-condensed", label: "Barlow Condensed" },
+  { id: "exo-2", label: "Exo 2" },
+  { id: "saira", label: "Saira" },
 ] as const;
 
 // Keep IDs stable for saved browser preferences when labels or assets change.
 export const IMAGE_EXPORT_BACKGROUNDS = [
-  { id: "dots", label: "Punteado", src: null },
   {
     id: "germany",
     label: "Impulso",
-    src: "/images/export-backgrounds/impulso.svg",
+    src: "/images/export-backgrounds/momentum.svg",
   },
   {
     id: "portugal",
     label: "Mosaico",
-    src: "/images/export-backgrounds/mosaico.svg",
+    src: "/images/export-backgrounds/mosaic.svg",
   },
   {
     id: "croatia",
     label: "Trama",
-    src: "/images/export-backgrounds/trama.svg",
+    src: "/images/export-backgrounds/weave.svg",
   },
   {
     id: "belgium",
     label: "Bloques",
-    src: "/images/export-backgrounds/bloques.svg",
+    src: "/images/export-backgrounds/blocks.svg",
   },
 ] as const;
 
 export type ImageExportOptions = {
+  palette: ColorPaletteId;
   font: (typeof IMAGE_EXPORT_FONTS)[number]["id"];
   background: (typeof IMAGE_EXPORT_BACKGROUNDS)[number]["id"];
   avatarShape: "circle" | "square";
@@ -37,8 +39,9 @@ export type ImageExportOptions = {
 };
 
 export const DEFAULT_IMAGE_EXPORT_OPTIONS: Readonly<ImageExportOptions> = {
+  palette: DEFAULT_COLOR_PALETTE,
   font: "work-sans",
-  background: "dots",
+  background: "germany",
   avatarShape: "circle",
   columns: 1,
 };
@@ -52,6 +55,7 @@ export function isImageExportOptions(
   if (!value || typeof value !== "object") return false;
   const options = value as Record<string, unknown>;
   return (
+    isColorPaletteId(options.palette) &&
     IMAGE_EXPORT_FONTS.some(({ id }) => id === options.font) &&
     IMAGE_EXPORT_BACKGROUNDS.some(({ id }) => id === options.background) &&
     (options.avatarShape === "circle" || options.avatarShape === "square") &&
@@ -78,6 +82,7 @@ export function imageExportSearchParams(
   options: ImageExportOptions,
 ): URLSearchParams {
   return new URLSearchParams({
+    palette: options.palette,
     font: options.font,
     background: options.background,
     avatarShape: options.avatarShape,
@@ -92,7 +97,7 @@ export function readImageExportOptions(): ImageExportOptions {
     );
     if (isImageExportOptions(stored)) return stored;
   } catch {
-    // Storage may be unavailable or contain preferences from an older version.
+    // Storage may be unavailable or contain invalid preferences.
   }
   return { ...DEFAULT_IMAGE_EXPORT_OPTIONS };
 }
