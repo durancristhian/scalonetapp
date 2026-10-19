@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice" style="--background:#FDFDFD;--primary:#FE0000;--secondary:#181897" overflow="hidden">
+  <!-- Palette: edit the root custom properties. External images do not inherit host CSS variables. -->
+  <rect width="600" height="600" fill="#FDFDFD" style="fill:var(--background)"/>
+  <path fill="#FE0000" style="fill:var(--primary)" d="M150,0 300,0 300,150 150,150Z M450,0 600,0 600,150 450,150Z M0,150 150,150 150,300 0,300Z M300,150 450,150 450,300 300,300Z M150,300 300,300 300,450 150,450Z M300,450 450,450 450,600 300,600Z"/>
+  <path fill="#181897" style="fill:var(--secondary)" d="M0,150 150,0 150,150Z M150,300 300,150 300,300Z M300,450 450,300 450,450Z M0,600 150,450 150,600Z"/>
+</svg>
