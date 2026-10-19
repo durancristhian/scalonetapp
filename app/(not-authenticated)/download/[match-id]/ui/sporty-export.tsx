@@ -3,13 +3,19 @@ import { type MatchWithPlayers } from "@/types/match";
 import { type BaseTeam } from "@/types/team";
 import { byName } from "@/utils/by-name";
 import { type Player } from "@prisma/client";
+import { Teko } from "next/font/google";
 import styles from "./sporty-export.module.css";
+
+const teko = Teko({
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export function SportyExport({ match }: { match: MatchWithPlayers }) {
   const teams: BaseTeam[] = JSON.parse(match.teams);
 
   return (
-    <main className={styles.sheet}>
+    <main className={`${styles.sheet} ${teko.className}`}>
       <header className={styles.heading}>
         <h1>{match.name}</h1>
       </header>

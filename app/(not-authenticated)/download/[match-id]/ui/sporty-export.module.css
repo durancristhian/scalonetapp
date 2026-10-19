@@ -57,8 +57,9 @@
 .player > span:last-child {
   min-inline-size: 0;
   font-size: 22px;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.35;
+  text-transform: uppercase;
 }
 
 .footer {
