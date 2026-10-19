@@ -34,7 +34,7 @@ const DialogContent = React.forwardRef<
     closeLabel?: string;
     closeDisabled?: boolean;
   }
->(({ className, children, closeLabel = "Close", closeDisabled = false, ...props }, ref) => (
+>(({ className, children, closeLabel = "Cerrar", closeDisabled = false, ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay />
     <DialogPrimitive.Content

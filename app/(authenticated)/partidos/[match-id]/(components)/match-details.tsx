@@ -5,7 +5,10 @@ import { BuildTeams } from "@/app/(authenticated)/partidos/[match-id]/(component
 import { CopyTeams } from "@/app/(authenticated)/partidos/[match-id]/(components)/copy-teams";
 import { ExportTeams } from "@/app/(authenticated)/partidos/[match-id]/(components)/export-teams";
 import { MatchPlayers } from "@/app/(authenticated)/partidos/[match-id]/(components)/match-players";
-import { SaveTeams } from "@/app/(authenticated)/partidos/[match-id]/(components)/save-teams";
+import {
+  SaveTeams,
+  TeamsValidationAlert,
+} from "@/app/(authenticated)/partidos/[match-id]/(components)/save-teams";
 import { TeamCard } from "@/app/(authenticated)/partidos/[match-id]/(components)/team-card";
 import { useTeamActions } from "@/app/(authenticated)/partidos/[match-id]/(hooks)/use-team-actions";
 import { useTeamsBuilderState } from "@/app/(authenticated)/partidos/[match-id]/(hooks)/use-team-builder-state";
@@ -105,12 +108,12 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                   />
                 ))}
               </div>
+              {!areTeamsValid ? <TeamsValidationAlert /> : null}
               <div className="flex flex-wrap gap-2 justify-between">
                 <CopyTeams teams={teams} />
                 <div className="flex flex-wrap gap-2">
                   <SaveTeams
                     disabled={busy || !areTeamsValid}
-                    invalid={!areTeamsValid}
                     processing={operation === "save"}
                     onSave={save}
                   />

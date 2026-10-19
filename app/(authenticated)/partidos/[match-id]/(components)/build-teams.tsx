@@ -45,12 +45,13 @@ export const BuildTeams: FC<BuildTeamsProps> = ({
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Armar equipos</DialogTitle>
-          <div className="hidden">
-            <DialogDescription />
-          </div>
+          <DialogDescription className="sr-only">
+            Elegí cómo distribuir a los jugadores entre los equipos.
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <RadioGroup
+            aria-label="Método para armar equipos"
             value={preset}
             onValueChange={(nextPreset: Preset) => {
               setPreset(nextPreset);

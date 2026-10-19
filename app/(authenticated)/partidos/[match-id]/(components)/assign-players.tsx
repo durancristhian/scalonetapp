@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Toggle } from "@/components/ui/toggle";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import type { Team } from "@/types/team";
 import type { Player } from "@prisma/client";
 import { type FC, useState } from "react";
@@ -50,24 +50,35 @@ export const AssignPlayers: FC<AssignPlayersProps> = ({
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          <div className="flex flex-wrap gap-2">
-            {players.map((player) => (
-              <Toggle
-                key={player.id}
-                onPressedChange={() => {
+          <ToggleGroup
+            type="multiple"
+            aria-label="Jugadores para asignar"
+            value={selectedIds.map(String)}
+            onValueChange={(values) => {
+              const nextIds = new Set(values.map(Number));
+              for (const player of players) {
+                if (nextIds.has(player.id) !== selectedIds.includes(player.id)) {
                   togglePlayer(player.id);
-                }}
-                pressed={selectedIds.includes(player.id)}
+                }
+              }
+            }}
+          >
+            {players.map((player) => (
+              <ToggleGroupItem
+                key={player.id}
+                value={String(player.id)}
+                aria-label={player.name}
                 variant="outline"
               >
-                <PlayerAvatar src={player.avatar}
+                <PlayerAvatar
+                  src={player.avatar}
                   name={player.name}
                   size="sm"
                 />
-                <p className="ml-2">{player.name}</p>
-              </Toggle>
+                <span className="ms-2">{player.name}</span>
+              </ToggleGroupItem>
             ))}
-          </div>
+          </ToggleGroup>
           {canAssignSelection ? (
             <Select
               value={selectedTeamId}
@@ -77,7 +88,10 @@ export const AssignPlayers: FC<AssignPlayersProps> = ({
                 setSelectedTeamId("");
               }}
             >
-              <SelectTrigger className="bg-white">
+              <SelectTrigger
+                className="bg-white"
+                aria-label="Asignar jugadores al equipo"
+              >
                 <SelectValue placeholder="Elige un equipo..." />
               </SelectTrigger>
               <SelectContent>

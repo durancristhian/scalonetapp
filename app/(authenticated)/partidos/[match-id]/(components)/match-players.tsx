@@ -1,4 +1,7 @@
-import { AddPlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/add-player";
+import {
+  AddPlayer,
+  PlayerLimitAlert,
+} from "@/app/(authenticated)/partidos/[match-id]/(components)/add-player";
 import { DeletePlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/delete-player";
 import { EditPlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/edit-player";
 import { AnimatedListItem } from "@/components/animated-list-item";
@@ -9,6 +12,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import {
@@ -29,12 +33,13 @@ type MatchPlayersProps = {
 };
 
 export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
+  const atPlayerLimit =
+    players.length >= Number(process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH);
   const canListPlayers = Array.isArray(players) && players.length;
 
   return (
     <Card>
-      {/* Instead of using CardHeader and overwriting too many classes I decided to write my own */}
-      <div className="flex gap-2 items-center justify-between p-6">
+      <CardHeader className="flex-row gap-2 items-center justify-between space-y-0">
         <div className="space-y-1">
           <CardTitle>Jugadores convocados</CardTitle>
           {players.length ? (
@@ -44,13 +49,13 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
             </CardDescription>
           ) : null}
         </div>
-        <AddPlayer
-          disabled={
-            players.length >=
-            Number(process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH)
-          }
-        />
-      </div>
+        <AddPlayer disabled={atPlayerLimit} />
+      </CardHeader>
+      {atPlayerLimit ? (
+        <CardContent>
+          <PlayerLimitAlert />
+        </CardContent>
+      ) : null}
       {canListPlayers ? (
         <CardContent className="pr-3">
           {/* 435 is a magical number. It's the height of 9.5 items (+ the margin
@@ -107,7 +112,11 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player }) => {
         <div className="flex-shrink-0">
           <DropdownMenu open={menuOpened} onOpenChange={setMenuOpened}>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label={`Acciones de ${player.name}`}
+              >
                 <EllipsisVerticalIcon className="h-4 text-muted-foreground w-4" />
               </Button>
             </DropdownMenuTrigger>

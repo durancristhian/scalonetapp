@@ -27,7 +27,7 @@ const Page: FC<PageProps> = async (props) => {
           <div className="flex gap-4 items-center">
             <div className="flex-shrink-0">
               <Button variant="outline" size="icon" asChild>
-                <Link href="/partidos">
+                <Link href="/partidos" aria-label="Volver a partidos">
                   <ChevronLeftIcon className="h-4 text-muted-foreground w-4" />
                 </Link>
               </Button>

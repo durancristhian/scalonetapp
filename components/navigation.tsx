@@ -44,7 +44,7 @@ export const SmallScreenNavigation = () => {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="link">
+        <Button variant="link" aria-label="Abrir navegación">
           <MenuIcon className="h4 opacity-50 w-4" />
         </Button>
       </SheetTrigger>

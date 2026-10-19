@@ -1,4 +1,7 @@
-import { AddMatch } from "@/app/(authenticated)/(components)/add-match";
+import {
+  AddMatch,
+  MatchLimitAlert,
+} from "@/app/(authenticated)/(components)/add-match";
 import { MatchesList } from "@/app/(authenticated)/(components)/matches-list";
 import { getMatchesQuery } from "@/server/queries/match";
 import { type FC } from "react";
@@ -6,19 +9,18 @@ import { type FC } from "react";
 const Page: FC = async () => {
   const [matches, totalCount] = await getMatchesQuery();
 
+  const atMatchLimit =
+    totalCount >= Number(process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER);
+
   return (
     <div className="py-4 md:py-8">
       <div className="max-w-7xl mx-auto px-4 w-full">
         <div className="space-y-4">
           <div className="flex gap-4 items-center justify-between">
             <h2 className="font-bold text-xl">Tus partidos ({totalCount})</h2>
-            <AddMatch
-              disabled={
-                totalCount >=
-                Number(process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER)
-              }
-            />
+            <AddMatch disabled={atMatchLimit} />
           </div>
+          {atMatchLimit ? <MatchLimitAlert /> : null}
           <MatchesList matches={matches} />
         </div>
       </div>
