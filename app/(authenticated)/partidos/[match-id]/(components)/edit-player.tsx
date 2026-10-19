@@ -50,9 +50,10 @@ export const EditPlayer: FC<EditPlayerProps> = ({ player, onClose }) => {
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Editar ficha del jugador</DialogTitle>
-          <div className="hidden">
-            <DialogDescription />
-          </div>
+          <DialogDescription className="sr-only">
+            Actualizá el nombre, la foto, la posición y el nivel de juego del
+            jugador.
+          </DialogDescription>
         </DialogHeader>
         <PlayerForm onSubmit={onSubmit} values={player} avatar={player.avatar} />
       </DialogContent>

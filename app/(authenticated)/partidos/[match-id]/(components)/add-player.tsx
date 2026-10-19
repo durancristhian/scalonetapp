@@ -5,15 +5,7 @@ import { savePlayerPhoto } from "@/utils/save-player-photo";
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { MultiplePlayersForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/multiple-players-form";
 import { PlayerForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/player-form";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -40,50 +32,24 @@ type AddPlayerProps = {
 
 export const AddPlayer: FC<AddPlayerProps> = ({ disabled }) => {
   if (disabled) {
-    return <DisabledContent />;
+    return <Button disabled>Agregar</Button>;
   }
 
   return <EnabledContent />;
 };
 
-const DisabledContent = () => {
-  const [dialogOpen, setDialogOpen] = useState(false);
-
-  return (
-    <>
-      <div className="inline-flex space-x-2">
-        <Button disabled>Agregar</Button>
-        <Button
-          onClick={() => {
-            setDialogOpen(true);
-          }}
-          variant="ghost"
-          size="icon"
-        >
-          <InfoIcon className="h-4 text-destructive w-4" />
-        </Button>
-      </div>
-      <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              ¡No hay más espacio en el banco!
-            </AlertDialogTitle>
-            <AlertDialogDescription className="max-md:text-balance">
-              ¡Has alcanzado el máximo de{" "}
-              {process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH} jugadores! Si
-              necesitas añadir más estrellas, considera liberar espacio
-              eliminando un jugador existente.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction>Entendido</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
-  );
-};
+export const PlayerLimitAlert = () => (
+  <Alert>
+    <InfoIcon aria-hidden="true" />
+    <AlertTitle>¡No hay más espacio en el banco!</AlertTitle>
+    <AlertDescription>
+      ¡Has alcanzado el máximo de{" "}
+      {process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH} jugadores! Si
+      necesitas añadir más estrellas, considera liberar espacio
+      eliminando un jugador existente.
+    </AlertDescription>
+  </Alert>
+);
 
 const EnabledContent: FC = () => {
   const [dialogOpen, setDialogOpen] = useState(false);

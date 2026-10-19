@@ -1,5 +1,10 @@
 import { type FC, type PropsWithChildren } from "react";
+import { Empty, EmptyDescription } from "@/components/ui/empty";
 
 export const EmptyState: FC<PropsWithChildren> = ({ children }) => {
-  return <p className="text-muted-foreground">{children}</p>;
+  return (
+    <Empty>
+      <EmptyDescription>{children}</EmptyDescription>
+    </Empty>
+  );
 };

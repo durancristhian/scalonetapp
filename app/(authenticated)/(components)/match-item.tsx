@@ -57,7 +57,7 @@ export const MatchItem: FC<MatchItemProps> = ({
         <div className="flex-shrink-0">
           <DropdownMenu open={menuOpened} onOpenChange={setMenuOpened}>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" aria-label={`Acciones de ${match.name}`}>
                 <EllipsisVerticalIcon className="h-4 text-muted-foreground w-4" />
               </Button>
             </DropdownMenuTrigger>

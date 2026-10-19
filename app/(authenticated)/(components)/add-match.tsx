@@ -2,15 +2,7 @@
 
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { MatchForm } from "@/app/(authenticated)/(components)/match-form";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -32,49 +24,23 @@ type AddMatchProps = {
 
 export const AddMatch: FC<AddMatchProps> = ({ disabled }) => {
   if (disabled) {
-    return <DisabledContent />;
+    return <Button disabled>Agregar</Button>;
   }
 
   return <EnabledContent />;
 };
 
-const DisabledContent = () => {
-  const [dialogOpen, setDialogOpen] = useState(false);
-
-  return (
-    <>
-      <div className="inline-flex space-x-2">
-        <Button disabled>Agregar</Button>
-        <Button
-          onClick={() => {
-            setDialogOpen(true);
-          }}
-          variant="ghost"
-          size="icon"
-        >
-          <InfoIcon className="h-4 text-destructive w-4" />
-        </Button>
-      </div>
-      <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              ¡Alto ahí, entrenador! ¡Llegaste al límite!
-            </AlertDialogTitle>
-            <AlertDialogDescription className="max-md:text-balance">
-              Ya tienes {process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER} partidos
-              creados. Te sugerimos eliminar alguno para darle lugar a nuevas
-              glorias futbolísticas!
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction>Entendido</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
-  );
-};
+export const MatchLimitAlert = () => (
+  <Alert>
+    <InfoIcon aria-hidden="true" />
+    <AlertTitle>¡Alto ahí, entrenador! ¡Llegaste al límite!</AlertTitle>
+    <AlertDescription>
+      Ya tienes {process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER} partidos
+      creados. Te sugerimos eliminar alguno para darle lugar a nuevas
+      glorias futbolísticas!
+    </AlertDescription>
+  </Alert>
+);
 
 const EnabledContent: FC = () => {
   const [dialogOpen, setDialogOpen] = useState(false);

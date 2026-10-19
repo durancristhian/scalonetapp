@@ -5,6 +5,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -40,7 +41,8 @@ export const TeamForm: FC<TeamFormProps> = ({ onSubmit, values }) => {
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="space-y-0">
+              <FormLabel className="sr-only">Nombre del equipo</FormLabel>
               <FormControl>
                 <Input
                   placeholder="Nombre del equipo"

@@ -15,10 +15,11 @@ import {
   FormRootError,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { PLAYER_SCHEMA, type PlayerSchema } from "@/schemas/player";
 import { PLAYER_POSITIONS } from "@/utils/player-positions";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, type FC } from "react";
+import { useId, useState, type FC } from "react";
 import { useForm } from "react-hook-form";
 
 /* Players are categorized from 1 to 10 */
@@ -47,6 +48,7 @@ type PlayerFormProps = {
 };
 
 export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values, avatar }) => {
+  const id = useId();
   const [photoPreparing, setPhotoPreparing] = useState(false);
   const [photo, setPhoto] = useState<Blob | null | undefined>();
   const form = useForm<PlayerSchema>({
@@ -91,24 +93,28 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values, avatar }) =>
           name="position"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Posición</FormLabel>
+              <FormLabel id={`${id}-position-label`}>Posición</FormLabel>
               <FormControl>
-                <div className="auto-cols-max gap-1 grid grid-cols-4">
+                <RadioGroup
+                  name={field.name}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  onBlur={field.onBlur}
+                  orientation="horizontal"
+                  aria-labelledby={`${id}-position-label`}
+                  className="grid-cols-4 gap-1"
+                >
                   {Object.entries(PLAYER_POSITIONS).map(([key, value]) => (
-                    <Button
+                    <RadioGroupItem
                       key={key}
-                      type="button"
-                      variant={field.value === key ? "outline" : "ghost"}
-                      /* We remove the horizontal padding in favor of getting space from the parent auto-cols-max */
-                      className="px-0"
-                      onClick={() => {
-                        field.onChange(key);
-                      }}
+                      value={key}
+                      variant="button"
+                      ref={field.value === key ? field.ref : undefined}
                     >
                       {value}
-                    </Button>
+                    </RadioGroupItem>
                   ))}
-                </div>
+                </RadioGroup>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -119,24 +125,28 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values, avatar }) =>
           name="level"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nivel de juego</FormLabel>
+              <FormLabel id={`${id}-level-label`}>Nivel de juego</FormLabel>
               <FormControl>
-                <div className="auto-cols-max gap-1 grid grid-cols-10">
+                <RadioGroup
+                  name={field.name}
+                  value={String(field.value)}
+                  onValueChange={(value) => field.onChange(Number(value))}
+                  onBlur={field.onBlur}
+                  orientation="horizontal"
+                  aria-labelledby={`${id}-level-label`}
+                  className="grid-cols-10 gap-1.5"
+                >
                   {PLAYER_LEVELS.map((level) => (
-                    <Button
+                    <RadioGroupItem
                       key={level}
-                      type="button"
-                      variant={field.value === level ? "outline" : "ghost"}
-                      /* We remove the horizontal padding in favor of getting space from the parent auto-cols-max */
-                      className="px-0"
-                      onClick={() => {
-                        field.onChange(level);
-                      }}
+                      value={String(level)}
+                      variant="button"
+                      ref={field.value === level ? field.ref : undefined}
                     >
                       {level}
-                    </Button>
+                    </RadioGroupItem>
                   ))}
-                </div>
+                </RadioGroup>
               </FormControl>
               <FormDescription>{LEVEL_MESSAGES[field.value]}</FormDescription>
               <FormMessage />

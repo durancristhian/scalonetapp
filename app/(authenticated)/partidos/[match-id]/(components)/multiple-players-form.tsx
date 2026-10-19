@@ -9,6 +9,7 @@ import {
   FormDescription,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
   FormRootError,
 } from "@/components/ui/form";
@@ -67,6 +68,7 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
           name="players"
           render={({ field }) => (
             <FormItem>
+              <FormLabel>Jugadores</FormLabel>
               <FormControl>
                 <Textarea rows={10} placeholder={PLACEHOLDER} {...field} />
               </FormControl>

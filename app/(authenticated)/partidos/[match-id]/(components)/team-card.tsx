@@ -76,7 +76,12 @@ export const TeamCard: FC<TeamCardProps> = ({
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button onClick={onTeamRemove} variant="ghost" size="icon">
+                    <Button
+                      onClick={onTeamRemove}
+                      variant="ghost"
+                      size="icon"
+                      aria-label={`Eliminar equipo ${team.name}`}
+                    >
                       <TrashIcon className="h-4 text-destructive w-4" />
                     </Button>
                   </TooltipTrigger>
@@ -122,6 +127,7 @@ export const TeamCard: FC<TeamCardProps> = ({
                               <Button
                                 variant="ghost"
                                 size="icon"
+                                aria-label={`Sacar a ${player.name} del equipo`}
                                 onClick={() => {
                                   removePlayerFromTeam(player.id, team.id);
                                 }}
