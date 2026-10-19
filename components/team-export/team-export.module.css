@@ -1,4 +1,6 @@
 .canvas {
+  position: relative;
+  isolation: isolate;
   box-sizing: border-box;
   inline-size: 1280px;
   padding: 32px;
@@ -13,6 +15,13 @@
 }
 
 .title {
+  position: relative;
+  paint-order: stroke fill;
+  -webkit-text-stroke: 1.5px oklch(1 0 none / 90%);
+  text-shadow:
+    0 0 2px oklch(1 0 none),
+    0 0 6px oklch(1 0 none),
+    0 0 12px oklch(1 0 none / 75%);
   font-size: 36px;
   line-height: 40px;
   font-weight: 700;
@@ -20,12 +29,14 @@
 }
 
 .teams {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 32px;
 }
 
 .team {
+  position: relative;
   min-inline-size: 0;
   border: 1px solid oklch(0.923 0.003 48.717);
   border-radius: 6px;
@@ -66,6 +77,13 @@
 }
 
 .footer {
+  position: relative;
+  paint-order: stroke fill;
+  -webkit-text-stroke: 1px oklch(1 0 none / 90%);
+  text-shadow:
+    0 0 2px oklch(1 0 none),
+    0 0 4px oklch(1 0 none),
+    0 0 8px oklch(1 0 none / 75%);
   text-align: center;
   font-size: 14px;
   line-height: 20px;

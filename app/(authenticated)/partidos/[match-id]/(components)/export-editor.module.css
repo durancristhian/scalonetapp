@@ -146,13 +146,12 @@
   margin-inline-start: -8px;
 }
 .swatch {
+  position: relative;
   display: block;
   block-size: 32px;
   border: 1px solid hsl(var(--border));
   border-radius: 3px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
+  overflow: clip;
 }
 .avatarChoice {
   display: grid;

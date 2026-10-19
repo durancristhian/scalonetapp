@@ -3,6 +3,7 @@
 import { PlayerAvatar } from "@/components/player-avatar";
 import { SoccerBall } from "@/components/soccer-ball";
 import { exportFontClasses } from "@/components/team-export/fonts";
+import { ExportBackground } from "@/components/team-export/export-background";
 import { Button } from "@/components/ui/button";
 import {
   DialogContent,
@@ -19,7 +20,6 @@ import {
 } from "@/components/ui/select";
 import { type Team } from "@/types/team";
 import { COLOR_PALETTES, getArtworkStyle, isColorPaletteId } from "@/utils/color-palettes";
-import { getImageExportBackgroundUrl } from "@/utils/image-export-background";
 import {
   DEFAULT_IMAGE_EXPORT_OPTIONS,
   IMAGE_EXPORT_BACKGROUNDS,
@@ -39,6 +39,13 @@ type ExportEditorProps = {
   processing: boolean;
   onExport: (options: ImageExportOptions) => Promise<string | null>;
 };
+
+const labelCollator = new Intl.Collator("es", { sensitivity: "base" });
+const byLabel = (a: { label: string }, b: { label: string }) =>
+  labelCollator.compare(a.label, b.label);
+const fonts = [...IMAGE_EXPORT_FONTS].sort(byLabel);
+const palettes = [...COLOR_PALETTES].sort(byLabel);
+const backgrounds = [...IMAGE_EXPORT_BACKGROUNDS].sort(byLabel);
 
 export default function ExportEditor({
   name,
@@ -100,9 +107,13 @@ export default function ExportEditor({
           <fieldset disabled={processing} className={styles.fields}>
             <legend className="sr-only">Opciones de la imagen</legend>
             <div className={styles.field}>
-              <h3 id={`${id}-font`} className={styles.label}>
+              <label
+                id={`${id}-font`}
+                htmlFor={`${id}-font-control`}
+                className={styles.label}
+              >
                 Tipografía
-              </h3>
+              </label>
               <Select
                 value={options.font}
                 disabled={processing}
@@ -111,13 +122,14 @@ export default function ExportEditor({
                 }
               >
                 <SelectTrigger
+                  id={`${id}-font-control`}
                   aria-labelledby={`${id}-font`}
                   className={styles.selectTrigger}
                 >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className={styles.selectContent}>
-                  {IMAGE_EXPORT_FONTS.map((font) => (
+                  {fonts.map((font) => (
                     <SelectItem
                       key={font.id}
                       value={font.id}
@@ -133,9 +145,13 @@ export default function ExportEditor({
               </Select>
             </div>
             <div className={styles.field}>
-              <h3 id={`${id}-palette`} className={styles.label}>
+              <label
+                id={`${id}-palette`}
+                htmlFor={`${id}-palette-control`}
+                className={styles.label}
+              >
                 Paleta de colores
-              </h3>
+              </label>
               <Select
                 value={options.palette}
                 disabled={processing}
@@ -144,13 +160,14 @@ export default function ExportEditor({
                 }}
               >
                 <SelectTrigger
+                  id={`${id}-palette-control`}
                   aria-labelledby={`${id}-palette`}
                   className={styles.selectTrigger}
                 >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className={styles.selectContent}>
-                  {COLOR_PALETTES.map((palette) => (
+                  {palettes.map((palette) => (
                     <SelectItem
                       key={palette.id}
                       value={palette.id}
@@ -175,9 +192,13 @@ export default function ExportEditor({
               </Select>
             </div>
             <div className={styles.field}>
-              <h3 id={`${id}-background`} className={styles.label}>
+              <label
+                id={`${id}-background`}
+                htmlFor={`${id}-background-control`}
+                className={styles.label}
+              >
                 Fondo
-              </h3>
+              </label>
               <Select
                 value={options.background}
                 disabled={processing}
@@ -186,13 +207,14 @@ export default function ExportEditor({
                 }
               >
                 <SelectTrigger
+                  id={`${id}-background-control`}
                   aria-labelledby={`${id}-background`}
                   className={styles.selectTrigger}
                 >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className={styles.selectContent}>
-                  {IMAGE_EXPORT_BACKGROUNDS.map((background) => (
+                  {backgrounds.map((background) => (
                     <SelectItem
                       key={background.id}
                       value={background.id}
@@ -203,11 +225,10 @@ export default function ExportEditor({
                         <span
                           aria-hidden="true"
                           className={styles.swatch}
-                          style={{
-                            ...getArtworkStyle(options.palette),
-                            backgroundImage: `url("${getImageExportBackgroundUrl(background.id, options.palette)}")`,
-                          }}
-                        />
+                          style={getArtworkStyle(options.palette)}
+                        >
+                          <ExportBackground background={background.id} palette={options.palette} />
+                        </span>
                         <span className={styles.sampleLabel}>{background.label}</span>
                       </span>
                     </SelectItem>
@@ -216,9 +237,13 @@ export default function ExportEditor({
               </Select>
             </div>
             <div className={styles.field}>
-              <h3 id={`${id}-avatar`} className={styles.label}>
+              <label
+                id={`${id}-avatar`}
+                htmlFor={`${id}-avatar-${options.avatarShape}`}
+                className={styles.label}
+              >
                 Avatares
-              </h3>
+              </label>
               <RadioGroup
                 className={styles.pair}
                 aria-labelledby={`${id}-avatar`}
@@ -236,7 +261,7 @@ export default function ExportEditor({
                     key={shape}
                     className={`${styles.choice} ${styles.avatarChoice}`}
                   >
-                    <RadioGroupItem value={shape} aria-label={label} />
+                    <RadioGroupItem id={`${id}-avatar-${shape}`} value={shape} aria-label={label} />
                     <span aria-hidden="true">
                       <PlayerAvatar name="Alex" shape={shape} palette={options.palette} />
                     </span>
@@ -246,9 +271,13 @@ export default function ExportEditor({
               </RadioGroup>
             </div>
             <div className={styles.field}>
-              <h3 id={`${id}-columns`} className={styles.label}>
+              <label
+                id={`${id}-columns`}
+                htmlFor={`${id}-columns-${options.columns}`}
+                className={styles.label}
+              >
                 Columnas por equipo
-              </h3>
+              </label>
               <RadioGroup
                 className={styles.pair}
                 aria-labelledby={`${id}-columns`}
@@ -259,11 +288,11 @@ export default function ExportEditor({
                 }
               >
                 <label className={styles.choice}>
-                  <RadioGroupItem value="1" />
+                  <RadioGroupItem id={`${id}-columns-1`} value="1" aria-label="Una" />
                   Una
                 </label>
                 <label className={styles.choice}>
-                  <RadioGroupItem value="2" />
+                  <RadioGroupItem id={`${id}-columns-2`} value="2" aria-label="Dos" />
                   Dos
                 </label>
               </RadioGroup>

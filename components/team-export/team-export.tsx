@@ -5,7 +5,7 @@ import { type Team } from "@/types/team";
 import { byName } from "@/utils/by-name";
 import { type ImageExportOptions } from "@/utils/image-export-options";
 import { getArtworkStyle } from "@/utils/color-palettes";
-import { getImageExportBackgroundUrl } from "@/utils/image-export-background";
+import { ExportBackground } from "./export-background";
 import { exportFontClasses } from "./fonts";
 import styles from "./team-export.module.css";
 
@@ -17,24 +17,15 @@ export type TeamExportProps = {
 
 // A fixed canvas shared by the live preview and the server-side PNG renderer.
 export function TeamExport({ name, teams, options }: TeamExportProps) {
-  const backgroundUrl = getImageExportBackgroundUrl(options.background, options.palette);
-
   return (
     <div
       data-team-export
       className={`${styles.canvas} ${exportFontClasses[options.font]}`}
       style={getArtworkStyle(options.palette)}
     >
+      <ExportBackground background={options.background} palette={options.palette} />
       <h1 className={styles.title}>{name}</h1>
-      <div
-        className={styles.teams}
-        style={{
-          backgroundImage: `url("${backgroundUrl}")`,
-          backgroundSize: "contain",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center",
-        }}
-      >
+      <div className={styles.teams}>
         {teams.map((team) => (
           <section className={styles.team} key={team.id}>
             <h2 className={styles.teamName}>{team.name.trim()}</h2>
