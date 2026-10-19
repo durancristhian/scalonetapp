@@ -196,10 +196,10 @@ export default function ExportEditor({
                     key={shape}
                     className={`${styles.choice} ${styles.avatarChoice}`}
                   >
+                    <RadioGroupItem value={shape} aria-label={label} />
                     <span aria-hidden="true">
                       <PlayerAvatar name="Alex" shape={shape} />
                     </span>
-                    <RadioGroupItem value={shape} aria-label={label} />
                     <span className={styles.avatarLabel}>{label}</span>
                   </label>
                 ))}
@@ -232,7 +232,6 @@ export default function ExportEditor({
         </div>
         {showPreview ? (
           <section className={styles.preview} aria-label="Vista previa">
-            <h3 className={styles.previewLabel}>Vista previa</h3>
             <div
               className={styles.previewScroll}
               tabIndex={0}

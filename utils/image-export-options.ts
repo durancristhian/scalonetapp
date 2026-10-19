@@ -4,27 +4,28 @@ export const IMAGE_EXPORT_FONTS = [
   { id: "barlow-condensed", label: "Barlow Condensed" },
 ] as const;
 
+// Keep IDs stable for saved browser preferences when labels or assets change.
 export const IMAGE_EXPORT_BACKGROUNDS = [
   { id: "dots", label: "Punteado", src: null },
   {
     id: "germany",
-    label: "Alemania",
-    src: "/images/export-backgrounds/germany.svg",
+    label: "Impulso",
+    src: "/images/export-backgrounds/impulso.svg",
   },
   {
     id: "portugal",
-    label: "Portugal",
-    src: "/images/export-backgrounds/portugal.svg",
+    label: "Mosaico",
+    src: "/images/export-backgrounds/mosaico.svg",
   },
   {
     id: "croatia",
-    label: "Croacia",
-    src: "/images/export-backgrounds/croatia.svg",
+    label: "Trama",
+    src: "/images/export-backgrounds/trama.svg",
   },
   {
     id: "belgium",
-    label: "Bélgica",
-    src: "/images/export-backgrounds/belgium.svg",
+    label: "Bloques",
+    src: "/images/export-backgrounds/bloques.svg",
   },
 ] as const;
 

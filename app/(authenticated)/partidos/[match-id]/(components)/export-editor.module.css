@@ -32,7 +32,6 @@
   min-inline-size: 0;
   overflow: auto;
   overscroll-behavior: contain;
-  scrollbar-gutter: stable;
   padding: 20px;
 }
 
@@ -140,18 +139,18 @@
   min-block-size: 0;
   min-inline-size: 0;
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   background: hsl(var(--muted));
   border-inline-start: 1px solid hsl(var(--border));
 }
-.previewLabel {
-  padding: 20px;
-  padding-block-end: 0;
-  font-size: 13px;
-  color: hsl(var(--muted-foreground));
+.previewScroll {
+  display: flex;
+  flex-direction: column;
 }
 .previewViewport {
   inline-size: 100%;
+  flex-shrink: 0;
+  margin-block: auto;
 }
 .previewSized {
   position: relative;
