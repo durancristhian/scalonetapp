@@ -8,6 +8,7 @@ import {
   getImageExportTarget,
   ImageExportConfigurationError,
 } from "@/utils/image-export-target";
+import { parseImageExportStyle } from "@/utils/image-export-style";
 import { type NextRequest, NextResponse } from "next/server";
 import { type Browser } from "puppeteer-core";
 
@@ -53,6 +54,10 @@ const getBrowser: () => Promise<Browser> = async () => {
 };
 
 export async function GET(request: NextRequest) {
+  const style = parseImageExportStyle(request.nextUrl.searchParams);
+  if (!style) {
+    return NextResponse.json({ error: "Estilo de imagen no válido." }, { status: 400 });
+  }
   let browser;
 
   try {
@@ -97,11 +102,12 @@ export async function GET(request: NextRequest) {
     });
     const exportUrl = `${exportTarget.origin}/download/${matchId}/ui`;
     // Pass this export's data before the page scripts run, without storage or reload.
-    await page.evaluateOnNewDocument((data, url) => {
+    await page.evaluateOnNewDocument((data, url, imageStyle) => {
       if (window === window.top && window.location.href === url) {
         (window as ImageExportWindow).__SCALONETA_EXPORT_MATCH__ = data;
+        (window as ImageExportWindow).__SCALONETA_EXPORT_STYLE__ = imageStyle;
       }
-    }, match, exportUrl);
+    }, match, exportUrl, style);
     const navigateToExport = async () => {
       const response = await page.goto(exportUrl);
       if (
@@ -134,6 +140,7 @@ export async function GET(request: NextRequest) {
 
     const response = new NextResponse(Buffer.from(screenshot));
     response.headers.set("content-type", "image/png");
+    response.headers.set("Cache-Control", "private, no-store");
     /* This header makes the response to be downloaded automatically by the user's browser */
     response.headers.set(
       "Content-Disposition",
