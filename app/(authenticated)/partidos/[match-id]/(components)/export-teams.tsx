@@ -89,13 +89,12 @@ export const ExportTeams: FC<ExportTeamsProps> = ({
               </Label>
             ))}
           </RadioGroup>
-          <div className="relative aspect-[256/83] min-w-0 self-start rounded-lg border bg-white">
+          <div className="min-w-0 self-start overflow-clip rounded-lg border">
             <Image
-              src={style.preview.src}
-              fill
+              {...style.preview}
               alt={`Ejemplo del estilo ${style.label}: Fútbol con amigos, con Ana en el Equipo A y Nico en el Equipo B.`}
               sizes="(max-width: 767px) calc(100vw - 82px), (max-width: 895px) calc(100vw - 266px), 662px"
-              className="rounded-lg object-contain"
+              className="block h-auto w-full"
             />
           </div>
         </div>
