@@ -1,9 +1,22 @@
-import { DEFAULT_IMAGE_EXPORT_STYLE, type ImageExportStyle } from "@/utils/image-export-style";
+import {
+  DEFAULT_IMAGE_EXPORT_OPTIONS,
+  imageExportSearchParams,
+  type ImageExportOptions,
+} from "./image-export-options.ts";
 
-export const fetchTeamExport = async (matchId: number, style: ImageExportStyle = DEFAULT_IMAGE_EXPORT_STYLE): Promise<Blob> => {
-  const response = await fetch(`/download/${matchId}?${new URLSearchParams({ style })}`, { cache: "no-store" });
+export const fetchTeamExport = async (
+  matchId: number,
+  options: ImageExportOptions = DEFAULT_IMAGE_EXPORT_OPTIONS,
+): Promise<Blob> => {
+  const response = await fetch(
+    `/download/${matchId}?${imageExportSearchParams(options)}`,
+    { cache: "no-store" },
+  );
 
-  if (!response.ok || response.headers.get("content-type")?.split(";")[0].trim() !== "image/png") {
+  if (
+    !response.ok ||
+    response.headers.get("content-type")?.split(";")[0].trim() !== "image/png"
+  ) {
     throw new Error("Invalid image response");
   }
 

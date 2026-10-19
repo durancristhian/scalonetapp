@@ -1,0 +1,214 @@
+.dialog {
+  inline-size: calc(100% - 2rem);
+  max-inline-size: 32rem;
+  block-size: min(800px, 90dvh);
+  max-block-size: 90dvh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 0;
+  padding: 0;
+  border-radius: 12px;
+  overflow: clip;
+}
+
+.header {
+  display: grid;
+  gap: 8px;
+  padding: 24px;
+  padding-inline-end: 48px;
+  border-block-end: 1px solid hsl(var(--border));
+}
+
+.body {
+  min-block-size: 0;
+  min-inline-size: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.options,
+.previewScroll {
+  min-block-size: 0;
+  min-inline-size: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 20px;
+}
+
+.fields {
+  display: grid;
+  gap: 24px;
+  min-inline-size: 0;
+}
+.fields:disabled {
+  opacity: 0.65;
+}
+.field {
+  display: grid;
+  gap: 10px;
+  min-inline-size: 0;
+}
+.label {
+  font-size: 14px;
+  font-weight: 600;
+}
+.pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.choice {
+  min-inline-size: 0;
+  border: 1px solid hsl(var(--border));
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.choice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-block-size: 44px;
+  padding: 10px;
+}
+.choice:has([data-state="checked"]) {
+  border-color: hsl(var(--primary));
+  background-color: hsl(var(--muted));
+}
+.choice:has(:focus-visible),
+.previewScroll:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+.choice:active {
+  background-color: hsl(var(--accent));
+}
+@media (hover: hover) and (pointer: fine) {
+  .choice:hover {
+    border-color: hsl(var(--primary));
+  }
+}
+.fontSample {
+  font-size: 20px;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+.selectTrigger {
+  block-size: auto;
+  min-block-size: 48px;
+  gap: 12px;
+}
+.selectContent {
+  inline-size: var(--radix-select-trigger-width);
+  max-block-size: min(20rem, var(--radix-select-content-available-height));
+}
+.selectItem {
+  min-block-size: 48px;
+}
+.backgroundSample {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.swatch {
+  display: block;
+  flex-shrink: 0;
+  inline-size: 48px;
+  block-size: 32px;
+  border: 1px solid hsl(var(--border));
+  border-radius: 3px;
+  background-size: cover;
+  background-position: center;
+}
+.avatarChoice {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  justify-items: center;
+}
+.avatarChoice > [role="radio"] {
+  grid-row: 1 / 3;
+}
+.avatarLabel {
+  grid-column: 2;
+  text-align: center;
+}
+.reset {
+  justify-self: start;
+  min-block-size: 44px;
+  padding-inline: 8px;
+}
+.reset:active {
+  opacity: 0.7;
+}
+.preview {
+  min-block-size: 0;
+  min-inline-size: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  background: hsl(var(--muted));
+  border-inline-start: 1px solid hsl(var(--border));
+}
+.previewScroll {
+  display: flex;
+  flex-direction: column;
+}
+.previewViewport {
+  inline-size: 100%;
+  flex-shrink: 0;
+  margin-block: auto;
+}
+.previewSized {
+  position: relative;
+  overflow: clip;
+  box-shadow: 0 2px 12px oklch(0 0 none / 8%);
+}
+.previewCanvas {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  inline-size: 1280px;
+  transform-origin: top left;
+}
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  border-block-start: 1px solid hsl(var(--border));
+  padding: 16px 20px;
+}
+.feedback {
+  flex-basis: 100%;
+  min-inline-size: 0;
+  font-size: 13px;
+}
+.feedback:has(p:empty):not(:has([role="alert"])) {
+  display: none;
+}
+.actions {
+  display: flex;
+  justify-content: end;
+  gap: 8px;
+  margin-inline-start: auto;
+}
+.actions button {
+  min-block-size: 44px;
+}
+.actions button:active {
+  opacity: 0.8;
+}
+@media (min-width: 1024px) {
+  .dialog {
+    max-inline-size: 100rem;
+    inline-size: calc(100% - 4rem);
+  }
+  .body {
+    grid-template-columns: 300px minmax(0, 1fr);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dialog {
+    animation: none;
+  }
+}

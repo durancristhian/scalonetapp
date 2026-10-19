@@ -1,0 +1,77 @@
+.canvas {
+  box-sizing: border-box;
+  inline-size: 1280px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  color: oklch(0 0 none);
+  text-transform: uppercase;
+  overflow-wrap: break-word;
+  font-size: 20px;
+  line-height: 1.4;
+}
+
+.title {
+  font-size: 36px;
+  line-height: 40px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.teams {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px;
+}
+
+.team {
+  min-inline-size: 0;
+  border: 1px solid oklch(0.923 0.003 48.717);
+  border-radius: 6px;
+  background: oklch(1 0 none / 75%);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 1px 2px oklch(0 0 none / 5%);
+}
+
+.teamName {
+  padding: 24px;
+  border-block-end: 1px solid oklch(0.923 0.003 48.717);
+  text-align: center;
+  font-size: 24px;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.players {
+  display: grid;
+  gap: 16px;
+  padding: 24px;
+}
+
+.player {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-inline-size: 0;
+}
+
+.playerName {
+  min-inline-size: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden; /* Supports the export Chromium's multi-line ellipsis. */
+}
+
+.footer {
+  text-align: center;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.footer span {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

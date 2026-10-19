@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { ClerkProvider } from "@clerk/nextjs";
 import clsx from "clsx";
 import type { Metadata, Viewport } from "next";
-import { Work_Sans } from "next/font/google";
+import { workSans } from "@/utils/fonts";
 import { type FC, type PropsWithChildren } from "react";
 
 export const viewport: Viewport = {
@@ -12,11 +12,6 @@ export const viewport: Viewport = {
   userScalable: false,
   width: "device-width",
 };
-
-const fontFamily = Work_Sans({
-  subsets: ["latin"],
-  display: "swap",
-});
 
 const title = "scalonet.app - ¡Arma equipos como un campeón!";
 const description =
@@ -68,7 +63,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
       <html lang="es">
         <body
           className={clsx(
-            fontFamily.className,
+            workSans.className,
             "antialiased bg-pattern min-h-dvh slashed-zero tabular-nums text-foreground"
           )}
         >
