@@ -23,15 +23,18 @@ export function TeamExport({ name, teams, options }: TeamExportProps) {
     <div
       data-team-export
       className={`${styles.canvas} ${exportFontClasses[options.font]}`}
-      style={{
-        ...getArtworkStyle(options.palette),
-        backgroundImage: `url("${backgroundUrl}")`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
+      style={getArtworkStyle(options.palette)}
     >
       <h1 className={styles.title}>{name}</h1>
-      <div className={styles.teams}>
+      <div
+        className={styles.teams}
+        style={{
+          backgroundImage: `url("${backgroundUrl}")`,
+          backgroundSize: "contain",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+        }}
+      >
         {teams.map((team) => (
           <section className={styles.team} key={team.id}>
             <h2 className={styles.teamName}>{team.name.trim()}</h2>

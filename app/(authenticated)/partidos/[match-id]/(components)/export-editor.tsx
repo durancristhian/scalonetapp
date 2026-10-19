@@ -159,7 +159,7 @@ export default function ExportEditor({
                     >
                       <span className={styles.paletteSample}>
                         <span className={styles.paletteDots} aria-hidden="true">
-                          {palette.roles.slice(0, 5).map((color) => (
+                          {palette.roles.slice(0, 4).map((color) => (
                             <span
                               key={color}
                               className={styles.paletteDot}
@@ -167,7 +167,7 @@ export default function ExportEditor({
                             />
                           ))}
                         </span>
-                        <span className={styles.paletteLabel} title={palette.label}>{palette.label}</span>
+                        <span className={styles.sampleLabel} title={palette.label}>{palette.label}</span>
                       </span>
                     </SelectItem>
                   ))}
@@ -208,7 +208,7 @@ export default function ExportEditor({
                             backgroundImage: `url("${getImageExportBackgroundUrl(background.id, options.palette)}")`,
                           }}
                         />
-                        {background.label}
+                        <span className={styles.sampleLabel}>{background.label}</span>
                       </span>
                     </SelectItem>
                   ))}
