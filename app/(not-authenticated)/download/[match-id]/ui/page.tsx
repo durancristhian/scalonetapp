@@ -1,85 +1,46 @@
 "use client";
 
-import { SportyExport } from "./sporty-export";
-import { DEFAULT_IMAGE_EXPORT_STYLE, type ImageExportStyle } from "@/utils/image-export-style";
-import { PlayerAvatar } from "@/components/player-avatar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { TeamExport } from "@/components/team-export/team-export";
 import { type ImageExportWindow } from "@/types/image-export";
 import { type MatchWithPlayers } from "@/types/match";
-import { type BaseTeam } from "@/types/team";
-import { byName } from "@/utils/by-name";
-import { type Player } from "@prisma/client";
-import { type FC, useEffect, useState } from "react";
+import { type BaseTeam, type Team } from "@/types/team";
+import {
+  DEFAULT_IMAGE_EXPORT_OPTIONS,
+  type ImageExportOptions,
+} from "@/utils/image-export-options";
+import { useEffect, useState } from "react";
 
-const Page: FC = () => {
-  const [style, setStyle] = useState<ImageExportStyle>(DEFAULT_IMAGE_EXPORT_STYLE);
-  const [match, setMatch] = useState<MatchWithPlayers>();
+export default function Page() {
+  const [data, setData] = useState<{
+    match: MatchWithPlayers;
+    options: ImageExportOptions;
+  }>();
 
   useEffect(() => {
-    const data = (window as ImageExportWindow).__SCALONETA_EXPORT_MATCH__;
-
-    if (data) {
-      setMatch(data);
-      setStyle((window as ImageExportWindow).__SCALONETA_EXPORT_STYLE__ ?? DEFAULT_IMAGE_EXPORT_STYLE);
+    const source = window as ImageExportWindow;
+    if (source.__SCALONETA_EXPORT_MATCH__) {
+      setData({
+        match: source.__SCALONETA_EXPORT_MATCH__,
+        options:
+          source.__SCALONETA_EXPORT_OPTIONS__ ?? DEFAULT_IMAGE_EXPORT_OPTIONS,
+      });
     }
   }, []);
 
-  if (!match) {
-    return null;
-  }
-
-  if (style === "sporty") return <SportyExport match={match} />;
-
-  const formattedTeams: BaseTeam[] = JSON.parse(match.teams);
+  if (!data) return null;
+  const playersById = new Map(
+    data.match.players.map((player) => [player.id, player]),
+  );
+  const savedTeams: BaseTeam[] = JSON.parse(data.match.teams);
+  const teams: Team[] = savedTeams.map((team) => ({
+    ...team,
+    players: team.players.flatMap((id) => {
+      const player = playersById.get(id);
+      return player ? [player] : [];
+    }),
+  }));
 
   return (
-    <div className="p-8">
-      <div className="space-y-8">
-        <h1 className="font-bold text-4xl text-center">{match.name}</h1>
-        <div className="grid grid-cols-2 gap-8">
-          {formattedTeams.map((team) => (
-            <Card key={team.id}>
-              <CardHeader className="border-b">
-                <CardTitle className="text-center text-2xl">
-                  {team.name}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-6">
-                <div className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    {team.players
-                      /* We look for the player data in the match */
-                      .map((playerId) =>
-                        match.players.find((player) => player.id === playerId)
-                      )
-                      /* We exclude potential empty players */
-                      .filter((player): player is Player => Boolean(player))
-                      /* We sort players in the team by name */
-                      .sort(byName)
-                      .map((player) => (
-                        <div
-                          key={player.id}
-                          className="flex gap-4 items-center"
-                        >
-                          <PlayerAvatar src={player.avatar} name={player.name} size="xl" />
-                          <div className="grow">
-                            <p className="text-xl">{player.name}</p>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-        <p className="text-center text-muted-foreground text-sm">
-          Hecho con{" "}
-          <span className="underline underline-offset-2">scalonet.app</span>
-        </p>
-      </div>
-    </div>
+    <TeamExport name={data.match.name} teams={teams} options={data.options} />
   );
-};
-
-export default Page;
+}

@@ -8,7 +8,11 @@ import {
   getImageExportTarget,
   ImageExportConfigurationError,
 } from "@/utils/image-export-target";
-import { parseImageExportStyle } from "@/utils/image-export-style";
+import {
+  IMAGE_EXPORT_BACKGROUNDS,
+  IMAGE_EXPORT_WIDTH,
+  parseImageExportOptions,
+} from "@/utils/image-export-options";
 import { type NextRequest, NextResponse } from "next/server";
 import { type Browser } from "puppeteer-core";
 
@@ -23,23 +27,26 @@ let chromiumExecutablePath: Promise<string> | undefined;
 const getBrowser: () => Promise<Browser> = async () => {
   if (process.env.NODE_ENV === "production") {
     const chromium = await import("@sparticuz/chromium-min").then(
-      (mod) => mod.default
+      (mod) => mod.default,
     );
 
     const puppeteerCore = await import("puppeteer-core").then(
-      (mod) => mod.default
+      (mod) => mod.default,
     );
 
     // Concurrent cold exports must share extraction, not partially unpacked files.
-    chromiumExecutablePath ??= chromium.executablePath(CHROMIUM_PACK_URL).catch(
-      (error) => {
+    chromiumExecutablePath ??= chromium
+      .executablePath(CHROMIUM_PACK_URL)
+      .catch((error) => {
         chromiumExecutablePath = undefined;
         throw error;
-      }
-    );
+      });
 
     return puppeteerCore.launch({
-      args: puppeteerCore.defaultArgs({ args: chromium.args, headless: "shell" }),
+      args: puppeteerCore.defaultArgs({
+        args: chromium.args,
+        headless: "shell",
+      }),
       executablePath: await chromiumExecutablePath,
       headless: "shell",
     });
@@ -54,9 +61,12 @@ const getBrowser: () => Promise<Browser> = async () => {
 };
 
 export async function GET(request: NextRequest) {
-  const style = parseImageExportStyle(request.nextUrl.searchParams);
-  if (!style) {
-    return NextResponse.json({ error: "Estilo de imagen no válido." }, { status: 400 });
+  const options = parseImageExportOptions(request.nextUrl.searchParams);
+  if (!options) {
+    return NextResponse.json(
+      { error: "Opciones de imagen no válidas." },
+      { status: 400 },
+    );
   }
   let browser;
 
@@ -74,7 +84,7 @@ export async function GET(request: NextRequest) {
     if (!match) {
       return NextResponse.json(
         { error: ERROR_MESSAGES.not_found },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -88,26 +98,32 @@ export async function GET(request: NextRequest) {
           headers: getImageExportRequestHeaders(
             browserRequest.url(),
             browserRequest.headers(),
-            exportTarget
+            exportTarget,
           ),
-        })
+        }),
       );
     }
     await page.setViewport({
-      /* Height here is pointless (but needed) since we take a fullpage screenshot */
+      /* The canvas screenshot determines the final image height. */
       height: 300,
-      width: 1280,
+      width: IMAGE_EXPORT_WIDTH,
       /* So images get a better resolution */
       deviceScaleFactor: 2,
     });
     const exportUrl = `${exportTarget.origin}/download/${matchId}/ui`;
     // Pass this export's data before the page scripts run, without storage or reload.
-    await page.evaluateOnNewDocument((data, url, imageStyle) => {
-      if (window === window.top && window.location.href === url) {
-        (window as ImageExportWindow).__SCALONETA_EXPORT_MATCH__ = data;
-        (window as ImageExportWindow).__SCALONETA_EXPORT_STYLE__ = imageStyle;
-      }
-    }, match, exportUrl, style);
+    await page.evaluateOnNewDocument(
+      (data, url, imageOptions) => {
+        if (window === window.top && window.location.href === url) {
+          (window as ImageExportWindow).__SCALONETA_EXPORT_MATCH__ = data;
+          (window as ImageExportWindow).__SCALONETA_EXPORT_OPTIONS__ =
+            imageOptions;
+        }
+      },
+      match,
+      exportUrl,
+      options,
+    );
     const navigateToExport = async () => {
       const response = await page.goto(exportUrl);
       if (
@@ -115,7 +131,7 @@ export async function GET(request: NextRequest) {
         (!response?.ok() || new URL(page.url()).origin !== exportTarget.origin)
       ) {
         throw new ImageExportConfigurationError(
-          "Preview image export could not access its deployment. Check deployment protection and VERCEL_AUTOMATION_BYPASS_SECRET."
+          "Preview image export could not access its deployment. Check deployment protection and VERCEL_AUTOMATION_BYPASS_SECRET.",
         );
       }
     };
@@ -123,14 +139,17 @@ export async function GET(request: NextRequest) {
     await waitForImageExport(
       page,
       match.name,
-      match.players.flatMap((player) => [player.avatar, getPlayerAvatarUrl(player.name)])
+      match.players.flatMap((player) => [
+        player.avatar,
+        getPlayerAvatarUrl(player.name),
+      ]),
+      IMAGE_EXPORT_BACKGROUNDS.find(({ id }) => id === options.background)
+        ?.src ?? undefined,
     );
 
-    const screenshot = await page.screenshot({
-      captureBeyondViewport: true,
-      fullPage: true,
-      type: "png",
-    });
+    const canvas = await page.waitForSelector("[data-team-export]");
+    if (!canvas) throw new Error("Image export canvas did not render.");
+    const screenshot = await canvas.screenshot({ type: "png" });
 
     /* We close the pages and the browser since we don't need it anymore */
     for (const page of await browser.pages()) {
@@ -144,7 +163,7 @@ export async function GET(request: NextRequest) {
     /* This header makes the response to be downloaded automatically by the user's browser */
     response.headers.set(
       "Content-Disposition",
-      `attachment; filename=equipos.png`
+      `attachment; filename=equipos.png`,
     );
 
     /* We're done, we return the screenshot */
@@ -163,7 +182,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(
       { error: ERROR_MESSAGES.server_error },
-      { status: 404 }
+      { status: 404 },
     );
   }
 }

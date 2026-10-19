@@ -73,6 +73,11 @@ test("Image export waits for rendered content and assets despite ongoing backgro
       })),
       { heading: "Preview fixture", fontsReady: true, avatarReady: true }
     );
+    await assert.rejects(
+      waitForImageExport(page, "Preview fixture", [], `${origin}/missing.svg`),
+      /Image export background did not load/
+    );
+    await waitForImageExport(page, "Preview fixture", [], `${origin}/slow.svg`);
   } finally {
     await browser?.close();
     server.closeAllConnections();
