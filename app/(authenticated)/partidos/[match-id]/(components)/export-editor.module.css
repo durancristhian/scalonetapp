@@ -121,11 +121,17 @@
   background-position: center;
 }
 .avatarChoice {
-  flex-wrap: wrap;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  justify-items: center;
+}
+.avatarChoice > [role="radio"] {
+  grid-row: 1 / 3;
 }
 .avatarLabel {
-  flex-basis: 100%;
+  grid-column: 2;
+  text-align: center;
 }
 .reset {
   justify-self: start;
