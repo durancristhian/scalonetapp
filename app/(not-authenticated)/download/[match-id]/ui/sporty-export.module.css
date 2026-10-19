@@ -1,14 +1,11 @@
 .sheet {
   min-block-size: 100dvh;
   padding: 32px;
-  background: oklch(1 0 none);
   color: hsl(var(--foreground));
   overflow-wrap: anywhere;
 }
 
 .heading {
-  padding-block-end: 24px;
-  border-block-end: 1px solid hsl(var(--border));
   margin-block-end: 32px;
 }
 
@@ -29,7 +26,7 @@
 .team {
   min-inline-size: 0;
   border: 1px solid hsl(var(--border));
-  border-radius: var(--radius);
+  background: hsl(var(--card));
 }
 
 .teamHeading {
@@ -55,10 +52,6 @@
   align-items: center;
   gap: 16px;
   padding-block: 16px;
-}
-
-.player + .player {
-  border-block-start: 1px solid hsl(var(--border));
 }
 
 .player > span:last-child {

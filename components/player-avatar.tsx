@@ -11,12 +11,14 @@ type PlayerAvatarProps = {
   src?: string;
   name: string;
   size?: AvatarSize;
+  shape?: "circle" | "square";
 };
 
 export const PlayerAvatar: FC<PlayerAvatarProps> = ({
   src,
   name,
   size = "md",
+  shape = "circle",
 }) => {
   const [failed, setFailed] = useState<string | undefined>();
   useEffect(() => {
@@ -33,6 +35,7 @@ export const PlayerAvatar: FC<PlayerAvatarProps> = ({
     <Avatar
       className={clsx(
         "ring-1 ring-black/5 shadow-md",
+        shape === "square" && "rounded-none",
         size === "sm" && "h-6 w-6",
         size === "md" && "h-12 w-12",
         size === "lg" && "h-16 w-16",
@@ -40,7 +43,7 @@ export const PlayerAvatar: FC<PlayerAvatarProps> = ({
       )}
     >
       <AvatarImage src={image} onLoadingStatusChange={status => { if (status === "error" && src) setFailed(src); }} alt={`Avatar de ${name}`} />
-      <AvatarFallback role="img" aria-label={`Avatar de ${name}`}>
+      <AvatarFallback role="img" aria-label={`Avatar de ${name}`} className={shape === "square" ? "rounded-none" : undefined}>
         {Array.from(name.trim())[0]?.toLocaleUpperCase("es") || "?"}
       </AvatarFallback>
     </Avatar>

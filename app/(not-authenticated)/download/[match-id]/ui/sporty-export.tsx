@@ -26,7 +26,7 @@ export function SportyExport({ match }: { match: MatchWithPlayers }) {
                 .sort(byName)
                 .map((player) => (
                   <li key={player.id} className={styles.player}>
-                    <PlayerAvatar src={player.avatar} name={player.name} size="lg" />
+                    <PlayerAvatar src={player.avatar} name={player.name} size="lg" shape="square" />
                     <span>{player.name}</span>
                   </li>
                 ))}
