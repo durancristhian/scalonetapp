@@ -128,7 +128,6 @@
 }
 .avatarChoice > [role="radio"] {
   grid-row: 1 / 3;
-  align-self: start;
 }
 .avatarLabel {
   grid-column: 2;
