@@ -11,22 +11,22 @@ export const IMAGE_EXPORT_BACKGROUNDS = [
   {
     id: "germany",
     label: "Impulso",
-    src: "/images/export-backgrounds/impulso.svg",
+    src: "/images/export-backgrounds/momentum.svg",
   },
   {
     id: "portugal",
     label: "Mosaico",
-    src: "/images/export-backgrounds/mosaico.svg",
+    src: "/images/export-backgrounds/mosaic.svg",
   },
   {
     id: "croatia",
     label: "Trama",
-    src: "/images/export-backgrounds/trama.svg",
+    src: "/images/export-backgrounds/weave.svg",
   },
   {
     id: "belgium",
     label: "Bloques",
-    src: "/images/export-backgrounds/bloques.svg",
+    src: "/images/export-backgrounds/blocks.svg",
   },
 ] as const;
 
@@ -95,25 +95,9 @@ export function readImageExportOptions(): ImageExportOptions {
     const stored: unknown = JSON.parse(
       localStorage.getItem(IMAGE_EXPORT_STORAGE_KEY) ?? "null",
     );
-    // Preserve existing choices while migrating retired styles and pre-palette preferences.
-    if (stored && typeof stored === "object" && !Array.isArray(stored)) {
-      const options = {
-        ...stored,
-        palette: "palette" in stored ? stored.palette : DEFAULT_COLOR_PALETTE,
-        font:
-          "font" in stored
-            ? stored.font === "teko" ? "exo-2"
-              : stored.font === "barlow-condensed" ? "saira" : stored.font
-            : undefined,
-        background:
-          "background" in stored && stored.background === "dots"
-            ? DEFAULT_IMAGE_EXPORT_OPTIONS.background
-            : "background" in stored ? stored.background : undefined,
-      };
-      if (isImageExportOptions(options)) return options;
-    }
+    if (isImageExportOptions(stored)) return stored;
   } catch {
-    // Storage may be unavailable or contain preferences from an older version.
+    // Storage may be unavailable or contain invalid preferences.
   }
   return { ...DEFAULT_IMAGE_EXPORT_OPTIONS };
 }
