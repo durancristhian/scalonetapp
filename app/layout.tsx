@@ -4,7 +4,6 @@ import { ClerkProvider } from "@clerk/nextjs";
 import clsx from "clsx";
 import type { Metadata, Viewport } from "next";
 import { workSans } from "@/utils/fonts";
-import { getArtworkStyle } from "@/utils/color-palettes";
 import { type FC, type PropsWithChildren } from "react";
 
 export const viewport: Viewport = {
@@ -63,7 +62,6 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
     >
       <html lang="es">
         <body
-          style={getArtworkStyle()}
           className={clsx(
             workSans.className,
             "antialiased bg-pattern min-h-dvh slashed-zero tabular-nums text-foreground"

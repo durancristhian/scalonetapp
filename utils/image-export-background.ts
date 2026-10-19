@@ -20,13 +20,14 @@ export function colorizeExportBackground(svg: string, palette: ColorPaletteId): 
     primary: roles[0],
     secondary: roles[1],
     tertiary: roles[2],
+    quaternary: roles[3],
   };
   for (const [role, color] of Object.entries(colors)) {
     svg = svg
       .replace(new RegExp(`--${role}:#[0-9a-f]{6}`, "gi"), `--${role}:${color}`)
       .replace(
-        new RegExp(`fill="#[0-9a-f]{6}"(?=\\s+style="fill:var\\(--${role}\\)")`, "gi"),
-        `fill="${color}"`,
+        new RegExp(`(fill|stroke)="#[0-9a-f]{6}"(?=\\s+style="\\1:var\\(--${role}\\)")`, "gi"),
+        `$1="${color}"`,
       );
   }
   return svg;

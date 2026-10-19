@@ -2,7 +2,7 @@
 export const COLOR_PALETTES = [
   {
     "id": "clasico-rojo",
-    "label": "Clásico rojo",
+    "label": "Clásica",
     "sourceUrl": "https://coolors.co/palette/003049-d62828-f77f00-fcbf49-eae2b7",
     "colors": [
       "#003049",
@@ -21,7 +21,7 @@ export const COLOR_PALETTES = [
   },
   {
     "id": "fuego-de-estadio",
-    "label": "Fuego de estadio",
+    "label": "Fuego",
     "sourceUrl": "https://coolors.co/palette/03071e-370617-6a040f-9d0208-d00000-dc2f02-e85d04-f48c06-faa307-ffba08",
     "colors": [
       "#03071E",
@@ -50,7 +50,7 @@ export const COLOR_PALETTES = [
   },
   {
     "id": "azul-electrico",
-    "label": "Azul eléctrico",
+    "label": "Eléctrica",
     "sourceUrl": "https://coolors.co/palette/ffbe0b-fb5607-ff006e-8338ec-3a86ff",
     "colors": [
       "#FFBE0B",
@@ -69,7 +69,7 @@ export const COLOR_PALETTES = [
   },
   {
     "id": "cancha-tropical",
-    "label": "Cancha tropical",
+    "label": "Tropical",
     "sourceUrl": "https://coolors.co/palette/ef476f-ffd166-06d6a0-118ab2-073b4c",
     "colors": [
       "#EF476F",
@@ -88,7 +88,7 @@ export const COLOR_PALETTES = [
   },
   {
     "id": "naranja-mecanica",
-    "label": "Naranja mecánica",
+    "label": "Ámbar",
     "sourceUrl": "https://coolors.co/palette/8ecae6-219ebc-023047-ffb703-fb8500",
     "colors": [
       "#8ECAE6",
@@ -107,7 +107,7 @@ export const COLOR_PALETTES = [
   },
   {
     "id": "verde-de-copa",
-    "label": "Verde de copa",
+    "label": "Bosque",
     "sourceUrl": "https://coolors.co/palette/da2c38-226f54-87c38f-f4f0bb-43291f",
     "colors": [
       "#DA2C38",
@@ -126,7 +126,7 @@ export const COLOR_PALETTES = [
   },
   {
     "id": "pista-violeta",
-    "label": "Pista violeta",
+    "label": "Neón",
     "sourceUrl": "https://coolors.co/palette/f72585-7209b7-3a0ca3-4361ee-4cc9f0",
     "colors": [
       "#F72585",
@@ -145,7 +145,7 @@ export const COLOR_PALETTES = [
   },
   {
     "id": "tribuna-multicolor",
-    "label": "Tribuna multicolor",
+    "label": "Fiesta",
     "sourceUrl": "https://coolors.co/palette/ff595e-ffca3a-8ac926-1982c4-6a4c93",
     "colors": [
       "#FF595E",
@@ -164,7 +164,7 @@ export const COLOR_PALETTES = [
   },
   {
     "id": "oro-de-final",
-    "label": "Oro de final",
+    "label": "Oro",
     "sourceUrl": "https://coolors.co/palette/000000-14213d-fca311-e5e5e5-ffffff",
     "colors": [
       "#000000",
@@ -183,7 +183,7 @@ export const COLOR_PALETTES = [
   },
   {
     "id": "pasion-granate",
-    "label": "Pasión granate",
+    "label": "Pasión",
     "sourceUrl": "https://coolors.co/palette/390099-9e0059-ff0054-ff5400-ffbd00",
     "colors": [
       "#390099",

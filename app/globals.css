@@ -59,11 +59,11 @@
   }
 }
 
-/* The app sets Clásico rojo; export canvases scope their own palette variables. */
+/* Neutral stone pattern, independent of the export palette. */
 .bg-pattern {
-  background-image: radial-gradient(var(--pattern-primary) 2px, transparent 2px),
-    radial-gradient(var(--pattern-secondary) 2px, transparent 2px);
+  background-image: radial-gradient(oklch(0.923 0.003 48.717) 2px, transparent 2px),
+    radial-gradient(oklch(0.923 0.003 48.717) 2px, transparent 2px);
   background-size: 100px 100px;
   background-position: 0 0, 50px 50px;
-  background-color: oklch(1 0 none);
+  background-color: oklch(0.985 0.001 106.423);
 }

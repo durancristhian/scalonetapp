@@ -113,6 +113,7 @@
 }
 .backgroundSample,
 .paletteSample {
+  --sample-inline-size: 56px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -120,32 +121,37 @@
   text-align: start;
   white-space: nowrap;
 }
-.paletteLabel {
+.sampleLabel {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.paletteDots,
+.swatch {
+  flex-shrink: 0;
+  inline-size: var(--sample-inline-size);
+}
 .paletteDots {
   display: inline-flex;
-  flex-shrink: 0;
-  padding-inline-start: 8px;
+  align-items: center;
 }
 .paletteDot {
   flex: none;
-  inline-size: 18px;
-  block-size: 18px;
-  margin-inline-start: -8px;
+  inline-size: 20px;
+  block-size: 20px;
   border: 2px solid oklch(1 0 none);
   border-radius: 50%;
-  box-shadow: 0 0 0 1px oklch(0 0 none / 15%);
+  box-shadow: inset 0 0 0 1px oklch(0 0 none / 15%);
+}
+.paletteDot + .paletteDot {
+  margin-inline-start: -8px;
 }
 .swatch {
   display: block;
-  flex-shrink: 0;
-  inline-size: 48px;
-  block-size: 28px;
+  block-size: 32px;
   border: 1px solid hsl(var(--border));
   border-radius: 3px;
-  background-size: cover;
+  background-size: contain;
+  background-repeat: no-repeat;
   background-position: center;
 }
 .avatarChoice {
