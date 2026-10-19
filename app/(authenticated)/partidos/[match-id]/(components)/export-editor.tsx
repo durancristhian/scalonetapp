@@ -1,5 +1,6 @@
 "use client";
 
+import { PlayerAvatar } from "@/components/player-avatar";
 import { SoccerBall } from "@/components/soccer-ball";
 import { exportFontClasses } from "@/components/team-export/fonts";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { type Team } from "@/types/team";
 import {
   DEFAULT_IMAGE_EXPORT_OPTIONS,
@@ -94,63 +102,78 @@ export default function ExportEditor({
               <h3 id={`${id}-font`} className={styles.label}>
                 Fuente
               </h3>
-              <RadioGroup
-                aria-labelledby={`${id}-font`}
+              <Select
                 value={options.font}
                 disabled={processing}
                 onValueChange={(font: ImageExportOptions["font"]) =>
                   updateOptions({ ...options, font })
                 }
               >
-                {IMAGE_EXPORT_FONTS.map((font) => (
-                  <label key={font.id} className={styles.choice}>
-                    <RadioGroupItem value={font.id} aria-label={font.label} />
-                    <span
-                      className={`${styles.fontSample} ${exportFontClasses[font.id]}`}
+                <SelectTrigger
+                  aria-labelledby={`${id}-font`}
+                  className={styles.selectTrigger}
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className={styles.selectContent}>
+                  {IMAGE_EXPORT_FONTS.map((font) => (
+                    <SelectItem
+                      key={font.id}
+                      value={font.id}
+                      textValue={font.label}
+                      className={styles.selectItem}
                     >
-                      {font.label}
-                    </span>
-                  </label>
-                ))}
-              </RadioGroup>
+                      <span
+                        className={`${styles.fontSample} ${exportFontClasses[font.id]}`}
+                      >
+                        {font.label}
+                      </span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className={styles.field}>
               <h3 id={`${id}-background`} className={styles.label}>
                 Fondo
               </h3>
-              <RadioGroup
-                className={styles.backgrounds}
-                aria-labelledby={`${id}-background`}
+              <Select
                 value={options.background}
                 disabled={processing}
                 onValueChange={(background: ImageExportOptions["background"]) =>
                   updateOptions({ ...options, background })
                 }
               >
-                {IMAGE_EXPORT_BACKGROUNDS.map((background) => (
-                  <label
-                    key={background.id}
-                    className={styles.backgroundChoice}
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={`${styles.swatch} ${background.src ? "" : "bg-pattern"}`}
-                      style={
-                        background.src
-                          ? { backgroundImage: `url("${background.src}")` }
-                          : undefined
-                      }
-                    />
-                    <span className={styles.backgroundLabel}>
-                      <RadioGroupItem
-                        value={background.id}
-                        aria-label={background.label}
-                      />
-                      {background.label}
-                    </span>
-                  </label>
-                ))}
-              </RadioGroup>
+                <SelectTrigger
+                  aria-labelledby={`${id}-background`}
+                  className={styles.selectTrigger}
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className={styles.selectContent}>
+                  {IMAGE_EXPORT_BACKGROUNDS.map((background) => (
+                    <SelectItem
+                      key={background.id}
+                      value={background.id}
+                      textValue={background.label}
+                      className={styles.selectItem}
+                    >
+                      <span className={styles.backgroundSample}>
+                        <span
+                          aria-hidden="true"
+                          className={`${styles.swatch} ${background.src ? "" : "bg-pattern"}`}
+                          style={
+                            background.src
+                              ? { backgroundImage: `url("${background.src}")` }
+                              : undefined
+                          }
+                        />
+                        {background.label}
+                      </span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className={styles.field}>
               <h3 id={`${id}-avatar`} className={styles.label}>
@@ -165,14 +188,21 @@ export default function ExportEditor({
                   avatarShape: ImageExportOptions["avatarShape"],
                 ) => updateOptions({ ...options, avatarShape })}
               >
-                <label className={styles.choice}>
-                  <RadioGroupItem value="circle" />
-                  Circulares
-                </label>
-                <label className={styles.choice}>
-                  <RadioGroupItem value="square" />
-                  Cuadrados
-                </label>
+                {([
+                  ["circle", "Circulares"],
+                  ["square", "Cuadrados"],
+                ] as const).map(([shape, label]) => (
+                  <label
+                    key={shape}
+                    className={`${styles.choice} ${styles.avatarChoice}`}
+                  >
+                    <span aria-hidden="true">
+                      <PlayerAvatar name="Alex" shape={shape} />
+                    </span>
+                    <RadioGroupItem value={shape} aria-label={label} />
+                    <span className={styles.avatarLabel}>{label}</span>
+                  </label>
+                ))}
               </RadioGroup>
             </div>
             <div className={styles.field}>
@@ -198,15 +228,6 @@ export default function ExportEditor({
                 </label>
               </RadioGroup>
             </div>
-            <Button
-              type="button"
-              variant="ghost"
-              className={styles.reset}
-              disabled={processing}
-              onClick={() => updateOptions({ ...DEFAULT_IMAGE_EXPORT_OPTIONS })}
-            >
-              Restablecer valores
-            </Button>
           </fieldset>
         </div>
         {showPreview ? (
@@ -238,6 +259,15 @@ export default function ExportEditor({
                 : ""}
           </p>
         </div>
+        <Button
+          type="button"
+          variant="ghost"
+          className={styles.reset}
+          disabled={processing}
+          onClick={() => updateOptions({ ...DEFAULT_IMAGE_EXPORT_OPTIONS })}
+        >
+          Restablecer valores
+        </Button>
         <div className={styles.actions}>
           <DialogClose asChild>
             <Button type="button" variant="outline" disabled={processing}>
