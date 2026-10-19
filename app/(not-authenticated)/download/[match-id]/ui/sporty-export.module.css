@@ -3,6 +3,7 @@
   padding: 32px;
   color: hsl(var(--foreground));
   overflow-wrap: anywhere;
+  text-transform: uppercase;
 }
 
 .heading {
@@ -56,7 +57,7 @@
 
 .player > span:last-child {
   min-inline-size: 0;
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 400;
   line-height: 1.35;
 }
@@ -66,6 +67,7 @@
   color: hsl(var(--muted-foreground));
   font-size: 14px;
   text-align: center;
+  text-transform: none;
 }
 
 .footer span {
