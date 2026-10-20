@@ -53,9 +53,7 @@ export function TeamExport({ name, teams, options }: TeamExportProps) {
           </section>
         ))}
       </div>
-      <p className={styles.footer}>
-        Hecho con <span>scalonet.app</span>
-      </p>
+      <p className={styles.footer}>Hecho con scalonet.app</p>
     </div>
   );
 }
