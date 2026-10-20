@@ -13,11 +13,6 @@ export const viewport: Viewport = {
   width: "device-width",
 };
 
-const title = "scalonet.app - ¡Arma equipos como un campeón!";
-const description =
-  "Tienes lo necesario para ser el Lionel Scaloni entre tus amigos?. Demostrá tu habilidad para formar equipos ideales.";
-const ogImagePath = "https://www.scalonet.app/api/og";
-
 export const metadata: Metadata = {
   applicationName: "scalonet.app",
   authors: {
@@ -25,28 +20,9 @@ export const metadata: Metadata = {
     url: "https://github.com/durancristhian",
   },
   creator: "Cristhian Duran",
-  description,
-  keywords: ["scaloneta", "scalonet.app", "fútbol", "armar equipos de fútbol"],
-  openGraph: {
-    type: "website",
-    url: "https://www.scalonet.app/",
-    title,
-    description,
-    siteName: "scalonet.app",
-    images: [
-      {
-        url: ogImagePath,
-      },
-    ],
-  },
-  title,
-  twitter: {
-    card: "summary_large_image",
-    title,
-    description,
-    creator: "@durancristhian",
-    images: ogImagePath,
-  },
+  title: "scalonet.app",
+  // Only public pages explicitly opt into search indexing.
+  robots: { index: false, follow: false },
 };
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {

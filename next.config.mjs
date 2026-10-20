@@ -2,6 +2,14 @@ import { heicLicensePlugin } from "./config/heic-license-plugin.mjs";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async headers() {
+    return [
+      {
+        source: "/download/:path*",
+        headers: [{ key: "X-Robots-Tag", value: "noindex" }],
+      },
+    ];
+  },
   outputFileTracingIncludes: {
     "/api/export-backgrounds/v1": ["./public/images/export-backgrounds/*.svg"],
   },

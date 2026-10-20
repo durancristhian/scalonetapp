@@ -1,4 +1,6 @@
 User-agent: *
-Disallow: /
-Allow: /$
+Allow: /
+Disallow: /api/
 Allow: /api/og
+
+Sitemap: https://www.scalonet.app/sitemap.xml
