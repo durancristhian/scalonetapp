@@ -1,5 +1,6 @@
 "use client";
 
+import { trackAnalytics } from "@/utils/analytics";
 import { AssignPlayers } from "@/app/(authenticated)/partidos/[match-id]/(components)/assign-players";
 import { BuildTeams } from "@/app/(authenticated)/partidos/[match-id]/(components)/build-teams";
 import { CopyTeams } from "@/app/(authenticated)/partidos/[match-id]/(components)/copy-teams";
@@ -78,11 +79,13 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                       switch (preset) {
                         case "random": {
                           randomizeTeams();
+                          trackAnalytics("teams_randomize_clicked");
 
                           break;
                         }
                         case "balanced": {
                           balanceTeams();
+                          trackAnalytics("teams_balance_clicked");
 
                           break;
                         }

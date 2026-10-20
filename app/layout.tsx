@@ -1,4 +1,6 @@
 import "@/app/globals.css";
+import { Analytics } from "@/components/analytics";
+import { analyticsWebsiteId } from "@/server/analytics";
 import { Toaster } from "@/components/ui/sonner";
 import { ClerkProvider } from "@clerk/nextjs";
 import clsx from "clsx";
@@ -69,6 +71,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
         >
           {children}
           <Toaster gap={8} offset={24} />
+          <Analytics websiteId={analyticsWebsiteId()} />
         </body>
       </html>
     </ClerkProvider>

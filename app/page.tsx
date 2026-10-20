@@ -1,5 +1,6 @@
 "use client";
 
+import { trackAnalytics } from "@/utils/analytics";
 import { Loader } from "@/components/loader";
 import { ShowOff } from "@/components/show-off";
 import { Button } from "@/components/ui/button";
@@ -56,7 +57,9 @@ const Page: FC = () => {
             transition={{ ease: "easeInOut", duration: 0.5, delay: 1.5 }}
           >
             <SignInButton mode="modal">
-              <Button>Ingresar con Google</Button>
+              <Button onClick={() => trackAnalytics("sign_in_clicked")}>
+                Ingresar con Google
+              </Button>
             </SignInButton>
           </motion.div>
         </div>

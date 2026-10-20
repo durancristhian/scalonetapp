@@ -1,5 +1,6 @@
 "use client";
 
+import { trackAnalytics } from "@/utils/analytics";
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { SoccerBall } from "@/components/soccer-ball";
 import {
@@ -31,6 +32,7 @@ export const DuplicateMatch: FC<DuplicateMatchProps> = ({ id, onClose }) => {
       setIsProcessing(true);
 
       await duplicateMatchAction(id);
+      trackAnalytics("match_duplicated");
 
       setIsProcessing(false);
 
