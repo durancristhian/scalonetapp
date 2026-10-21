@@ -1,4 +1,4 @@
-name: Match duplication regression
+name: Saved teams regression
 
 on:
   pull_request:
@@ -36,6 +36,9 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npx prisma db push
+      - run: npx prisma generate
+      - run: npx prisma migrate deploy
       - run: npm run test:duplicate
       - run: npm run test:duplicate:db
+      - run: npm run test:player-teams:state
+      - run: npm run test:player-teams:db

@@ -70,6 +70,11 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
   useEffect(() => {
     const playerIds = new Set(match.players.map((player) => player.id));
 
+    setSelectedIds(ids => {
+      const remaining = ids.filter(id => playerIds.has(id));
+      return remaining.length === ids.length ? ids : remaining;
+    });
+
     setTeams((currTeams) =>
       currTeams.map((currTeam) => {
         const nextTeam = { ...currTeam };

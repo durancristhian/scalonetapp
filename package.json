@@ -12,6 +12,8 @@
     "start": "next start",
     "test:duplicate": "NODE_ENV=production node --conditions=react-server --test tests/duplicate-match.test.cjs",
     "test:duplicate:db": "NODE_ENV=production node --test tests/duplicate-match-db.test.cjs",
+    "test:player-teams:db": "NODE_ENV=production node --test tests/player-teams-db.test.cjs",
+    "test:player-teams:state": "node --test tests/player-teams-state.test.cjs",
     "vercel-build": "prisma generate && prisma migrate deploy && next build"
   },
   "dependencies": {

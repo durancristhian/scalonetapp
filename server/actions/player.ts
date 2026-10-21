@@ -101,6 +101,8 @@ export const deletePlayerAction: (id: number) => Promise<void> = async (id) => {
     await removeUnusedPhoto(deleted.avatar);
 
     revalidatePath("/partidos/[match-id]", "page");
+    revalidatePath("/dashboard");
+    revalidatePath("/partidos");
   } catch (error) {
     throw new Error(ERROR_MESSAGES.player_delete_error);
   }

@@ -2,6 +2,7 @@ import type { PlayerSchema } from "@/schemas/player";
 import prisma from "../../utils/prisma.ts";
 import { ERROR_MESSAGES } from "../../utils/error-messages.ts";
 import { getPlayerAdditionError } from "../../utils/player-limits.ts";
+import { removePlayerFromSavedTeams } from "../../utils/remove-player-from-saved-teams.ts";
 import type { Player, Prisma } from "@prisma/client";
 
 export class PlayerAdditionError extends Error {}
@@ -78,10 +79,21 @@ export const deletePlayerQuery: (
   id: number,
   userId: string
 ) => Promise<Player> = async (id, userId) => {
-  return await prisma.player.delete({
-    where: {
-      id,
-      match: { userId },
-    },
+  return prisma.$transaction(async transaction => {
+    const player = await transaction.player.findFirst({ where: { id, match: { userId } }, select: { matchId: true } });
+    if (!player) throw new Error(ERROR_MESSAGES.not_found);
+
+    // Roster changes and team saves must lock the parent before changing either.
+    const [match] = await transaction.$queryRaw<{ id: number; teams: string }[]>`
+      SELECT "id", "teams" FROM "Match"
+      WHERE "id" = ${player.matchId} AND "userId" = ${userId} FOR UPDATE
+    `;
+    if (!match) throw new Error(ERROR_MESSAGES.not_found);
+    const teams = removePlayerFromSavedTeams(match.teams, id);
+    const deleted = await transaction.player.delete({ where: { id, match: { userId } } });
+    if (teams !== match.teams) {
+      await transaction.match.update({ where: { id: match.id, userId }, data: { teams } });
+    }
+    return deleted;
   });
 };

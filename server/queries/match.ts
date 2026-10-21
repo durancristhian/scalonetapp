@@ -83,18 +83,20 @@ export const editMatchQuery: (
   userId: string
 ) => Promise<Match> = async (id, data, userId) => {
   const matchData = MATCH_UPDATE_SCHEMA.parse(data);
-  if (matchData.teams !== undefined) {
-    const teams: unknown = JSON.parse(matchData.teams);
-    const players = await prisma.player.findMany({ where: { matchId: id, match: { userId } }, select: { id: true } });
+  const serializedTeams = matchData.teams;
+  if (serializedTeams === undefined) {
+    return prisma.match.update({ where: { id, userId }, data: matchData });
+  }
+  return prisma.$transaction(async transaction => {
+    const matches = await transaction.$queryRaw<{ id: number }[]>`
+      SELECT "id" FROM "Match" WHERE "id" = ${id} AND "userId" = ${userId} FOR UPDATE
+    `;
+    if (!matches.length) throw new Error(ERROR_MESSAGES.not_found);
+    const teams: unknown = JSON.parse(serializedTeams);
+    const players = await transaction.player.findMany({ where: { matchId: id }, select: { id: true } });
     const error = getSavedTeamsError(teams, players.map(player => player.id));
     if (error) throw new Error(error);
-  }
-  return await prisma.match.update({
-    where: {
-      id,
-      userId,
-    },
-    data: matchData,
+    return transaction.match.update({ where: { id, userId }, data: matchData });
   });
 };
 
