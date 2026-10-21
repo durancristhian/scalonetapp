@@ -1,11 +1,39 @@
 import { type ImageExportOptions } from "@/utils/image-export-options";
 import { ExportWeather } from "./export-background";
-import styles from "./match-grandstand.module.css";
+import { cn } from "@/utils/cn";
 
 const bannerOutlines = {
   pasto: "M2 2Q288 6 576 2T1150 2L1150 106Q864 111 576 108T2 106Z",
   natural: "M3 3Q280 8 576 3T1149 5L1151 105Q880 112 576 107T2 108Z",
-  potrero: "M6 4Q280 11 575 3L847 6 1147 2 1150 43 1146 72 1151 106Q875 111 577 106T4 109L7 75 2 40Z",
+  potrero:
+    "M6 4Q280 11 575 3L847 6 1147 2 1150 43 1146 72 1151 106Q875 111 577 106T4 109L7 75 2 40Z",
+};
+
+const materials = {
+  pasto: {
+    stand:
+      "[--stand-tread:color-mix(in_oklch,var(--export-divider-color)_60%,oklch(0.75_0_none))] [--stand-riser:color-mix(in_oklch,var(--export-frame-color)_65%,oklch(0.5_0_none))]",
+    tread: "stroke-white/10 stroke-1",
+    terraces: "",
+    edge: "stroke-white/20 stroke-1",
+    hem: "opacity-40 [stroke-dasharray:3_4]",
+  },
+  natural: {
+    stand:
+      "[--stand-tread:color-mix(in_oklch,var(--export-divider-color)_25%,oklch(0.65_0_none))] [--stand-riser:color-mix(in_oklch,var(--export-frame-color)_35%,oklch(0.5_0_none))]",
+    tread: "",
+    terraces: "",
+    edge: "stroke-white/20 stroke-1 [stroke-opacity:0.6] [stroke-dasharray:140_2_80_1]",
+    hem: "opacity-40 [stroke-dasharray:3_4]",
+  },
+  potrero: {
+    stand:
+      "[--stand-tread:color-mix(in_oklch,var(--export-divider-color)_80%,var(--export-frame-color))] [--stand-riser:color-mix(in_oklch,var(--export-divider-color)_45%,var(--export-frame-color))]",
+    tread: "",
+    terraces: "-skew-y-[0.15deg]",
+    edge: "stroke-[var(--export-frame-color)] stroke-2 opacity-50",
+    hem: "opacity-50 [stroke-dasharray:4_5]",
+  },
 };
 
 export function MatchGrandstand({
@@ -13,38 +41,120 @@ export function MatchGrandstand({
   background,
   weather,
 }: Pick<ImageExportOptions, "background" | "weather"> & { name: string }) {
+  const material = materials[background];
   return (
-    <header className={`${styles.grandstand} ${styles[background]}`} data-match-grandstand>
-      <svg className={styles.terraces} viewBox="0 0 1280 160" aria-hidden="true">
+    <header
+      className={cn(
+        "relative grid h-40 place-items-center overflow-clip bg-[color-mix(in_oklch,var(--export-frame-color)_80%,black)]",
+        material.stand,
+      )}
+      data-match-grandstand
+    >
+      <svg
+        className={cn("absolute inset-0 size-full", material.terraces)}
+        viewBox="0 0 1280 160"
+        aria-hidden="true"
+      >
         {/* Treads and risers widen toward the field to give the frontal stand depth. */}
         {[0, 1, 2, 3, 4, 5, 6, 7].map((row) => {
           const y = row * 20;
           const inset = 44 - row * 6;
-          return <g key={row}>
-            <path className={styles.tread} d={`M${inset} ${y}H${1280 - inset}l6 10H${inset - 6}Z`} />
-            <path className={styles.riser} d={`M${inset - 6} ${y + 10}H${1286 - inset}v10H${inset - 6}Z`} />
-            <path className={styles.edge} d={`M${inset - 6} ${y + 10}H${1286 - inset}`} />
-          </g>;
+          return (
+            <g key={row}>
+              <path
+                className={cn("fill-[var(--stand-tread)]", material.tread)}
+                d={`M${inset} ${y}H${1280 - inset}l6 10H${inset - 6}Z`}
+              />
+              <path
+                className={"fill-[var(--stand-riser)]"}
+                d={`M${inset - 6} ${y + 10}H${1286 - inset}v10H${inset - 6}Z`}
+              />
+              <path
+                className={cn("fill-none", material.edge)}
+                d={`M${inset - 6} ${y + 10}H${1286 - inset}`}
+              />
+            </g>
+          );
         })}
-        {background === "natural" ? <path className={styles.wear} d="M58 28l20 2m1100 16-12 3M31 109l17-2m1180 34-24-1M96 7l25 1" /> : null}
-        {background === "potrero" ? <path className={styles.grain} d="M50 6q65-5 118 0m939 18q70 4 111-1M26 65q60-4 104 0m1005 20q60-5 111-1M12 127q70 6 120 0m1004 18q53-4 119 0" /> : null}
+        {background === "natural" ? (
+          <path
+            className={
+              "fill-none stroke-[var(--export-frame-color)] stroke-2 opacity-40"
+            }
+            d="M58 28l20 2m1100 16-12 3M31 109l17-2m1180 34-24-1M96 7l25 1"
+          />
+        ) : null}
+        {background === "potrero" ? (
+          <path
+            className={
+              "fill-none stroke-[var(--export-frame-color)] stroke-1 opacity-50"
+            }
+            d="M50 6q65-5 118 0m939 18q70 4 111-1M26 65q60-4 104 0m1005 20q60-5 111-1M12 127q70 6 120 0m1004 18q53-4 119 0"
+          />
+        ) : null}
       </svg>
       <ExportWeather weather={weather} snowAccumulation={false} />
-      <div className={styles.banner} data-match-banner>
-        <svg className={styles.fabric} viewBox="0 0 1152 112" preserveAspectRatio="none" aria-hidden="true">
-          <path className={styles.cloth} d={bannerOutlines[background]} />
-          <path className={styles.hem} d="M12 12Q290 17 576 12T1140 13M12 98Q290 105 576 99T1140 97" />
-          <path className={styles.folds} d="M28 6q-8 48 0 98M1124 5q8 48 0 98M279 6q-6 48 0 99M873 5q6 48 0 100" />
-          <path className={styles.foldLight} d="M33 6q-8 48 0 98M1119 5q8 48 0 98M284 6q-6 48 0 99M868 5q6 48 0 100" />
-          {background === "potrero" ? <g className={styles.patch}>
-            <path d="M1040 78l38-3 3 27-39 2Z" />
-            <path className={styles.stitches} d="M1047 79v6m9-7v6m9-6v6m9-6v6m-25 14v6m9-7v6m9-6v6" />
-          </g> : null}
-          <g className={styles.eyelets}>
-            <circle cx="13" cy="13" r="3" /><circle cx="1139" cy="13" r="3" />
+      <div
+        className={
+          "relative grid h-28 w-[90%] min-w-0 place-items-center drop-shadow-md"
+        }
+        data-match-banner
+      >
+        <svg
+          className={"absolute inset-0 size-full"}
+          viewBox="0 0 1152 112"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path
+            className={
+              "fill-[var(--export-frame-color)] stroke-[color-mix(in_oklch,var(--export-frame-color)_70%,black)] stroke-2"
+            }
+            d={bannerOutlines[background]}
+          />
+          <path
+            className={cn(
+              "fill-none stroke-[var(--export-divider-color)] stroke-1",
+              material.hem,
+            )}
+            d="M12 12Q290 17 576 12T1140 13M12 98Q290 105 576 99T1140 97"
+          />
+          <path
+            className={"fill-none stroke-black/10 stroke-[5]"}
+            d="M28 6q-8 48 0 98M1124 5q8 48 0 98M279 6q-6 48 0 99M873 5q6 48 0 100"
+          />
+          <path
+            className={"fill-none stroke-white/5 stroke-[5]"}
+            d="M33 6q-8 48 0 98M1119 5q8 48 0 98M284 6q-6 48 0 99M868 5q6 48 0 100"
+          />
+          {background === "potrero" ? (
+            <g className={"fill-[var(--export-divider-color)] fill-opacity-20"}>
+              <path d="M1040 78l38-3 3 27-39 2Z" />
+              <path
+                className={
+                  "fill-none stroke-[var(--export-divider-color)] stroke-1 stroke-opacity-50"
+                }
+                d="M1047 79v6m9-7v6m9-6v6m9-6v6m-25 14v6m9-7v6m9-6v6"
+              />
+            </g>
+          ) : null}
+          <g
+            className={
+              "fill-[var(--export-divider-color)] stroke-[var(--export-frame-color)] stroke-1"
+            }
+          >
+            <circle cx="13" cy="13" r="3" />
+            <circle cx="1139" cy="13" r="3" />
           </g>
         </svg>
-        <h1 className={styles.title} title={name}>{name}</h1>
+        <h1
+          className={
+            "relative w-[calc(100%_-_theme(spacing.20))] min-w-0 truncate text-center text-4xl font-bold text-white"
+          }
+          title={name}
+        >
+          {name}
+        </h1>
       </div>
     </header>
   );

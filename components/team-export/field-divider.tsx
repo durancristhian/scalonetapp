@@ -1,5 +1,4 @@
 import { type ImageExportBackgroundId } from "@/utils/image-export-backgrounds";
-import styles from "./field-divider.module.css";
 
 const markings = {
   pasto: {
@@ -16,23 +15,60 @@ const markings = {
   },
 } satisfies Record<ImageExportBackgroundId, { line: string; ring: string }>;
 
-export function FieldDivider({ background }: {
+export function FieldDivider({
+  background,
+}: {
   background: ImageExportBackgroundId;
 }) {
   const { line, ring } = markings[background];
   return (
-    <span aria-hidden="true" data-field-divider className={styles.divider}>
-      <svg data-field-boundary className={styles.boundary} viewBox="0 0 100 64" preserveAspectRatio="none" focusable="false">
-        <path d={line} transform="matrix(0 1 1 0 0 0)" fill="none" stroke="currentColor" vectorEffect="non-scaling-stroke" />
+    <span
+      aria-hidden="true"
+      data-field-divider
+      className="pointer-events-none absolute inset-0 grid place-items-center text-[var(--export-marking-color)] opacity-50 [&_path]:stroke-2"
+    >
+      <svg
+        data-field-boundary
+        className="absolute [inset-block-start:calc(theme(spacing.8)*-1)] -start-0.5 h-16 w-[calc(100%+4px)] overflow-visible"
+        viewBox="0 0 100 64"
+        preserveAspectRatio="none"
+        focusable="false"
+      >
+        <path
+          d={line}
+          transform="matrix(0 1 1 0 0 0)"
+          fill="none"
+          stroke="currentColor"
+          vectorEffect="non-scaling-stroke"
+        />
       </svg>
       {/* Line height, ring diameter and center point scale independently. */}
-      <svg className={styles.line} viewBox="0 0 64 100" preserveAspectRatio="none" focusable="false">
-        <path d={line} fill="none" stroke="currentColor" vectorEffect="non-scaling-stroke" />
+      <svg
+        className="absolute [inset-block:0] h-full w-16 overflow-visible"
+        viewBox="0 0 64 100"
+        preserveAspectRatio="none"
+        focusable="false"
+      >
+        <path
+          d={line}
+          fill="none"
+          stroke="currentColor"
+          vectorEffect="non-scaling-stroke"
+        />
       </svg>
-      <svg className={styles.center} viewBox="0 0 56 56" focusable="false">
-        <path d={ring} fill="none" stroke="currentColor" vectorEffect="non-scaling-stroke" />
+      <svg
+        className="absolute h-3/4 w-1/4 overflow-visible"
+        viewBox="0 0 56 56"
+        focusable="false"
+      >
+        <path
+          d={ring}
+          fill="none"
+          stroke="currentColor"
+          vectorEffect="non-scaling-stroke"
+        />
       </svg>
-      <svg className={styles.point} viewBox="0 0 4 4" focusable="false">
+      <svg className="absolute size-1" viewBox="0 0 4 4" focusable="false">
         <circle cx="2" cy="2" r="2" fill="currentColor" />
       </svg>
     </span>

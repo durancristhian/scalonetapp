@@ -1,12 +1,24 @@
-import { IMAGE_EXPORT_PLAYER_ROLES, type ImageExportPlayerRole } from "@/utils/image-export-player-roles";
-import styles from "./player-role-badges.module.css";
+import {
+  IMAGE_EXPORT_PLAYER_ROLES,
+  type ImageExportPlayerRole,
+} from "@/utils/image-export-player-roles";
+import { cn } from "@/utils/cn";
 
 function GoalkeeperGlove() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path fill="currentColor" d="M8.2 19.5c-.8-2-1.5-2.8-2.8-4.3l-2-2.5a1.5 1.5 0 0 1 2.2-2l1.8 1.8V5.8a1.25 1.25 0 0 1 2.5 0v4.7h.6V3.7a1.25 1.25 0 0 1 2.5 0v6.8h.6V4.4a1.25 1.25 0 0 1 2.5 0v6.1h.6V6.4a1.25 1.25 0 0 1 2.5 0v7.1c0 2.2-.5 4.1-1.5 6H8.2Z" />
+      <path
+        fill="currentColor"
+        d="M8.2 19.5c-.8-2-1.5-2.8-2.8-4.3l-2-2.5a1.5 1.5 0 0 1 2.2-2l1.8 1.8V5.8a1.25 1.25 0 0 1 2.5 0v4.7h.6V3.7a1.25 1.25 0 0 1 2.5 0v6.8h.6V4.4a1.25 1.25 0 0 1 2.5 0v6.1h.6V6.4a1.25 1.25 0 0 1 2.5 0v7.1c0 2.2-.5 4.1-1.5 6H8.2Z"
+      />
       <path fill="currentColor" d="M8.1 20.3h9.7v2.2H8.1z" />
-      <path d="M10 15h6M10 17h6" fill="none" stroke="var(--export-frame-color)" strokeWidth=".9" strokeLinecap="round" />
+      <path
+        d="M10 15h6M10 17h6"
+        fill="none"
+        stroke="var(--export-frame-color)"
+        strokeWidth=".9"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
@@ -14,7 +26,13 @@ function GoalkeeperGlove() {
 function CaptainMark() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M17 7.5a6.5 6.5 0 1 0 0 9" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" />
+      <path
+        d="M17 7.5a6.5 6.5 0 1 0 0 9"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="3.5"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
@@ -32,12 +50,34 @@ type Props = {
 export function PlayerRoleBadges({ roles, placement, shape }: Props) {
   if (!roles.length) return null;
   return (
-    <span className={`${styles.badges} ${styles[placement]} ${shape === "circle" ? styles.circle : ""}`}>
+    <span
+      className={cn(
+        "flex flex-none items-center gap-1",
+        placement === "image" &&
+          "absolute justify-between [&>span:only-child]:ms-auto",
+        placement === "image" &&
+          (shape === "circle"
+            ? "[inset-block-start:0] [inset-inline:0]"
+            : "[inset-block-start:calc(theme(spacing.2)*-1)] [inset-inline:calc(theme(spacing.2)*-1)]"),
+      )}
+    >
       {roles.map((role) => {
         const Icon = roleIcons[role];
-        const label = IMAGE_EXPORT_PLAYER_ROLES.find(({ id }) => id === role)!.label;
+        const label = IMAGE_EXPORT_PLAYER_ROLES.find(
+          ({ id }) => id === role,
+        )!.label;
         return (
-          <span key={role} className={styles.badge} role="img" aria-label={label} title={label} data-player-role={role}>
+          <span
+            key={role}
+            className={cn(
+              "grid place-items-center rounded-full border-[var(--export-divider-color)] bg-[var(--export-frame-color)] text-white shadow-sm [&>svg]:size-3/4",
+              placement === "inline" ? "size-[1em] border" : "size-7 border-2",
+            )}
+            role="img"
+            aria-label={label}
+            title={label}
+            data-player-role={role}
+          >
             <Icon />
           </span>
         );

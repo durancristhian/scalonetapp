@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import {
   DialogContent,
   DialogDescription,
+  DialogHeader,
+  DialogFooter,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -18,7 +20,11 @@ import {
 } from "@/components/ui/select";
 import { type Team } from "@/types/team";
 import { IMAGE_EXPORT_BACKGROUNDS } from "@/utils/image-export-backgrounds";
-import { getImageExportBackground, getImageExportBackgroundStyle, getImageExportBackgroundUrl } from "@/utils/image-export-background";
+import {
+  getImageExportBackground,
+  getImageExportBackgroundStyle,
+  getImageExportBackgroundUrl,
+} from "@/utils/image-export-background";
 import {
   DEFAULT_IMAGE_EXPORT_OPTIONS,
   IMAGE_EXPORT_AVATARS,
@@ -39,7 +45,7 @@ import {
 } from "@/utils/image-export-player-roles";
 import { byName } from "@/utils/by-name";
 import { ExportPreview } from "./export-preview";
-import styles from "./export-editor.module.css";
+import { Label } from "@/components/ui/label";
 
 type ExportEditorProps = {
   matchId: number;
@@ -47,7 +53,10 @@ type ExportEditorProps = {
   teams: Team[];
   disabled: boolean;
   processing: boolean;
-  onExport: (options: ImageExportOptions, selections: ImageExportTeamSelections) => Promise<string | null>;
+  onExport: (
+    options: ImageExportOptions,
+    selections: ImageExportTeamSelections,
+  ) => Promise<string | null>;
 };
 
 export default function ExportEditor({
@@ -59,7 +68,9 @@ export default function ExportEditor({
   onExport,
 }: ExportEditorProps) {
   const [options, setOptions] = useState(readImageExportOptions);
-  const [savedSelections, setSavedSelections] = useState(() => readImageExportTeamSelections(matchId, teams));
+  const [savedSelections, setSavedSelections] = useState(() =>
+    readImageExportTeamSelections(matchId, teams),
+  );
   const selections = useMemo(
     () => reconcileImageExportTeamSelections(teams, savedSelections),
     [teams, savedSelections],
@@ -72,7 +83,9 @@ export default function ExportEditor({
 
   useEffect(() => {
     // Advance the remembered roster even if match data changes while open.
-    setSavedSelections(saved => reconcileImageExportTeamSelections(teams, saved));
+    setSavedSelections((saved) =>
+      reconcileImageExportTeamSelections(teams, saved),
+    );
   }, [teams]);
 
   useEffect(() => {
@@ -105,7 +118,7 @@ export default function ExportEditor({
 
   return (
     <DialogContent
-      className={styles.dialog}
+      className="h-[min(50rem,90dvh)] max-h-[90dvh] w-[calc(100%_-_2rem)] grid-rows-[auto_minmax(0,1fr)_auto] gap-0 overflow-clip rounded-lg p-0 lg:w-[calc(100%_-_4rem)] lg:max-w-screen-2xl motion-reduce:animate-none"
       closeLabel="Cerrar"
       closeDisabled={processing}
       onEscapeKeyDown={(event) => {
@@ -115,24 +128,26 @@ export default function ExportEditor({
         if (processing) event.preventDefault();
       }}
     >
-      <header className={styles.header}>
+      <DialogHeader className="border-b p-6 pe-12 text-start">
         <DialogTitle>Exportar</DialogTitle>
         <DialogDescription>
           Personalizá la imagen de tus equipos.
         </DialogDescription>
-      </header>
-      <div className={styles.body}>
-        <div className={styles.options}>
-          <fieldset disabled={processing} className={styles.fields}>
+      </DialogHeader>
+      <div className="grid min-h-0 min-w-0 grid-cols-1 lg:grid-cols-[theme(spacing.80)_minmax(0,1fr)]">
+        <div className="min-h-0 min-w-0 overflow-auto overscroll-contain p-6">
+          <fieldset
+            disabled={processing}
+            className="grid min-w-0 gap-6 disabled:opacity-60"
+          >
             <legend className="sr-only">Opciones de la imagen</legend>
-            <div className={styles.field}>
-              <label
+            <div className="grid min-w-0 grid-cols-1 gap-2">
+              <Label
                 id={`${id}-background`}
                 htmlFor={`${id}-background-control`}
-                className={styles.label}
               >
                 Tipo de cancha
-              </label>
+              </Label>
               <Select
                 value={options.background}
                 disabled={processing}
@@ -143,42 +158,44 @@ export default function ExportEditor({
                 <SelectTrigger
                   id={`${id}-background-control`}
                   aria-labelledby={`${id}-background`}
-                  className={styles.selectTrigger}
+                  size="lg"
                 >
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className={styles.selectContent}>
+                <SelectContent className="w-[var(--radix-select-trigger-width)]">
                   {IMAGE_EXPORT_BACKGROUNDS.map((background) => (
                     <SelectItem
                       key={background.id}
                       value={background.id}
                       textValue={background.label}
-                      className={styles.selectItem}
+                      size="lg"
                     >
-                      <span className={styles.avatarSample}>
+                      <span className="flex min-w-0 items-center gap-3 whitespace-nowrap text-start">
                         <span
                           aria-hidden="true"
-                          className={styles.backgroundSwatch}
-                          style={{
-                            ...getImageExportBackgroundStyle(background.id),
-                            backgroundImage: `url("${getImageExportBackgroundUrl(background.id)}")`,
-                          }}
-                        />
-                        <span className={styles.sampleLabel}>{background.label}</span>
+                          className="grid size-8 shrink-0 place-items-center"
+                        >
+                          <span
+                            className="size-6 rounded-sm bg-[var(--export-surface-color)] bg-cover"
+                            style={{
+                              ...getImageExportBackgroundStyle(background.id),
+                              backgroundImage: `url("${getImageExportBackgroundUrl(background.id)}")`,
+                            }}
+                          />
+                        </span>
+                        <span className="min-w-0 truncate">
+                          {background.label}
+                        </span>
                       </span>
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className={styles.field}>
-              <label
-                id={`${id}-weather`}
-                htmlFor={`${id}-weather-control`}
-                className={styles.label}
-              >
+            <div className="grid min-w-0 grid-cols-1 gap-2">
+              <Label id={`${id}-weather`} htmlFor={`${id}-weather-control`}>
                 Clima
-              </label>
+              </Label>
               <Select
                 value={options.weather}
                 disabled={processing}
@@ -189,118 +206,143 @@ export default function ExportEditor({
                 <SelectTrigger
                   id={`${id}-weather-control`}
                   aria-labelledby={`${id}-weather`}
-                  className={styles.selectTrigger}
+                  size="lg"
                 >
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className={styles.selectContent}>
+                <SelectContent className="w-[var(--radix-select-trigger-width)]">
                   {IMAGE_EXPORT_WEATHERS.map((weather) => (
                     <SelectItem
                       key={weather.id}
                       value={weather.id}
                       textValue={weather.label}
-                      className={styles.selectItem}
+                      size="lg"
                     >
-                      <span className={styles.avatarSample}>
-                        <span className={styles.avatarIllustration} aria-hidden="true">
+                      <span className="flex min-w-0 items-center gap-3 whitespace-nowrap text-start">
+                        <span
+                          className="grid size-8 shrink-0 place-items-center"
+                          aria-hidden="true"
+                        >
                           <WeatherIllustration weather={weather.id} />
                         </span>
-                        <span className={styles.sampleLabel}>{weather.label}</span>
+                        <span className="min-w-0 truncate">
+                          {weather.label}
+                        </span>
                       </span>
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className={styles.field}>
-              <label
-                id={`${id}-avatar`}
-                htmlFor={`${id}-avatar-control`}
-                className={styles.label}
-              >
+            <div className="grid min-w-0 grid-cols-1 gap-2">
+              <Label id={`${id}-avatar`} htmlFor={`${id}-avatar-control`}>
                 Imágenes de jugadores
-              </label>
+              </Label>
               <Select
                 value={options.avatarShape}
                 disabled={processing}
-                onValueChange={(avatarShape: ImageExportOptions["avatarShape"]) =>
-                  updateOptions({ ...options, avatarShape })
-                }
+                onValueChange={(
+                  avatarShape: ImageExportOptions["avatarShape"],
+                ) => updateOptions({ ...options, avatarShape })}
               >
                 <SelectTrigger
                   id={`${id}-avatar-control`}
                   aria-labelledby={`${id}-avatar`}
-                  className={styles.selectTrigger}
+                  size="lg"
                 >
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className={styles.selectContent}>
+                <SelectContent className="w-[var(--radix-select-trigger-width)]">
                   {IMAGE_EXPORT_AVATARS.map(({ id: shape, label }) => (
                     <SelectItem
                       key={shape}
                       value={shape}
                       textValue={label}
-                      className={styles.selectItem}
+                      size="lg"
                     >
-                      <span className={styles.avatarSample}>
-                        <span aria-hidden="true" className={styles.avatarIllustration}>
+                      <span className="flex min-w-0 items-center gap-3 whitespace-nowrap text-start">
+                        <span
+                          aria-hidden="true"
+                          className="grid size-8 shrink-0 place-items-center"
+                        >
                           {shape === "none" ? (
-                            <ImageOff className={styles.noAvatarIcon} strokeWidth={1.5} />
+                            <ImageOff className="size-6 text-muted-foreground" />
                           ) : (
-                            <PlayerAvatar name="Alex" size="sm" shape={shape} palette={palette} />
+                            <PlayerAvatar
+                              name="Alex"
+                              size="sm"
+                              shape={shape}
+                              palette={palette}
+                            />
                           )}
                         </span>
-                        <span className={styles.sampleLabel}>{label}</span>
+                        <span className="min-w-0 truncate">{label}</span>
                       </span>
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className={styles.field}>
-              <label
+            <div className="grid min-w-0 grid-cols-1 gap-2">
+              <Label
                 id={`${id}-alignment`}
                 htmlFor={`${id}-alignment-${options.alignment}`}
-                className={styles.label}
               >
                 Alineación de jugadores
-              </label>
+              </Label>
               <RadioGroup
-                className={styles.pair}
+                className="grid grid-cols-2 gap-1 rounded-md bg-muted p-1"
                 aria-labelledby={`${id}-alignment`}
                 value={options.alignment}
                 disabled={processing}
                 onValueChange={(value) =>
-                  updateOptions({ ...options, alignment: value === "center" ? "center" : "left" })
+                  updateOptions({
+                    ...options,
+                    alignment: value === "center" ? "center" : "left",
+                  })
                 }
               >
-                <label className={styles.choice}>
-                  <RadioGroupItem className="sr-only" id={`${id}-alignment-left`} value="left" aria-label="Izquierda" />
-                  <AlignLeft className={styles.choiceIcon} aria-hidden="true" />
+                <RadioGroupItem
+                  variant="button"
+                  className="min-h-11 gap-2"
+                  id={`${id}-alignment-left`}
+                  value="left"
+                >
+                  <AlignLeft className="size-4 shrink-0" aria-hidden="true" />
                   Izquierda
-                </label>
-                <label className={styles.choice}>
-                  <RadioGroupItem className="sr-only" id={`${id}-alignment-center`} value="center" aria-label="Centrada" />
-                  <AlignCenter className={styles.choiceIcon} aria-hidden="true" />
+                </RadioGroupItem>
+                <RadioGroupItem
+                  variant="button"
+                  className="min-h-11 gap-2"
+                  id={`${id}-alignment-center`}
+                  value="center"
+                >
+                  <AlignCenter className="size-4 shrink-0" aria-hidden="true" />
                   Centrada
-                </label>
+                </RadioGroupItem>
               </RadioGroup>
             </div>
             {teams.map((team) => (
-              <fieldset key={team.id} className={styles.teamRoles}>
-                <legend className={styles.label}>{team.name.trim()}</legend>
+              <fieldset
+                key={team.id}
+                className="grid min-w-0 gap-4 border-t [padding-block-start:theme(spacing.4)]"
+              >
+                <legend className="max-w-full pe-3 text-sm font-medium [overflow-wrap:anywhere]">
+                  {team.name.trim()}
+                </legend>
                 {IMAGE_EXPORT_PLAYER_ROLES.map(({ id: role, label }) => (
-                  <div key={role} className={styles.field}>
-                    <label
+                  <div key={role} className="grid min-w-0 grid-cols-1 gap-2">
+                    <Label
                       id={`${id}-${role}-${team.id}`}
                       htmlFor={`${id}-${role}-${team.id}-control`}
-                      className={styles.label}
                     >
                       {label}
                       <span className="sr-only"> de {team.name.trim()}</span>
-                    </label>
+                    </Label>
                     <Select
-                      value={String(selections[team.id].assignments[role] ?? "none")}
+                      value={String(
+                        selections[team.id].assignments[role] ?? "none",
+                      )}
                       disabled={processing}
                       onValueChange={(value) => {
                         setSavedSelections({
@@ -322,24 +364,53 @@ export default function ExportEditor({
                         aria-labelledby={`${id}-${role}-${team.id}`}
                         data-player-role-control={role}
                         data-role-team={team.id}
-                        className={styles.selectTrigger}
+                        size="lg"
                       >
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className={styles.selectContent}>
-                        <SelectItem value="none" textValue="No indicado" className={styles.selectItem}>
-                          <span className={styles.avatarSample}>
-                            <span className={styles.avatarIllustration} aria-hidden="true"><Minus strokeWidth={1.5} className={styles.noAvatarIcon} /></span>
-                            <span className={styles.sampleLabel}>No indicado</span>
+                      <SelectContent className="w-[var(--radix-select-trigger-width)]">
+                        <SelectItem
+                          value="none"
+                          textValue="No indicado"
+                          size="lg"
+                        >
+                          <span className="flex min-w-0 items-center gap-3 whitespace-nowrap text-start">
+                            <span
+                              className="grid size-8 shrink-0 place-items-center"
+                              aria-hidden="true"
+                            >
+                              <Minus className="size-6 text-muted-foreground" />
+                            </span>
+                            <span className="min-w-0 truncate">
+                              No indicado
+                            </span>
                           </span>
                         </SelectItem>
                         {[...team.players].sort(byName).map((player) => (
-                          <SelectItem key={player.id} value={String(player.id)} textValue={player.name} className={styles.selectItem}>
-                            <span className={styles.avatarSample}>
-                              <span className={styles.avatarIllustration} aria-hidden="true">
-                                <PlayerAvatar name={player.name} src={player.avatar} size="sm" palette={palette} />
+                          <SelectItem
+                            key={player.id}
+                            value={String(player.id)}
+                            textValue={player.name}
+                            size="lg"
+                          >
+                            <span className="flex min-w-0 items-center gap-3 whitespace-nowrap text-start">
+                              <span
+                                className="grid size-8 shrink-0 place-items-center"
+                                aria-hidden="true"
+                              >
+                                <PlayerAvatar
+                                  name={player.name}
+                                  src={player.avatar}
+                                  size="sm"
+                                  palette={palette}
+                                />
                               </span>
-                              <span className={styles.sampleLabel} title={player.name}>{player.name}</span>
+                              <span
+                                className="min-w-0 truncate"
+                                title={player.name}
+                              >
+                                {player.name}
+                              </span>
                             </span>
                           </SelectItem>
                         ))}
@@ -352,20 +423,31 @@ export default function ExportEditor({
           </fieldset>
         </div>
         {showPreview ? (
-          <section className={styles.preview} aria-label="Vista previa">
+          <section
+            className="grid min-h-0 min-w-0 grid-rows-[minmax(0,1fr)] border-s bg-muted"
+            aria-label="Vista previa"
+          >
             <div
-              className={styles.previewScroll}
+              className="flex min-h-0 min-w-0 flex-col overflow-auto overscroll-contain p-6 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
               tabIndex={0}
               role="region"
               aria-label="Imagen de los equipos"
             >
-              <ExportPreview name={name} teams={teams} options={options} playerRoles={selections} />
+              <ExportPreview
+                name={name}
+                teams={teams}
+                options={options}
+                playerRoles={selections}
+              />
             </div>
           </section>
         ) : null}
       </div>
-      <footer className={styles.footer}>
-        <div className={styles.feedback}>
+      <footer className="flex flex-wrap items-center gap-3 border-t px-6 py-4">
+        <div
+          className="min-w-0 basis-full text-sm"
+          hidden={!error && !processing && !downloaded}
+        >
           {error ? (
             <p role="alert" className="text-destructive">
               {error}
@@ -379,9 +461,10 @@ export default function ExportEditor({
                 : ""}
           </p>
         </div>
-        <div className={styles.actions}>
+        <DialogFooter className="ms-auto w-full gap-2 sm:w-auto sm:space-x-0">
           <Button
             type="button"
+            className="min-h-11 flex-1 active:opacity-80"
             variant="outline"
             disabled={processing}
             onClick={() => updateOptions({ ...DEFAULT_IMAGE_EXPORT_OPTIONS })}
@@ -390,6 +473,7 @@ export default function ExportEditor({
           </Button>
           <Button
             type="button"
+            className="min-h-11 flex-1 active:opacity-80"
             disabled={disabled || processing}
             onClick={download}
             aria-busy={processing}
@@ -402,7 +486,7 @@ export default function ExportEditor({
             ) : null}
             {processing ? "Descargando…" : "Descargar"}
           </Button>
-        </div>
+        </DialogFooter>
       </footer>
     </DialogContent>
   );
