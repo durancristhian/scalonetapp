@@ -1,5 +1,8 @@
 "use server";
 
+import { duplicateMatch } from "@/server/duplicate-match";
+import { reportServerError } from "@/server/report-error";
+import type { DuplicateMatchResult } from "@/types/duplicate-match";
 import { removeUnusedPhoto } from "@/server/player-photos";
 
 import { MATCH_SCHEMA, MATCH_UPDATE_SCHEMA, type MatchSchema, type MatchUpdateSchema } from "@/schemas/match";
@@ -7,19 +10,12 @@ import {
   addMatchQuery,
   deleteMatchQuery,
   editMatchQuery,
-  getMatchByIdQuery,
 } from "@/server/queries/match";
-import { addMultiplePlayersQuery } from "@/server/queries/player";
-import { type BaseTeam } from "@/types/team";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import prisma from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { type Match } from "@prisma/client";
-import { format } from "date-fns";
 import { revalidatePath } from "next/cache";
-import { getSavedTeamsError } from "@/utils/team-validation";
-import { getDuplicatedMatchName } from "@/utils/match-name";
-import { MAX_PLAYERS_BATCH, MAX_PLAYERS_PER_MATCH } from "@/utils/player-limits";
 
 export const addMatchAction: (
   data: MatchSchema,
@@ -133,94 +129,28 @@ export const deleteMatchAction: (id: number) => Promise<void> = async (id) => {
   }
 };
 
-export const duplicateMatchAction: (id: number) => Promise<void> = async (
-  id
-) => {
+export const duplicateMatchAction = async (id: number): Promise<DuplicateMatchResult> => {
+  let result: DuplicateMatchResult;
   try {
     const { userId } = await auth();
-
-    /* We check auth */
-    if (!userId) {
-      throw new Error(ERROR_MESSAGES.unauthorized);
+    if (!userId) return { ok: false, code: "unauthorized" };
+    if (!Number.isSafeInteger(id) || id <= 0 || id > 2147483647) {
+      return { ok: false, code: "not_found" };
     }
-
-    const existingMatch = await getMatchByIdQuery(id);
-
-    if (!existingMatch) {
-      throw new Error(ERROR_MESSAGES.not_found);
-    }
-    if (existingMatch.players.length > MAX_PLAYERS_PER_MATCH) {
-      throw new Error("El partido supera el máximo de jugadores permitido.");
-    }
-
-    const existingTeams: BaseTeam[] = JSON.parse(existingMatch.teams);
-    if (existingTeams.length) {
-      const error = getSavedTeamsError(existingTeams, existingMatch.players.map(player => player.id));
-      if (error) throw new Error(error);
-    }
-
-    /* We create a new match */
-    const newMatch = await addMatchAction(
-      {
-        name: getDuplicatedMatchName(existingMatch.name, format(new Date(), "t")),
-      },
-      { revalidatePath: false }
-    );
-
-    if (existingMatch.players.length) {
-      /* We add the existing players to the new match as well */
-      for (let offset = 0; offset < existingMatch.players.length; offset += MAX_PLAYERS_BATCH) {
-        await addMultiplePlayersQuery(
-          newMatch.id,
-          existingMatch.players.slice(offset, offset + MAX_PLAYERS_BATCH).map(({ name, level, position }) => ({
-            name,
-            level,
-            position,
-          })),
-          userId,
-        );
-      }
-
-      const updatedNewMatch = await getMatchByIdQuery(newMatch.id);
-
-      if (!updatedNewMatch) {
-        throw new Error(ERROR_MESSAGES.not_found);
-      }
-
-      if (existingTeams.length) {
-        /* We create a map to get the recently created player id based on the existing one */
-        const existingPlayersMap: Record<number, number> =
-          existingMatch.players.reduce(
-            (acc, curr) => ({
-              ...acc,
-              [curr.id]: updatedNewMatch.players.find(
-                (player) => player.name === curr.name
-                /* It's safe to use ? here since we just duplicated the players and names should match */
-              )?.id,
-            }),
-            {}
-          );
-
-        /* We iterate over the existing teams and we replace the ids */
-        const parsedTeams: BaseTeam[] = JSON.parse(existingMatch.teams);
-        const nextTeams: BaseTeam[] = parsedTeams.map((team) => ({
-          ...team,
-          players: team.players
-            .map((playerId) => existingPlayersMap[playerId])
-            .filter((id): id is number => id !== undefined),
-        }));
-
-        /* We edit the match so we copy the same teams */
-        await editMatchQuery(
-          newMatch.id,
-          { teams: JSON.stringify(nextTeams) },
-          userId
-        );
-      }
-    }
-
-    revalidatePath("/dashboard");
+    result = await duplicateMatch(id, userId);
   } catch (error) {
-    throw new Error(ERROR_MESSAGES.match_duplicate_error);
+    const reference = reportServerError(error, { operation: "match.duplicate", matchId: id });
+    return { ok: false, code: "unexpected", reference };
   }
+
+  if (result.ok) {
+    try {
+      revalidatePath("/dashboard");
+      revalidatePath("/partidos");
+    } catch (error) {
+      // The copy already committed. Don't invite a second copy because refresh failed.
+      reportServerError(error, { operation: "match.duplicate.revalidate", matchId: id });
+    }
+  }
+  return result;
 };

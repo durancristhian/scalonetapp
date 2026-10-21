@@ -18,6 +18,8 @@ export const ERROR_MESSAGES = {
     "Ocurrió un error al eliminar el partido. Por favor, intente nuevamente.",
   match_duplicate_error:
     "Ocurrió un error al duplicar el partido. Por favor, intente nuevamente.",
+  match_duplicate_player_limit:
+    "Este partido supera el máximo de 100 jugadores. Eliminá los que sobran antes de duplicarlo.",
   match_edit_error:
     "Ocurrió un error al editar el partido. Por favor, intente nuevamente.",
   match_limit_reached:

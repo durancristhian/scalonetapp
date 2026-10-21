@@ -10,6 +10,8 @@
     "dev": "next dev --turbopack",
     "lint": "next lint",
     "start": "next start",
+    "test:duplicate": "NODE_ENV=production node --conditions=react-server --test tests/duplicate-match.test.cjs",
+    "test:duplicate:db": "NODE_ENV=production node --test tests/duplicate-match-db.test.cjs",
     "vercel-build": "prisma generate && prisma migrate deploy && next build"
   },
   "dependencies": {
