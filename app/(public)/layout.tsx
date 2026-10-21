@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import { type PropsWithChildren } from "react";
 
-const title = "Armá equipos de fútbol | scalonet.app";
+const title = "Scalonet.app | Armá equipos de fútbol";
 const description =
   "Armá equipos de fútbol con tus amigos. Cargá jugadores, distribuí equipos al azar o por posición y nivel, y descargá una imagen para compartir.";
 const url = "https://www.scalonet.app/";
 const image = "https://www.scalonet.app/api/og";
 
 export const metadata: Metadata = {
-  title,
+  title: { absolute: title },
   description,
   alternates: { canonical: url },
   robots: { index: true, follow: true },
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     url,
     title,
     description,
-    siteName: "scalonet.app",
+    siteName: "Scalonet.app",
     locale: "es_AR",
     images: [{ url: image, width: 1200, height: 630, alt: "scalonet.app" }],
   },

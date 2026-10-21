@@ -2,9 +2,10 @@ import { MatchDetails } from "@/app/(authenticated)/partidos/[match-id]/(compone
 import { Button } from "@/components/ui/button";
 import { getMatchByIdQuery } from "@/server/queries/match";
 import { ChevronLeftIcon } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { type FC } from "react";
+import { cache, type FC } from "react";
 
 type PageProps = {
   params: Promise<{
@@ -12,9 +13,26 @@ type PageProps = {
   }>;
 };
 
+const getMatch = cache(async (matchId: string) => {
+  const id = Number(matchId);
+  if (!Number.isInteger(id) || id < 1 || id > 2_147_483_647) {
+    return null;
+  }
+
+  return getMatchByIdQuery(id);
+});
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const match = await getMatch((await params)["match-id"]);
+  // Keep user-entered $ sequences literal instead of applying Next's template.
+  return {
+    title: { absolute: `${match?.name ?? "Página no encontrada"} | Scalonet.app` },
+  };
+}
+
 const Page: FC<PageProps> = async (props) => {
   const params = await props.params;
-  const match = await getMatchByIdQuery(Number(params["match-id"]));
+  const match = await getMatch(params["match-id"]);
 
   if (!match) {
     return notFound();

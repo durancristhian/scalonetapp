@@ -4,7 +4,10 @@ import {
 } from "@/app/(authenticated)/(components)/add-match";
 import { MatchesList } from "@/app/(authenticated)/(components)/matches-list";
 import { getMatchesQuery } from "@/server/queries/match";
+import type { Metadata } from "next";
 import { type FC } from "react";
+
+export const metadata: Metadata = { title: "Partidos" };
 
 const Page: FC = async () => {
   const [matches, totalCount] = await getMatchesQuery();
