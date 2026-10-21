@@ -50,6 +50,7 @@ export function MatchGrandstand({
   weather,
 }: Pick<ImageExportOptions, "background" | "weather"> & { name: string }) {
   const material = materials[background];
+  const cornerFoldOpacity = { pasto: 0.12, natural: 0.16, potrero: 0.2 }[background];
   return (
     <header
       className={cn(
@@ -134,6 +135,21 @@ export function MatchGrandstand({
           <path
             className={"fill-none stroke-white/5 stroke-[5]"}
             d="M33 6q-8 48 0 98M1119 5q8 48 0 98M284 6q-6 48 0 99M868 5q6 48 0 100"
+          />
+          {/* Corner creases follow the same subtle-to-rough progression as the field. */}
+          <path
+            d="M17 16Q38 25 63 35M1135 16Q1110 27 1089 36"
+            fill="none"
+            stroke="black"
+            strokeOpacity={cornerFoldOpacity}
+            strokeWidth="3"
+          />
+          <path
+            d="M18 19Q38 28 62 38M1134 19Q1110 30 1090 39"
+            fill="none"
+            stroke="white"
+            strokeOpacity={cornerFoldOpacity * 0.4}
+            strokeWidth="2"
           />
           {background === "potrero" ? (
             <g className={"fill-[var(--export-divider-color)] fill-opacity-20"}>
