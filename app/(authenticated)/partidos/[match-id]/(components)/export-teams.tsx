@@ -1,5 +1,6 @@
 "use client";
 
+import { trackAnalytics } from "@/utils/analytics";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { type Team } from "@/types/team";
@@ -30,7 +31,10 @@ export function ExportTeams({
     <Dialog
       open={open}
       onOpenChange={(nextOpen) => {
-        if (!processing) setOpen(nextOpen);
+        if (!processing) {
+          setOpen(nextOpen);
+          if (nextOpen) trackAnalytics("export_opened");
+        }
       }}
     >
       <DialogTrigger asChild>

@@ -1,5 +1,6 @@
 "use client";
 
+import { trackAnalytics } from "@/utils/analytics";
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { MatchForm } from "@/app/(authenticated)/(components)/match-form";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -52,6 +53,7 @@ const EnabledContent: FC = () => {
     return new Promise(async (resolve, reject) => {
       try {
         await addMatchAction(values);
+        trackAnalytics("match_created");
 
         successAlert({
           title: "¡Partido creado!",
@@ -73,7 +75,13 @@ const EnabledContent: FC = () => {
   };
 
   return (
-    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+    <Dialog
+      open={dialogOpen}
+      onOpenChange={(open) => {
+        setDialogOpen(open);
+        if (open) trackAnalytics("match_create_opened");
+      }}
+    >
       <DialogTrigger asChild>
         <Button>Agregar</Button>
       </DialogTrigger>
