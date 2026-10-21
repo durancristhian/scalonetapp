@@ -93,22 +93,18 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player }) => {
     <Card>
       <div className="flex items-center gap-2 ps-4">
         <PlayerAvatar src={player.avatar} name={player.name} size="sm" />
-        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-4 gap-y-2 py-2">
-          <p className="min-w-0 flex-1 basis-40 [overflow-wrap:anywhere]">
-            {player.name}
-          </p>
-          <div className="flex shrink-0 gap-2">
-            <Badge
-              variant={player.position}
-              className="justify-center uppercase w-12"
-            >
-              {PLAYER_POSITIONS[player.position].substring(0, 3)}
-            </Badge>
-            <Badge variant="secondary" className="justify-center w-10">
-              {player.level}
-            </Badge>
-          </div>
-        </div>
+        <p className="min-w-0 flex-1 py-2 [overflow-wrap:anywhere]">
+          {player.name}
+        </p>
+        <Badge
+          variant={player.position}
+          className="shrink-0 justify-center uppercase w-12"
+        >
+          {PLAYER_POSITIONS[player.position].substring(0, 3)}
+        </Badge>
+        <Badge variant="secondary" className="shrink-0 justify-center w-10">
+          {player.level}
+        </Badge>
         <div className="flex-shrink-0">
           <DropdownMenu open={menuOpened} onOpenChange={setMenuOpened}>
             <DropdownMenuTrigger asChild>
