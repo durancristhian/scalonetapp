@@ -12,6 +12,7 @@ import {
   type ImageExportOptions,
 } from "@/utils/image-export-options";
 import { useEffect, useRef, useState } from "react";
+import { type ImageExportTeamSelections } from "@/utils/image-export-player-roles";
 
 export const useTeamActions = (
   match: MatchWithPlayers,
@@ -29,6 +30,7 @@ export const useTeamActions = (
   const run = async (
     action: "save" | "export",
     options: ImageExportOptions = DEFAULT_IMAGE_EXPORT_OPTIONS,
+    selections: ImageExportTeamSelections = {},
   ): Promise<string | null> => {
     // Block a second click before React commits the disabled state.
     if (operationLock.current || !valid)
@@ -55,7 +57,7 @@ export const useTeamActions = (
 
       if (action === "export") {
         stage = "image";
-        const blob = await fetchTeamExport(match.id, options);
+        const blob = await fetchTeamExport(match.id, options, selections);
         downloadBlob(blob, "equipos.png");
       }
 
@@ -78,6 +80,6 @@ export const useTeamActions = (
   return {
     operation,
     save: () => run("save"),
-    exportTeams: (options: ImageExportOptions) => run("export", options),
+    exportTeams: (options: ImageExportOptions, selections: ImageExportTeamSelections) => run("export", options, selections),
   };
 };

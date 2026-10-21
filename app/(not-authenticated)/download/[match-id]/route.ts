@@ -10,9 +10,9 @@ import {
 } from "@/utils/image-export-target";
 import {
   IMAGE_EXPORT_WIDTH,
-  parseImageExportOptions,
 } from "@/utils/image-export-options";
-import { getImageExportBackgroundUrl } from "@/utils/image-export-background";
+import { parseImageExportRequest } from "@/utils/image-export-request";
+import { getImageExportBackground, getImageExportBackgroundUrls } from "@/utils/image-export-background";
 import { type NextRequest, NextResponse } from "next/server";
 import { type Browser } from "puppeteer-core";
 
@@ -61,13 +61,14 @@ const getBrowser: () => Promise<Browser> = async () => {
 };
 
 export async function GET(request: NextRequest) {
-  const options = parseImageExportOptions(request.nextUrl.searchParams);
-  if (!options) {
+  const exportRequest = parseImageExportRequest(request.nextUrl.searchParams);
+  if (!exportRequest) {
     return NextResponse.json(
       { error: "Opciones de imagen no válidas." },
       { status: 400 },
     );
   }
+  const { options, selections } = exportRequest;
   let browser;
 
   try {
@@ -113,16 +114,18 @@ export async function GET(request: NextRequest) {
     const exportUrl = `${exportTarget.origin}/download/${matchId}/ui`;
     // Pass this export's data before the page scripts run, without storage or reload.
     await page.evaluateOnNewDocument(
-      (data, url, imageOptions) => {
+      (data, url, imageOptions, playerRoles) => {
         if (window === window.top && window.location.href === url) {
           (window as ImageExportWindow).__SCALONETA_EXPORT_MATCH__ = data;
           (window as ImageExportWindow).__SCALONETA_EXPORT_OPTIONS__ =
             imageOptions;
+          (window as ImageExportWindow).__SCALONETA_EXPORT_PLAYER_ROLES__ = playerRoles;
         }
       },
       match,
       exportUrl,
       options,
+      selections,
     );
     const navigateToExport = async () => {
       const response = await page.goto(exportUrl);
@@ -139,11 +142,11 @@ export async function GET(request: NextRequest) {
     await waitForImageExport(
       page,
       match.name,
-      match.players.flatMap((player) => [
+      options.avatarShape === "none" ? [] : match.players.flatMap((player) => [
         player.avatar,
-        getPlayerAvatarUrl(player.name, options.palette),
+        getPlayerAvatarUrl(player.name, getImageExportBackground(options.background)!.palette),
       ]),
-      getImageExportBackgroundUrl(options.background, options.palette),
+      getImageExportBackgroundUrls(options),
     );
 
     const canvas = await page.waitForSelector("[data-team-export]");

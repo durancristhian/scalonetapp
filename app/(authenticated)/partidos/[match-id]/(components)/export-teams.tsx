@@ -6,18 +6,21 @@ import { type Team } from "@/types/team";
 import { type ImageExportOptions } from "@/utils/image-export-options";
 import dynamic from "next/dynamic";
 import { useState } from "react";
+import { type ImageExportTeamSelections } from "@/utils/image-export-player-roles";
 
 const ExportEditor = dynamic(() => import("./export-editor"));
 
 type ExportTeamsProps = {
+  matchId: number;
   disabled: boolean;
   processing: boolean;
   name: string;
   teams: Team[];
-  onExport: (options: ImageExportOptions) => Promise<string | null>;
+  onExport: (options: ImageExportOptions, selections: ImageExportTeamSelections) => Promise<string | null>;
 };
 
 export function ExportTeams({
+  matchId,
   disabled,
   processing,
   name,
@@ -40,6 +43,7 @@ export function ExportTeams({
       </DialogTrigger>
       {open ? (
         <ExportEditor
+          matchId={matchId}
           name={name}
           teams={teams}
           processing={processing}

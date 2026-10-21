@@ -118,6 +118,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                     onSave={save}
                   />
                   <ExportTeams
+                    matchId={match.id}
                     name={match.name}
                     teams={teams}
                     disabled={busy || !areTeamsValid}

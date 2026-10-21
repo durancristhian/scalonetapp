@@ -1,15 +1,17 @@
 import {
   DEFAULT_IMAGE_EXPORT_OPTIONS,
-  imageExportSearchParams,
   type ImageExportOptions,
 } from "./image-export-options.ts";
+import { imageExportRequestSearchParams } from "./image-export-request.ts";
+import { type ImageExportTeamSelections } from "./image-export-player-roles.ts";
 
 export const fetchTeamExport = async (
   matchId: number,
   options: ImageExportOptions = DEFAULT_IMAGE_EXPORT_OPTIONS,
+  selections: ImageExportTeamSelections = {},
 ): Promise<Blob> => {
   const response = await fetch(
-    `/download/${matchId}?${imageExportSearchParams(options)}`,
+    `/download/${matchId}?${imageExportRequestSearchParams(options, selections)}`,
     { cache: "no-store" },
   );
 

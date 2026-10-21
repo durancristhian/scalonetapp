@@ -3,15 +3,26 @@
   inset: 0;
   overflow: clip;
   pointer-events: none;
-  container-type: size;
+}
+
+.artwork,
+.weather {
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat;
 }
 
 .artwork {
-  position: absolute;
-  /* Cover a variable-height team sheet while preserving the SVG's 720:520 ratio. */
-  inline-size: max(100cqw, calc(100cqh * 720 / 520));
-  aspect-ratio: 720 / 520;
+  /* Synthetic stripes retain their spacing as the teams grow taller. */
+  background-size: 1280px 640px;
+}
+
+.continuous {
+  /* Organic patches fill the whole field once, without tile boundaries. */
   background-size: 100% 100%;
   background-repeat: no-repeat;
-  transform-origin: center;
+}
+
+.weather {
+  background-size: 1280px 960px;
 }

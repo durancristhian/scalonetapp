@@ -1,0 +1,18 @@
+.avatar {
+  border: 1px solid oklch(0 0 none / 65%);
+  box-shadow:
+    0 1px 2px oklch(0 0 none / 15%),
+    0 3px 6px oklch(0 0 none / 12%);
+}
+
+.avatar.square {
+  border-radius: var(--player-corner-radius, 12.5%);
+}
+
+.avatar.circle {
+  border-radius: 50%;
+}
+
+.avatar .fallback {
+  border-radius: inherit;
+}
