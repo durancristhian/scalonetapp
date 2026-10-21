@@ -45,7 +45,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
         <body
           className={clsx(
             workSans.className,
-            "antialiased bg-pattern min-h-dvh slashed-zero tabular-nums text-foreground"
+            "antialiased bg-pattern min-h-dvh text-base leading-6 slashed-zero tabular-nums text-foreground"
           )}
         >
           {children}
