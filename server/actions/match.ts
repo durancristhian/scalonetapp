@@ -2,7 +2,7 @@
 
 import { removeUnusedPhoto } from "@/server/player-photos";
 
-import { type MatchSchema } from "@/schemas/match";
+import { MATCH_SCHEMA, MATCH_UPDATE_SCHEMA, type MatchSchema, type MatchUpdateSchema } from "@/schemas/match";
 import {
   addMatchQuery,
   deleteMatchQuery,
@@ -17,6 +17,9 @@ import { auth } from "@clerk/nextjs/server";
 import { type Match } from "@prisma/client";
 import { format } from "date-fns";
 import { revalidatePath } from "next/cache";
+import { getSavedTeamsError } from "@/utils/team-validation";
+import { getDuplicatedMatchName } from "@/utils/match-name";
+import { MAX_PLAYERS_PER_MATCH } from "@/utils/player-limits";
 
 export const addMatchAction: (
   data: MatchSchema,
@@ -35,6 +38,7 @@ export const addMatchAction: (
       throw new Error(ERROR_MESSAGES.unauthorized);
     }
 
+    const matchData = MATCH_SCHEMA.parse(data);
     const userMatches = await prisma.match.findMany({
       where: {
         userId: {
@@ -51,7 +55,7 @@ export const addMatchAction: (
     }
 
     const sameNameMatch = userMatches.find(
-      (userMatch) => userMatch.name === data.name
+      (userMatch) => userMatch.name === matchData.name
     );
 
     /* We check we don't have a match named the same */
@@ -59,7 +63,7 @@ export const addMatchAction: (
       throw new Error(ERROR_MESSAGES.match_name_repeated);
     }
 
-    const newMatch = await addMatchQuery(data, userId);
+    const newMatch = await addMatchQuery(matchData, userId);
 
     if (options.revalidatePath) {
       revalidatePath("/dashboard");
@@ -73,7 +77,7 @@ export const addMatchAction: (
 
 export const editMatchAction: (
   id: number,
-  data: Partial<Match>,
+  data: MatchUpdateSchema,
   pathToRevalidate: string
 ) => Promise<void> = async (id, data, pathToRevalidate) => {
   try {
@@ -84,16 +88,16 @@ export const editMatchAction: (
       throw new Error(ERROR_MESSAGES.unauthorized);
     }
 
-    /* We check we don't have a match named the same ONLY IF we're getting a name as part of the data to be updated */
-    if (data.name) {
+    const matchData = MATCH_UPDATE_SCHEMA.parse(data);
+    /* A rename may keep its existing name, but cannot reuse another match's. */
+    if (matchData.name !== undefined) {
       const sameNameMatch = await prisma.match.findFirst({
         where: {
           userId: {
             equals: userId,
           },
-          name: {
-            equals: data.name,
-          },
+          name: matchData.name,
+          id: { not: id },
         },
       });
 
@@ -102,7 +106,7 @@ export const editMatchAction: (
       }
     }
 
-    await editMatchQuery(id, data, userId);
+    await editMatchQuery(id, matchData, userId);
 
     revalidatePath(pathToRevalidate, "page");
   } catch (error) {
@@ -145,11 +149,20 @@ export const duplicateMatchAction: (id: number) => Promise<void> = async (
     if (!existingMatch) {
       throw new Error(ERROR_MESSAGES.not_found);
     }
+    if (existingMatch.players.length > MAX_PLAYERS_PER_MATCH) {
+      throw new Error("El partido supera el máximo de jugadores permitido.");
+    }
+
+    const existingTeams: BaseTeam[] = JSON.parse(existingMatch.teams);
+    if (existingTeams.length) {
+      const error = getSavedTeamsError(existingTeams, existingMatch.players.map(player => player.id));
+      if (error) throw new Error(error);
+    }
 
     /* We create a new match */
     const newMatch = await addMatchAction(
       {
-        name: `Copia de ${existingMatch.name} (${format(new Date(), "t")})`,
+        name: getDuplicatedMatchName(existingMatch.name, format(new Date(), "t")),
       },
       { revalidatePath: false }
     );
@@ -162,7 +175,8 @@ export const duplicateMatchAction: (id: number) => Promise<void> = async (
           name,
           level,
           position,
-        }))
+        })),
+        userId,
       );
 
       const updatedNewMatch = await getMatchByIdQuery(newMatch.id);
@@ -171,7 +185,7 @@ export const duplicateMatchAction: (id: number) => Promise<void> = async (
         throw new Error(ERROR_MESSAGES.not_found);
       }
 
-      if (existingMatch.teams) {
+      if (existingTeams.length) {
         /* We create a map to get the recently created player id based on the existing one */
         const existingPlayersMap: Record<number, number> =
           existingMatch.players.reduce(

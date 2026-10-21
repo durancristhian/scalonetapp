@@ -15,9 +15,11 @@ import { useTeamActions } from "@/app/(authenticated)/partidos/[match-id]/(hooks
 import { useTeamsBuilderState } from "@/app/(authenticated)/partidos/[match-id]/(hooks)/use-team-builder-state";
 import { EmptyState } from "@/components/empty-state";
 import { Button } from "@/components/ui/button";
-import { TEAM_SCHEMA } from "@/schemas/team";
 import { type MatchWithPlayers } from "@/types/match";
 import { type FC, useMemo } from "react";
+import { TEAMS_PER_MATCH } from "@/utils/team-count";
+import { MAX_PLAYERS_PER_MATCH } from "@/utils/player-limits";
+import { getSavedTeamsError } from "@/utils/team-validation";
 
 type MatchDetailsProps = {
   match: MatchWithPlayers;
@@ -38,12 +40,11 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
     updateTeamName,
   } = useTeamsBuilderState(match);
 
-  /* We consider teams are valid when there is no unselected players AND all teams have a valid name */
-  const areTeamsValid = useMemo(() => {
-    const validTeamNames = teams.every((team) => TEAM_SCHEMA.safeParse({ name: team.name }).success);
-
-    return !unselectedPlayers.length && validTeamNames;
-  }, [teams, unselectedPlayers]);
+  const validationError = useMemo(() => getSavedTeamsError(
+    teams.map(team => ({ ...team, players: team.players.map(player => player.id) })),
+    match.players.map(player => player.id),
+  ), [teams, match.players]);
+  const areTeamsValid = !validationError;
 
   const { operation, save, exportTeams } = useTeamActions(
     match,
@@ -54,10 +55,10 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div className="md:col-span-1">
+      <div className="min-w-0 md:col-span-1">
         <MatchPlayers players={match.players} />
       </div>
-      <div className="md:col-span-2">
+      <div className="min-w-0 md:col-span-2">
         {match.players.length ? (
           <div className="space-y-8">
             {unselectedPlayers.length ? (
@@ -75,6 +76,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                 <h1 className="font-bold text-xl">Equipos</h1>
                 <div className="space-x-2">
                   <BuildTeams
+                    disabled={teams.length !== TEAMS_PER_MATCH || match.players.length > MAX_PLAYERS_PER_MATCH}
                     onSave={(preset) => {
                       switch (preset) {
                         case "random": {
@@ -96,14 +98,14 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                     }
                     showPing={unselectedPlayers.length === match.players.length}
                   />
-                  <Button onClick={createNewTeam}>Agregar</Button>
+                  {teams.length < TEAMS_PER_MATCH ? <Button onClick={createNewTeam}>Agregar</Button> : null}
                 </div>
               </div>
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid lg:grid-cols-2 gap-4">
                 {teams.map((team) => (
                   <TeamCard
                     key={team.id}
-                    canBeDeleted={teams.length > 2}
+                    canBeDeleted={teams.length > TEAMS_PER_MATCH}
                     removePlayerFromTeam={removePlayerFromTeam}
                     removeTeam={removeTeam}
                     team={team}
@@ -111,7 +113,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                   />
                 ))}
               </div>
-              {!areTeamsValid ? <TeamsValidationAlert /> : null}
+              {validationError ? <TeamsValidationAlert message={validationError} /> : null}
               <div className="flex flex-wrap gap-2 justify-between">
                 <CopyTeams teams={teams} />
                 <div className="flex flex-wrap gap-2">
@@ -121,6 +123,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                     onSave={save}
                   />
                   <ExportTeams
+                    matchId={match.id}
                     name={match.name}
                     teams={teams}
                     disabled={busy || !areTeamsValid}

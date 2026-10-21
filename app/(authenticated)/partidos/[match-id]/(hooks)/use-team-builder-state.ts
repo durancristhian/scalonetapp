@@ -1,6 +1,9 @@
 import { type MatchWithPlayers } from "@/types/match";
 import { type BaseTeam, type Team } from "@/types/team";
 import { byName } from "@/utils/by-name";
+import { TEAMS_PER_MATCH } from "@/utils/team-count";
+import { canAssignPlayersToTeam, MAX_PLAYERS_PER_MATCH } from "@/utils/player-limits";
+import { invalidateImageExportTeamSelections } from "@/utils/image-export-player-roles";
 import { type Player } from "@prisma/client";
 import shuffle from "lodash.shuffle";
 import { useEffect, useState } from "react";
@@ -55,6 +58,10 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
   const [teams, setTeams] = useState<Team[]>(() => getInitialTeams(match));
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
+  useEffect(() => {
+    invalidateImageExportTeamSelections(match.id, teams);
+  }, [match.id, teams]);
+
   /*
     When players change we check:
     - there is no assigned players that were deleted
@@ -86,9 +93,13 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
 
   const assignSelectionToTeam: UseTeamsBuilderStateResult["assignSelectionToTeam"] =
     (teamId) => {
-      setTeams((currTeams) =>
+      const target = teams.find(team => team.id === teamId);
+      if (!target || !canAssignPlayersToTeam(target.players.map(player => player.id), selectedIds)) return;
+      setTeams((currTeams) => {
+        const currentTarget = currTeams.find(team => team.id === teamId);
+        if (!currentTarget || !canAssignPlayersToTeam(currentTarget.players.map(player => player.id), selectedIds)) return currTeams;
         /* We loop over all the teams since an update might include removing players from another team, not only adding them to the specified team */
-        currTeams.map((currTeam) => {
+        return currTeams.map((currTeam) => {
           const nextTeam = { ...currTeam };
 
           /* If the selection is meant to be for the specified team id */
@@ -115,8 +126,8 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
           }
 
           return nextTeam;
-        })
-      );
+        });
+      });
 
       /* We clean the current selected ids as well so we can start over */
       setSelectedIds([]);
@@ -186,6 +197,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
   };
 
   const balanceTeams: UseTeamsBuilderStateResult["balanceTeams"] = () => {
+    if (teams.length !== TEAMS_PER_MATCH || match.players.length > MAX_PLAYERS_PER_MATCH) return;
     const balancedTeams = createBalancedTeams([...match.players], teams.length);
 
     setTeams((currTeams) => {
@@ -198,7 +210,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
 
   const createNewTeam: UseTeamsBuilderStateResult["createNewTeam"] = () => {
     setTeams((currTeams) =>
-      currTeams.concat([createEmptyTeam("Nuevo equipo")])
+      currTeams.length < TEAMS_PER_MATCH ? currTeams.concat([createEmptyTeam("Nuevo equipo")]) : currTeams
     );
   };
 
@@ -251,6 +263,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
   };
 
   const randomizeTeams: UseTeamsBuilderStateResult["randomizeTeams"] = () => {
+    if (teams.length !== TEAMS_PER_MATCH || match.players.length > MAX_PLAYERS_PER_MATCH) return;
     const shuffledPlayers = shuffle([...match.players]);
 
     updateTeamsWithPlayerChunks(shuffledPlayers);
@@ -276,7 +289,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
     };
 
   const removeTeam: UseTeamsBuilderStateResult["removeTeam"] = (teamId) => {
-    setTeams((currTeams) => currTeams.filter((team) => team.id !== teamId));
+    setTeams((currTeams) => currTeams.length > TEAMS_PER_MATCH ? currTeams.filter((team) => team.id !== teamId) : currTeams);
   };
 
   const togglePlayer: UseTeamsBuilderStateResult["togglePlayer"] = (

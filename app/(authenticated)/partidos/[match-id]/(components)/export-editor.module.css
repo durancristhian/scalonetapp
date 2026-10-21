@@ -45,8 +45,21 @@
 }
 .field {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 10px;
   min-inline-size: 0;
+}
+.teamRoles {
+  display: grid;
+  gap: 16px;
+  min-inline-size: 0;
+  padding-block-start: 16px;
+  border-block-start: 1px solid hsl(var(--border));
+}
+.teamRoles > legend {
+  max-inline-size: 100%;
+  padding-inline-end: 12px;
+  overflow-wrap: anywhere;
 }
 .label {
   font-size: 14px;
@@ -67,9 +80,15 @@
 .choice {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   min-block-size: 44px;
   padding: 10px;
+}
+.choiceIcon {
+  flex: none;
+  inline-size: 1.2em;
+  block-size: 1.2em;
 }
 .choice:has([data-state="checked"]) {
   border-color: hsl(var(--primary));
@@ -97,11 +116,14 @@
 }
 .selectTrigger {
   gap: 8px;
+  min-inline-size: 0;
+  max-inline-size: 100%;
 }
 .selectTrigger > span,
 .selectItem > span:last-child {
   display: block;
   min-inline-size: 0;
+  flex: 1;
   -webkit-line-clamp: unset;
 }
 .selectTrigger > svg {
@@ -111,62 +133,38 @@
   inline-size: var(--radix-select-trigger-width);
   max-block-size: min(20rem, var(--radix-select-content-available-height));
 }
-.backgroundSample,
-.paletteSample {
-  --sample-inline-size: 56px;
+.avatarSample {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   min-inline-size: 0;
   text-align: start;
   white-space: nowrap;
 }
 .sampleLabel {
-  overflow: hidden;
+  min-inline-size: 0;
+  overflow: clip;
   text-overflow: ellipsis;
 }
-.paletteDots,
-.swatch {
-  flex-shrink: 0;
-  inline-size: var(--sample-inline-size);
-}
-.paletteDots {
-  display: inline-flex;
-  align-items: center;
-}
-.paletteDot {
+.backgroundSwatch {
   flex: none;
-  inline-size: 20px;
-  block-size: 20px;
-  border: 2px solid oklch(1 0 none);
-  border-radius: 50%;
-  box-shadow: inset 0 0 0 1px oklch(0 0 none / 15%);
-}
-.paletteDot + .paletteDot {
-  margin-inline-start: -8px;
-}
-.swatch {
-  position: relative;
-  display: block;
-  block-size: 32px;
-  border: 1px solid hsl(var(--border));
+  inline-size: 40px;
+  block-size: 28px;
   border-radius: 3px;
-  overflow: clip;
+  background-color: var(--export-surface-color);
+  background-size: cover;
 }
-.avatarChoice {
+.avatarIllustration {
   display: grid;
-  grid-template-columns: 1rem minmax(0, 1fr);
-  grid-template-rows: auto auto;
-  justify-items: start;
+  place-items: center;
+  flex: none;
+  inline-size: 32px;
+  block-size: 32px;
 }
-.avatarChoice > [role="radio"] {
-  grid-column: 1;
-  grid-row: 1 / 3;
-  justify-self: start;
-}
-.avatarLabel {
-  grid-column: 2;
-  text-align: start;
+.noAvatarIcon {
+  inline-size: 1.5em;
+  block-size: 1.5em;
+  opacity: 0.65;
 }
 .preview {
   min-block-size: 0;

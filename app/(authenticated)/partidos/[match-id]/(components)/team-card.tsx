@@ -64,7 +64,7 @@ export const TeamCard: FC<TeamCardProps> = ({
       <CardContent className="pt-6">
         <div className="space-y-4">
           <div className="flex gap-2 items-center">
-            <div className="grow">
+            <div className="grow min-w-0">
               <TeamForm
                 onSubmit={onTeamNameChange}
                 values={{
@@ -96,12 +96,12 @@ export const TeamCard: FC<TeamCardProps> = ({
                 {[...goa, ...def, ...mid, ...forwards].map((player, idx) => (
                   <AnimatedListItem key={player.id} listIndex={idx}>
                     <div className="flex gap-2 items-center">
-                      <div className="grow">
-                        <div className="flex gap-2 items-center">
+                      <div className="grow min-w-0">
+                        <div className="flex gap-2 items-center min-w-0">
                           <PlayerAvatar src={player.avatar}
                             name={player.name}
                           />
-                          <p>{player.name}</p>
+                          <p className="min-w-0 [overflow-wrap:anywhere]">{player.name}</p>
                         </div>
                       </div>
                       <div className="flex-shrink-0">

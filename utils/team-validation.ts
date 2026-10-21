@@ -1,0 +1,32 @@
+import { getTeamCountError } from "./team-count.ts";
+import { MAX_PLAYERS_PER_MATCH, MAX_PLAYERS_PER_TEAM } from "./player-limits.ts";
+
+export const MAX_TEAM_NAME_LENGTH = 40;
+
+// Shared by the builder, persistence and the PNG endpoint, including legacy data.
+export function getSavedTeamsError(value: unknown, matchPlayerIds: readonly number[]): string | null {
+  if (!Array.isArray(value)) return "La información de los equipos no es válida. Volvé a armar los equipos.";
+  const countError = getTeamCountError(value.length);
+  if (countError) return countError;
+  if (matchPlayerIds.length > MAX_PLAYERS_PER_MATCH) return `El partido admite hasta ${MAX_PLAYERS_PER_MATCH} jugadores. Eliminá los que sobran antes de guardar o exportar.`;
+  const available = new Set(matchPlayerIds);
+  const assigned = new Set<number>();
+  const teamIds = new Set<string>();
+  for (const team of value) {
+    if (!team || typeof team.id !== "string" || !team.id.trim() || teamIds.has(team.id)) {
+      return "La información de los equipos no es válida. Volvé a armar los equipos.";
+    }
+    teamIds.add(team.id);
+    if (typeof team.name !== "string" || !team.name.trim() || team.name.trim().length > MAX_TEAM_NAME_LENGTH) {
+      return "Los nombres de los equipos deben tener entre 1 y 40 caracteres.";
+    }
+    if (!Array.isArray(team.players) || !team.players.length) return "Cada equipo necesita al menos un jugador.";
+    if (team.players.length > MAX_PLAYERS_PER_TEAM) return `Cada equipo admite hasta ${MAX_PLAYERS_PER_TEAM} jugadores. Redistribuí los jugadores antes de guardar o exportar.`;
+    for (const id of team.players) {
+      if (!Number.isSafeInteger(id) || !available.has(id)) return "Hay jugadores que ya no pertenecen al partido. Volvé a armar los equipos.";
+      if (assigned.has(id)) return "Un jugador no puede estar repetido ni pertenecer a los dos equipos.";
+      assigned.add(id);
+    }
+  }
+  return assigned.size === available.size ? null : "Asigná a todos los jugadores antes de guardar o exportar los equipos.";
+}

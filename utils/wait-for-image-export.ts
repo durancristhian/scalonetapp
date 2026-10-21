@@ -4,7 +4,7 @@ export async function waitForImageExport(
   page: Page,
   matchName: string,
   avatarUrls: string[],
-  backgroundUrl?: string,
+  backgroundUrls: string[] = [],
 ) {
   await page.waitForFunction(
     (name) => document.querySelector("h1")?.textContent === name,
@@ -13,7 +13,7 @@ export async function waitForImageExport(
   );
 
   await page.evaluate(
-    async (urls, background) => {
+    async (urls, backgrounds) => {
       const fonts = new Promise<void>((resolve, reject) => {
         const timer = setTimeout(
           () => reject(new Error("Image export fonts did not finish loading.")),
@@ -50,8 +50,8 @@ export async function waitForImageExport(
           }),
       );
 
-      const backgroundImage = background
-        ? new Promise<void>((resolve, reject) => {
+      const backgroundImages = backgrounds.map(
+        (background) => new Promise<void>((resolve, reject) => {
             const image = new Image();
             const timer = setTimeout(
               () => reject(new Error("Image export background did not load.")),
@@ -66,15 +66,15 @@ export async function waitForImageExport(
               reject(new Error("Image export background did not load."));
             };
             image.src = background;
-          })
-        : Promise.resolve();
+          }),
+      );
 
-      await Promise.all([fonts, backgroundImage, ...images]);
+      await Promise.all([fonts, ...backgroundImages, ...images]);
       await new Promise<void>((resolve) => {
         requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
       });
     },
     [...new Set(avatarUrls.filter(Boolean))],
-    backgroundUrl,
+    backgroundUrls,
   );
 }

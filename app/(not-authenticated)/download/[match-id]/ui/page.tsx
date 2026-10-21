@@ -9,11 +9,13 @@ import {
   type ImageExportOptions,
 } from "@/utils/image-export-options";
 import { useEffect, useState } from "react";
+import { type ImageExportTeamSelections } from "@/utils/image-export-player-roles";
 
 export default function Page() {
   const [data, setData] = useState<{
     match: MatchWithPlayers;
     options: ImageExportOptions;
+    playerRoles: ImageExportTeamSelections;
   }>();
 
   useEffect(() => {
@@ -23,6 +25,7 @@ export default function Page() {
         match: source.__SCALONETA_EXPORT_MATCH__,
         options:
           source.__SCALONETA_EXPORT_OPTIONS__ ?? DEFAULT_IMAGE_EXPORT_OPTIONS,
+        playerRoles: source.__SCALONETA_EXPORT_PLAYER_ROLES__ ?? {},
       });
     }
   }, []);
@@ -41,6 +44,6 @@ export default function Page() {
   }));
 
   return (
-    <TeamExport name={data.match.name} teams={teams} options={data.options} />
+    <TeamExport name={data.match.name} teams={teams} options={data.options} playerRoles={data.playerRoles} />
   );
 }
