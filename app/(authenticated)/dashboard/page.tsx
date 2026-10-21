@@ -5,10 +5,13 @@ import {
 import { MatchesList } from "@/app/(authenticated)/(components)/matches-list";
 import { Button } from "@/components/ui/button";
 import { getMatchesQuery } from "@/server/queries/match";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { type FC } from "react";
 
 const TAKE_LIMIT = 3;
+
+export const metadata: Metadata = { title: "Dashboard" };
 
 const Page: FC = async () => {
   const [matches, totalCount] = await getMatchesQuery({ take: TAKE_LIMIT });

@@ -16,13 +16,16 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  applicationName: "scalonet.app",
+  applicationName: "Scalonet.app",
   authors: {
     name: "Cristhian Duran",
     url: "https://github.com/durancristhian",
   },
   creator: "Cristhian Duran",
-  title: "scalonet.app",
+  title: {
+    default: "Scalonet.app",
+    template: "%s | Scalonet.app",
+  },
   // Only public pages explicitly opt into search indexing.
   robots: { index: false, follow: false },
 };

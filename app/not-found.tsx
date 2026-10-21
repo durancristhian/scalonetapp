@@ -1,6 +1,11 @@
 import { Button } from "@/components/ui/button";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { type FC } from "react";
+
+export const metadata: Metadata = {
+  title: { absolute: "Página no encontrada | Scalonet.app" },
+};
 
 const NotFound: FC = () => {
   return (
