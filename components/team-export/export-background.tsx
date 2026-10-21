@@ -12,6 +12,7 @@ export function ExportBackground({
   weather,
   outside = false,
 }: Pick<ImageExportOptions, "background" | "weather"> & { outside?: boolean }) {
+  const solidOutside = outside && background === "pasto";
   return (
     <span
       aria-hidden="true"
@@ -25,10 +26,15 @@ export function ExportBackground({
           background === "pasto" || outside
             ? "[background-size:1280px_640px]"
             : "[background-size:100%_100%]",
-          outside && "[filter:brightness(0.7)_saturate(0.75)_contrast(0.85)]",
+          solidOutside
+            ? "bg-[color-mix(in_oklch,var(--export-surface-color)_65%,var(--export-frame-color))]"
+            : outside &&
+                "[filter:brightness(0.7)_saturate(0.75)_contrast(0.85)]",
         )}
         style={{
-          backgroundImage: `url("${getImageExportBackgroundUrl(background)}")`,
+          backgroundImage: solidOutside
+            ? undefined
+            : `url("${getImageExportBackgroundUrl(background)}")`,
         }}
       />
       <ExportWeather weather={weather} />
