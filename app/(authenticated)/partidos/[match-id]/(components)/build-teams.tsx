@@ -16,12 +16,14 @@ import { type FC, useState } from "react";
 type Preset = "random" | "balanced";
 
 type BuildTeamsProps = {
+  disabled?: boolean;
   onSave: (preset: Preset) => void;
   showConfirmation: boolean;
   showPing: boolean;
 };
 
 export const BuildTeams: FC<BuildTeamsProps> = ({
+  disabled,
   onSave,
   showConfirmation,
   showPing,
@@ -32,7 +34,7 @@ export const BuildTeams: FC<BuildTeamsProps> = ({
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="relative">
+        <Button variant="outline" className="relative" disabled={disabled}>
           Armar equipos
           {showPing ? (
             <span className="absolute flex h-3 -right-1.5 -top-1.5 w-3">

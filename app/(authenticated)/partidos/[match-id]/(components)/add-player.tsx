@@ -22,20 +22,22 @@ import {
   addPlayerAction,
 } from "@/server/actions/player";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
+import { MAX_PLAYERS_PER_MATCH } from "@/utils/player-limits";
 import { InfoIcon } from "lucide-react";
 import { useParams } from "next/navigation";
 import { type FC, useState } from "react";
 
 type AddPlayerProps = {
+  currentPlayerCount: number;
   disabled?: boolean;
 };
 
-export const AddPlayer: FC<AddPlayerProps> = ({ disabled }) => {
+export const AddPlayer: FC<AddPlayerProps> = ({ currentPlayerCount, disabled }) => {
   if (disabled) {
     return <Button disabled>Agregar</Button>;
   }
 
-  return <EnabledContent />;
+  return <EnabledContent currentPlayerCount={currentPlayerCount} />;
 };
 
 export const PlayerLimitAlert = () => (
@@ -44,14 +46,14 @@ export const PlayerLimitAlert = () => (
     <AlertTitle>¡No hay más espacio en el banco!</AlertTitle>
     <AlertDescription>
       ¡Has alcanzado el máximo de{" "}
-      {process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH} jugadores! Si
+      {MAX_PLAYERS_PER_MATCH} jugadores! Si
       necesitas añadir más estrellas, considera liberar espacio
       eliminando un jugador existente.
     </AlertDescription>
   </Alert>
 );
 
-const EnabledContent: FC = () => {
+const EnabledContent: FC<{ currentPlayerCount: number }> = ({ currentPlayerCount }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const params = useParams();
   const matchId = Number(params["match-id"]);
@@ -92,10 +94,7 @@ const EnabledContent: FC = () => {
       } catch (error) {
         if (error instanceof Error) {
           errorAlert({
-            title:
-              error.message in ERROR_MESSAGES
-                ? ERROR_MESSAGES[error.message as keyof typeof ERROR_MESSAGES]
-                : ERROR_MESSAGES.player_multiple_add_error,
+            title: error.message || ERROR_MESSAGES.player_multiple_add_error,
           });
         }
 
@@ -109,7 +108,7 @@ const EnabledContent: FC = () => {
       <DialogTrigger asChild>
         <Button>Agregar</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg [max-block-size:90dvh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Convocando a los galácticos</DialogTitle>
           <DialogDescription className="max-md:text-balance">
@@ -125,7 +124,7 @@ const EnabledContent: FC = () => {
             <PlayerForm onSubmit={onPlayerSubmit} />
           </TabsContent>
           <TabsContent value="multiple">
-            <MultiplePlayersForm onSubmit={onMultiplePlayersSubmit} />
+            <MultiplePlayersForm currentPlayerCount={currentPlayerCount} onSubmit={onMultiplePlayersSubmit} />
           </TabsContent>
         </Tabs>
       </DialogContent>

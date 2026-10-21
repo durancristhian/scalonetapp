@@ -10,11 +10,13 @@ import {
   editPlayerQuery,
 } from "@/server/queries/player";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
+import { getPlayerAdditionError, MAX_PLAYERS_BATCH } from "@/utils/player-limits";
 import prisma from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
 const PLAYER_ID_SCHEMA = z.number().int().positive().max(2147483647);
+class PlayerLimitError extends Error {}
 
 const getMatch = async (matchId: number, userId: string) => {
   return await prisma.match.findFirst({
@@ -81,18 +83,15 @@ export const addPlayerAction: (
     }
 
     /* We check we don't reach the players in match limit */
-    if (
-      match.players.length + 1 >
-      Number(process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH)
-    ) {
-      throw new Error(ERROR_MESSAGES.match_players_per_match_limit_reached);
-    }
+    const limitError = getPlayerAdditionError(match.players.length, 1);
+    if (limitError) throw new PlayerLimitError(limitError);
 
     const created = await addPlayerQuery(matchId, player);
 
     revalidatePath("/partidos/[match-id]", "page");
     return created.id;
   } catch (error) {
+    if (error instanceof PlayerLimitError) throw error;
     throw new Error(ERROR_MESSAGES.player_add_error);
   }
 };
@@ -109,7 +108,9 @@ export const addMultiplePlayersAction: (
       throw new Error(ERROR_MESSAGES.unauthorized);
     }
 
-    const players = z.array(PLAYER_SCHEMA.strict()).parse(data);
+    const batchError = getPlayerAdditionError(0, data.length);
+    if (batchError) throw new PlayerLimitError(batchError);
+    const players = z.array(PLAYER_SCHEMA.strict()).min(1).max(MAX_PLAYERS_BATCH).parse(data);
 
     const match = await getMatch(matchId, userId);
 
@@ -129,17 +130,14 @@ export const addMultiplePlayersAction: (
     }
 
     /* We check we don't reach the players in match limit */
-    if (
-      match.players.length + players.length >
-      Number(process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH)
-    ) {
-      throw new Error(ERROR_MESSAGES.match_players_per_match_limit_reached);
-    }
+    const limitError = getPlayerAdditionError(match.players.length, players.length);
+    if (limitError) throw new PlayerLimitError(limitError);
 
     await addMultiplePlayersQuery(matchId, players);
 
     revalidatePath("/partidos/[match-id]", "page");
   } catch (error) {
+    if (error instanceof PlayerLimitError) throw error;
     throw new Error(ERROR_MESSAGES.player_add_error);
   }
 };

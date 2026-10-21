@@ -1,6 +1,7 @@
 // Local, opt-in fixtures. Never changes an existing match or another account.
 import { PrismaClient } from '@prisma/client';
 import { mkdir, writeFile } from 'node:fs/promises';
+import { MAX_PLAYERS_PER_MATCH as max, MAX_PLAYERS_PER_TEAM } from '../utils/player-limits.ts';
 
 for (const key of ['POSTGRES_PRISMA_URL', 'POSTGRES_URL_NON_POOLING']) {
   const url = new URL(process.env[key] ?? '');
@@ -10,13 +11,14 @@ if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.startsWith('pk_test_') || !p
 const userId = process.argv.find(arg => arg.startsWith('--user-id='))?.slice(10);
 if (!userId) throw new Error('Pass --user-id=<local Clerk user ID>.');
 const write = process.argv.includes('--write');
-const max = Number(process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH);
-if (!Number.isInteger(max) || max < 2) throw new Error('Configure NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH.');
 const cases = [
   { key: 'one-each', name: '[QA] Uno contra uno', sizes: [1, 1] },
   { key: 'long-names', name: '[QA] La final de nombres extraordinarios', sizes: [8, 8], long: true, photo: true },
   { key: 'maximum', name: `[QA] Máximo ${max} jugadores`, sizes: [Math.ceil(max / 2), Math.floor(max / 2)] },
-  { key: 'unbalanced', name: '[QA] Equipos desbalanceados', sizes: [1, max - 1] },
+  { key: 'unbalanced', name: `[QA] Desbalanceados 1 y ${MAX_PLAYERS_PER_TEAM}`, sizes: [1, MAX_PLAYERS_PER_TEAM] },
+  { key: 'near-limit', name: `[QA] Carga masiva con ${max-2} jugadores`, sizes: [MAX_PLAYERS_PER_TEAM-1, MAX_PLAYERS_PER_TEAM-1] },
+  { key: 'oversized-team', name: `[QA] Equipo inválido con ${MAX_PLAYERS_PER_TEAM+1}`, sizes: [MAX_PLAYERS_PER_TEAM+1, 1] },
+  { key: 'oversized-match', name: `[QA] Partido inválido con ${max+1}`, sizes: [MAX_PLAYERS_PER_TEAM+1, MAX_PLAYERS_PER_TEAM] },
   { key: 'roles', name: '[QA] Cambios de capitán y arquero', sizes: [3, 3] },
   { key: 'legacy-three', name: '[QA] Antiguo partido con tres equipos', sizes: [2, 2, 2] },
   { key: 'empty-team', name: '[QA] Equipo vacío', sizes: [2, 0] },

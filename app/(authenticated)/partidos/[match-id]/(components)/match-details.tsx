@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { type MatchWithPlayers } from "@/types/match";
 import { type FC, useMemo } from "react";
 import { TEAMS_PER_MATCH } from "@/utils/team-count";
+import { MAX_PLAYERS_PER_MATCH } from "@/utils/player-limits";
 import { getSavedTeamsError } from "@/utils/team-validation";
 
 type MatchDetailsProps = {
@@ -75,6 +76,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                 <h1 className="font-bold text-xl">Equipos</h1>
                 <div className="space-x-2">
                   <BuildTeams
+                    disabled={teams.length !== TEAMS_PER_MATCH || match.players.length > MAX_PLAYERS_PER_MATCH}
                     onSave={(preset) => {
                       switch (preset) {
                         case "random": {

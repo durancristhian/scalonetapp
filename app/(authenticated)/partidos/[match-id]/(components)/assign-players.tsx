@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import type { Team } from "@/types/team";
+import { canAssignPlayersToTeam, MAX_PLAYERS_PER_TEAM } from "@/utils/player-limits";
 import type { Player } from "@prisma/client";
 import { type FC, useState } from "react";
 
@@ -96,11 +97,14 @@ export const AssignPlayers: FC<AssignPlayersProps> = ({
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {teams.map((team) => (
-                    <SelectItem key={team.id} value={team.id}>
-                      {team.name}
-                    </SelectItem>
-                  ))}
+                  {teams.map((team) => {
+                    const hasRoom = canAssignPlayersToTeam(team.players.map(player => player.id), selectedIds);
+                    return (
+                      <SelectItem key={team.id} value={team.id} disabled={!hasRoom}>
+                        {team.name}{hasRoom ? "" : ` (máximo ${MAX_PLAYERS_PER_TEAM} jugadores)`}
+                      </SelectItem>
+                    );
+                  })}
                 </SelectGroup>
               </SelectContent>
             </Select>

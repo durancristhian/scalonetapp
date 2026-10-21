@@ -6,6 +6,7 @@ import sharp from 'sharp';
 import { createClerkClient } from '@clerk/backend';
 import { PrismaClient } from '@prisma/client';
 import { resolve } from 'node:path';
+import { MAX_PLAYERS_PER_TEAM, MAX_PLAYERS_PER_MATCH } from '../utils/player-limits.ts';
 
 const origin = 'http://localhost:3000';
 const userId = process.argv.find(arg => arg.startsWith('--user-id='))?.slice(10);
@@ -22,6 +23,7 @@ let page;
 const originalTeams = new Map();
 const originalNames = new Map();
 const originalPlayers = new Map();
+const originalPlayerIds = new Map();
 const check = (condition,message) => {assert.ok(condition,message); report.checks.push(message);};
 const button = name => `::-p-aria(${name}[role="button"])`;
 const select = async (suffix,label) => {
@@ -71,9 +73,9 @@ try {
   const cdp = await page.createCDPSession();
   await cdp.send('Page.setDownloadBehavior',{behavior:'allow',downloadPath:resolve(output)});
   page.setDefaultTimeout(15000);
-  const owned = await db.match.findMany({where:{id:{in:fixtures.map(f=>f.matchId)},userId},select:{id:true,teams:true,name:true}});
+  const owned = await db.match.findMany({where:{id:{in:fixtures.map(f=>f.matchId)},userId},select:{id:true,teams:true,name:true,players:{select:{id:true}}}});
   assert.equal(owned.length,fixtures.length,'Every fixture must belong to the explicit test account.');
-  for (const match of owned) {originalTeams.set(match.id,match.teams);originalNames.set(match.id,match.name);}
+  for (const match of owned) {originalTeams.set(match.id,match.teams);originalNames.set(match.id,match.name);originalPlayerIds.set(match.id,match.players.map(player=>player.id));}
   await page.goto(origin);
   await page.waitForFunction(() => window.Clerk?.loaded);
   const clerk = createClerkClient({secretKey:process.env.CLERK_SECRET_KEY});
@@ -107,17 +109,17 @@ try {
   await editor();
   await page.click('[id$="-captain-maximum-0-control"]');
   await page.waitForSelector('[role="option"]');
-  check(await page.$$eval('[role="option"]',els=>els.length)===51,'Maximum-roster role menu includes all 50 players and No indicado.');
+  check(await page.$$eval('[role="option"]',els=>els.length)===MAX_PLAYERS_PER_TEAM+1,'Maximum-roster role menu includes all 20 players and No indicado.');
   await page.keyboard.press('End');
-  await page.waitForFunction(()=>document.activeElement?.textContent.includes('Jugador 050'));
+  await page.waitForFunction(()=>document.activeElement?.textContent.includes('Jugador 020'));
   await page.keyboard.press('Enter');
-  await page.waitForFunction(()=>document.querySelector('[id$="-captain-maximum-0-control"]')?.textContent.includes('Jugador 050'));
+  await page.waitForFunction(()=>document.querySelector('[id$="-captain-maximum-0-control"]')?.textContent.includes('Jugador 020'));
   await page.click('[id$="-goalkeeper-maximum-0-control"]');
   await page.waitForSelector('[role="option"]');
   await page.keyboard.press('End');
-  await page.waitForFunction(()=>document.activeElement?.textContent.includes('Jugador 050'));
+  await page.waitForFunction(()=>document.activeElement?.textContent.includes('Jugador 020'));
   await page.keyboard.press('Enter');
-  await page.waitForFunction(()=>document.querySelector('[id$="-goalkeeper-maximum-0-control"]')?.textContent.includes('Jugador 050'));
+  await page.waitForFunction(()=>document.querySelector('[id$="-goalkeeper-maximum-0-control"]')?.textContent.includes('Jugador 020'));
   check(true,'The last player in a maximum-roster menu can hold both roles via keyboard.');
   for (const shape of ['Cuadradas','Circulares']) {
     await select('avatar',shape);
@@ -129,6 +131,63 @@ try {
     check(separate,`${shape}: shared captain and goalkeeper badges occupy opposite sides.`);
   }
   await close();
+
+  console.log('Checking player and batch limits');
+  await page.setViewport({width:320,height:568});
+  await open('near-limit');
+  await page.click(button('Agregar'));
+  await page.click('::-p-aria(Agregar muchos[role="tab"])');
+  check(await page.$eval('[role="dialog"]',el=>el.textContent.includes('hasta 2 jugadores más')),'Bulk entry displays the actual two remaining match slots.');
+  await page.locator('textarea').fill('QA Alta 039\nQA Alta 040\nQA Alta 041');
+  await page.waitForFunction(()=>document.querySelector('[role="dialog"]')?.textContent.includes('Podés agregar 2 jugadores más.'));
+  check(await page.$eval(button('Guardar'),el=>el.disabled),'Bulk entry rejects three names when only two slots remain.');
+  check(await page.$eval('[role="dialog"]',el=>{
+    const rect=el.getBoundingClientRect();
+    return rect.top>=0 && rect.bottom<=innerHeight && rect.left>=0 && rect.right<=innerWidth && el.scrollWidth<=el.clientWidth;
+  }),'Bulk-entry limits and errors remain inside the 320-pixel viewport.');
+  await page.locator('textarea').fill('QA Alta 039\nQA Alta 040');
+  await page.waitForFunction(()=>!document.querySelector('[role="dialog"] button[type="submit"]').disabled);
+  await page.evaluate(()=>{
+    window.__qaOriginalFetch=window.fetch;
+    window.fetch=(input,init)=>{
+      const headers=new Headers(init?.headers);
+      if(headers.has('next-action')) window.__qaBatchRequest={url:String(input),headers:Object.fromEntries(headers),body:init.body};
+      return window.__qaOriginalFetch(input,init);
+    };
+  });
+  await page.click(button('Guardar'));
+  await page.waitForSelector('[role="dialog"]',{hidden:true});
+  await page.waitForFunction(()=>document.body.innerText.includes('40 de 40'));
+  check(await db.player.count({where:{matchId:fixture('near-limit').matchId}})===MAX_PLAYERS_PER_MATCH,'A batch fills the last two slots exactly to 40.');
+  check(await page.$eval(button('Agregar'),el=>el.disabled),'Adding players is disabled after filling the last available slots.');
+  const rejectedBatches=await page.evaluate(async()=>{
+    const saved=window.__qaBatchRequest;
+    const [matchId]=JSON.parse(saved.body);
+    const results=[];
+    for(const count of [1,41]) {
+      const players=Array.from({length:count},(_,i)=>({name:`QA Rechazado ${i}`,level:5,position:'mid'}));
+      const response=await window.__qaOriginalFetch(saved.url,{method:'POST',headers:saved.headers,body:JSON.stringify([matchId,players])});
+      const body=await response.text();
+      results.push(response.status>=400 || body.includes(':E{'));
+    }
+    window.fetch=window.__qaOriginalFetch;
+    return results;
+  });
+  check(rejectedBatches.every(Boolean)&&await db.player.count({where:{matchId:fixture('near-limit').matchId}})===40,'Direct server actions reject both a full-match addition and a 41-player batch without inserting players.');
+  await page.locator('::-p-aria(QA Alta 039[role="button"])').click();
+  await page.locator('::-p-aria(QA Alta 040[role="button"])').click();
+  await page.click('[role="combobox"][aria-label="Asignar jugadores al equipo"]');
+  check(await page.$$eval('[role="option"]',els=>els.every(el=>el.getAttribute('aria-disabled')==='true'&&el.textContent.includes('máximo 20'))),'A two-player selection cannot overflow either 19-player team.');
+  await page.keyboard.press('Escape');
+  await page.locator('::-p-aria(QA Alta 040[role="button"])').click();
+  await page.click('[role="combobox"][aria-label="Asignar jugadores al equipo"]');
+  await page.locator('::-p-aria(Equipo 1[role="option"])').click();
+  await page.locator('::-p-aria(QA Alta 040[role="button"])').click();
+  await page.click('[role="combobox"][aria-label="Asignar jugadores al equipo"]');
+  check(await page.$eval('[role="option"][data-disabled]',el=>el.textContent.includes('Equipo 1')),'A full 20-player team is unavailable for the next assignment.');
+  await page.locator('::-p-aria(Equipo 2[role="option"])').click();
+  check(!await page.$eval(button('Exportar'),el=>el.disabled),'Assigning one player to each team produces valid 20-versus-20 teams.');
+  await page.setViewport({width:1440,height:900});
 
   console.log('Checking preferences and role persistence');
   // Preferences overwrite cleanly and roles remain local to each match.
@@ -211,7 +270,7 @@ try {
   await page.locator('::-p-aria(Equipo 1[role="option"])').click();
   check(await page.$eval(button('Exportar'),el=>!el.disabled),'Repairing the roster enables exporting a legacy match.');
 
-  for (const key of ['empty-team','unassigned']) {
+  for (const key of ['empty-team','unassigned','oversized-team','oversized-match']) {
     await open(key);
     check(await page.$eval(button('Exportar'),el=>el.disabled),`${key}: export is disabled until teams are complete.`);
     const status=await page.evaluate(async id=>(await fetch(`/download/${id}`)).status,fixture(key).matchId);
@@ -232,6 +291,7 @@ try {
       const headers=new Headers(init?.headers ?? (input instanceof Request?input.headers:undefined));
       if (headers.has('next-action')) {
         window.__qaCounts.saves++;
+        window.__qaSavedRequest={url:String(input),headers:Object.fromEntries(headers),body:init.body};
         if (window.__qaFailureMode==='save') {
           await new Promise(resolve=>setTimeout(resolve,600));
           return new Response('QA save failure',{status:500});
@@ -271,6 +331,15 @@ try {
   await page.click(button('Guardar'));
   await page.waitForFunction(()=>document.body.innerText.includes('¡Equipos guardados con éxito!'));
   check((await counts()).saves===3 && (await counts()).images===3,'Guardar remains independently usable without generating an image.');
+  const maximum=await db.match.findUnique({where:{id:fixture('maximum').matchId}});
+  const invalidTeams=JSON.parse(maximum.teams);
+  invalidTeams[0].players.push(invalidTeams[1].players.pop());
+  const invalidSave=await page.evaluate(async({id,teams})=>{
+    const saved=window.__qaSavedRequest;
+    const response=await window.__qaOriginalFetch(saved.url,{method:'POST',headers:saved.headers,body:JSON.stringify([id,{teams},`/partidos/${id}`])});
+    return response.status>=400 || (await response.text()).includes(':E{');
+  },{id:maximum.id,teams:JSON.stringify(invalidTeams)});
+  check(invalidSave&&(await db.match.findUnique({where:{id:maximum.id}})).teams===maximum.teams,'Direct team saves reject 21-versus-19 without changing valid saved teams.');
   await page.evaluate(()=>{window.fetch=window.__qaOriginalFetch;});
 
   // Responsive page + modal at baseline sizes and both sides of layout changes.
@@ -311,6 +380,7 @@ try {
 } finally {
   const restorations=[
     ...Array.from(originalTeams,([id,teams])=>({name:`match ${id}`,run:()=>db.match.update({where:{id,userId},data:{teams,name:originalNames.get(id)}})})),
+    ...Array.from(originalPlayerIds,([matchId,ids])=>({name:`new players in match ${matchId}`,run:()=>db.player.deleteMany({where:{matchId,match:{userId},id:{notIn:ids}}})})),
     ...Array.from(originalPlayers,([id,name])=>({name:`player ${id}`,run:()=>db.player.update({where:{id},data:{name}})})),
   ];
   try {

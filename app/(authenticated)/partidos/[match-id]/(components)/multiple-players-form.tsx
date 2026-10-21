@@ -15,8 +15,9 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { type PlayerSchema } from "@/schemas/player";
-import { PLAYERS_SCHEMA, type PlayersSchema } from "@/schemas/players";
+import { createPlayersSchema, type PlayersSchema } from "@/schemas/players";
 import { getLinesFromString } from "@/utils/get-lines-from-string";
+import { getRemainingPlayerSlots } from "@/utils/player-limits";
 import { getPlayersFromLines } from "@/utils/get-players-from-lines";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type FC, useMemo } from "react";
@@ -27,17 +28,22 @@ Roman
 Riquelme`;
 
 type MultiplePlayersFormProps = {
+  currentPlayerCount: number;
   onSubmit: (values: PlayerSchema[]) => Promise<void>;
 };
 
 export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
+  currentPlayerCount,
   onSubmit,
 }) => {
+  const schema = useMemo(() => createPlayersSchema(currentPlayerCount), [currentPlayerCount]);
+  const availableSlots = getRemainingPlayerSlots(currentPlayerCount);
   const form = useForm<PlayersSchema>({
+    mode: "onChange",
     defaultValues: {
       players: "",
     },
-    resolver: zodResolver(PLAYERS_SCHEMA),
+    resolver: zodResolver(schema),
   });
   /* We listen for changes in the players string */
   const players = useWatch({
@@ -73,8 +79,8 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
                 <Textarea rows={10} placeholder={PLACEHOLDER} {...field} />
               </FormControl>
               <FormDescription>
-                Agrega un nombre por línea.¡Puedes añadir hasta{" "}
-                {process.env.NEXT_PUBLIC_MAX_PLAYERS_BATCH} al mismo tiempo.
+                Agregá un nombre por línea. Podés agregar hasta {availableSlots}{" "}
+                {availableSlots === 1 ? "jugador más" : "jugadores más"} a este partido.
               </FormDescription>
               {lines.length > 0 ? (
                 <FormDescription>

@@ -16,14 +16,17 @@ The fixture script defaults to a dry run without `--write`. Both scripts reject 
 | --- | --- | --- |
 | One each | 1 / 1 | Minimum field, shared roles, empty grid slots |
 | Long names + uploaded-image sample | 8 / 8 | Ellipsis, wrapping, palette-independent image |
-| Match maximum | 50 / 50 at current limit 100 | Large PNG and roster scrolling |
-| Uneven maximum | 1 / 99 at current limit 100 | Highly asymmetric rosters |
+| Match maximum | 20 / 20 | Maximum allowed PNG and roster scrolling |
+| Uneven maximum | 1 / 20 | Highly asymmetric valid rosters |
+| Near match limit | 19 / 19 | Bulk entry accepts two remaining places, rejects three |
+| Oversized team | 21 / 1 | Team-capacity validation and blocked download |
+| Oversized match | 21 / 20 | Legacy match above 40 players and blocked download |
 | Roles | 3 / 3 | Captain/goalkeeper persistence and roster changes |
 | Legacy three-team match | 2 / 2 / 2 | Disabled export, tooltip, HTTP 422 and repair |
 | Empty team | 2 / 0 | Incomplete-team state |
 | Unassigned player | 1 / 1 + 1 waiting | Assignment validation |
 
-The maximum is read from `NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH` rather than hardcoded in fixture generation. Selected role suggestions and match IDs are written to ignored `.local/export-fixtures.json`. Captains are deliberately not auto-selected in product behavior.
+Limits are imported from `utils/player-limits.ts`: 20 per team, 40 per match. Both fixtures and product code use these constants; the old player-limit environment variables are no longer used. Existing fixtures are preserved, so older 100-player examples can remain as invalid legacy data. Selected role suggestions and match IDs are written to ignored `.local/export-fixtures.json`. Captains are deliberately not auto-selected in product behavior.
 
 ## Coverage
 
@@ -31,6 +34,7 @@ The maximum is read from `NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH` rather than hardcod
 - Eight additional real PNGs: minimum, maximum, asymmetric and role fixtures, with and without images.
 - Every successful PNG is fully decoded into raw pixels before recording its result; reading header metadata alone cannot detect a truncated image.
 - Actual editor interactions: remembered appearance, match-scoped roles, changing team membership, role invalidation even through closed-editor round trips, large role menus with keyboard selection, and repair of legacy data.
+- Capacity checks: bulk-entry remaining-place feedback and errors at 320 px, 38 + 2 accepted, 38 + 3 blocked, direct server additions and oversized batches rejected without writes, full-team assignment disabled, valid 20-versus-20 composition, and direct 21-versus-19 save rejected. The add-player modal scrolls within the viewport when its form or errors exceed the available height.
 - Fault injection confined to the disposable test page: save failure, image failure after save, retry without repeat save, independent save, repeated downloads and processing/success controls.
 - Page and modal checks at 320, 390, 639, 640, 767, 768, 1023, 1024, 1279, 1280 and 1440 CSS pixels. No document, dialog or control-panel horizontal overflow; preview appears from 1024 px.
 - Unit coverage for request validation, all option combinations, global preference replacement, unavailable browser storage, role deletion/swaps, explicit unassigned roles and per-match isolation.
@@ -50,4 +54,4 @@ Two optional follow-ups for owner review, not applied here:
 
 ## Verified run
 
-Local verification on 2026-10-21 completed 62 decoded PNG exports, 43 browser behavior checks, 18 unit tests and the 11 viewport checks above. PNGs were 2560 pixels wide and ranged from 1470 to 16008 pixels high. The initial pass found page overflow at 320 and 768 pixels in existing roster/team rows; the final pass with 40-character unbroken player/match names had no page, modal or options-panel overflow.
+Local verification on 2026-10-21 completed 62 decoded PNG exports, 57 browser behavior checks, 21 unit tests and the 11 viewport checks above. With the 20-player team limit, PNGs were 2560 pixels wide and ranged from 1470 to 3848 pixels high. The initial pass found page overflow at 320 and 768 pixels in existing roster/team rows; the final pass with 40-character unbroken player/match names had no page, modal or options-panel overflow.

@@ -24,6 +24,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { byName } from "@/utils/by-name";
 import { PLAYER_POSITIONS } from "@/utils/player-positions";
+import { MAX_PLAYERS_PER_MATCH } from "@/utils/player-limits";
 import { type Player } from "@prisma/client";
 import { EllipsisVerticalIcon, PencilIcon, TrashIcon } from "lucide-react";
 import { type FC, useState } from "react";
@@ -35,7 +36,7 @@ type MatchPlayersProps = {
 
 export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
   const atPlayerLimit =
-    players.length >= Number(process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH);
+    players.length >= MAX_PLAYERS_PER_MATCH;
   const canListPlayers = Array.isArray(players) && players.length;
 
   return (
@@ -46,11 +47,11 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
           {players.length ? (
             <CardDescription>
               {players.length} de{" "}
-              {process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH}
+              {MAX_PLAYERS_PER_MATCH}
             </CardDescription>
           ) : null}
         </div>
-        <AddPlayer disabled={atPlayerLimit} />
+        <AddPlayer currentPlayerCount={players.length} disabled={atPlayerLimit} />
       </CardHeader>
       {atPlayerLimit ? (
         <CardContent>

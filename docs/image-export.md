@@ -4,7 +4,8 @@ The editor and downloaded PNG share `TeamExport`, a 1280 CSS-pixel canvas render
 
 ## Behavior
 
-- Exactly two teams, with at least one player in each and all called-up players assigned. New teams cannot exceed two. Older matches with extra teams can be repaired by removing teams and reassigning their players.
+- Exactly two teams, with 1–20 players in each, at most 40 called-up players per match and all called-up players assigned. New teams cannot exceed two. Older matches with extra teams can be repaired by removing teams and reassigning their players. Matches above the player limits require removing excess players or redistributing them before saving/exporting.
+- Player limits are shared constants in `utils/player-limits.ts`. Individual and bulk additions enforce the 40-player total on the server. Bulk entry accepts at most the remaining places (up to 40 in an empty match), reports that count in the form, and rejects oversized batches without partially inserting them. Assignment cannot overflow a 20-player team.
 - Invalid team counts disable Exportar. Hover or keyboard focus explains how to repair the match. The save query and download endpoint enforce the same team-count, name and complete-membership validation as the builder.
 - Fixed two player columns per team. Global left/center alignment, square/circle/no-image presentation. Names truncate to two lines; team signs and the match banner truncate to one line.
 - Synthetic, natural and dirt surfaces each own a palette, stand, banner and team signs. Generated faces retain their name seed; uploaded imagery remains unchanged. Appearance defaults to synthetic grass, clear weather, square images and left alignment.

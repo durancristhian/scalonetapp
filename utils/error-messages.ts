@@ -22,10 +22,8 @@ export const ERROR_MESSAGES = {
     "Ocurrió un error al editar el partido. Por favor, intente nuevamente.",
   match_limit_reached:
     "Se alcanzó el límite máximo de partidos que puedes crear. Elimina alguno para continuar.",
-  match_max_players_per_batch: `Solo se permiten hasta ${process.env.NEXT_PUBLIC_MAX_PLAYERS_BATCH} nombres por lote.`,
   match_name_repeated: "Ya existe un partido con ese nombre.",
   match_player_repeated: "Ya existe un jugador con ese nombre en este partido.",
-  match_players_per_match_limit_reached: `Se alcanzó el límite máximo de jugadores que puedes agregar (${process.env.NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH}).`,
   match_players_repeated:
     "Ya existe un jugador con alguno de estos nombres en este partido.",
 
