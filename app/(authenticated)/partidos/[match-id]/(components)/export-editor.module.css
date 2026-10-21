@@ -94,16 +94,20 @@
   border-color: hsl(var(--primary));
   background-color: hsl(var(--muted));
 }
+.choice:has(:disabled) {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
 .choice:has(:focus-visible),
 .previewScroll:focus-visible {
   outline: 2px solid hsl(var(--ring));
   outline-offset: 2px;
 }
-.choice:active {
+.choice:not(:has(:disabled)):active {
   background-color: hsl(var(--accent));
 }
 @media (hover: hover) and (pointer: fine) {
-  .choice:hover {
+  .choice:not(:has(:disabled)):hover {
     border-color: hsl(var(--primary));
   }
 }
