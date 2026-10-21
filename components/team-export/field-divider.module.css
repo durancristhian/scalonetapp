@@ -24,10 +24,10 @@
 
 .line {
   position: absolute;
-  /* Overlap the frame edges to prevent a subpixel gap in the scaled preview. */
-  inset-block: calc(-1 * var(--export-border-width));
+  /* Meet the horizontal boundary at its center without extending above it. */
+  inset-block: 0;
   inline-size: 64px;
-  block-size: calc(100% + 2 * var(--export-border-width));
+  block-size: 100%;
   overflow: visible;
 }
 

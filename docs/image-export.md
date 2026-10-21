@@ -20,3 +20,11 @@ The editor and downloaded PNG share `TeamExport`, a 1280 CSS-pixel canvas render
 `scaloneta:export-player-roles:v1:<matchId>` stores each team's sorted player IDs and selected captain/goalkeeper. Roles are scoped to the match and the team's exact membership. Roster changes clear both roles in every affected team, even while the editor is closed and even if the original roster is later restored; renaming or reordering does not. The same player can hold both roles. A unique goalkeeper position can be selected on initial configuration; captain starts unassigned. Explicit “No indicado” persists.
 
 Guardar remains independent. Descargar first saves dirty teams, then requests the PNG. Save failure stops generation. Image failure preserves the successful save and retries only the image. Processing blocks repeat actions and closing the editor; success and failures have separate feedback.
+
+## Before merging: Vercel environment
+
+No environment-variable additions or value changes are required for this PR. Player limits are now shared code constants: 20 per team, 40 per match, and bulk entry limited to the remaining places.
+
+- Keep the existing `NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH` and `NEXT_PUBLIC_MAX_PLAYERS_BATCH` variables until the new version is deployed. The current main branch still reads them; this PR ignores them.
+- After deployment, those two variables can be removed from Vercel environments where present as optional cleanup. They do not need to be changed to 40 before merging. Retain their former values if rebuilding an older revision for rollback.
+- Keep `NEXT_PUBLIC_MAX_MATCHES_PER_USER` and `NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL`; they are still used. No Clerk, database, Blob or export-target environment changes are introduced here, and no schema migration is required.
