@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { type PlayerSchema } from "@/schemas/player";
 import { createPlayersSchema, type PlayersSchema } from "@/schemas/players";
 import { getLinesFromString } from "@/utils/get-lines-from-string";
-import { getRemainingPlayerSlots } from "@/utils/player-limits";
+import { getRemainingPlayerSlots, MAX_PLAYERS_BATCH } from "@/utils/player-limits";
 import { getPlayersFromLines } from "@/utils/get-players-from-lines";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type FC, useMemo } from "react";
@@ -79,7 +79,7 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
                 <Textarea rows={10} placeholder={PLACEHOLDER} {...field} />
               </FormControl>
               <FormDescription>
-                Agregá un nombre por línea. Podés agregar hasta {availableSlots}{" "}
+                Agregá un nombre por línea, hasta {MAX_PLAYERS_BATCH} por carga. Podés agregar hasta {availableSlots}{" "}
                 {availableSlots === 1 ? "jugador más" : "jugadores más"} a este partido.
               </FormDescription>
               {lines.length > 0 ? (

@@ -19,7 +19,7 @@ import { format } from "date-fns";
 import { revalidatePath } from "next/cache";
 import { getSavedTeamsError } from "@/utils/team-validation";
 import { getDuplicatedMatchName } from "@/utils/match-name";
-import { MAX_PLAYERS_PER_MATCH } from "@/utils/player-limits";
+import { MAX_PLAYERS_BATCH, MAX_PLAYERS_PER_MATCH } from "@/utils/player-limits";
 
 export const addMatchAction: (
   data: MatchSchema,
@@ -169,15 +169,17 @@ export const duplicateMatchAction: (id: number) => Promise<void> = async (
 
     if (existingMatch.players.length) {
       /* We add the existing players to the new match as well */
-      await addMultiplePlayersQuery(
-        newMatch.id,
-        existingMatch.players.map(({ name, level, position }) => ({
-          name,
-          level,
-          position,
-        })),
-        userId,
-      );
+      for (let offset = 0; offset < existingMatch.players.length; offset += MAX_PLAYERS_BATCH) {
+        await addMultiplePlayersQuery(
+          newMatch.id,
+          existingMatch.players.slice(offset, offset + MAX_PLAYERS_BATCH).map(({ name, level, position }) => ({
+            name,
+            level,
+            position,
+          })),
+          userId,
+        );
+      }
 
       const updatedNewMatch = await getMatchByIdQuery(newMatch.id);
 
