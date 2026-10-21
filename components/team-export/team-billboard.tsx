@@ -1,50 +1,25 @@
 import { type ImageExportBackgroundId } from "@/utils/image-export-backgrounds";
-import { cn } from "@/utils/cn";
 
-// Material textures stay local to the export artwork and use its selected palette.
-const materials = {
+const frame = "var(--export-frame-color)";
+const trim = "var(--export-divider-color)";
+const dark = "color-mix(in oklch, var(--export-frame-color) 72%, black)";
+
+// Match the field markings: subtle in synthetic, organic in natural, rough in potrero.
+const silhouettes = {
   pasto: {
-    panel: cn(
-      "border-[color-mix(in_oklch,var(--export-divider-color)_75%,white)]",
-      "[background:linear-gradient(180deg,color-mix(in_oklch,var(--export-frame-color)_75%,var(--export-divider-color)),var(--export-frame-color)_22%,var(--export-frame-color)_80%,color-mix(in_oklch,var(--export-frame-color)_85%,var(--export-divider-color)))]",
-      "shadow-[inset_0_2px_0_oklch(1_0_none/14%),0_5px_0_color-mix(in_oklch,var(--export-frame-color)_75%,black),0_13px_12px_oklch(0_0_none/20%)]",
-    ),
-    support: "",
-    fastener:
-      "size-1.5 shadow-[0_0_0_1px_oklch(0_0_none/35%),inset_0_1px_0_oklch(1_0_none/50%)]",
+    outline: "M10 5Q138 2 268 5T526 4L528 78Q394 81 268 78T10 80Z",
+    seam: "",
   },
   natural: {
-    panel: cn(
-      "rounded-sm border-[color-mix(in_oklch,var(--export-divider-color)_65%,var(--export-frame-color))]",
-      "shadow-[inset_0_1px_0_oklch(1_0_none/12%),0_4px_0_var(--export-frame-color),0_12px_10px_oklch(0_0_none/20%)]",
-      "before:pointer-events-none",
-      "before:absolute",
-      "before:inset-1",
-      "before:opacity-20",
-      "before:[background:repeating-linear-gradient(176deg,transparent_0_26px,var(--export-divider-color)_26px_27px,transparent_27px_61px),radial-gradient(ellipse_at_5%_15%,var(--export-divider-color),transparent_30%)]",
-    ),
-    support: "",
-    fastener: "",
+    outline: "M12 6Q142 0 268 6L399 3 525 8 529 76Q395 83 268 78L140 82 10 78Z",
+    seam: "M12 39Q145 36 268 41T526 42",
   },
   potrero: {
-    panel: cn(
-      "rounded-none border-[color-mix(in_oklch,var(--export-frame-color)_80%,var(--export-divider-color))]",
-      "[background:repeating-linear-gradient(0deg,transparent_0_23px,oklch(0_0_none/32%)_23px_26px,oklch(1_0_none/5%)_26px_27px,transparent_27px_51px),linear-gradient(175deg,color-mix(in_oklch,var(--export-frame-color)_70%,var(--export-divider-color)),var(--export-frame-color))]",
-      "shadow-[1px_5px_0_color-mix(in_oklch,var(--export-frame-color)_75%,black),0_12px_10px_oklch(0_0_none/25%)]",
-      "before:pointer-events-none",
-      "before:absolute",
-      "before:inset-1",
-      "before:opacity-10",
-      "before:[background:repeating-linear-gradient(177deg,transparent_0_7px,var(--export-divider-color)_7px_8px,transparent_8px_18px),repeating-radial-gradient(ellipse_at_18%_40%,transparent_0_12px,var(--export-divider-color)_13px_14px,transparent_15px_24px)]",
-    ),
-    support: "[inset-inline:theme(spacing.9)_theme(spacing.7)] -skew-x-1",
-    fastener:
-      "bg-[color-mix(in_oklch,var(--export-divider-color)_50%,var(--export-frame-color))] shadow-[0_1px_0_oklch(0_0_none/50%)]",
+    outline:
+      "M12 9L119 3 238 8 342 2 434 10 524 5 527 30 523 51 530 77 412 82 288 77 164 85 11 79 14 52 9 28Z",
+    seam: "M12 39L119 36 238 42 342 38 434 44 525 40",
   },
-} satisfies Record<
-  ImageExportBackgroundId,
-  { panel: string; support: string; fastener: string }
->;
+} satisfies Record<ImageExportBackgroundId, { outline: string; seam: string }>;
 
 export function TeamBillboard({
   id,
@@ -55,39 +30,63 @@ export function TeamBillboard({
   name: string;
   background: ImageExportBackgroundId;
 }) {
-  const material = materials[background];
-  const fastener = cn(
-    "relative size-1 flex-none rounded-full bg-[var(--export-divider-color)] opacity-80",
-    material.fastener,
-  );
+  const { outline, seam } = silhouettes[background];
   return (
-    <div
-      className="relative isolate mx-6 my-2 min-w-0 [margin-block-end:theme(spacing.3)] [padding-block-end:theme(spacing.3)]"
-      data-team-billboard
-    >
-      <span
-        className={cn(
-          "absolute -z-10 [inset-inline:theme(spacing.8)] [inset-block:theme(spacing.3)_0] border-s-8 border-e-8 border-[color-mix(in_oklch,var(--export-frame-color)_85%,black)]",
-          material.support,
-        )}
+    <div className="relative mx-6 h-28 min-w-0" data-team-billboard>
+      <svg
+        className="absolute inset-0 size-full overflow-visible"
+        viewBox="0 0 544 112"
+        preserveAspectRatio="none"
         aria-hidden="true"
-      />
-      <div
-        className={cn(
-          "relative flex min-h-20 items-center gap-4 rounded-sm border-2 border-[var(--export-divider-color)] p-4 text-white [background:linear-gradient(175deg,color-mix(in_oklch,var(--export-frame-color)_78%,var(--export-divider-color)),var(--export-frame-color)_65%)]",
-          material.panel,
-        )}
       >
-        <span className={fastener} aria-hidden="true" />
-        <h2
-          className="relative min-w-0 flex-1 truncate text-center text-3xl font-bold leading-tight"
-          id={id}
-          title={name}
-        >
-          {name}
-        </h2>
-        <span className={fastener} aria-hidden="true" />
-      </div>
+        <ellipse cx="274" cy="105" rx="242" ry="8" fill="black" opacity=".13" />
+        <path d="M80 62H92V104H80ZM452 62H464V104H452Z" fill={dark} />
+        <path
+          d="M83 68H86V100H83ZM455 68H458V100H455Z"
+          fill={trim}
+          opacity=".35"
+        />
+        <path d={outline} fill={dark} transform="translate(3 8)" />
+        <path d={outline} fill={frame} stroke={trim} strokeWidth="3" />
+        {background === "pasto" ? (
+          <>
+            <path
+              d="M14 9Q140 6 268 9T522 8M14 10L14 75"
+              stroke="white"
+              strokeWidth="2"
+              opacity=".2"
+            />
+            <path
+              d="M14 76Q140 80 268 76T524 76"
+              stroke={dark}
+              strokeWidth="4"
+            />
+          </>
+        ) : (
+          <>
+            <path d={seam} stroke={dark} strokeWidth="3" />
+            <path
+              d="M24 16q106 8 204 1m110 8q97-6 170 0M28 66q100-6 205 0m95-5q72 5 172-1"
+              fill="none"
+              stroke={trim}
+              strokeWidth="1"
+              opacity=".2"
+            />
+          </>
+        )}
+        {[24, 512].flatMap((x) =>
+          [17, 65].map((y) => (
+            <circle key={`${x}-${y}`} cx={x} cy={y} r="3" fill={trim} />
+          )),
+        )}
+      </svg>
+      <h2
+        id={id}
+        className="absolute inset-x-12 [inset-block-start:theme(spacing.6)] truncate text-center text-3xl font-bold leading-9 text-white"
+        title={name}
+      >
+        {name}
+      </h2>
     </div>
   );
 }

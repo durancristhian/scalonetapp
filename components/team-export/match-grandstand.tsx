@@ -3,10 +3,18 @@ import { ExportWeather } from "./export-background";
 import { cn } from "@/utils/cn";
 
 const bannerOutlines = {
-  pasto: "M2 2Q288 6 576 2T1150 2L1150 106Q864 111 576 108T2 106Z",
-  natural: "M3 3Q280 8 576 3T1149 5L1151 105Q880 112 576 107T2 108Z",
+  pasto: "M3 5Q288 0 576 5T1149 4L1150 105Q864 111 576 106T3 108Z",
+  natural:
+    "M4 8Q180 0 376 8Q570 14 770 5Q954 1 1148 9L1150 103Q962 114 770 105Q568 100 376 109Q184 114 3 104Z",
   potrero:
-    "M6 4Q280 11 575 3L847 6 1147 2 1150 43 1146 72 1151 106Q875 111 577 106T4 109L7 75 2 40Z",
+    "M6 11Q158 0 315 9L480 4 648 14Q810 2 970 8L1146 3 1150 39 1145 70 1150 101Q978 114 807 105L635 110 462 101Q227 117 5 106L9 74 2 40Z",
+};
+const bannerHems = {
+  pasto: "M14 15Q288 10 576 15T1138 14M14 98Q288 103 576 98T1138 96",
+  natural:
+    "M15 18Q180 10 376 18Q570 24 770 15Q954 11 1137 19M15 94Q184 104 376 99Q568 90 770 95Q962 104 1138 93",
+  potrero:
+    "M17 21Q158 10 315 19L480 14 648 24Q810 12 970 18L1135 13M17 96Q227 107 462 91L635 100 807 95Q978 104 1138 91",
 };
 
 const materials = {
@@ -117,7 +125,7 @@ export function MatchGrandstand({
               "fill-none stroke-[var(--export-divider-color)] stroke-1",
               material.hem,
             )}
-            d="M12 12Q290 17 576 12T1140 13M12 98Q290 105 576 99T1140 97"
+            d={bannerHems[background]}
           />
           <path
             className={"fill-none stroke-black/10 stroke-[5]"}
