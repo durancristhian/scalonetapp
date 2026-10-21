@@ -37,6 +37,11 @@ const open = async key => {
 const editor = async () => {
   await page.click(button('Exportar'));
   await page.waitForSelector('[role="dialog"] [role="combobox"]');
+  await page.waitForFunction(() => {
+    const dialog = document.querySelector('[role="dialog"]');
+    return dialog && getComputedStyle(dialog).opacity === '1' &&
+      dialog.getAnimations().every(animation => animation.playState !== 'running');
+  });
 };
 const close = async () => {await page.click(button('Cerrar')); await page.waitForSelector('[role="dialog"]',{hidden:true});};
 const setRoles = async f => page.evaluate(({id,roles}) => localStorage.setItem(`scaloneta:export-player-roles:v1:${id}`,JSON.stringify(roles)),{id:f.matchId,roles:f.roles});
