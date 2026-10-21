@@ -173,12 +173,16 @@ export default function ExportEditor({
                       <span className="flex min-w-0 items-center gap-3 whitespace-nowrap text-start">
                         <span
                           aria-hidden="true"
-                          className="h-7 w-10 shrink-0 rounded-sm bg-[var(--export-surface-color)] bg-cover"
-                          style={{
-                            ...getImageExportBackgroundStyle(background.id),
-                            backgroundImage: `url("${getImageExportBackgroundUrl(background.id)}")`,
-                          }}
-                        />
+                          className="grid size-8 shrink-0 place-items-center"
+                        >
+                          <span
+                            className="size-6 rounded-sm bg-[var(--export-surface-color)] bg-cover"
+                            style={{
+                              ...getImageExportBackgroundStyle(background.id),
+                              backgroundImage: `url("${getImageExportBackgroundUrl(background.id)}")`,
+                            }}
+                          />
+                        </span>
                         <span className="min-w-0 truncate">
                           {background.label}
                         </span>
