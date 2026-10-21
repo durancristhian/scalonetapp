@@ -27,6 +27,7 @@ import { PLAYER_POSITIONS } from "@/utils/player-positions";
 import { type Player } from "@prisma/client";
 import { EllipsisVerticalIcon, PencilIcon, TrashIcon } from "lucide-react";
 import { type FC, useState } from "react";
+import styles from "./match-players.module.css";
 
 type MatchPlayersProps = {
   players: Player[];
@@ -57,10 +58,8 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
         </CardContent>
       ) : null}
       {canListPlayers ? (
-        <CardContent className="pr-3">
-          {/* 435 is a magical number. It's the height of 9.5 items (+ the margin
-          separating them) so we only show those items and there is some sort of
-          visual guidance to scroll if you want to see more */}
+        <CardContent className={`${styles.list} pr-3`}>
+          {/* Keep large rosters scrollable independently of the team builder. */}
           <ScrollArea className={players.length > 10 ? "h-[435px]" : "h-auto"}>
             <div className="mr-3">
               <ul className="space-y-2">
@@ -91,23 +90,21 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player }) => {
 
   return (
     <Card>
-      <div className="flex gap-2 items-center pl-4">
+      <div className={styles.playerRow}>
         <PlayerAvatar src={player.avatar} name={player.name} size="sm" />
-        <div className="grow">
-          <p>{player.name}</p>
-        </div>
-        <div className="flex-shrink-0">
+        <div className={styles.info}>
+          <p className={styles.name}>{player.name}</p>
+          <div className={styles.attributes}>
           <Badge
             variant={player.position}
             className="justify-center uppercase w-[50px]"
           >
             {PLAYER_POSITIONS[player.position].substring(0, 3)}
           </Badge>
-        </div>
-        <div className="flex-shrink-0">
           <Badge variant="secondary" className="justify-center w-[38px]">
             {player.level}
           </Badge>
+          </div>
         </div>
         <div className="flex-shrink-0">
           <DropdownMenu open={menuOpened} onOpenChange={setMenuOpened}>

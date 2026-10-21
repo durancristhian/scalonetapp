@@ -15,6 +15,7 @@ import { parseImageExportRequest } from "@/utils/image-export-request";
 import { getImageExportBackground, getImageExportBackgroundUrls } from "@/utils/image-export-background";
 import { type NextRequest, NextResponse } from "next/server";
 import { type Browser } from "puppeteer-core";
+import { getTeamCountError } from "@/utils/team-count";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -87,6 +88,12 @@ export async function GET(request: NextRequest) {
         { error: ERROR_MESSAGES.not_found },
         { status: 404 },
       );
+    }
+
+    const teams: unknown = JSON.parse(match.teams);
+    const teamCountError = getTeamCountError(Array.isArray(teams) ? teams.length : 0);
+    if (teamCountError) {
+      return NextResponse.json({ error: teamCountError }, { status: 422 });
     }
 
     browser = await getBrowser();

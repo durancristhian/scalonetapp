@@ -1,6 +1,7 @@
 import { type MatchWithPlayers } from "@/types/match";
 import { type BaseTeam, type Team } from "@/types/team";
 import { byName } from "@/utils/by-name";
+import { TEAMS_PER_MATCH } from "@/utils/team-count";
 import { type Player } from "@prisma/client";
 import shuffle from "lodash.shuffle";
 import { useEffect, useState } from "react";
@@ -198,7 +199,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
 
   const createNewTeam: UseTeamsBuilderStateResult["createNewTeam"] = () => {
     setTeams((currTeams) =>
-      currTeams.concat([createEmptyTeam("Nuevo equipo")])
+      currTeams.length < TEAMS_PER_MATCH ? currTeams.concat([createEmptyTeam("Nuevo equipo")]) : currTeams
     );
   };
 
@@ -276,7 +277,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
     };
 
   const removeTeam: UseTeamsBuilderStateResult["removeTeam"] = (teamId) => {
-    setTeams((currTeams) => currTeams.filter((team) => team.id !== teamId));
+    setTeams((currTeams) => currTeams.length > TEAMS_PER_MATCH ? currTeams.filter((team) => team.id !== teamId) : currTeams);
   };
 
   const togglePlayer: UseTeamsBuilderStateResult["togglePlayer"] = (

@@ -33,6 +33,7 @@ export const TeamsValidationAlert = () => (
     <AlertTitle>No se cumple alguno de estos requisitos:</AlertTitle>
     <AlertDescription>
       <ul className="list-disc list-inside">
+        <li>El partido debe tener dos equipos, con al menos un jugador en cada uno.</li>
         <li>Los nombres de los equipos no pueden estar vacíos.</li>
         <li>No puedes tener jugadores sin equipo.</li>
       </ul>

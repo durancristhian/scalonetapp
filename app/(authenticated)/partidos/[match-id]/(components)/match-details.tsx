@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { TEAM_SCHEMA } from "@/schemas/team";
 import { type MatchWithPlayers } from "@/types/match";
 import { type FC, useMemo } from "react";
+import { getTeamCountError, TEAMS_PER_MATCH } from "@/utils/team-count";
 
 type MatchDetailsProps = {
   match: MatchWithPlayers;
@@ -41,7 +42,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
   const areTeamsValid = useMemo(() => {
     const validTeamNames = teams.every((team) => TEAM_SCHEMA.safeParse({ name: team.name }).success);
 
-    return !unselectedPlayers.length && validTeamNames;
+    return !getTeamCountError(teams.length) && teams.every(team => team.players.length > 0) && !unselectedPlayers.length && validTeamNames;
   }, [teams, unselectedPlayers]);
 
   const { operation, save, exportTeams } = useTeamActions(
@@ -53,10 +54,10 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div className="md:col-span-1">
+      <div className="min-w-0 md:col-span-1">
         <MatchPlayers players={match.players} />
       </div>
-      <div className="md:col-span-2">
+      <div className="min-w-0 md:col-span-2">
         {match.players.length ? (
           <div className="space-y-8">
             {unselectedPlayers.length ? (
@@ -93,14 +94,14 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                     }
                     showPing={unselectedPlayers.length === match.players.length}
                   />
-                  <Button onClick={createNewTeam}>Agregar</Button>
+                  {teams.length < TEAMS_PER_MATCH ? <Button onClick={createNewTeam}>Agregar</Button> : null}
                 </div>
               </div>
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid lg:grid-cols-2 gap-4">
                 {teams.map((team) => (
                   <TeamCard
                     key={team.id}
-                    canBeDeleted={teams.length > 2}
+                    canBeDeleted={teams.length > TEAMS_PER_MATCH}
                     removePlayerFromTeam={removePlayerFromTeam}
                     removeTeam={removeTeam}
                     team={team}

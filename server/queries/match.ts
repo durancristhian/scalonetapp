@@ -3,6 +3,7 @@ import { ERROR_MESSAGES } from "@/utils/error-messages";
 import prisma from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { type Match } from "@prisma/client";
+import { getTeamCountError } from "@/utils/team-count";
 
 export const getMatchesQuery: (options?: {
   take: number;
@@ -81,6 +82,11 @@ export const editMatchQuery: (
   data: Partial<Match>,
   userId: string
 ) => Promise<Match> = async (id, data, userId) => {
+  if (data.teams !== undefined) {
+    const teams: unknown = JSON.parse(data.teams);
+    const error = getTeamCountError(Array.isArray(teams) ? teams.length : 0);
+    if (error) throw new Error(error);
+  }
   return await prisma.match.update({
     where: {
       id,

@@ -32,7 +32,7 @@ const Page: FC<PageProps> = async (props) => {
                 </Link>
               </Button>
             </div>
-            <h2 className="font-bold text-xl">{match.name}</h2>
+            <h2 className="min-w-0 font-bold text-xl [overflow-wrap:anywhere]">{match.name}</h2>
           </div>
           <MatchDetails match={match} />
         </div>

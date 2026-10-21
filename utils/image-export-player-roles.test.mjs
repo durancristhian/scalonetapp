@@ -99,3 +99,23 @@ test('captains start unassigned and can share the goalkeeper role', () => {
   assert.deepEqual(reconciled.a.assignments, { goalkeeper: null, captain: null });
   assert.deepEqual(reconciled.b.assignments, { goalkeeper: 4, captain: 5 });
 });
+
+test('deleting a selected captain clears both roles only in the changed team', () => {
+  const saved = reconcile(teams, {});
+  saved.a.assignments.captain = 2;
+  saved.b.assignments.captain = 5;
+  const changed = [{...teams[0],players:teams[0].players.filter(p=>p.id!==2)},teams[1]];
+  const next = reconcile(changed,saved);
+  assert.deepEqual(next.a.assignments,{goalkeeper:null,captain:null});
+  assert.deepEqual(next.b,saved.b);
+});
+
+test('removed teams disappear and newly created teams do not silently regain roles', () => {
+  const saved = reconcile(teams, {});
+  saved.a.assignments.captain = 1;
+  const replacement = {...teams[1],id:'replacement'};
+  const next = reconcile([teams[0],replacement],saved);
+  assert.equal(next.b,undefined);
+  assert.deepEqual(next.a,saved.a);
+  assert.deepEqual(next.replacement.assignments,{goalkeeper:null,captain:null});
+});
