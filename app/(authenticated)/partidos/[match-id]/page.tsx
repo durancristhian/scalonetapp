@@ -24,7 +24,10 @@ const getMatch = cache(async (matchId: string) => {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const match = await getMatch((await params)["match-id"]);
-  return { title: match?.name ?? "Página no encontrada" };
+  // Keep user-entered $ sequences literal instead of applying Next's template.
+  return {
+    title: { absolute: `${match?.name ?? "Página no encontrada"} | Scalonet.app` },
+  };
 }
 
 const Page: FC<PageProps> = async (props) => {
