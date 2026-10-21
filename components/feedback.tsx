@@ -87,7 +87,7 @@ const FeedbackForm: FC<FeedbackFormProps> = ({ afterSubmit }) => {
     } catch (error) {
       if (error instanceof Error) {
         errorAlert({
-          title: error.message || ERROR_MESSAGES.feedback_submit_error,
+          title: ERROR_MESSAGES.feedback_submit_error,
         });
       }
     }

@@ -16,6 +16,8 @@ import { getImageExportBackground, getImageExportBackgroundUrls } from "@/utils/
 import { type NextRequest, NextResponse } from "next/server";
 import { type Browser } from "puppeteer-core";
 import { getSavedTeamsError } from "@/utils/team-validation";
+import { readSavedTeams } from "@/utils/read-saved-teams";
+import { lineupFingerprint } from "@/utils/lineup-fingerprint";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -90,10 +92,22 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const teams: unknown = JSON.parse(match.teams);
+    let teams: unknown;
+    try { teams = JSON.parse(match.teams); } catch { teams = null; }
     const teamsError = getSavedTeamsError(teams, match.players.map(player => player.id));
     if (teamsError) {
       return NextResponse.json({ error: teamsError }, { status: 422 });
+    }
+
+    const expected = request.headers.get("X-Lineup-Fingerprint");
+    if (expected) {
+      const players = new Map(match.players.map(player => [player.id, player]));
+      const hydrated = readSavedTeams(match.teams).map(team => ({ ...team,
+        players: team.players.flatMap(id => { const player = players.get(id); return player ? [player] : []; }),
+      }));
+      if (expected !== await lineupFingerprint(match.name, hydrated)) {
+        return NextResponse.json({ error: "El partido cambió. Actualizá la página antes de exportar." }, { status: 409 });
+      }
     }
 
     browser = await getBrowser();

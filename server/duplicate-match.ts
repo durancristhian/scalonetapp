@@ -5,6 +5,7 @@ import { MAX_PLAYERS_BATCH, MAX_PLAYERS_PER_MATCH } from "@/utils/player-limits"
 import prisma from "@/utils/prisma";
 import { getSavedTeamsError } from "@/utils/team-validation";
 import { format } from "date-fns";
+import { lockMatchOwner } from "@/server/lock-match-owner";
 
 function readTeams(serialized: string, playerIds: number[]): { teams: BaseTeam[]; teamsReset: boolean } {
   try {
@@ -23,6 +24,7 @@ function playerKey(player: { name: string; level: number; position: string }): s
 
 export async function duplicateMatch(id: number, userId: string): Promise<DuplicateMatchResult> {
   return prisma.$transaction(async transaction => {
+    await lockMatchOwner(transaction, userId);
     // Lock this owner's matches in a stable order: concurrent copies must see
     // each other's names/counts. Player additions also lock their parent match.
     await transaction.$queryRaw`

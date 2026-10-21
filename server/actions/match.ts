@@ -14,120 +14,28 @@ import {
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import prisma from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { type Match } from "@prisma/client";
+import { z } from "zod";
+import { runMutation } from "@/server/run-mutation";
 import { revalidatePath } from "next/cache";
 
-export const addMatchAction: (
-  data: MatchSchema,
-  options?: { revalidatePath: boolean }
-) => Promise<Match> = async (
-  data,
-  options = {
-    revalidatePath: true,
-  }
-) => {
-  try {
-    const { userId } = await auth();
+const ID_SCHEMA = z.number().int().positive().max(2147483647);
 
-    /* We check auth */
-    if (!userId) {
-      throw new Error(ERROR_MESSAGES.unauthorized);
-    }
+export const addMatchAction = async (data: MatchSchema) =>
+  runMutation({ operation: "match.add" }, ERROR_MESSAGES.match_add_error, userId =>
+    addMatchQuery(MATCH_SCHEMA.parse(data), userId));
 
-    const matchData = MATCH_SCHEMA.parse(data);
-    const userMatches = await prisma.match.findMany({
-      where: {
-        userId: {
-          equals: userId,
-        },
-      },
-    });
+export const editMatchAction = async (id: number, data: MatchUpdateSchema, _pathToRevalidate?: string) =>
+  runMutation({ operation: "match.edit", matchId: id }, ERROR_MESSAGES.match_edit_error, async userId => {
+    await editMatchQuery(ID_SCHEMA.parse(id), MATCH_UPDATE_SCHEMA.parse(data), userId);
+  });
 
-    /* We check the user hasn't reached the limit of matches they can create */
-    if (
-      userMatches.length >= Number(process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER)
-    ) {
-      throw new Error(ERROR_MESSAGES.match_limit_reached);
-    }
-
-    const sameNameMatch = userMatches.find(
-      (userMatch) => userMatch.name === matchData.name
-    );
-
-    /* We check we don't have a match named the same */
-    if (sameNameMatch) {
-      throw new Error(ERROR_MESSAGES.match_name_repeated);
-    }
-
-    const newMatch = await addMatchQuery(matchData, userId);
-
-    if (options.revalidatePath) {
-      revalidatePath("/dashboard");
-    }
-
-    return newMatch;
-  } catch (error) {
-    throw new Error(ERROR_MESSAGES.match_add_error);
-  }
-};
-
-export const editMatchAction: (
-  id: number,
-  data: MatchUpdateSchema,
-  pathToRevalidate: string
-) => Promise<void> = async (id, data, pathToRevalidate) => {
-  try {
-    const { userId } = await auth();
-
-    /* We check auth */
-    if (!userId) {
-      throw new Error(ERROR_MESSAGES.unauthorized);
-    }
-
-    const matchData = MATCH_UPDATE_SCHEMA.parse(data);
-    /* A rename may keep its existing name, but cannot reuse another match's. */
-    if (matchData.name !== undefined) {
-      const sameNameMatch = await prisma.match.findFirst({
-        where: {
-          userId: {
-            equals: userId,
-          },
-          name: matchData.name,
-          id: { not: id },
-        },
-      });
-
-      if (sameNameMatch) {
-        throw new Error(ERROR_MESSAGES.match_name_repeated);
-      }
-    }
-
-    await editMatchQuery(id, matchData, userId);
-
-    revalidatePath(pathToRevalidate, "page");
-  } catch (error) {
-    throw new Error(ERROR_MESSAGES.match_edit_error);
-  }
-};
-
-export const deleteMatchAction: (id: number) => Promise<void> = async (id) => {
-  try {
-    const { userId } = await auth();
-
-    /* We check auth */
-    if (!userId) {
-      throw new Error(ERROR_MESSAGES.unauthorized);
-    }
-
-    const photos = await prisma.player.findMany({ where: { matchId: id, match: { userId } }, select: { avatar: true } });
-    await deleteMatchQuery(id, userId);
+export const deleteMatchAction = async (id: number) =>
+  runMutation({ operation: "match.delete", matchId: id }, ERROR_MESSAGES.match_delete_error, async userId => {
+    const matchId = ID_SCHEMA.parse(id);
+    const photos = await prisma.player.findMany({ where: { matchId, match: { userId } }, select: { avatar: true } });
+    await deleteMatchQuery(matchId, userId);
     await Promise.all(photos.map(({ avatar }) => removeUnusedPhoto(avatar)));
-
-    revalidatePath("/dashboard");
-  } catch (error) {
-    throw new Error(ERROR_MESSAGES.match_delete_error);
-  }
-};
+  });
 
 export const duplicateMatchAction = async (id: number): Promise<DuplicateMatchResult> => {
   let result: DuplicateMatchResult;

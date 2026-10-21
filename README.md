@@ -28,7 +28,12 @@ npm run dev
 Open [localhost:3000](http://localhost:3000). Keep this port for local image exports.
 Environment files are ignored by Git; use development credentials only.
 
-## Saved teams regression checks
+## Match consistency regression checks
+
+See [the reproduction and verification guide](docs/match-consistency-verification.md)
+for manual scenarios, expected results, and the historical cleanup's scope.
+`npm run test:consistency` covers safe mutations and export snapshot checks;
+`npm run test:consistency:db` covers stale saves, duplicate names, and account limits.
 
 Run `npm run test:duplicate` for action and dialog regressions, including the
 production Server Components error transport. The tests use synthetic data.

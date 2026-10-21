@@ -10,7 +10,12 @@ export const MATCH_SCHEMA = z.object({
     .max(MAX_MATCH_NAME_LENGTH, { message: ERROR_MESSAGES.too_large }),
 }).strict();
 
-export const MATCH_UPDATE_SCHEMA = MATCH_SCHEMA.partial().extend({ teams: z.string().optional() });
+export const MATCH_UPDATE_SCHEMA = MATCH_SCHEMA.partial().extend({
+  teams: z.string().optional(),
+  expectedTeams: z.string().optional(),
+}).refine(data => data.teams === undefined || data.expectedTeams !== undefined, {
+  message: "La versión de los equipos es necesaria para guardar.",
+});
 
 export type MatchSchema = z.infer<typeof MATCH_SCHEMA>;
 export type MatchUpdateSchema = z.infer<typeof MATCH_UPDATE_SCHEMA>;

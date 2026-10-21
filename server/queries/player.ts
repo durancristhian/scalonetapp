@@ -4,8 +4,9 @@ import { ERROR_MESSAGES } from "../../utils/error-messages.ts";
 import { getPlayerAdditionError } from "../../utils/player-limits.ts";
 import { removePlayerFromSavedTeams } from "../../utils/remove-player-from-saved-teams.ts";
 import type { Player, Prisma } from "@prisma/client";
+import { ExpectedActionError } from "../expected-action-error.ts";
 
-export class PlayerAdditionError extends Error {}
+export class PlayerAdditionError extends ExpectedActionError {}
 
 async function addPlayersAtomically<T>(
   matchId: number,
@@ -18,7 +19,7 @@ async function addPlayersAtomically<T>(
     const matches = await transaction.$queryRaw<{ id: number }[]>`
       SELECT "id" FROM "Match" WHERE "id" = ${matchId} AND "userId" = ${userId} FOR UPDATE
     `;
-    if (!matches.length) throw new Error(ERROR_MESSAGES.not_found);
+    if (!matches.length) throw new ExpectedActionError(ERROR_MESSAGES.not_found);
 
     const count = await transaction.player.count({ where: { matchId } });
     const limitError = getPlayerAdditionError(count, players.length);
@@ -66,12 +67,13 @@ export const editPlayerQuery: (
   userId: string,
   data: PlayerSchema
 ) => Promise<Player> = async (id, userId, data) => {
-  return await prisma.player.update({
-    where: {
-      id,
-      match: { userId },
-    },
-    data,
+  return prisma.$transaction(async transaction => {
+    const player = await transaction.player.findFirst({ where: { id, match: { userId } }, select: { matchId: true } });
+    if (!player) throw new ExpectedActionError(ERROR_MESSAGES.not_found);
+    await transaction.$queryRaw`SELECT "id" FROM "Match" WHERE "id" = ${player.matchId} AND "userId" = ${userId} FOR UPDATE`;
+    const repeated = await transaction.player.findFirst({ where: { matchId: player.matchId, name: data.name, id: { not: id } } });
+    if (repeated) throw new ExpectedActionError(ERROR_MESSAGES.match_player_repeated);
+    return transaction.player.update({ where: { id, match: { userId } }, data });
   });
 };
 
@@ -81,14 +83,14 @@ export const deletePlayerQuery: (
 ) => Promise<Player> = async (id, userId) => {
   return prisma.$transaction(async transaction => {
     const player = await transaction.player.findFirst({ where: { id, match: { userId } }, select: { matchId: true } });
-    if (!player) throw new Error(ERROR_MESSAGES.not_found);
+    if (!player) throw new ExpectedActionError(ERROR_MESSAGES.not_found);
 
     // Roster changes and team saves must lock the parent before changing either.
     const [match] = await transaction.$queryRaw<{ id: number; teams: string }[]>`
       SELECT "id", "teams" FROM "Match"
       WHERE "id" = ${player.matchId} AND "userId" = ${userId} FOR UPDATE
     `;
-    if (!match) throw new Error(ERROR_MESSAGES.not_found);
+    if (!match) throw new ExpectedActionError(ERROR_MESSAGES.not_found);
     const teams = removePlayerFromSavedTeams(match.teams, id);
     const deleted = await transaction.player.delete({ where: { id, match: { userId } } });
     if (teams !== match.teams) {

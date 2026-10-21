@@ -101,7 +101,7 @@ test("a save validated before deletion finishes first, then deletion cleans its 
         return async args => { const rows = await target.findMany(args); read.resolve(); await release.promise; return rows; };
       },
     }) : undefined);
-    const saving = queries(db).save(match.id, { teams: match.teams }, owner);
+    const saving = queries(db).save(match.id, { teams: match.teams, expectedTeams: match.teams }, owner);
     await read.promise;
     const deleting = queries().remove(match.players[0].id, owner);
     release.resolve();
@@ -132,8 +132,8 @@ test("a save waiting behind deletion cannot reintroduce the deleted player", asy
         saveStarted.resolve(); return tx.$queryRaw(...args);
       } : undefined).$transaction,
     };
-    const saving = queries(savingDb).save(match.id, { teams: match.teams }, owner);
-    const assertion = assert.rejects(saving, /ya no pertenecen/);
+    const saving = queries(savingDb).save(match.id, { teams: match.teams, expectedTeams: match.teams }, owner);
+    const assertion = assert.rejects(saving, /cambió/);
     await saveStarted.promise;
     release.resolve();
     await Promise.all([deleting, assertion]);

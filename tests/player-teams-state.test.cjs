@@ -40,7 +40,7 @@ function setup() {
   const state = hookState(), writes = [];
   const load = sourceLoader({
     react: state.react,
-    "@/server/actions/match": { editMatchAction: async (...args) => writes.push(args) },
+    "@/server/actions/match": { editMatchAction: async (...args) => { writes.push(args); return { ok: true }; } },
     "@/utils/analytics": { trackAnalytics() {} },
     "@/utils/image-export-player-roles": { invalidateImageExportTeamSelections() {} },
     "@/app/(authenticated)/(hooks)/use-alerts": { useAlerts: () => ({ successAlert() {}, errorAlert() {} }) },
@@ -51,9 +51,12 @@ function setup() {
   let match = { id: 1, players: Array.from({ length: 4 }, (_, i) => ({ id: i + 10, name: `Fixture ${i}`, level: 5, position: "mid" })),
     teams: JSON.stringify([{ id: "a", name: "A", players: [10, 11] }, { id: "b", name: "B", players: [12, 13] }]) };
   return { writes, serialize,
-    render: () => state.render(() => { const b = builder(match); return { ...b, actions: actions(match, b.teams, true) }; }),
-    remove: () => { match = { ...match, players: match.players.slice(1), teams: JSON.stringify([{ id: "a", name: "A", players: [11] }, { id: "b", name: "B", players: [12, 13] }]) }; },
+    render: () => state.render(() => { const b = builder(match); return { ...b, actions: actions(match, b.teams, true, b.baseTeams) }; }),
+    remove: () => { match = { ...match, players: match.players.slice(1), teams: JSON.stringify(JSON.parse(match.teams).map(t => ({ ...t, players: t.players.filter(id => id !== 10) }))) }; },
+    acknowledge: () => { match = { ...match, teams: writes.at(-1)[1].teams }; },
     saved: () => match.teams,
+    remote: () => { match = { ...match, teams: JSON.stringify([{ id: "a", name: "Remote A", players: [10, 12] }, { id: "b", name: "Remote B", players: [11, 13] }]) }; },
+    malformed: value => { match = { ...match, teams: value }; },
   };
 }
 
@@ -69,6 +72,33 @@ test("refreshed deletion removes the player from teams and selection, and is alr
   assert.equal(app.writes.length, 0);
 });
 
+test("a pristine tab follows refreshed saved teams automatically", () => {
+  const app = setup(); app.render(); app.remote();
+  const state = app.render();
+  assert.equal(app.serialize(state.teams), app.saved());
+  assert.equal(state.baseTeams, app.saved());
+});
+
+test("a dirty tab preserves its draft and old version after another tab saves", async () => {
+  const app = setup(); let state = app.render();
+  const base = state.baseTeams;
+  state.updateTeamName("a", "Local draft"); state = app.render();
+  app.remote(); state = app.render();
+  assert.equal(state.teams[0].name, "Local draft");
+  assert.equal(state.baseTeams, base);
+  await state.actions.save();
+  assert.equal(app.writes[0][1].expectedTeams, base);
+});
+
+test("unusable legacy team data opens a recoverable builder", () => {
+  for (const value of ["not-json", "null", "{}", '[{"id":"bad","players":null}]']) {
+    const app = setup(); app.malformed(value);
+    const state = app.render();
+    assert.equal(state.teams.length, 2);
+    assert.equal(state.unselectedPlayers.length, 4);
+  }
+});
+
 test("deletion preserves unrelated unsaved team edits without autosaving them", async () => {
   const app = setup();
   let state = app.render();
@@ -80,4 +110,16 @@ test("deletion preserves unrelated unsaved team edits without autosaving them", 
   await state.actions.save();
   assert.equal(app.writes.length, 1);
   assert.equal(JSON.parse(app.writes[0][1].teams)[0].name, "My unsaved name");
+});
+
+test("an acknowledged save advances the base before a later deletion and draft save", async () => {
+  const app = setup(); let state = app.render();
+  state.updateTeamName("a", "Saved name"); state = app.render();
+  await state.actions.save(); app.acknowledge(); state = app.render();
+  assert.equal(state.baseTeams, app.saved());
+  state.updateTeamName("b", "Later draft"); state = app.render();
+  app.remove(); state = app.render();
+  await state.actions.save();
+  assert.equal(app.writes.at(-1)[1].expectedTeams, app.saved());
+  assert.equal(JSON.parse(app.writes.at(-1)[1].teams)[1].name, "Later draft");
 });

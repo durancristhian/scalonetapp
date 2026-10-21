@@ -1,5 +1,8 @@
 "use client";
 
+import { unwrapActionResult, getActionErrorMessage } from "@/utils/action-result";
+
+
 import { savePlayerPhoto } from "@/utils/save-player-photo";
 import { trackAnalytics } from "@/utils/analytics";
 
@@ -63,7 +66,7 @@ const EnabledContent: FC<{ currentPlayerCount: number }> = ({ currentPlayerCount
   const onPlayerSubmit: (values: PlayerSchema, photo?: Blob | null) => Promise<void> = (values, photo) => {
     return new Promise(async (resolve, reject) => {
       try {
-        const id = await addPlayerAction(matchId, values);
+        const id = unwrapActionResult(await addPlayerAction(matchId, values));
         trackAnalytics("players_added", { method: "single", count: 1 });
         const photoError = await savePlayerPhoto(id, photo);
         if (photoError) errorAlert({ title: photoError });
@@ -74,7 +77,7 @@ const EnabledContent: FC<{ currentPlayerCount: number }> = ({ currentPlayerCount
       } catch (error) {
         if (error instanceof Error) {
           errorAlert({
-            title: error.message || ERROR_MESSAGES.player_add_error,
+            title: getActionErrorMessage(error, ERROR_MESSAGES.player_add_error),
           });
         }
 
@@ -88,7 +91,7 @@ const EnabledContent: FC<{ currentPlayerCount: number }> = ({ currentPlayerCount
   ) => {
     return new Promise(async (resolve, reject) => {
       try {
-        await addMultiplePlayersAction(matchId, values);
+        unwrapActionResult(await addMultiplePlayersAction(matchId, values));
         trackAnalytics("players_added", { method: "bulk", count: values.length });
 
         setDialogOpen(false);
@@ -97,7 +100,7 @@ const EnabledContent: FC<{ currentPlayerCount: number }> = ({ currentPlayerCount
       } catch (error) {
         if (error instanceof Error) {
           errorAlert({
-            title: error.message || ERROR_MESSAGES.player_multiple_add_error,
+            title: getActionErrorMessage(error, ERROR_MESSAGES.player_multiple_add_error),
           });
         }
 

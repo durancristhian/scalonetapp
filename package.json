@@ -14,7 +14,9 @@
     "test:duplicate:db": "NODE_ENV=production node --test tests/duplicate-match-db.test.cjs",
     "test:player-teams:db": "NODE_ENV=production node --test tests/player-teams-db.test.cjs",
     "test:player-teams:state": "node --test tests/player-teams-state.test.cjs",
-    "vercel-build": "prisma generate && prisma migrate deploy && next build"
+    "vercel-build": "prisma generate && prisma migrate deploy && next build",
+    "test:consistency": "NODE_ENV=production node --conditions=react-server --test tests/consistency.test.cjs",
+    "test:consistency:db": "NODE_ENV=production node --test tests/consistency-db.test.cjs"
   },
   "dependencies": {
     "@dicebear/core": "10.7.0",
