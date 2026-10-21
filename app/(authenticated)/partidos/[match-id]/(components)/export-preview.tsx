@@ -6,7 +6,6 @@ import {
 } from "@/components/team-export/team-export";
 import { IMAGE_EXPORT_WIDTH } from "@/utils/image-export-options";
 import { useEffect, useRef, useState } from "react";
-import styles from "./export-editor.module.css";
 
 export function ExportPreview(props: TeamExportProps) {
   const viewport = useRef<HTMLDivElement>(null);
@@ -27,14 +26,14 @@ export function ExportPreview(props: TeamExportProps) {
 
   const scale = size.width / IMAGE_EXPORT_WIDTH;
   return (
-    <div ref={viewport} className={styles.previewViewport}>
+    <div ref={viewport} className="my-auto w-full shrink-0">
       <div
-        className={styles.previewSized}
+        className="relative overflow-clip shadow-md"
         style={{ height: size.height * scale }}
       >
         <div
           ref={canvas}
-          className={styles.previewCanvas}
+          className="absolute [inset-block-start:0] start-0 w-[1280px] origin-top-left"
           style={{ transform: `scale(${scale})` }}
         >
           <TeamExport {...props} />

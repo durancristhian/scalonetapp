@@ -28,15 +28,13 @@ import { MAX_PLAYERS_PER_MATCH } from "@/utils/player-limits";
 import { type Player } from "@prisma/client";
 import { EllipsisVerticalIcon, PencilIcon, TrashIcon } from "lucide-react";
 import { type FC, useState } from "react";
-import styles from "./match-players.module.css";
 
 type MatchPlayersProps = {
   players: Player[];
 };
 
 export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
-  const atPlayerLimit =
-    players.length >= MAX_PLAYERS_PER_MATCH;
+  const atPlayerLimit = players.length >= MAX_PLAYERS_PER_MATCH;
   const canListPlayers = Array.isArray(players) && players.length;
 
   return (
@@ -46,12 +44,14 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
           <CardTitle>Jugadores convocados</CardTitle>
           {players.length ? (
             <CardDescription>
-              {players.length} de{" "}
-              {MAX_PLAYERS_PER_MATCH}
+              {players.length} de {MAX_PLAYERS_PER_MATCH}
             </CardDescription>
           ) : null}
         </div>
-        <AddPlayer currentPlayerCount={players.length} disabled={atPlayerLimit} />
+        <AddPlayer
+          currentPlayerCount={players.length}
+          disabled={atPlayerLimit}
+        />
       </CardHeader>
       {atPlayerLimit ? (
         <CardContent>
@@ -59,12 +59,12 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
         </CardContent>
       ) : null}
       {canListPlayers ? (
-        <CardContent className={`${styles.list} pr-3`}>
+        <CardContent className="pe-3">
           {/* Keep large rosters scrollable independently of the team builder. */}
-          <ScrollArea className={players.length > 10 ? "h-[435px]" : "h-auto"}>
-            <div className="mr-3">
+          <ScrollArea className={players.length > 10 ? "h-96" : "h-auto"}>
+            <div className="me-3">
               <ul className="space-y-2">
-                {players.sort(byName).map((player, idx) => {
+                {[...players].sort(byName).map((player, idx) => {
                   return (
                     <AnimatedListItem key={player.id} listIndex={idx}>
                       <MatchPlayer player={player} />
@@ -91,20 +91,22 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player }) => {
 
   return (
     <Card>
-      <div className={styles.playerRow}>
+      <div className="flex items-center gap-2 ps-4">
         <PlayerAvatar src={player.avatar} name={player.name} size="sm" />
-        <div className={styles.info}>
-          <p className={styles.name}>{player.name}</p>
-          <div className={styles.attributes}>
-          <Badge
-            variant={player.position}
-            className="justify-center uppercase w-[50px]"
-          >
-            {PLAYER_POSITIONS[player.position].substring(0, 3)}
-          </Badge>
-          <Badge variant="secondary" className="justify-center w-[38px]">
-            {player.level}
-          </Badge>
+        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-4 gap-y-2 py-2">
+          <p className="min-w-0 flex-1 basis-40 [overflow-wrap:anywhere]">
+            {player.name}
+          </p>
+          <div className="flex shrink-0 gap-2">
+            <Badge
+              variant={player.position}
+              className="justify-center uppercase w-12"
+            >
+              {PLAYER_POSITIONS[player.position].substring(0, 3)}
+            </Badge>
+            <Badge variant="secondary" className="justify-center w-10">
+              {player.level}
+            </Badge>
           </div>
         </div>
         <div className="flex-shrink-0">
