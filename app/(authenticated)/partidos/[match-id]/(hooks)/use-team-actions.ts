@@ -1,5 +1,6 @@
 "use client";
 
+import { trackAnalytics } from "@/utils/analytics";
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { editMatchAction } from "@/server/actions/match";
 import { type MatchWithPlayers } from "@/types/match";
@@ -37,6 +38,7 @@ export const useTeamActions = (
       return "No se pudo iniciar la operación. Intentá de nuevo.";
     operationLock.current = true;
     setOperation(action);
+    if (action === "export") trackAnalytics("export_requested");
 
     let stage: "save" | "image" = "save";
     try {
@@ -53,18 +55,23 @@ export const useTeamActions = (
           "/partidos/[match-id]",
         );
         savedTeams.current = payload;
+        trackAnalytics("teams_saved");
       }
 
       if (action === "export") {
         stage = "image";
         const blob = await fetchTeamExport(match.id, options, selections);
         downloadBlob(blob, "equipos.png");
+        trackAnalytics("export_download_started");
       }
 
       if (action === "save")
         successAlert({ title: "¡Equipos guardados con éxito!" });
       return null;
     } catch {
+      if (action === "export") {
+        trackAnalytics(stage === "image" ? "export_image_failed" : "export_save_failed");
+      }
       const message =
         stage === "image"
           ? "Los equipos están guardados, pero no se pudo descargar la imagen. Intentá de nuevo."
