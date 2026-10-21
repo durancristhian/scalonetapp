@@ -97,8 +97,7 @@
 
 .playerName {
   min-inline-size: 0;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden; /* Supports the export Chromium's multi-line ellipsis. */
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden; /* Chromium used for exports needs hidden for ellipsis. */
 }

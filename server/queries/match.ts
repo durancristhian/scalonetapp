@@ -1,4 +1,4 @@
-import { type MatchSchema } from "@/schemas/match";
+import { MATCH_SCHEMA, MATCH_UPDATE_SCHEMA, type MatchSchema, type MatchUpdateSchema } from "@/schemas/match";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import prisma from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
@@ -71,7 +71,7 @@ export const addMatchQuery: (
 ) => Promise<Match> = async (data, userId) => {
   return await prisma.match.create({
     data: {
-      ...data,
+      ...MATCH_SCHEMA.parse(data),
       userId,
     },
   });
@@ -79,11 +79,12 @@ export const addMatchQuery: (
 
 export const editMatchQuery: (
   id: number,
-  data: Partial<Match>,
+  data: MatchUpdateSchema,
   userId: string
 ) => Promise<Match> = async (id, data, userId) => {
-  if (data.teams !== undefined) {
-    const teams: unknown = JSON.parse(data.teams);
+  const matchData = MATCH_UPDATE_SCHEMA.parse(data);
+  if (matchData.teams !== undefined) {
+    const teams: unknown = JSON.parse(matchData.teams);
     const players = await prisma.player.findMany({ where: { matchId: id, match: { userId } }, select: { id: true } });
     const error = getSavedTeamsError(teams, players.map(player => player.id));
     if (error) throw new Error(error);
@@ -93,7 +94,7 @@ export const editMatchQuery: (
       id,
       userId,
     },
-    data,
+    data: matchData,
   });
 };
 

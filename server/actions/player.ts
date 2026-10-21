@@ -8,51 +8,14 @@ import {
   addPlayerQuery,
   deletePlayerQuery,
   editPlayerQuery,
+  PlayerAdditionError,
 } from "@/server/queries/player";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
-import { getPlayerAdditionError, MAX_PLAYERS_BATCH } from "@/utils/player-limits";
-import prisma from "@/utils/prisma";
+import { MAX_PLAYERS_BATCH } from "@/utils/player-limits";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
 const PLAYER_ID_SCHEMA = z.number().int().positive().max(2147483647);
-class PlayerLimitError extends Error {}
-
-const getMatch = async (matchId: number, userId: string) => {
-  return await prisma.match.findFirst({
-    where: {
-      id: {
-        equals: matchId,
-      },
-      userId: {
-        equals: userId,
-      },
-    },
-    include: {
-      players: true,
-    },
-  });
-};
-
-const namesInMatch: (
-  matchId: number,
-  names: string[]
-) => Promise<boolean> = async (matchId, names) => {
-  const coincidences = await prisma.player.findMany({
-    where: {
-      matchId: {
-        equals: matchId,
-      },
-      OR: names.map((name) => ({
-        name: {
-          equals: name,
-        },
-      })),
-    },
-  });
-
-  return !!coincidences.length;
-};
 
 export const addPlayerAction: (
   matchId: number,
@@ -68,30 +31,12 @@ export const addPlayerAction: (
 
     const player = PLAYER_SCHEMA.strict().parse(data);
 
-    const match = await getMatch(matchId, userId);
-
-    /* We check the current user owns the match we're trying to add a player to */
-    if (!match) {
-      throw new Error(ERROR_MESSAGES.not_found);
-    }
-
-    const coincidences = await namesInMatch(matchId, [player.name]);
-
-    /* We check that we don't have a player named the same in the match already */
-    if (coincidences) {
-      throw new Error(ERROR_MESSAGES.match_player_repeated);
-    }
-
-    /* We check we don't reach the players in match limit */
-    const limitError = getPlayerAdditionError(match.players.length, 1);
-    if (limitError) throw new PlayerLimitError(limitError);
-
-    const created = await addPlayerQuery(matchId, player);
+    const created = await addPlayerQuery(matchId, player, userId);
 
     revalidatePath("/partidos/[match-id]", "page");
     return created.id;
   } catch (error) {
-    if (error instanceof PlayerLimitError) throw error;
+    if (error instanceof PlayerAdditionError) throw error;
     throw new Error(ERROR_MESSAGES.player_add_error);
   }
 };
@@ -108,36 +53,12 @@ export const addMultiplePlayersAction: (
       throw new Error(ERROR_MESSAGES.unauthorized);
     }
 
-    const batchError = getPlayerAdditionError(0, data.length);
-    if (batchError) throw new PlayerLimitError(batchError);
     const players = z.array(PLAYER_SCHEMA.strict()).min(1).max(MAX_PLAYERS_BATCH).parse(data);
-
-    const match = await getMatch(matchId, userId);
-
-    /* We check the current user owns the match we're trying to add a player to */
-    if (!match) {
-      throw new Error(ERROR_MESSAGES.not_found);
-    }
-
-    const coincidences = await namesInMatch(
-      matchId,
-      players.map((player) => player.name)
-    );
-
-    /* We check that we don't have a player named the same in the match already */
-    if (coincidences) {
-      throw new Error(ERROR_MESSAGES.match_players_repeated);
-    }
-
-    /* We check we don't reach the players in match limit */
-    const limitError = getPlayerAdditionError(match.players.length, players.length);
-    if (limitError) throw new PlayerLimitError(limitError);
-
-    await addMultiplePlayersQuery(matchId, players);
+    await addMultiplePlayersQuery(matchId, players, userId);
 
     revalidatePath("/partidos/[match-id]", "page");
   } catch (error) {
-    if (error instanceof PlayerLimitError) throw error;
+    if (error instanceof PlayerAdditionError) throw error;
     throw new Error(ERROR_MESSAGES.player_add_error);
   }
 };

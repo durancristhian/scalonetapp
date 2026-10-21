@@ -5,6 +5,7 @@ Run with Node 24, `npm ci`, the local PostgreSQL/Clerk Development environment d
 ```sh
 npm run fixtures:export -- --user-id=<local-clerk-user-id> --write
 npm run test:export
+npm run test:integrity:local -- --user-id=<local-clerk-user-id>
 npm run test:export:local -- --user-id=<local-clerk-user-id>
 ```
 
@@ -41,6 +42,14 @@ Limits are imported from `utils/player-limits.ts`: 20 per team, 40 per match. Bo
 
 Artifacts are written to ignored `.local/export-qa/`: retained PNGs, screenshots, logs and `report.json`. `--skip-matrix` reruns UI/state/responsive checks without repeating the 62 PNG requests. Reports should be read together when using that option.
 
+## Fast integrity checks
+
+`test:integrity:local` exercises the actual PostgreSQL player-write queries, without launching a browser or generating images. It requires a loopback database and an explicit local fixture account. Temporary matches are deleted after the run. Seven cases cover concurrent individual/bulk/mixed additions, concurrent duplicate names, duplicates within a batch, ownership and oversized batches.
+
+Each player-add transaction locks its match row, verifies ownership, then checks capacity/names and inserts on the same connection. [PostgreSQL row locks](https://www.postgresql.org/docs/current/explicit-locking.html#LOCKING-ROWS) serialize additions to that match until commit or rollback. Different matches use different row locks.
+
+Match creation and edits parse the same strict name schema as the form; updates only accept name and teams. Automatically generated copy names reserve space for their prefix and timestamp within 40 characters.
+
 ## Visual review
 
 ![Three surfaces and weather treatments](images/export-themes.webp)
@@ -55,3 +64,5 @@ Two optional follow-ups for owner review, not applied here:
 ## Verified run
 
 Local verification on 2026-10-21 completed 62 decoded PNG exports, 57 browser behavior checks, 21 unit tests and the 11 viewport checks above. With the 20-player team limit, PNGs were 2560 pixels wide and ranged from 1470 to 3848 pixels high. The initial pass found page overflow at 320 and 768 pixels in existing roster/team rows; the final pass with 40-character unbroken player/match names had no page, modal or options-panel overflow.
+
+That full run predates the latest single-line player-name change. Per the owner's request, image/browser matrices and builds remain paused until the PR's final verification stage. The latest fast pass covers 24 unit tests, the seven PostgreSQL integrity cases, TypeScript and lint; no new PNG or visual verification is claimed for that change.
