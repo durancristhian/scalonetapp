@@ -5,6 +5,7 @@ import {
   getImageExportPlayerRoles,
   readImageExportTeamSelections,
   storeImageExportTeamSelections,
+  invalidateImageExportTeamSelections,
 } from './image-export-player-roles.ts';
 import { DEFAULT_IMAGE_EXPORT_OPTIONS } from './image-export-options.ts';
 import { imageExportRequestSearchParams, parseImageExportRequest } from './image-export-request.ts';
@@ -118,4 +119,32 @@ test('removed teams disappear and newly created teams do not silently regain rol
   assert.equal(next.b,undefined);
   assert.deepEqual(next.a,saved.a);
   assert.deepEqual(next.replacement.assignments,{goalkeeper:null,captain:null});
+});
+
+test('closed-editor roster changes remain invalidated after returning to the original roster',()=>{
+  const previous=globalThis.localStorage;
+  const memory=new Map();
+  globalThis.localStorage={getItem:key=>memory.get(key)??null,setItem:(key,value)=>memory.set(key,value)};
+  try {
+    const saved=reconcile(teams,{});
+    saved.a.assignments.captain=1;
+    storeImageExportTeamSelections(10,saved);
+    invalidateImageExportTeamSelections(10,[{...teams[0],players:teams[0].players.slice(1)},teams[1]]);
+    invalidateImageExportTeamSelections(10,teams);
+    const next=readImageExportTeamSelections(10,teams);
+    assert.deepEqual(next.a.assignments,{goalkeeper:null,captain:null});
+    assert.deepEqual(next.b,saved.b);
+  } finally {globalThis.localStorage=previous;}
+});
+
+test('observing an unconfigured builder does not suppress initial goalkeeper selection',()=>{
+  const previous=globalThis.localStorage;
+  const memory=new Map();
+  globalThis.localStorage={getItem:key=>memory.get(key)??null,setItem:(key,value)=>memory.set(key,value)};
+  try {
+    invalidateImageExportTeamSelections(10,teams.map(team=>({...team,players:[]})));
+    invalidateImageExportTeamSelections(10,teams);
+    assert.equal(memory.size,0);
+    assert.deepEqual(assignments(readImageExportTeamSelections(10,teams)),[1,4]);
+  } finally {globalThis.localStorage=previous;}
 });

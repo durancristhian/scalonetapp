@@ -6,7 +6,7 @@ for (const key of ['POSTGRES_PRISMA_URL', 'POSTGRES_URL_NON_POOLING']) {
   const url = new URL(process.env[key] ?? '');
   if (!['localhost', '127.0.0.1', '[::1]'].includes(url.hostname)) throw new Error('Fixtures require a local database.');
 }
-if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.startsWith('pk_test_')) throw new Error('Fixtures require Clerk test mode.');
+if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.startsWith('pk_test_') || !process.env.CLERK_SECRET_KEY?.startsWith('sk_test_')) throw new Error('Fixtures require Clerk test mode.');
 const userId = process.argv.find(arg => arg.startsWith('--user-id='))?.slice(10);
 if (!userId) throw new Error('Pass --user-id=<local Clerk user ID>.');
 const write = process.argv.includes('--write');

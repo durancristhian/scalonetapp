@@ -8,7 +8,7 @@ npm run test:export
 npm run test:export:local -- --user-id=<local-clerk-user-id>
 ```
 
-The fixture script defaults to a dry run without `--write`. Both scripts reject non-local databases and non-test Clerk keys. Seeding is idempotent by account and fixture name and never replaces existing matches. To create the same cases in another local account, explicitly pass that account's user ID. The browser runner verifies ownership, signs into that test account with a short-lived ticket, and restores the original fixture team data after its temporary UI edits. It does not change Production.
+The fixture script defaults to a dry run without `--write`. Both scripts reject non-local databases and require both Clerk keys to be test keys. Seeding is idempotent by account and fixture name and never replaces existing matches. To create the same cases in another local account, explicitly pass that account's user ID. The browser runner verifies ownership, signs into that test account with a short-lived ticket, and restores the original fixture team data and any temporary names after its temporary UI edits. It does not change Production.
 
 ## Fixtures
 
@@ -29,7 +29,7 @@ The maximum is read from `NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH` rather than hardcod
 
 - 54 real PNG requests: 3 surfaces × 3 weather options × 3 image presentations × 2 alignments. Validate PNG content type, nonempty decoded image, width 2560 and bounded dynamic height.
 - Eight additional real PNGs: minimum, maximum, asymmetric and role fixtures, with and without images.
-- Actual editor interactions: remembered appearance, match-scoped roles, changing team membership, role invalidation and repair of legacy data.
+- Actual editor interactions: remembered appearance, match-scoped roles, changing team membership, role invalidation even through closed-editor round trips, large role menus with keyboard selection, and repair of legacy data.
 - Fault injection confined to the disposable test page: save failure, image failure after save, retry without repeat save, independent save, repeated downloads and processing/success controls.
 - Page and modal checks at 320, 390, 639, 640, 767, 768, 1023, 1024, 1279, 1280 and 1440 CSS pixels. No document, dialog or control-panel horizontal overflow; preview appears from 1024 px.
 - Unit coverage for request validation, all option combinations, global preference replacement, unavailable browser storage, role deletion/swaps, explicit unassigned roles and per-match isolation.
@@ -49,4 +49,4 @@ Two optional follow-ups for owner review, not applied here:
 
 ## Verified run
 
-Local verification on 2026-10-21 completed 62 decoded PNG exports, 35 browser behavior checks, 12 unit tests and the 11 viewport checks above. PNGs were 2560 pixels wide and ranged from 1470 to 16008 pixels high. The initial pass found page overflow at 320 and 768 pixels in existing roster/team rows; the final pass with 40-character unbroken player/match names had no page, modal or options-panel overflow.
+Local verification on 2026-10-21 completed 62 decoded PNG exports, 43 browser behavior checks, 18 unit tests and the 11 viewport checks above. PNGs were 2560 pixels wide and ranged from 1470 to 16008 pixels high. The initial pass found page overflow at 320 and 768 pixels in existing roster/team rows; the final pass with 40-character unbroken player/match names had no page, modal or options-panel overflow.

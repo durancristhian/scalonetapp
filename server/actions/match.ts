@@ -17,7 +17,7 @@ import { auth } from "@clerk/nextjs/server";
 import { type Match } from "@prisma/client";
 import { format } from "date-fns";
 import { revalidatePath } from "next/cache";
-import { getTeamCountError } from "@/utils/team-count";
+import { getSavedTeamsError } from "@/utils/team-validation";
 
 export const addMatchAction: (
   data: MatchSchema,
@@ -148,8 +148,9 @@ export const duplicateMatchAction: (id: number) => Promise<void> = async (
     }
 
     const existingTeams: BaseTeam[] = JSON.parse(existingMatch.teams);
-    if (existingTeams.length && getTeamCountError(existingTeams.length)) {
-      throw new Error("Dejá solo dos equipos antes de duplicar este partido.");
+    if (existingTeams.length) {
+      const error = getSavedTeamsError(existingTeams, existingMatch.players.map(player => player.id));
+      if (error) throw new Error(error);
     }
 
     /* We create a new match */

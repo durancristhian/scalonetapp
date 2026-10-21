@@ -2,6 +2,7 @@ import { type MatchWithPlayers } from "@/types/match";
 import { type BaseTeam, type Team } from "@/types/team";
 import { byName } from "@/utils/by-name";
 import { TEAMS_PER_MATCH } from "@/utils/team-count";
+import { invalidateImageExportTeamSelections } from "@/utils/image-export-player-roles";
 import { type Player } from "@prisma/client";
 import shuffle from "lodash.shuffle";
 import { useEffect, useState } from "react";
@@ -55,6 +56,10 @@ type UseTeamsBuilderState = (
 export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
   const [teams, setTeams] = useState<Team[]>(() => getInitialTeams(match));
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
+
+  useEffect(() => {
+    invalidateImageExportTeamSelections(match.id, teams);
+  }, [match.id, teams]);
 
   /*
     When players change we check:

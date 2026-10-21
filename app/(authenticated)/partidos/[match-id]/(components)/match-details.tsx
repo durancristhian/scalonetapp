@@ -15,10 +15,10 @@ import { useTeamActions } from "@/app/(authenticated)/partidos/[match-id]/(hooks
 import { useTeamsBuilderState } from "@/app/(authenticated)/partidos/[match-id]/(hooks)/use-team-builder-state";
 import { EmptyState } from "@/components/empty-state";
 import { Button } from "@/components/ui/button";
-import { TEAM_SCHEMA } from "@/schemas/team";
 import { type MatchWithPlayers } from "@/types/match";
 import { type FC, useMemo } from "react";
-import { getTeamCountError, TEAMS_PER_MATCH } from "@/utils/team-count";
+import { TEAMS_PER_MATCH } from "@/utils/team-count";
+import { getSavedTeamsError } from "@/utils/team-validation";
 
 type MatchDetailsProps = {
   match: MatchWithPlayers;
@@ -39,12 +39,11 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
     updateTeamName,
   } = useTeamsBuilderState(match);
 
-  /* We consider teams are valid when there is no unselected players AND all teams have a valid name */
-  const areTeamsValid = useMemo(() => {
-    const validTeamNames = teams.every((team) => TEAM_SCHEMA.safeParse({ name: team.name }).success);
-
-    return !getTeamCountError(teams.length) && teams.every(team => team.players.length > 0) && !unselectedPlayers.length && validTeamNames;
-  }, [teams, unselectedPlayers]);
+  const validationError = useMemo(() => getSavedTeamsError(
+    teams.map(team => ({ ...team, players: team.players.map(player => player.id) })),
+    match.players.map(player => player.id),
+  ), [teams, match.players]);
+  const areTeamsValid = !validationError;
 
   const { operation, save, exportTeams } = useTeamActions(
     match,
@@ -112,7 +111,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                   />
                 ))}
               </div>
-              {!areTeamsValid ? <TeamsValidationAlert /> : null}
+              {validationError ? <TeamsValidationAlert message={validationError} /> : null}
               <div className="flex flex-wrap gap-2 justify-between">
                 <CopyTeams teams={teams} />
                 <div className="flex flex-wrap gap-2">

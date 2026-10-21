@@ -9,7 +9,7 @@ import { resolve } from 'node:path';
 
 const origin = 'http://localhost:3000';
 const userId = process.argv.find(arg => arg.startsWith('--user-id='))?.slice(10);
-if (!userId || !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.startsWith('pk_test_')) throw new Error('Explicit local test account required.');
+if (!userId || !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.startsWith('pk_test_') || !process.env.CLERK_SECRET_KEY?.startsWith('sk_test_')) throw new Error('Explicit local test account required.');
 for (const key of ['POSTGRES_PRISMA_URL','POSTGRES_URL_NON_POOLING']) if (!['localhost','127.0.0.1','[::1]'].includes(new URL(process.env[key]).hostname)) throw new Error('Local database required.');
 const fixtures = JSON.parse(await readFile('.local/export-fixtures.json','utf8'));
 const fixture = key => fixtures.find(f => f.key === key);
@@ -18,10 +18,7 @@ await mkdir(output,{recursive:true});
 const report = { exports:[], responsive:[], checks:[], failures:[] };
 const browser = await puppeteer.launch({headless:true});
 const db = new PrismaClient();
-const page = await browser.newPage();
-const cdp = await page.createCDPSession();
-await cdp.send('Page.setDownloadBehavior',{behavior:'allow',downloadPath:resolve(output)});
-page.setDefaultTimeout(15000);
+let page;
 const originalTeams = new Map();
 const originalNames = new Map();
 const originalPlayers = new Map();
@@ -64,6 +61,13 @@ async function download(f,options,label,retain=false) {
 }
 
 try {
+  page = await browser.newPage();
+  const cdp = await page.createCDPSession();
+  await cdp.send('Page.setDownloadBehavior',{behavior:'allow',downloadPath:resolve(output)});
+  page.setDefaultTimeout(15000);
+  const owned = await db.match.findMany({where:{id:{in:fixtures.map(f=>f.matchId)},userId},select:{id:true,teams:true,name:true}});
+  assert.equal(owned.length,fixtures.length,'Every fixture must belong to the explicit test account.');
+  for (const match of owned) {originalTeams.set(match.id,match.teams);originalNames.set(match.id,match.name);}
   await page.goto(origin);
   await page.waitForFunction(() => window.Clerk?.loaded);
   const clerk = createClerkClient({secretKey:process.env.CLERK_SECRET_KEY});
@@ -72,9 +76,6 @@ try {
     const signIn = await window.Clerk.client.signIn.create({strategy:'ticket',ticket});
     await window.Clerk.setActive({session:signIn.createdSessionId});
   },token);
-  const owned = await db.match.findMany({where:{id:{in:fixtures.map(f=>f.matchId)},userId},select:{id:true,teams:true,name:true}});
-  assert.equal(owned.length,fixtures.length,'Every fixture must belong to the explicit test account.');
-  for (const match of owned) {originalTeams.set(match.id,match.teams);originalNames.set(match.id,match.name);}
   await page.setViewport({width:1440,height:900});
 
   // Real renderer + PNG endpoint across the complete option matrix.
@@ -94,6 +95,34 @@ try {
   }
 
   }
+
+  await open('maximum');
+  check(await page.$$eval('button',els=>els.some(el=>el.textContent.trim()==='Agregar'&&el.disabled)),'The match player limit disables adding more players.');
+  await editor();
+  await page.click('[id$="-captain-maximum-0-control"]');
+  await page.waitForSelector('[role="option"]');
+  check(await page.$$eval('[role="option"]',els=>els.length)===51,'Maximum-roster role menu includes all 50 players and No indicado.');
+  await page.keyboard.press('End');
+  await page.waitForFunction(()=>document.activeElement?.textContent.includes('Jugador 050'));
+  await page.keyboard.press('Enter');
+  await page.waitForFunction(()=>document.querySelector('[id$="-captain-maximum-0-control"]')?.textContent.includes('Jugador 050'));
+  await page.click('[id$="-goalkeeper-maximum-0-control"]');
+  await page.waitForSelector('[role="option"]');
+  await page.keyboard.press('End');
+  await page.waitForFunction(()=>document.activeElement?.textContent.includes('Jugador 050'));
+  await page.keyboard.press('Enter');
+  await page.waitForFunction(()=>document.querySelector('[id$="-goalkeeper-maximum-0-control"]')?.textContent.includes('Jugador 050'));
+  check(true,'The last player in a maximum-roster menu can hold both roles via keyboard.');
+  for (const shape of ['Cuadradas','Circulares']) {
+    await select('avatar',shape);
+    const separate=await page.$eval('[data-player-role="captain"]',badge=>{
+      const pair=Array.from(badge.parentElement.querySelectorAll('[data-player-role]'));
+      const [a,b]=pair.map(el=>el.getBoundingClientRect());
+      return pair.length===2&&a.left<b.left&&Math.abs(a.top-b.top)<1;
+    });
+    check(separate,`${shape}: shared captain and goalkeeper badges occupy opposite sides.`);
+  }
+  await close();
 
   console.log('Checking preferences and role persistence');
   // Preferences overwrite cleanly and roles remain local to each match.
@@ -144,6 +173,17 @@ try {
   check(await page.$$eval('[data-player-role-control]',els=>els.every(el=>el.textContent.includes('No indicado'))),'Invalidated role selects show No indicado.');
   await close();
 
+  await open('roles');
+  await setRoles(fixture('roles'));
+  await page.click(button('Sacar a Jugador 001 del equipo'));
+  await page.waitForFunction(()=>JSON.parse(localStorage.getItem('scaloneta:export-player-roles:v1:'+document.location.pathname.split('/').at(-1)))?.['roles-0']?.assignments.captain===null);
+  await page.locator('::-p-aria(Jugador 001[role="button"])').click();
+  await page.click('[role="combobox"][aria-label="Asignar jugadores al equipo"]');
+  await page.locator('::-p-aria(Equipo 1[role="option"])').click();
+  await editor();
+  check(await page.$eval('[id$="-captain-roles-0-control"]',el=>el.textContent.includes('No indicado')) && await page.$eval('[id$="-goalkeeper-roles-0-control"]',el=>el.textContent.includes('No indicado')),'Roles do not resurrect after a closed-editor roster round trip.');
+  await close();
+
   console.log('Checking legacy teams');
   // Existing invalid data is repairable but cannot be exported.
   await open('legacy-three');
@@ -168,6 +208,8 @@ try {
   for (const key of ['empty-team','unassigned']) {
     await open(key);
     check(await page.$eval(button('Exportar'),el=>el.disabled),`${key}: export is disabled until teams are complete.`);
+    const status=await page.evaluate(async id=>(await fetch(`/download/${id}`)).status,fixture(key).matchId);
+    check(status===422,`${key}: direct PNG requests reject incomplete rosters.`);
   }
 
   console.log('Checking save, image failure, retry and success states');
@@ -257,13 +299,21 @@ try {
   await page.screenshot({path:`${output}/final-preview.png`});
 } catch (error) {
   report.failures.push(error.message);
-  await page.screenshot({path:`${output}/failure.png`}).catch(()=>{});
+  if (page) await page.screenshot({path:`${output}/failure.png`}).catch(()=>{});
   console.error(error.stack);
   process.exitCode=1;
 } finally {
-  for (const [id,teams] of originalTeams) await db.match.update({where:{id,userId},data:{teams,name:originalNames.get(id)}});
-  for (const [id,name] of originalPlayers) await db.player.update({where:{id},data:{name}});
-  await writeFile(`${output}/report.json`,JSON.stringify(report,null,2)+'\n');
-  await browser.close();
-  await db.$disconnect();
+  const restorations=[
+    ...Array.from(originalTeams,([id,teams])=>({name:`match ${id}`,run:()=>db.match.update({where:{id,userId},data:{teams,name:originalNames.get(id)}})})),
+    ...Array.from(originalPlayers,([id,name])=>({name:`player ${id}`,run:()=>db.player.update({where:{id},data:{name}})})),
+  ];
+  try {
+    const results=await Promise.allSettled(restorations.map(item=>Promise.resolve().then(item.run)));
+    results.forEach((result,index)=>{
+      if (result.status==='rejected') {report.failures.push(`Could not restore ${restorations[index].name}`);process.exitCode=1;}
+    });
+    await writeFile(`${output}/report.json`,JSON.stringify(report,null,2)+'\n');
+ } finally {
+    await Promise.allSettled([browser.close(),db.$disconnect()]);
+  }
 }

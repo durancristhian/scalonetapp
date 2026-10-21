@@ -64,15 +64,26 @@ export function getImageExportPlayerRoles(
     .map(({ id }) => id);
 }
 
-export function readImageExportTeamSelections(matchId: number, teams: Team[]): ImageExportTeamSelections {
-  let saved: ImageExportTeamSelections = {};
+function readSavedSelections(matchId: number): ImageExportTeamSelections | null {
   try {
-    const value: unknown = JSON.parse(localStorage.getItem(storageKey(matchId)) ?? "{}");
-    if (isImageExportTeamSelections(value)) saved = value;
+    const value: unknown = JSON.parse(localStorage.getItem(storageKey(matchId)) ?? "null");
+    return isImageExportTeamSelections(value) ? value : null;
   } catch {
-    // The editor also works when browser storage is unavailable.
+    return null;
   }
-  return reconcileImageExportTeamSelections(teams, saved);
+}
+
+export function readImageExportTeamSelections(matchId: number, teams: Team[]): ImageExportTeamSelections {
+  return reconcileImageExportTeamSelections(teams, readSavedSelections(matchId) ?? {});
+}
+
+// Observe changes while the editor is closed too. Do not initialize roles before
+// the first export configuration, so unique-goalkeeper preselection still works.
+export function invalidateImageExportTeamSelections(matchId: number, teams: Team[]): void {
+  const saved = readSavedSelections(matchId);
+  if (saved && Object.keys(saved).length) {
+    storeImageExportTeamSelections(matchId, reconcileImageExportTeamSelections(teams, saved));
+  }
 }
 
 export function storeImageExportTeamSelections(matchId: number, selections: ImageExportTeamSelections): void {

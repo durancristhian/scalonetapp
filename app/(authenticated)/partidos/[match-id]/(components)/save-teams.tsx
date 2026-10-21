@@ -27,16 +27,10 @@ export const SaveTeams: FC<SaveTeamsProps> = ({
   </div>
 );
 
-export const TeamsValidationAlert = () => (
+export const TeamsValidationAlert = ({ message }: { message: string }) => (
   <Alert>
     <InfoIcon aria-hidden="true" />
-    <AlertTitle>No se cumple alguno de estos requisitos:</AlertTitle>
-    <AlertDescription>
-      <ul className="list-disc list-inside">
-        <li>El partido debe tener dos equipos, con al menos un jugador en cada uno.</li>
-        <li>Los nombres de los equipos no pueden estar vacíos.</li>
-        <li>No puedes tener jugadores sin equipo.</li>
-      </ul>
-    </AlertDescription>
+    <AlertTitle>Revisá los equipos</AlertTitle>
+    <AlertDescription>{message}</AlertDescription>
   </Alert>
 );
