@@ -2,7 +2,7 @@ import { type MatchWithPlayers } from "@/types/match";
 import { type BaseTeam, type Team } from "@/types/team";
 import { byName } from "@/utils/by-name";
 import { TEAMS_PER_MATCH } from "@/utils/team-count";
-import { canAssignPlayersToTeam, MAX_PLAYERS_PER_MATCH } from "@/utils/player-limits";
+import { MAX_PLAYERS_PER_MATCH } from "@/utils/player-limits";
 import { invalidateImageExportTeamSelections } from "@/utils/image-export-player-roles";
 import { type Player } from "@prisma/client";
 import shuffle from "lodash.shuffle";
@@ -94,10 +94,10 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
   const assignSelectionToTeam: UseTeamsBuilderStateResult["assignSelectionToTeam"] =
     (teamId) => {
       const target = teams.find(team => team.id === teamId);
-      if (!target || !canAssignPlayersToTeam(target.players.map(player => player.id), selectedIds)) return;
+      if (!target) return;
       setTeams((currTeams) => {
         const currentTarget = currTeams.find(team => team.id === teamId);
-        if (!currentTarget || !canAssignPlayersToTeam(currentTarget.players.map(player => player.id), selectedIds)) return currTeams;
+        if (!currentTarget) return currTeams;
         /* We loop over all the teams since an update might include removing players from another team, not only adding them to the specified team */
         return currTeams.map((currTeam) => {
           const nextTeam = { ...currTeam };
