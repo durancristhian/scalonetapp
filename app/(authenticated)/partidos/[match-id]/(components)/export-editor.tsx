@@ -28,7 +28,7 @@ import {
   type ImageExportOptions,
 } from "@/utils/image-export-options";
 import { useEffect, useId, useMemo, useState } from "react";
-import { ImageOff, Minus } from "lucide-react";
+import { AlignCenter, AlignLeft, ImageOff, Minus } from "lucide-react";
 import { WeatherIllustration } from "@/components/team-export/weather-illustration";
 import {
   IMAGE_EXPORT_PLAYER_ROLES,
@@ -254,28 +254,30 @@ export default function ExportEditor({
             </div>
             <div className={styles.field}>
               <label
-                id={`${id}-columns`}
-                htmlFor={`${id}-columns-${options.columns}`}
+                id={`${id}-alignment`}
+                htmlFor={`${id}-alignment-${options.alignment}`}
                 className={styles.label}
               >
-                Columnas por equipo
+                Alineación de jugadores
               </label>
               <RadioGroup
                 className={styles.pair}
-                aria-labelledby={`${id}-columns`}
-                value={String(options.columns)}
+                aria-labelledby={`${id}-alignment`}
+                value={options.alignment}
                 disabled={processing}
                 onValueChange={(value) =>
-                  updateOptions({ ...options, columns: value === "2" ? 2 : 1 })
+                  updateOptions({ ...options, alignment: value === "center" ? "center" : "left" })
                 }
               >
                 <label className={styles.choice}>
-                  <RadioGroupItem id={`${id}-columns-1`} value="1" aria-label="Una" />
-                  Una
+                  <RadioGroupItem className="sr-only" id={`${id}-alignment-left`} value="left" aria-label="Izquierda" />
+                  <AlignLeft className={styles.choiceIcon} aria-hidden="true" />
+                  Izquierda
                 </label>
                 <label className={styles.choice}>
-                  <RadioGroupItem id={`${id}-columns-2`} value="2" aria-label="Dos" />
-                  Dos
+                  <RadioGroupItem className="sr-only" id={`${id}-alignment-center`} value="center" aria-label="Centrada" />
+                  <AlignCenter className={styles.choiceIcon} aria-hidden="true" />
+                  Centrada
                 </label>
               </RadioGroup>
             </div>

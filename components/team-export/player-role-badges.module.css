@@ -8,12 +8,17 @@
 .image {
   position: absolute;
   inset-block-start: -10px;
-  inset-inline-end: -10px;
+  inset-inline: -10px;
+  justify-content: space-between;
+}
+
+.image .badge:only-child {
+  margin-inline-start: auto;
 }
 
 .image.circle {
   inset-block-start: 0;
-  inset-inline-end: 0;
+  inset-inline: 0;
 }
 
 .badge {

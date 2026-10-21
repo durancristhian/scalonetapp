@@ -7,7 +7,8 @@ export const IMAGE_EXPORT_WEATHER_URLS = {
   snow: "/images/export-backgrounds/snow.svg",
 } as const;
 
-export function getImageExportWeatherUrl(weather: ImageExportOptions["weather"]): string | null {
+export function getImageExportWeatherUrl(weather: ImageExportOptions["weather"], snowAccumulation = true): string | null {
+  if (weather === "snow" && !snowAccumulation) return "/images/export-backgrounds/snowfall.svg";
   return weather === "none" ? null : IMAGE_EXPORT_WEATHER_URLS[weather];
 }
 
@@ -23,7 +24,9 @@ export function getImageExportBackgroundUrls(
   { background, weather }: Pick<ImageExportOptions, "background" | "weather">,
 ): string[] {
   const overlay = getImageExportWeatherUrl(weather);
-  return [getImageExportBackgroundUrl(background), ...(overlay ? [overlay] : [])];
+  return [getImageExportBackgroundUrl(background), ...(overlay ? [overlay] : []),
+    ...(weather === "snow" ? [getImageExportWeatherUrl(weather, false)!] : []),
+  ];
 }
 
 export function getImageExportBackgroundStyle(background: ImageExportBackgroundId): CSSProperties {

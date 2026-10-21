@@ -26,12 +26,10 @@ export function MatchGrandstand({
             <path className={styles.edge} d={`M${inset - 6} ${y + 10}H${1286 - inset}`} />
           </g>;
         })}
-        <path className={styles.aisle} d="M603 0H677L690 160H590Z" />
-        <path className={styles.joints} d="M160 0L120 160M1120 0L1160 160" />
         {background === "natural" ? <path className={styles.wear} d="M58 28l20 2m1100 16-12 3M31 109l17-2m1180 34-24-1M96 7l25 1" /> : null}
         {background === "potrero" ? <path className={styles.grain} d="M50 6q65-5 118 0m939 18q70 4 111-1M26 65q60-4 104 0m1005 20q60-5 111-1M12 127q70 6 120 0m1004 18q53-4 119 0" /> : null}
       </svg>
-      <ExportWeather weather={weather} />
+      <ExportWeather weather={weather} snowAccumulation={false} />
       <div className={styles.banner} data-match-banner>
         <svg className={styles.fabric} viewBox="0 0 1152 112" preserveAspectRatio="none" aria-hidden="true">
           <path className={styles.cloth} d={bannerOutlines[background]} />

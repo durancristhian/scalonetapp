@@ -19,8 +19,8 @@ export function ExportBackground({
   );
 }
 
-export function ExportWeather({ weather }: Pick<ImageExportOptions, "weather">) {
-  const overlay = getImageExportWeatherUrl(weather);
+export function ExportWeather({ weather, snowAccumulation = true }: Pick<ImageExportOptions, "weather"> & { snowAccumulation?: boolean }) {
+  const overlay = getImageExportWeatherUrl(weather, snowAccumulation);
   return overlay ? <span aria-hidden="true" className={styles.weather} style={{
     backgroundImage: `url("${overlay}")`,
   }} /> : null;

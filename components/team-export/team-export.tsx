@@ -48,10 +48,7 @@ export function TeamExport({ name, teams, options, playerRoles = {} }: TeamExpor
           {teams.map((team) => (
             <section className={styles.team} key={team.id} aria-labelledby={`${headingId}-${team.id}`}>
               <div
-                className={`${styles.players} ${showImages ? "" : styles.withoutImages}`}
-                style={{
-                  gridTemplateColumns: `repeat(${options.columns}, minmax(0, 1fr))`,
-                }}
+                className={`${styles.players} ${showImages ? "" : styles.withoutImages} ${options.alignment === "center" ? styles.centered : ""}`}
               >
                 {[...team.players].sort(byName).map((player) => {
                   const roles = getImageExportPlayerRoles(selections[team.id], player.id);

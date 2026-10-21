@@ -80,9 +80,15 @@
 .choice {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   min-block-size: 44px;
   padding: 10px;
+}
+.choiceIcon {
+  flex: none;
+  inline-size: 1.2em;
+  block-size: 1.2em;
 }
 .choice:has([data-state="checked"]) {
   border-color: hsl(var(--primary));

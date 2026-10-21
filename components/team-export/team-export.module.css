@@ -1,10 +1,11 @@
 .canvas {
+  --export-canvas-width: 1280px;
   --player-corner-radius: 12px;
   --export-border-width: 3px;
   position: relative;
   isolation: isolate;
   box-sizing: border-box;
-  inline-size: 1280px;
+  inline-size: var(--export-canvas-width);
   display: flex;
   flex-direction: column;
   color: oklch(1 0 none);
@@ -17,6 +18,9 @@
 
 .field {
   position: relative;
+  display: grid;
+  align-content: center;
+  min-block-size: calc(var(--export-canvas-width) / 3);
   padding: 32px;
   background: var(--export-surface-color);
 }
@@ -41,6 +45,7 @@
 
 .players {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
   padding: 24px;
 }
@@ -62,6 +67,11 @@
 
 .withoutImages .player {
   min-block-size: 0;
+}
+
+.centered .player {
+  align-items: center;
+  text-align: center;
 }
 
 .playerImage {

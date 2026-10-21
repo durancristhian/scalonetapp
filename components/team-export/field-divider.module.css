@@ -34,8 +34,8 @@
 .center {
   position: absolute;
   inline-size: var(--center-diameter);
-  block-size: auto;
-  aspect-ratio: 1;
+  /* SVG's default xMidYMid meet keeps the ring round within both limits. */
+  block-size: 75%;
   overflow: visible;
 }
 

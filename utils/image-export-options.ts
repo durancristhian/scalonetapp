@@ -16,14 +16,14 @@ export type ImageExportOptions = {
   background: ImageExportBackgroundId;
   weather: (typeof IMAGE_EXPORT_WEATHERS)[number]["id"];
   avatarShape: (typeof IMAGE_EXPORT_AVATARS)[number]["id"];
-  columns: 1 | 2;
+  alignment: "left" | "center";
 };
 
 export const DEFAULT_IMAGE_EXPORT_OPTIONS: Readonly<ImageExportOptions> = {
   background: "pasto",
   weather: "none",
   avatarShape: "square",
-  columns: 2,
+  alignment: "left",
 };
 
 export const IMAGE_EXPORT_WIDTH = 1280;
@@ -38,7 +38,7 @@ export function isImageExportOptions(
     IMAGE_EXPORT_BACKGROUNDS.some(({ id }) => id === options.background) &&
     IMAGE_EXPORT_WEATHERS.some(({ id }) => id === options.weather) &&
     IMAGE_EXPORT_AVATARS.some(({ id }) => id === options.avatarShape) &&
-    (options.columns === 1 || options.columns === 2)
+    (options.alignment === "left" || options.alignment === "center")
   );
 }
 
@@ -52,7 +52,7 @@ export function parseImageExportOptions(
       params.getAll(key).length !== 1
     )
       return null;
-    values[key] = key === "columns" ? Number(params.get(key)) : params.get(key);
+    values[key] = params.get(key);
   }
   return isImageExportOptions(values) ? values : null;
 }
@@ -64,7 +64,7 @@ export function imageExportSearchParams(
     background: options.background,
     weather: options.weather,
     avatarShape: options.avatarShape,
-    columns: String(options.columns),
+    alignment: options.alignment,
   });
 }
 
