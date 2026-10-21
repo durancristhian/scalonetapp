@@ -26,3 +26,8 @@
 .weather {
   background-size: 1280px 960px;
 }
+
+.outsideArtwork {
+  background-size: 1280px 640px;
+  filter: brightness(0.7) saturate(0.75) contrast(0.85);
+}

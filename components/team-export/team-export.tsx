@@ -11,6 +11,9 @@ import { workSans } from "@/utils/fonts";
 import styles from "./team-export.module.css";
 import { getImageExportPlayerRoles, reconcileImageExportTeamSelections, type ImageExportTeamSelections } from "@/utils/image-export-player-roles";
 import { PlayerRoleBadges } from "./player-role-badges";
+import { TeamBillboard } from "./team-billboard";
+import { MatchGrandstand } from "./match-grandstand";
+import { useId } from "react";
 
 export type TeamExportProps = {
   name: string;
@@ -21,6 +24,7 @@ export type TeamExportProps = {
 
 // A fixed canvas shared by the live preview and the server-side PNG renderer.
 export function TeamExport({ name, teams, options, playerRoles = {} }: TeamExportProps) {
+  const headingId = useId();
   const palette = getImageExportBackground(options.background)!.palette;
   const selections = reconcileImageExportTeamSelections(teams, playerRoles);
   const showImages = options.avatarShape !== "none";
@@ -30,14 +34,19 @@ export function TeamExport({ name, teams, options, playerRoles = {} }: TeamExpor
       className={`${styles.canvas} ${workSans.className}`}
       style={getImageExportBackgroundStyle(options.background)}
     >
-      <h1 className={styles.title}>{name}</h1>
+      <MatchGrandstand name={name} background={options.background} weather={options.weather} />
+      <div className={styles.outside} data-field-outside>
+        <ExportBackground background={options.background} weather={options.weather} outside />
+        <div className={styles.teams}>
+          {teams.map(team => <TeamBillboard key={team.id} id={`${headingId}-${team.id}`} name={team.name.trim()} background={options.background} />)}
+        </div>
+      </div>
       <div className={styles.field}>
         <ExportBackground background={options.background} weather={options.weather} />
         <FieldDivider background={options.background} />
         <div className={styles.teams}>
           {teams.map((team) => (
-            <section className={styles.team} key={team.id}>
-              <h2 className={styles.teamName}>{team.name.trim()}</h2>
+            <section className={styles.team} key={team.id} aria-labelledby={`${headingId}-${team.id}`}>
               <div
                 className={`${styles.players} ${showImages ? "" : styles.withoutImages}`}
                 style={{

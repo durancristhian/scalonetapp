@@ -22,6 +22,9 @@ export function FieldDivider({ background }: {
   const { line, ring } = markings[background];
   return (
     <span aria-hidden="true" data-field-divider className={styles.divider}>
+      <svg data-field-boundary className={styles.boundary} viewBox="0 0 100 64" preserveAspectRatio="none" focusable="false">
+        <path d={line} transform="matrix(0 1 1 0 0 0)" fill="none" stroke="currentColor" vectorEffect="non-scaling-stroke" />
+      </svg>
       {/* Line height, ring diameter and center point scale independently. */}
       <svg className={styles.line} viewBox="0 0 64 100" preserveAspectRatio="none" focusable="false">
         <path d={line} fill="none" stroke="currentColor" vectorEffect="non-scaling-stroke" />

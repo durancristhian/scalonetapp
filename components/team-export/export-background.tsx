@@ -7,16 +7,21 @@ import styles from "./export-background.module.css";
 export function ExportBackground({
   background,
   weather,
-}: Pick<ImageExportOptions, "background" | "weather">) {
-  const overlay = getImageExportWeatherUrl(weather);
+  outside = false,
+}: Pick<ImageExportOptions, "background" | "weather"> & { outside?: boolean }) {
   return (
     <span aria-hidden="true" className={styles.layer}>
-      <span className={`${styles.artwork} ${background === "pasto" ? "" : styles.continuous}`} style={{
+      <span className={`${styles.artwork} ${background === "pasto" ? "" : styles.continuous} ${outside ? styles.outsideArtwork : ""}`} style={{
         backgroundImage: `url("${getImageExportBackgroundUrl(background)}")`,
       }} />
-      {overlay ? <span className={styles.weather} style={{
-        backgroundImage: `url("${overlay}")`,
-      }} /> : null}
+      <ExportWeather weather={weather} />
     </span>
   );
+}
+
+export function ExportWeather({ weather }: Pick<ImageExportOptions, "weather">) {
+  const overlay = getImageExportWeatherUrl(weather);
+  return overlay ? <span aria-hidden="true" className={styles.weather} style={{
+    backgroundImage: `url("${overlay}")`,
+  }} /> : null;
 }

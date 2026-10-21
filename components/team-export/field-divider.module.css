@@ -13,6 +13,15 @@
   stroke-width: var(--export-border-width);
 }
 
+.boundary {
+  position: absolute;
+  inset-block-start: -32px;
+  inset-inline-start: calc(-1 * var(--export-border-width));
+  inline-size: calc(100% + 2 * var(--export-border-width));
+  block-size: 64px;
+  overflow: visible;
+}
+
 .line {
   position: absolute;
   /* Overlap the frame edges to prevent a subpixel gap in the scaled preview. */

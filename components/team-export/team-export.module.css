@@ -15,19 +15,15 @@
   line-height: 1.4;
 }
 
-.title {
-  position: relative;
-  padding: 32px;
-  border-block-end: var(--export-border-width) solid var(--export-divider-color);
-  font-size: 36px;
-  line-height: 40px;
-  font-weight: 700;
-  text-align: center;
-}
-
 .field {
   position: relative;
   padding: 32px;
+  background: var(--export-surface-color);
+}
+
+.outside {
+  position: relative;
+  padding: 24px 32px 16px;
   background: var(--export-surface-color);
 }
 
@@ -41,15 +37,6 @@
 .team {
   position: relative;
   min-inline-size: 0;
-}
-
-.teamName {
-  margin-inline: 24px;
-  padding-block: 16px;
-  text-align: start;
-  font-size: 26px;
-  line-height: 1.2;
-  font-weight: 700;
 }
 
 .players {

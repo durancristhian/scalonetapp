@@ -1,0 +1,97 @@
+.grandstand {
+  --stand-tread: color-mix(in oklch, var(--export-divider-color) 60%, oklch(0.75 0 none));
+  --stand-riser: color-mix(in oklch, var(--export-frame-color) 65%, oklch(0.5 0 none));
+  position: relative;
+  display: grid;
+  place-items: center;
+  block-size: 160px;
+  overflow: clip;
+  background: color-mix(in oklch, var(--export-frame-color) 80%, oklch(0 0 none));
+}
+
+.terraces {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.tread { fill: var(--stand-tread); }
+.riser { fill: var(--stand-riser); }
+.edge { fill: none; stroke: oklch(1 0 none / 20%); stroke-width: 1; }
+.aisle { fill: var(--export-divider-color); opacity: 0.3; }
+.joints { fill: none; stroke: var(--export-frame-color); stroke-width: 3; opacity: 0.45; }
+.wear { fill: none; stroke: var(--export-frame-color); stroke-width: 3; opacity: 0.4; }
+.grain { fill: none; stroke: var(--export-frame-color); stroke-width: 1; opacity: 0.5; }
+
+.banner {
+  position: relative;
+  display: grid;
+  place-items: center;
+  inline-size: 90%;
+  min-inline-size: 0;
+  block-size: 112px;
+  filter: drop-shadow(0 5px 3px oklch(0 0 none / 30%));
+}
+
+.fabric {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.cloth {
+  fill: var(--export-frame-color);
+  stroke: color-mix(in oklch, var(--export-frame-color) 70%, oklch(0 0 none));
+  stroke-width: 2;
+}
+
+.hem {
+  fill: none;
+  stroke: var(--export-divider-color);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  opacity: 0.35;
+}
+
+.folds,
+.foldLight { fill: none; stroke-width: 5; }
+.folds { stroke: oklch(0 0 none / 10%); }
+.foldLight { stroke: oklch(1 0 none / 4%); }
+.eyelets { fill: var(--export-divider-color); stroke: var(--export-frame-color); stroke-width: 1; }
+.patch { fill: var(--export-divider-color); fill-opacity: 0.18; }
+.stitches { fill: none; stroke: var(--export-divider-color); stroke-width: 1; stroke-opacity: 0.5; }
+
+.title {
+  position: relative;
+  inline-size: calc(100% - 80px);
+  min-inline-size: 0;
+  overflow: hidden; /* Chromium used for exports needs hidden for ellipsis. */
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: oklch(1 0 none);
+  font-size: 36px;
+  line-height: 40px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.pasto .tread { stroke: oklch(1 0 none / 10%); stroke-width: 1; }
+
+.natural {
+  --stand-tread: color-mix(in oklch, var(--export-divider-color) 25%, oklch(0.65 0 none));
+  --stand-riser: color-mix(in oklch, var(--export-frame-color) 35%, oklch(0.5 0 none));
+}
+
+.natural .edge { stroke-opacity: 0.6; stroke-dasharray: 140 2 80 1; }
+
+.potrero {
+  --stand-tread: color-mix(in oklch, var(--export-divider-color) 80%, var(--export-frame-color));
+  --stand-riser: color-mix(in oklch, var(--export-divider-color) 45%, var(--export-frame-color));
+}
+
+.potrero .terraces { transform: skewY(-0.15deg); }
+.potrero .edge { stroke: var(--export-frame-color); opacity: 0.5; stroke-width: 2; }
+.potrero .joints { stroke-width: 5; }
+.potrero .hem { stroke-dasharray: 4 5; opacity: 0.5; }
