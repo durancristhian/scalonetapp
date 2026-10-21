@@ -74,7 +74,6 @@ export function TeamExport({ name, teams, options, playerRoles = {} }: TeamExpor
           ))}
         </div>
       </div>
-      <p className={styles.footer}>Hecho con scalonet.app</p>
     </div>
   );
 }

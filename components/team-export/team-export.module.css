@@ -105,12 +105,3 @@
   -webkit-line-clamp: 2;
   overflow: hidden; /* Supports the export Chromium's multi-line ellipsis. */
 }
-
-.footer {
-  position: relative;
-  padding: 20px 32px;
-  border-block-start: var(--export-border-width) solid var(--export-divider-color);
-  text-align: center;
-  font-size: 14px;
-  line-height: 20px;
-}
