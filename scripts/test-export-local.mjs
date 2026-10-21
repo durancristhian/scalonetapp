@@ -53,10 +53,11 @@ async function download(f,options,label,retain=false) {
   assert.equal(data.status,200,`${label}: response`);
   assert.equal(data.type,'image/png',`${label}: type`);
   const bytes = Buffer.from(data.base64,'base64');
-  const metadata = await sharp(bytes).metadata();
-  assert.equal(metadata.width,2560);
-  assert.ok(metadata.height>0 && metadata.height<32768,`${label}: height`);
-  report.exports.push({label,options,width:metadata.width,height:metadata.height,bytes:bytes.length});
+  // Decode every pixel: metadata alone also accepts a truncated PNG header.
+  const {info} = await sharp(bytes).raw().toBuffer({resolveWithObject:true});
+  assert.equal(info.width,2560);
+  assert.ok(info.height>0 && info.height<32768,`${label}: height`);
+  report.exports.push({label,options,width:info.width,height:info.height,bytes:bytes.length});
   if (retain) await writeFile(`${output}/${label}.png`,bytes);
 }
 

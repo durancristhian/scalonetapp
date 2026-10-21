@@ -29,6 +29,7 @@ The maximum is read from `NEXT_PUBLIC_MAX_PLAYERS_PER_MATCH` rather than hardcod
 
 - 54 real PNG requests: 3 surfaces × 3 weather options × 3 image presentations × 2 alignments. Validate PNG content type, nonempty decoded image, width 2560 and bounded dynamic height.
 - Eight additional real PNGs: minimum, maximum, asymmetric and role fixtures, with and without images.
+- Every successful PNG is fully decoded into raw pixels before recording its result; reading header metadata alone cannot detect a truncated image.
 - Actual editor interactions: remembered appearance, match-scoped roles, changing team membership, role invalidation even through closed-editor round trips, large role menus with keyboard selection, and repair of legacy data.
 - Fault injection confined to the disposable test page: save failure, image failure after save, retry without repeat save, independent save, repeated downloads and processing/success controls.
 - Page and modal checks at 320, 390, 639, 640, 767, 768, 1023, 1024, 1279, 1280 and 1440 CSS pixels. No document, dialog or control-panel horizontal overflow; preview appears from 1024 px.
