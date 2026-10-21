@@ -95,8 +95,8 @@ export const TeamCard: FC<TeamCardProps> = ({
               <div className="space-y-2">
                 {[...goa, ...def, ...mid, ...forwards].map((player, idx) => (
                   <AnimatedListItem key={player.id} listIndex={idx}>
-                    <div className="flex gap-2 items-center">
-                      <div className="grow min-w-0">
+                    <div className="flex flex-wrap gap-2 items-center">
+                      <div className="min-w-0 flex-1 basis-40">
                         <div className="flex gap-2 items-center min-w-0">
                           <PlayerAvatar src={player.avatar}
                             name={player.name}
@@ -104,40 +104,42 @@ export const TeamCard: FC<TeamCardProps> = ({
                           <p className="min-w-0 [overflow-wrap:anywhere]">{player.name}</p>
                         </div>
                       </div>
-                      <div className="flex-shrink-0">
-                        <Badge
-                          variant={player.position}
-                          className="justify-center uppercase w-[50px]"
-                        >
-                          {PLAYER_POSITIONS[player.position].substring(0, 3)}
-                        </Badge>
-                      </div>
-                      <div className="flex-shrink-0">
-                        <Badge
-                          variant="secondary"
-                          className="justify-center w-[38px]"
-                        >
-                          {player.level}
-                        </Badge>
-                      </div>
-                      <div className="flex-shrink-0">
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                aria-label={`Sacar a ${player.name} del equipo`}
-                                onClick={() => {
-                                  removePlayerFromTeam(player.id, team.id);
-                                }}
-                              >
-                                <XIcon className="h-4 text-destructive w-4" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>Sacar del equipo</TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                      <div className="ms-auto flex shrink-0 items-center gap-2">
+                        <div className="flex-shrink-0">
+                          <Badge
+                            variant={player.position}
+                            className="justify-center uppercase w-[50px]"
+                          >
+                            {PLAYER_POSITIONS[player.position].substring(0, 3)}
+                          </Badge>
+                        </div>
+                        <div className="flex-shrink-0">
+                          <Badge
+                            variant="secondary"
+                            className="justify-center w-[38px]"
+                          >
+                            {player.level}
+                          </Badge>
+                        </div>
+                        <div className="flex-shrink-0">
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  aria-label={`Sacar a ${player.name} del equipo`}
+                                  onClick={() => {
+                                    removePlayerFromTeam(player.id, team.id);
+                                  }}
+                                >
+                                  <XIcon className="h-4 text-destructive w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>Sacar del equipo</TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </div>
                       </div>
                     </div>
                   </AnimatedListItem>

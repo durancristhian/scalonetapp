@@ -10,8 +10,6 @@ import { type FC, type PropsWithChildren } from "react";
 
 export const viewport: Viewport = {
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   width: "device-width",
 };
 

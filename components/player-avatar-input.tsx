@@ -20,7 +20,7 @@ export function PlayerAvatarInput({ name, src, disabled, onChange, onPreparingCh
   useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
   useEffect(() => () => { if (selected) URL.revokeObjectURL(selected); }, [selected]);
   return <div className="space-y-2">
-    <div className="flex items-center justify-center gap-4">
+    <div className="flex flex-wrap items-center justify-center gap-4">
       <PlayerAvatar name={name || "Jugador"} src={selected || (removed ? undefined : src)} size="xl" />
       <input ref={input} hidden type="file" accept={PLAYER_PHOTO_ACCEPT} disabled={disabled || preparing} onChange={async event => {
         const file = event.target.files?.[0]; event.target.value = "";
