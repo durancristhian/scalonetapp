@@ -17,22 +17,9 @@ export async function POST(request: Request) {
   if (Number(request.headers.get("content-length")) > 4096) return response(413);
 
   try {
-    // Bound the actual stream as well: Content-Length is not trustworthy.
-    const reader = request.body?.getReader();
-    if (!reader) return response(400);
-    const chunks: Uint8Array[] = [];
-    let size = 0;
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      size += value.byteLength;
-      if (size > 4096) {
-        await reader.cancel();
-        return response(413);
-      }
-      chunks.push(value);
-    }
-    const parsed = analyticsRequestSchema.safeParse(JSON.parse(Buffer.concat(chunks).toString("utf8")));
+    const body = await request.text();
+    if (Buffer.byteLength(body) > 4096) return response(413);
+    const parsed = analyticsRequestSchema.safeParse(JSON.parse(body));
     if (!parsed.success) return response(400);
     const { payload } = parsed.data;
     if (payload.website !== website || payload.hostname !== new URL(origin).hostname ||
@@ -43,19 +30,17 @@ export async function POST(request: Request) {
     const ip = request.headers.get("x-vercel-forwarded-for");
     if (process.env.VERCEL === "1" && ip && isIP(ip)) headers.set("X-Forwarded-For", ip);
     const cache = request.headers.get("x-umami-cache");
-    if (cache && cache.length <= 2048) headers.set("x-umami-cache", cache);
+    if (cache) headers.set("x-umami-cache", cache);
     const upstream = await fetch("https://gateway.umami.is/api/send", {
       method: "POST", headers, body: JSON.stringify(parsed.data),
       cache: "no-store", redirect: "error", signal: AbortSignal.timeout(5000),
-    });
-    if (!upstream.ok) return response(502);
-    const result = await upstream.json();
-    return response(200, {
-      ...(typeof result?.cache === "string" && result.cache.length <= 2048 ? { cache: result.cache } : {}),
-      ...(result?.disabled === true ? { disabled: true } : {}),
+    }).catch(() => null);
+    if (!upstream) return response(502);
+    return new Response(upstream.body, {
+      status: upstream.status,
+      headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
     });
   } catch {
-    // Do not log bodies, private page URLs, identifiers or upstream errors.
     return response(400);
   }
 }
