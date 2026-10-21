@@ -1,6 +1,7 @@
 "use client";
 
 import { trackAnalytics } from "@/utils/analytics";
+import { getExportAnalyticsData } from "@/utils/export-analytics";
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { editMatchAction } from "@/server/actions/match";
 import { type MatchWithPlayers } from "@/types/match";
@@ -62,7 +63,7 @@ export const useTeamActions = (
         stage = "image";
         const blob = await fetchTeamExport(match.id, options, selections);
         downloadBlob(blob, "equipos.png");
-        trackAnalytics("export_download_started");
+        trackAnalytics("export_download_started", getExportAnalyticsData(options, teams, selections));
       }
 
       if (action === "save")

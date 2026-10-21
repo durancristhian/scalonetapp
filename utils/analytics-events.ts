@@ -1,3 +1,5 @@
+import type { ImageExportOptions } from "./image-export-options.ts";
+
 export const ANALYTICS_PAGES = {
   "/": "Home",
   "/dashboard": "Dashboard",
@@ -18,10 +20,21 @@ export const ANALYTICS_EVENTS = [
   "export_download_started",
   "export_save_failed",
   "export_image_failed",
+  "players_added",
 ] as const;
 
 export type AnalyticsEvent = (typeof ANALYTICS_EVENTS)[number];
 export type AnalyticsPage = keyof typeof ANALYTICS_PAGES;
+export type ExportAnalyticsData = {
+  surface: ImageExportOptions["background"];
+  weather: ImageExportOptions["weather"];
+  image_shape: ImageExportOptions["avatarShape"];
+  alignment: ImageExportOptions["alignment"];
+  has_captain: boolean;
+  has_goalkeeper: boolean;
+};
+export type PlayersAddedAnalyticsData = { method: "single" | "bulk"; count: number };
+export type AnalyticsData = ExportAnalyticsData | PlayersAddedAnalyticsData;
 
 export function analyticsPage(pathname: string): AnalyticsPage | null {
   if (/^\/partidos\/\d+\/?$/.test(pathname)) return "/partidos/:match";
@@ -36,4 +49,5 @@ export type AnalyticsPayload = {
   title: (typeof ANALYTICS_PAGES)[AnalyticsPage];
   referrer: string;
   name?: AnalyticsEvent;
+  data?: AnalyticsData;
 };

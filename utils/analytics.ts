@@ -1,6 +1,6 @@
 "use client";
 
-import { ANALYTICS_PAGES, analyticsPage, type AnalyticsEvent, type AnalyticsPayload } from "@/utils/analytics-events";
+import { ANALYTICS_PAGES, analyticsPage, type AnalyticsData, type AnalyticsEvent, type AnalyticsPayload, type ExportAnalyticsData, type PlayersAddedAnalyticsData } from "./analytics-events.ts";
 
 declare global {
   interface Window {
@@ -42,7 +42,10 @@ export function flushAnalytics() {
   }
 }
 
-export function trackAnalytics(name?: AnalyticsEvent) {
+export function trackAnalytics(name?: Exclude<AnalyticsEvent, "export_download_started" | "players_added">): void;
+export function trackAnalytics(name: "export_download_started", data: ExportAnalyticsData): void;
+export function trackAnalytics(name: "players_added", data: PlayersAddedAnalyticsData): void;
+export function trackAnalytics(name?: AnalyticsEvent, data?: AnalyticsData) {
   try {
     if (!website || analyticsExcluded()) return;
     const url = analyticsPage(window.location.pathname);
@@ -59,6 +62,7 @@ export function trackAnalytics(name?: AnalyticsEvent) {
     if (pending.length < 20) pending.push({
       website, hostname, url, title: ANALYTICS_PAGES[url], referrer,
       ...(name ? { name } : {}),
+      ...(data ? { data: { ...data } } : {}),
     });
     flushAnalytics();
   } catch {

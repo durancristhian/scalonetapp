@@ -6,10 +6,6 @@
     "node": "24.x"
   },
   "scripts": {
-    "test:export": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test utils/image-export*.test.mjs",
-    "test:integrity:local": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --env-file=.env.local scripts/test-player-integrity-local.mjs",
-    "fixtures:export": "node --env-file=.env.local scripts/seed-export-fixtures.mjs",
-    "test:export:local": "node --env-file=.env.local scripts/test-export-local.mjs",
     "build": "next build",
     "dev": "next dev --turbopack",
     "lint": "next lint",

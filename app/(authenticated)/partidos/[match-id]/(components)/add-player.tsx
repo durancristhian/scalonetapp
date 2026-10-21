@@ -1,6 +1,7 @@
 "use client";
 
 import { savePlayerPhoto } from "@/utils/save-player-photo";
+import { trackAnalytics } from "@/utils/analytics";
 
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { MultiplePlayersForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/multiple-players-form";
@@ -63,6 +64,7 @@ const EnabledContent: FC<{ currentPlayerCount: number }> = ({ currentPlayerCount
     return new Promise(async (resolve, reject) => {
       try {
         const id = await addPlayerAction(matchId, values);
+        trackAnalytics("players_added", { method: "single", count: 1 });
         const photoError = await savePlayerPhoto(id, photo);
         if (photoError) errorAlert({ title: photoError });
 
@@ -87,6 +89,7 @@ const EnabledContent: FC<{ currentPlayerCount: number }> = ({ currentPlayerCount
     return new Promise(async (resolve, reject) => {
       try {
         await addMultiplePlayersAction(matchId, values);
+        trackAnalytics("players_added", { method: "bulk", count: values.length });
 
         setDialogOpen(false);
 
