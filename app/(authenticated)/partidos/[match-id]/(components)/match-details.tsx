@@ -27,6 +27,7 @@ type MatchDetailsProps = {
 
 export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
   const {
+    baseTeams,
     assignSelectionToTeam,
     balanceTeams,
     createNewTeam,
@@ -49,12 +50,13 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
   const { operation, save, exportTeams } = useTeamActions(
     match,
     teams,
-    areTeamsValid
+    areTeamsValid,
+    baseTeams,
   );
   const busy = operation !== null;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[minmax(20rem,1fr)_repeat(2,minmax(0,1fr))] gap-8">
+    <fieldset disabled={busy} aria-label="Preparación del partido" className="[min-inline-size:0] grid grid-cols-1 md:grid-cols-[minmax(20rem,1fr)_repeat(2,minmax(0,1fr))] gap-8">
       <div className="min-w-0 md:col-span-1">
         <MatchPlayers players={match.players} />
       </div>
@@ -146,6 +148,6 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
           </div>
         )}
       </div>
-    </div>
+    </fieldset>
   );
 };

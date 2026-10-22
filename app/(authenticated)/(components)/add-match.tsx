@@ -1,5 +1,7 @@
 "use client";
 
+import { unwrapActionResult, getActionErrorMessage } from "@/utils/action-result";
+
 import { trackAnalytics } from "@/utils/analytics";
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { MatchForm } from "@/app/(authenticated)/(components)/match-form";
@@ -52,7 +54,7 @@ const EnabledContent: FC = () => {
   ) => {
     return new Promise(async (resolve, reject) => {
       try {
-        await addMatchAction(values);
+        unwrapActionResult(await addMatchAction(values));
         trackAnalytics("match_created");
 
         successAlert({
@@ -65,7 +67,7 @@ const EnabledContent: FC = () => {
       } catch (error) {
         if (error instanceof Error) {
           errorAlert({
-            title: error.message || ERROR_MESSAGES.match_add_error,
+            title: getActionErrorMessage(error, ERROR_MESSAGES.match_add_error),
           });
         }
 

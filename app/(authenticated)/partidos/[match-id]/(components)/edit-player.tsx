@@ -1,3 +1,4 @@
+import { unwrapActionResult, getActionErrorMessage } from "@/utils/action-result";
 import { savePlayerPhoto } from "@/utils/save-player-photo";
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { PlayerForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/player-form";
@@ -25,7 +26,7 @@ export const EditPlayer: FC<EditPlayerProps> = ({ player, onClose }) => {
   const onSubmit: (values: PlayerSchema, photo?: Blob | null) => Promise<void> = async (values, photo) => {
     return new Promise(async (resolve, reject) => {
       try {
-        await editPlayerAction(player.id, values);
+        unwrapActionResult(await editPlayerAction(player.id, values));
         const id = player.id;
         const photoError = await savePlayerPhoto(id, photo);
         if (photoError) errorAlert({ title: photoError });
@@ -36,7 +37,7 @@ export const EditPlayer: FC<EditPlayerProps> = ({ player, onClose }) => {
       } catch (error) {
         if (error instanceof Error) {
           errorAlert({
-            title: error.message || ERROR_MESSAGES.player_edit_error,
+            title: getActionErrorMessage(error, ERROR_MESSAGES.player_edit_error),
           });
         }
 

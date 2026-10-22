@@ -5,7 +5,6 @@ import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { SoccerBall } from "@/components/soccer-ball";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -16,7 +15,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { duplicateMatchAction } from "@/server/actions/match";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
-import { type FC, useState } from "react";
+import { type FC, useRef, useState } from "react";
+
+const duplicateErrors = {
+  unauthorized: ERROR_MESSAGES.unauthorized,
+  not_found: ERROR_MESSAGES.not_found,
+  match_limit: ERROR_MESSAGES.match_limit_reached,
+  player_limit: ERROR_MESSAGES.match_duplicate_player_limit,
+  unexpected: ERROR_MESSAGES.match_duplicate_error,
+};
 
 type DuplicateMatchProps = {
   id: number;
@@ -25,36 +32,41 @@ type DuplicateMatchProps = {
 
 export const DuplicateMatch: FC<DuplicateMatchProps> = ({ id, onClose }) => {
   const [processing, setIsProcessing] = useState(false);
+  const pending = useRef(false);
   const { errorAlert, successAlert } = useAlerts();
 
   const onDuplicateMatch: () => Promise<void> = async () => {
+    if (pending.current) return;
+    pending.current = true;
+    setIsProcessing(true);
     try {
-      setIsProcessing(true);
-
-      await duplicateMatchAction(id);
+      const result = await duplicateMatchAction(id);
+      if (!result.ok) {
+        errorAlert({
+          title: duplicateErrors[result.code] || ERROR_MESSAGES.match_duplicate_error,
+          description: result.reference ? `Referencia: ${result.reference}` : undefined,
+        });
+        return;
+      }
       trackAnalytics("match_duplicated");
-
-      setIsProcessing(false);
-
       successAlert({
         title: "¡Partido duplicado!",
       });
-
       onClose();
-    } catch (error) {
-      if (error instanceof Error) {
-        errorAlert({
-          title: error.message || ERROR_MESSAGES.match_duplicate_error,
-        });
-      }
-
+    } catch {
+      errorAlert({ title: ERROR_MESSAGES.match_duplicate_error });
+    } finally {
+      pending.current = false;
       setIsProcessing(false);
     }
   };
 
   return (
     <AlertDialog open>
-      <AlertDialogContent onEscapeKeyDown={onClose}>
+      <AlertDialogContent onEscapeKeyDown={event => {
+        if (pending.current) event.preventDefault();
+        else onClose();
+      }}>
         <AlertDialogHeader>
           <AlertDialogTitle>¿Duplicar este partido?</AlertDialogTitle>
           <AlertDialogDescription className="max-md:text-balance">
@@ -63,15 +75,13 @@ export const DuplicateMatch: FC<DuplicateMatchProps> = ({ id, onClose }) => {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onClose}>Cancelar</AlertDialogCancel>
-          <AlertDialogAction asChild>
-            <Button onClick={onDuplicateMatch} disabled={processing}>
-              {processing ? (
-                <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
-              ) : null}
-              {processing ? "Duplicando..." : "Sí, duplicar"}
-            </Button>
-          </AlertDialogAction>
+          <AlertDialogCancel onClick={onClose} disabled={processing}>Cancelar</AlertDialogCancel>
+          <Button onClick={onDuplicateMatch} disabled={processing}>
+            {processing ? (
+              <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
+            ) : null}
+            {processing ? "Duplicando..." : "Sí, duplicar"}
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

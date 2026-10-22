@@ -15,19 +15,22 @@ import {
 } from "@/utils/image-export-options";
 import { useEffect, useRef, useState } from "react";
 import { type ImageExportTeamSelections } from "@/utils/image-export-player-roles";
+import { unwrapActionResult, getActionErrorMessage } from "@/utils/action-result";
+import { lineupFingerprint } from "@/utils/lineup-fingerprint";
 
 export const useTeamActions = (
   match: MatchWithPlayers,
   teams: Team[],
   valid: boolean,
+  baseTeams: string,
 ) => {
   const { errorAlert, successAlert } = useAlerts();
   const [operation, setOperation] = useState<"save" | "export" | null>(null);
   const operationLock = useRef(false);
-  const savedTeams = useRef(match.teams);
+  const savedTeams = useRef(baseTeams);
   useEffect(() => {
-    savedTeams.current = match.teams;
-  }, [match.id, match.teams]);
+    savedTeams.current = baseTeams;
+  }, [match.id, baseTeams]);
 
   const run = async (
     action: "save" | "export",
@@ -50,18 +53,19 @@ export const useTeamActions = (
         })),
       );
       if (payload !== savedTeams.current) {
-        await editMatchAction(
+        unwrapActionResult(await editMatchAction(
           match.id,
-          { teams: payload },
+          { teams: payload, expectedTeams: savedTeams.current },
           "/partidos/[match-id]",
-        );
+        ));
         savedTeams.current = payload;
         trackAnalytics("teams_saved");
       }
 
       if (action === "export") {
         stage = "image";
-        const blob = await fetchTeamExport(match.id, options, selections);
+        const fingerprint = await lineupFingerprint(match.name, teams);
+        const blob = await fetchTeamExport(match.id, options, selections, fingerprint);
         downloadBlob(blob, "equipos.png");
         trackAnalytics("export_download_started", getExportAnalyticsData(options, teams, selections));
       }
@@ -69,14 +73,14 @@ export const useTeamActions = (
       if (action === "save")
         successAlert({ title: "¡Equipos guardados con éxito!" });
       return null;
-    } catch {
+    } catch (error) {
       if (action === "export") {
         trackAnalytics(stage === "image" ? "export_image_failed" : "export_save_failed");
       }
-      const message =
+      const message = getActionErrorMessage(error,
         stage === "image"
           ? "Los equipos están guardados, pero no se pudo descargar la imagen. Intentá de nuevo."
-          : "No se pudieron guardar los equipos. Intentá de nuevo.";
+          : "No se pudieron guardar los equipos. Intentá de nuevo.");
       if (action === "save") errorAlert({ title: message });
       return message;
     } finally {

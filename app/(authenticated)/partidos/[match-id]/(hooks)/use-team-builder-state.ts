@@ -1,12 +1,14 @@
 import { type MatchWithPlayers } from "@/types/match";
-import { type BaseTeam, type Team } from "@/types/team";
+import { type Team } from "@/types/team";
 import { byName } from "@/utils/by-name";
 import { TEAMS_PER_MATCH } from "@/utils/team-count";
 import { MAX_PLAYERS_PER_MATCH } from "@/utils/player-limits";
 import { invalidateImageExportTeamSelections } from "@/utils/image-export-player-roles";
 import { type Player } from "@prisma/client";
 import shuffle from "lodash.shuffle";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
+import { readSavedTeams } from "@/utils/read-saved-teams";
+import { getTeamsToSave } from "@/utils/get-teams-to-save";
 import { v4 as uuidv4 } from "uuid";
 
 const createEmptyTeam: (name: string) => Team = (name) => ({
@@ -21,7 +23,7 @@ const DEFAULT_TEAMS: Team[] = [
 ];
 
 const getInitialTeams: (match: MatchWithPlayers) => Team[] = (match) => {
-  const formattedTeams: BaseTeam[] = JSON.parse(match.teams);
+  const formattedTeams = readSavedTeams(match.teams);
 
   if (!formattedTeams.length) {
     return DEFAULT_TEAMS;
@@ -44,6 +46,7 @@ type UseTeamsBuilderStateResult = {
   removePlayerFromTeam: (playerId: number, teamId: string) => void;
   removeTeam: (teamId: string) => void;
   selectedIds: number[];
+  baseTeams: string;
   teams: Team[];
   togglePlayer: (id: number) => void;
   unselectedPlayers: Player[];
@@ -55,7 +58,11 @@ type UseTeamsBuilderState = (
 ) => UseTeamsBuilderStateResult;
 
 export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
-  const [teams, setTeams] = useState<Team[]>(() => getInitialTeams(match));
+  const [builder, setBuilder] = useState(() => ({ teams: getInitialTeams(match), baseTeams: match.teams, matchId: match.id }));
+  const { teams, baseTeams } = builder;
+  const setTeams: Dispatch<SetStateAction<Team[]>> = next => setBuilder(current => ({
+    ...current, teams: typeof next === "function" ? next(current.teams) : next,
+  }));
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   useEffect(() => {
@@ -70,8 +77,14 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
   useEffect(() => {
     const playerIds = new Set(match.players.map((player) => player.id));
 
-    setTeams((currTeams) =>
-      currTeams.map((currTeam) => {
+    setSelectedIds(ids => {
+      const remaining = ids.filter(id => playerIds.has(id));
+      return remaining.length === ids.length ? ids : remaining;
+    });
+
+    setBuilder((current) => {
+      const currTeams = current.teams;
+      const reconciled = currTeams.map((currTeam) => {
         const nextTeam = { ...currTeam };
 
         const playersInTeam = nextTeam.players.filter((player) =>
@@ -87,9 +100,22 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
         nextTeam.players = updatedPlayersInTeam as unknown as Player[];
 
         return nextTeam;
-      })
-    );
-  }, [match.players]);
+      });
+      // Refresh a clean builder automatically. Keep unrelated draft edits, but
+      // do not silently bless their old base when another tab changed teams.
+      const baseline = getInitialTeams({ ...match, teams: current.baseTeams });
+      const incoming = getInitialTeams(match);
+      const clean = getTeamsToSave(reconciled) === getTeamsToSave(baseline);
+      const rosterOnly = getTeamsToSave(baseline) === getTeamsToSave(incoming);
+      const acknowledged = getTeamsToSave(reconciled) === getTeamsToSave(incoming);
+      const changedMatch = current.matchId !== match.id;
+      return {
+        teams: changedMatch || clean ? incoming : reconciled,
+        baseTeams: changedMatch || clean || rosterOnly || acknowledged ? match.teams : current.baseTeams,
+        matchId: match.id,
+      };
+    });
+  }, [match]);
 
   const assignSelectionToTeam: UseTeamsBuilderStateResult["assignSelectionToTeam"] =
     (teamId) => {
@@ -331,6 +357,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
   };
 
   return {
+    baseTeams,
     assignSelectionToTeam,
     balanceTeams,
     createNewTeam,

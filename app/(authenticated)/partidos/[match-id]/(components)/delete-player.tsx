@@ -1,8 +1,8 @@
+import { unwrapActionResult, getActionErrorMessage } from "@/utils/action-result";
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { SoccerBall } from "@/components/soccer-ball";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { deletePlayerAction } from "@/server/actions/player";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
-import { type FC, useState } from "react";
+import { type FC, useRef, useState } from "react";
 
 type DeletePlayerProps = {
   id: number;
@@ -22,31 +22,36 @@ type DeletePlayerProps = {
 
 export const DeletePlayer: FC<DeletePlayerProps> = ({ id, onClose }) => {
   const [processing, setIsProcessing] = useState(false);
+  const lock = useRef(false);
   const { errorAlert } = useAlerts();
 
   const onDeletePlayer = async () => {
+    if (lock.current) return;
+    lock.current = true;
     try {
       setIsProcessing(true);
 
-      await deletePlayerAction(id);
+      unwrapActionResult(await deletePlayerAction(id));
 
+      lock.current = false;
       setIsProcessing(false);
 
       onClose();
     } catch (error) {
       if (error instanceof Error) {
         errorAlert({
-          title: error.message || ERROR_MESSAGES.player_delete_error,
+          title: getActionErrorMessage(error, ERROR_MESSAGES.player_delete_error),
         });
       }
 
+      lock.current = false;
       setIsProcessing(false);
     }
   };
 
   return (
     <AlertDialog open>
-      <AlertDialogContent onEscapeKeyDown={onClose}>
+      <AlertDialogContent onEscapeKeyDown={event => { if (lock.current) event.preventDefault(); else onClose(); }}>
         <AlertDialogHeader>
           <AlertDialogTitle>¿Eliminar este jugador?</AlertDialogTitle>
           <AlertDialogDescription className="max-md:text-balance">
@@ -55,19 +60,17 @@ export const DeletePlayer: FC<DeletePlayerProps> = ({ id, onClose }) => {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onClose}>Cancelar</AlertDialogCancel>
-          <AlertDialogAction asChild>
-            <Button onClick={onDeletePlayer} disabled={processing}>
-              {processing ? (
-                <>
-                  <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
-                  Eliminando...
-                </>
-              ) : (
-                "Sí, eliminar"
-              )}
-            </Button>
-          </AlertDialogAction>
+          <AlertDialogCancel disabled={processing} onClick={onClose}>Cancelar</AlertDialogCancel>
+          <Button onClick={onDeletePlayer} disabled={processing}>
+            {processing ? (
+              <>
+                <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
+                Eliminando...
+              </>
+            ) : (
+              "Sí, eliminar"
+            )}
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

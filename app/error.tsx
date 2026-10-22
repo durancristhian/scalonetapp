@@ -24,7 +24,6 @@ const Error: FC<ErrorProps> = ({ error, reset }) => {
             área. No te preocupes, capaz el dibu puede atajar este penal para
             vos.
           </p>
-          <p className="font-bold text-muted-foreground">{error.message}</p>
           <Button
             onClick={() => {
               reset();
