@@ -128,14 +128,14 @@ export default function ExportEditor({
         if (processing) event.preventDefault();
       }}
     >
-      <DialogHeader className="border-b p-6 pe-12 text-start">
+      <DialogHeader className="border-b p-4 sm:p-6 text-start">
         <DialogTitle>Exportar</DialogTitle>
         <DialogDescription>
           Personalizá la imagen de tus equipos.
         </DialogDescription>
       </DialogHeader>
       <div className="grid min-h-0 min-w-0 grid-cols-1 lg:grid-cols-[theme(spacing.80)_minmax(0,1fr)]">
-        <div className="min-h-0 min-w-0 overflow-auto overscroll-contain p-6">
+        <div className="min-h-0 min-w-0 overflow-auto overscroll-contain p-4 sm:p-6">
           <fieldset
             disabled={processing}
             className="grid min-w-0 gap-6 disabled:opacity-60"
@@ -319,9 +319,9 @@ export default function ExportEditor({
             {teams.map((team) => (
               <fieldset
                 key={team.id}
-                className="grid min-w-0 gap-4 border-t [padding-block-start:theme(spacing.4)]"
+                className="grid min-w-0 gap-4 [padding-block-start:theme(spacing.4)]"
               >
-                <legend className="max-w-full pe-3 text-base font-medium [overflow-wrap:anywhere]">
+                <legend className="max-w-full text-base font-medium [overflow-wrap:anywhere]">
                   {team.name.trim()}
                 </legend>
                 {IMAGE_EXPORT_PLAYER_ROLES.map(({ id: role, label }) => (
@@ -419,7 +419,7 @@ export default function ExportEditor({
             aria-label="Vista previa"
           >
             <div
-              className="flex min-h-0 min-w-0 flex-col overflow-auto overscroll-contain p-6 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+              className="flex min-h-0 min-w-0 flex-col overflow-auto overscroll-contain p-4 sm:p-6 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
               tabIndex={0}
               role="region"
               aria-label="Imagen de los equipos"
@@ -434,7 +434,7 @@ export default function ExportEditor({
           </section>
         ) : null}
       </div>
-      <footer className="flex flex-wrap items-center gap-3 border-t px-6 py-4">
+      <footer className="flex flex-wrap items-center gap-3 border-t p-4 sm:px-6">
         <div
           className="min-w-0 basis-full text-base"
           hidden={!error && !processing && !downloaded}

@@ -69,13 +69,14 @@ export const AssignPlayers: FC<AssignPlayersProps> = ({
                 value={String(player.id)}
                 aria-label={player.name}
                 variant="outline"
+                className="min-w-0 justify-start gap-2 text-start"
               >
                 <PlayerAvatar
                   src={player.avatar}
                   name={player.name}
                   size="sm"
                 />
-                <span className="ms-2">{player.name}</span>
+                <span className="min-w-0 line-clamp-2" title={player.name}>{player.name}</span>
               </ToggleGroupItem>
             ))}
           </ToggleGroup>

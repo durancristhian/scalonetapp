@@ -5,8 +5,7 @@ import {
 import { DeletePlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/delete-player";
 import { EditPlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/edit-player";
 import { AnimatedListItem } from "@/components/animated-list-item";
-import { PlayerAvatar } from "@/components/player-avatar";
-import { Badge } from "@/components/ui/badge";
+import { PlayerRow } from "@/components/player-row";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -23,7 +22,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { byName } from "@/utils/by-name";
-import { PLAYER_POSITIONS } from "@/utils/player-positions";
 import { MAX_PLAYERS_PER_MATCH } from "@/utils/player-limits";
 import { type Player } from "@prisma/client";
 import { EllipsisVerticalIcon, PencilIcon, TrashIcon } from "lucide-react";
@@ -39,8 +37,8 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
 
   return (
     <Card>
-      <CardHeader className="flex-row gap-2 items-center justify-between space-y-0">
-        <div className="space-y-1">
+      <CardHeader className="flex-row flex-wrap gap-3 items-center justify-between space-y-0 p-4 sm:p-6">
+        <div className="min-w-0 flex-1 space-y-1">
           <CardTitle>Jugadores convocados</CardTitle>
           {players.length ? (
             <CardDescription>
@@ -59,7 +57,7 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
         </CardContent>
       ) : null}
       {canListPlayers ? (
-        <CardContent className="pe-3">
+        <CardContent className="px-4 pe-2 sm:px-6 sm:pe-3">
           {/* Keep large rosters scrollable independently of the team builder. */}
           <ScrollArea className={players.length > 10 ? "h-96" : "h-auto"}>
             <div className="me-3">
@@ -91,21 +89,8 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player }) => {
 
   return (
     <Card>
-      <div className="flex flex-wrap items-center gap-2 ps-4">
-        <PlayerAvatar src={player.avatar} name={player.name} size="sm" />
-        <p className="min-w-0 flex-1 basis-20 py-2 [overflow-wrap:anywhere]">
-          {player.name}
-        </p>
-        <div className="ms-auto flex shrink-0 items-center gap-2">
-          <Badge
-            variant={player.position}
-            className="shrink-0 justify-center uppercase w-12"
-          >
-            {PLAYER_POSITIONS[player.position].substring(0, 3)}
-          </Badge>
-          <Badge variant="secondary" className="shrink-0 justify-center w-10">
-            {player.level}
-          </Badge>
+      <div className="ps-2">
+        <PlayerRow player={player} compact>
           <div className="flex-shrink-0">
             <DropdownMenu open={menuOpened} onOpenChange={setMenuOpened}>
               <DropdownMenuTrigger asChild>
@@ -138,7 +123,7 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player }) => {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-        </div>
+        </PlayerRow>
         {dialogId === "edit" ? (
           <EditPlayer
             player={player}

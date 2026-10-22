@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { type Match } from "@prisma/client";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNowStrict } from "date-fns";
 import { es } from "date-fns/locale/es";
 import {
   CopyIcon,
@@ -39,85 +39,89 @@ export const MatchItem: FC<MatchItemProps> = ({
   >(null);
 
   return (
-    <Card className="hover:bg-accent transition-colors">
-      <div className="flex items-center justify-between">
-        <div className="grow">
-          <Link href={`/partidos/${match.id}`}>
-            <div className="p-4 space-y-1">
-              <CardTitle>{match.name}</CardTitle>
-              <CardDescription>
-                Última actualización:{" "}
-                {formatDistanceToNow(match.updatedAt, {
-                  locale: es,
-                })}
-              </CardDescription>
-            </div>
-          </Link>
+    <Card className="relative hover:bg-accent transition-colors">
+      <Link
+        href={`/partidos/${match.id}`}
+        className="block rounded-[inherit] p-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      >
+        <div className="min-h-8 pe-12">
+          <CardTitle
+            className="line-clamp-2 [overflow-wrap:anywhere]"
+            title={match.name}
+          >
+            {match.name}
+          </CardTitle>
         </div>
-        <div className="flex-shrink-0">
-          <DropdownMenu open={menuOpened} onOpenChange={setMenuOpened}>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label={`Acciones de ${match.name}`}>
-                <EllipsisVerticalIcon className="h-4 text-muted-foreground w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            {/* Margin here helps to detach the menu from the limit of the screen (specially in mobile) */}
-            <DropdownMenuContent className="mr-4">
-              <DropdownMenuItem
-                onClick={() => {
-                  setDialogId("duplicate");
-                }}
-                disabled={disableDuplication}
-              >
-                <CopyIcon className="h-4 mr-2 text-muted-foreground w-4" />
-                Duplicar
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => {
-                  setDialogId("edit");
-                }}
-              >
-                <PencilIcon className="h-4 mr-2 text-muted-foreground w-4" />
-                Editar
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => {
-                  setDialogId("delete");
-                }}
-              >
-                <TrashIcon className="h-4 mr-2 text-destructive w-4" />
-                Eliminar
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          {dialogId === "duplicate" ? (
-            <DuplicateMatch
-              id={match.id}
-              onClose={() => {
-                setDialogId(null);
-                setMenuOpened(false);
+        <CardDescription className="[margin-block-start:theme(spacing.1)]">
+          Última actualización:{" "}
+          {formatDistanceToNowStrict(match.updatedAt, {
+            locale: es,
+          })}
+        </CardDescription>
+      </Link>
+      <div className="absolute end-0 [inset-block-start:0]">
+        <DropdownMenu open={menuOpened} onOpenChange={setMenuOpened}>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" aria-label={`Acciones de ${match.name}`}>
+              <EllipsisVerticalIcon className="h-4 text-muted-foreground w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          {/* Margin here helps to detach the menu from the limit of the screen (specially in mobile) */}
+          <DropdownMenuContent className="mr-4">
+            <DropdownMenuItem
+              onClick={() => {
+                setDialogId("duplicate");
               }}
-            />
-          ) : null}
-          {dialogId === "edit" ? (
-            <EditMatch
-              match={match}
-              onClose={() => {
-                setDialogId(null);
-                setMenuOpened(false);
+              disabled={disableDuplication}
+            >
+              <CopyIcon className="h-4 mr-2 text-muted-foreground w-4" />
+              Duplicar
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                setDialogId("edit");
               }}
-            />
-          ) : null}
-          {dialogId === "delete" ? (
-            <DeleteMatch
-              id={match.id}
-              onClose={() => {
-                setDialogId(null);
-                setMenuOpened(false);
+            >
+              <PencilIcon className="h-4 mr-2 text-muted-foreground w-4" />
+              Editar
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                setDialogId("delete");
               }}
-            />
-          ) : null}
-        </div>
+            >
+              <TrashIcon className="h-4 mr-2 text-destructive w-4" />
+              Eliminar
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        {dialogId === "duplicate" ? (
+          <DuplicateMatch
+            id={match.id}
+            onClose={() => {
+              setDialogId(null);
+              setMenuOpened(false);
+            }}
+          />
+        ) : null}
+        {dialogId === "edit" ? (
+          <EditMatch
+            match={match}
+            onClose={() => {
+              setDialogId(null);
+              setMenuOpened(false);
+            }}
+          />
+        ) : null}
+        {dialogId === "delete" ? (
+          <DeleteMatch
+            id={match.id}
+            onClose={() => {
+              setDialogId(null);
+              setMenuOpened(false);
+            }}
+          />
+        ) : null}
       </div>
     </Card>
   );
