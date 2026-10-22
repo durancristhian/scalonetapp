@@ -20,6 +20,12 @@ export const ERROR_MESSAGES = {
     "Ocurrió un error al duplicar el partido. Por favor, intente nuevamente.",
   match_duplicate_player_limit:
     "Este partido supera el máximo de 100 jugadores. Eliminá los que sobran antes de duplicarlo.",
+  match_teams_changed:
+    "El partido cambió en otra pestaña. Actualizá la página antes de guardar.",
+  match_export_changed:
+    "El partido cambió. Actualizá la página antes de exportar.",
+  match_teams_invalid:
+    "La información de los equipos no es válida. Volvé a armar los equipos.",
   match_edit_error:
     "Ocurrió un error al editar el partido. Por favor, intente nuevamente.",
   match_limit_reached:

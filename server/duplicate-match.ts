@@ -7,15 +7,15 @@ import { getSavedTeamsError } from "@/utils/team-validation";
 import { format } from "date-fns";
 import { lockMatchOwner } from "@/server/lock-match-owner";
 
-function readTeams(serialized: string, playerIds: number[]): { teams: BaseTeam[]; teamsReset: boolean } {
+function readTeams(serialized: string, playerIds: number[]): BaseTeam[] {
   try {
     const value: unknown = JSON.parse(serialized);
-    if (Array.isArray(value) && !value.length) return { teams: [], teamsReset: false };
-    if (!getSavedTeamsError(value, playerIds)) return { teams: value as BaseTeam[], teamsReset: false };
+    if (Array.isArray(value) && !value.length) return [];
+    if (!getSavedTeamsError(value, playerIds)) return value as BaseTeam[];
   } catch {
     // Legacy saved teams may be malformed. The current roster can still be copied.
   }
-  return { teams: [], teamsReset: true };
+  return [];
 }
 
 function playerKey(player: { name: string; level: number; position: string }): string {
@@ -45,7 +45,7 @@ export async function duplicateMatch(id: number, userId: string): Promise<Duplic
       name = getDuplicatedMatchName(source.name, `${timestamp}-${attempt}`);
     }
 
-    const { teams, teamsReset } = readTeams(source.teams, source.players.map(player => player.id));
+    const teams = readTeams(source.teams, source.players.map(player => player.id));
     const copy = await transaction.match.create({ data: { name, userId } });
     const playerIds = new Map<number, number>();
     for (let offset = 0; offset < source.players.length; offset += MAX_PLAYERS_BATCH) {
@@ -79,6 +79,6 @@ export async function duplicateMatch(id: number, userId: string): Promise<Duplic
       }));
       await transaction.match.update({ where: { id: copy.id }, data: { teams: JSON.stringify(mappedTeams) } });
     }
-    return { ok: true, teamsReset };
+    return { ok: true };
   });
 }

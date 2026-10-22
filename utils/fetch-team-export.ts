@@ -5,6 +5,7 @@ import {
 import { imageExportRequestSearchParams } from "./image-export-request.ts";
 import { type ImageExportTeamSelections } from "./image-export-player-roles.ts";
 import { ActionError } from "./action-result.ts";
+import { ERROR_MESSAGES } from "./error-messages.ts";
 
 export const fetchTeamExport = async (
   matchId: number,
@@ -18,7 +19,7 @@ export const fetchTeamExport = async (
   );
 
   if (response.status === 409) {
-    throw new ActionError("El partido cambió. Actualizá la página antes de exportar.");
+    throw new ActionError(ERROR_MESSAGES.match_export_changed);
   }
 
   if (

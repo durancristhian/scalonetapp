@@ -18,8 +18,8 @@ import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { type FC, useRef, useState } from "react";
 
 const duplicateErrors = {
-  unauthorized: "Tu sesión venció. Volvé a iniciar sesión para duplicar el partido.",
-  not_found: "No encontramos el partido. Actualizá la página e intentá nuevamente.",
+  unauthorized: ERROR_MESSAGES.unauthorized,
+  not_found: ERROR_MESSAGES.not_found,
   match_limit: ERROR_MESSAGES.match_limit_reached,
   player_limit: ERROR_MESSAGES.match_duplicate_player_limit,
   unexpected: ERROR_MESSAGES.match_duplicate_error,
@@ -51,9 +51,6 @@ export const DuplicateMatch: FC<DuplicateMatchProps> = ({ id, onClose }) => {
       trackAnalytics("match_duplicated");
       successAlert({
         title: "¡Partido duplicado!",
-        description: result.teamsReset
-          ? "Se copiaron los jugadores. Volvé a armar los equipos: los guardados estaban desactualizados."
-          : undefined,
       });
       onClose();
     } catch {
@@ -73,8 +70,8 @@ export const DuplicateMatch: FC<DuplicateMatchProps> = ({ id, onClose }) => {
         <AlertDialogHeader>
           <AlertDialogTitle>¿Duplicar este partido?</AlertDialogTitle>
           <AlertDialogDescription className="max-md:text-balance">
-            Se copiarán los jugadores y los equipos que sigan vigentes a un nuevo
-            partido con un nombre modificado.
+            Se creará un nuevo partido basado en el actual con un nombre
+            modificado.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

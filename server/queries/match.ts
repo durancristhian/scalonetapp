@@ -101,11 +101,11 @@ export const editMatchQuery: (
     }
     if (serializedTeams !== undefined) {
       if (match.teams !== serializedTeams && match.teams !== expectedTeams) {
-        throw new ExpectedActionError("El partido cambió en otra pestaña. Actualizá la página antes de guardar.");
+        throw new ExpectedActionError(ERROR_MESSAGES.match_teams_changed);
       }
       let teams: unknown;
       try { teams = JSON.parse(serializedTeams); }
-      catch { throw new ExpectedActionError("La información de los equipos no es válida. Volvé a armar los equipos."); }
+      catch { throw new ExpectedActionError(ERROR_MESSAGES.match_teams_invalid); }
       const players = await transaction.player.findMany({ where: { matchId: id }, select: { id: true } });
       const error = getSavedTeamsError(teams, players.map(player => player.id));
       if (error) throw new ExpectedActionError(error);

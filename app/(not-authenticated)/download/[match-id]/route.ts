@@ -106,7 +106,7 @@ export async function GET(request: NextRequest) {
         players: team.players.flatMap(id => { const player = players.get(id); return player ? [player] : []; }),
       }));
       if (expected !== await lineupFingerprint(match.name, hydrated)) {
-        return NextResponse.json({ error: "El partido cambió. Actualizá la página antes de exportar." }, { status: 409 });
+        return NextResponse.json({ error: ERROR_MESSAGES.match_export_changed }, { status: 409 });
       }
     }
 
