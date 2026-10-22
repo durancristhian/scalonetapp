@@ -47,7 +47,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
   ), [teams, match.players]);
   const areTeamsValid = !validationError;
 
-  const { operation, save, exportTeams } = useTeamActions(
+  const { hasUnsavedChanges, operation, save, exportTeams } = useTeamActions(
     match,
     teams,
     areTeamsValid,
@@ -120,7 +120,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                 <CopyTeams teams={teams} />
                 <div className="flex flex-wrap gap-2">
                   <SaveTeams
-                    disabled={busy || !areTeamsValid}
+                    disabled={busy || !areTeamsValid || !hasUnsavedChanges}
                     processing={operation === "save"}
                     onSave={save}
                   />

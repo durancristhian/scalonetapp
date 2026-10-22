@@ -9,11 +9,12 @@ import { type Team } from "@/types/team";
 import { downloadBlob } from "@/utils/download-blob";
 import { fetchTeamExport } from "@/utils/fetch-team-export";
 import { getTeamsToSave } from "@/utils/get-teams-to-save";
+import { haveTeamsChanged } from "@/utils/have-teams-changed";
 import {
   DEFAULT_IMAGE_EXPORT_OPTIONS,
   type ImageExportOptions,
 } from "@/utils/image-export-options";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { type ImageExportTeamSelections } from "@/utils/image-export-player-roles";
 import { unwrapActionResult, getActionErrorMessage } from "@/utils/action-result";
 import { lineupFingerprint } from "@/utils/lineup-fingerprint";
@@ -27,10 +28,19 @@ export const useTeamActions = (
   const { errorAlert, successAlert } = useAlerts();
   const [operation, setOperation] = useState<"save" | "export" | null>(null);
   const operationLock = useRef(false);
-  const savedTeams = useRef(baseTeams);
-  useEffect(() => {
-    savedTeams.current = baseTeams;
-  }, [match.id, baseTeams]);
+  // A successful save is the baseline even before server props refresh.
+  const [savedSnapshot, setSavedSnapshot] = useState({
+    matchId: match.id, baseTeams, teams: baseTeams,
+  });
+  const baseChanged = savedSnapshot.matchId !== match.id || savedSnapshot.baseTeams !== baseTeams;
+  const savedTeams = baseChanged ? baseTeams : savedSnapshot.teams;
+  if (baseChanged) {
+    setSavedSnapshot({ matchId: match.id, baseTeams, teams: baseTeams });
+  }
+  const payload = getTeamsToSave(
+    teams.map(team => ({ ...team, name: team.name.trim() })),
+  );
+  const hasUnsavedChanges = haveTeamsChanged(payload, savedTeams);
 
   const run = async (
     action: "save" | "export",
@@ -40,25 +50,21 @@ export const useTeamActions = (
     // Block a second click before React commits the disabled state.
     if (operationLock.current || !valid)
       return "No se pudo iniciar la operación. Intentá de nuevo.";
+    if (action === "save" && !hasUnsavedChanges) return null;
     operationLock.current = true;
     setOperation(action);
     if (action === "export") trackAnalytics("export_requested");
 
     let stage: "save" | "image" = "save";
     try {
-      const payload = getTeamsToSave(
-        teams.map((team) => ({
-          ...team,
-          name: team.name.trim(),
-        })),
-      );
-      if (payload !== savedTeams.current) {
+      // Export also syncs ordering so its preview fingerprint matches the server.
+      if (payload !== savedTeams) {
         unwrapActionResult(await editMatchAction(
           match.id,
-          { teams: payload, expectedTeams: savedTeams.current },
+          { teams: payload, expectedTeams: savedTeams },
           "/partidos/[match-id]",
         ));
-        savedTeams.current = payload;
+        setSavedSnapshot({ matchId: match.id, baseTeams, teams: payload });
         trackAnalytics("teams_saved");
       }
 
@@ -90,6 +96,7 @@ export const useTeamActions = (
   };
 
   return {
+    hasUnsavedChanges,
     operation,
     save: () => run("save"),
     exportTeams: (options: ImageExportOptions, selections: ImageExportTeamSelections) => run("export", options, selections),

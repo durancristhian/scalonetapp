@@ -17,7 +17,7 @@ export const CopyTeams: FC<CopyTeamsProps> = ({ teams }) => {
   const copyTeams = () => {
     const text = `${teams
       .map((team) => {
-        const players = team.players
+        const players = [...team.players]
           .sort(byName)
           .map((player) => `- ${player.name}`)
           .join("\n");
