@@ -61,7 +61,7 @@ export const TeamCard: FC<TeamCardProps> = ({
     <Card>
       <CardContent className="p-4 sm:p-6">
         <div className="space-y-4">
-          <div className="flex gap-2 items-center">
+          <div className="flex gap-2 items-start">
             <div className="grow min-w-0">
               <TeamForm
                 onSubmit={onTeamNameChange}

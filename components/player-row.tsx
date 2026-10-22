@@ -25,7 +25,7 @@ export function PlayerRow({ player, compact = false, children }: PlayerRowProps)
       >
         {player.name}
       </p>
-      <div className="flex shrink-0 items-center gap-1">
+      <div className="flex shrink-0 self-start items-center gap-1">
         <Badge variant={player.position} className="justify-center uppercase">
           {PLAYER_POSITIONS[player.position].substring(0, 3)}
         </Badge>
