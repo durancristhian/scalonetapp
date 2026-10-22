@@ -9,6 +9,7 @@ import shuffle from "lodash.shuffle";
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { readSavedTeams } from "@/utils/read-saved-teams";
 import { getTeamsToSave } from "@/utils/get-teams-to-save";
+import { haveTeamsChanged } from "@/utils/have-teams-changed";
 import { v4 as uuidv4 } from "uuid";
 
 const createEmptyTeam: (name: string) => Team = (name) => ({
@@ -105,9 +106,12 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
       // do not silently bless their old base when another tab changed teams.
       const baseline = getInitialTeams({ ...match, teams: current.baseTeams });
       const incoming = getInitialTeams(match);
-      const clean = getTeamsToSave(reconciled) === getTeamsToSave(baseline);
-      const rosterOnly = getTeamsToSave(baseline) === getTeamsToSave(incoming);
-      const acknowledged = getTeamsToSave(reconciled) === getTeamsToSave(incoming);
+      const currentTeams = getTeamsToSave(reconciled);
+      const baselineTeams = getTeamsToSave(baseline);
+      const incomingTeams = getTeamsToSave(incoming);
+      const clean = !haveTeamsChanged(currentTeams, baselineTeams);
+      const rosterOnly = !haveTeamsChanged(baselineTeams, incomingTeams);
+      const acknowledged = !haveTeamsChanged(currentTeams, incomingTeams);
       const changedMatch = current.matchId !== match.id;
       return {
         teams: changedMatch || clean ? incoming : reconciled,
