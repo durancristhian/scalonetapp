@@ -36,13 +36,13 @@ export const ShowOff: FC<ShowOffProps> = ({ popoverSeparation }) => {
             <div className="space-y-4">
               <div>
                 <h4 className="font-bold">Cristhian Duran</h4>
-                <p className="text-sm">
+                <p className="text-base">
                   Programador front-end de Buenos Aires, Argentina.
                 </p>
               </div>
               <div className="flex gap-2 items-center">
                 <MailIcon className="h-4 text-muted-foreground w-4" />
-                <span className="text-muted-foreground text-xs">
+                <span className="text-muted-foreground text-sm">
                   durancristhian@gmail.com
                 </span>
               </div>

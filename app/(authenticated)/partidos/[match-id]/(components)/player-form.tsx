@@ -102,7 +102,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values, avatar }) =>
                   onBlur={field.onBlur}
                   orientation="horizontal"
                   aria-labelledby={`${id}-position-label`}
-                  className="grid-cols-4 gap-1"
+                  className="grid-cols-2 gap-1 sm:grid-cols-4"
                 >
                   {Object.entries(PLAYER_POSITIONS).map(([key, value]) => (
                     <RadioGroupItem
@@ -134,7 +134,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values, avatar }) =>
                   onBlur={field.onBlur}
                   orientation="horizontal"
                   aria-labelledby={`${id}-level-label`}
-                  className="grid-cols-10 gap-1.5"
+                  className="grid-cols-5 gap-1"
                 >
                   {PLAYER_LEVELS.map((level) => (
                     <RadioGroupItem

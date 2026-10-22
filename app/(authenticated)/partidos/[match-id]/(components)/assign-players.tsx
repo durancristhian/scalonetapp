@@ -89,7 +89,6 @@ export const AssignPlayers: FC<AssignPlayersProps> = ({
               }}
             >
               <SelectTrigger
-                className="bg-white"
                 aria-label="Asignar jugadores al equipo"
               >
                 <SelectValue placeholder="Elige un equipo..." />

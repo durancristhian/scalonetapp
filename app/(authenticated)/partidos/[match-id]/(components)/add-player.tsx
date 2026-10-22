@@ -114,7 +114,7 @@ const EnabledContent: FC<{ currentPlayerCount: number }> = ({ currentPlayerCount
       <DialogTrigger asChild>
         <Button>Agregar</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-lg [max-block-size:90dvh] overflow-y-auto">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Convocando a los galácticos</DialogTitle>
           <DialogDescription className="max-md:text-balance">

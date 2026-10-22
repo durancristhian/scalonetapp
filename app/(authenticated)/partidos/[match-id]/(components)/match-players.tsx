@@ -91,51 +91,53 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player }) => {
 
   return (
     <Card>
-      <div className="flex items-center gap-2 ps-4">
+      <div className="flex flex-wrap items-center gap-2 ps-4">
         <PlayerAvatar src={player.avatar} name={player.name} size="sm" />
-        <p className="min-w-0 flex-1 py-2 [overflow-wrap:anywhere]">
+        <p className="min-w-0 flex-1 basis-20 py-2 [overflow-wrap:anywhere]">
           {player.name}
         </p>
-        <Badge
-          variant={player.position}
-          className="shrink-0 justify-center uppercase w-12"
-        >
-          {PLAYER_POSITIONS[player.position].substring(0, 3)}
-        </Badge>
-        <Badge variant="secondary" className="shrink-0 justify-center w-10">
-          {player.level}
-        </Badge>
-        <div className="flex-shrink-0">
-          <DropdownMenu open={menuOpened} onOpenChange={setMenuOpened}>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label={`Acciones de ${player.name}`}
-              >
-                <EllipsisVerticalIcon className="h-4 text-muted-foreground w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            {/* Margin here helps to detach the menu from the limit of the screen (specially in mobile) */}
-            <DropdownMenuContent className="mr-4">
-              <DropdownMenuItem
-                onClick={() => {
-                  setDialogId("edit");
-                }}
-              >
-                <PencilIcon className="h-4 mr-2 text-muted-foreground w-4" />
-                Editar
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => {
-                  setDialogId("delete");
-                }}
-              >
-                <TrashIcon className="h-4 mr-2 text-destructive w-4" />
-                Eliminar
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+        <div className="ms-auto flex shrink-0 items-center gap-2">
+          <Badge
+            variant={player.position}
+            className="shrink-0 justify-center uppercase w-12"
+          >
+            {PLAYER_POSITIONS[player.position].substring(0, 3)}
+          </Badge>
+          <Badge variant="secondary" className="shrink-0 justify-center w-10">
+            {player.level}
+          </Badge>
+          <div className="flex-shrink-0">
+            <DropdownMenu open={menuOpened} onOpenChange={setMenuOpened}>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label={`Acciones de ${player.name}`}
+                >
+                  <EllipsisVerticalIcon className="h-4 text-muted-foreground w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              {/* Margin here helps to detach the menu from the limit of the screen (specially in mobile) */}
+              <DropdownMenuContent className="mr-4">
+                <DropdownMenuItem
+                  onClick={() => {
+                    setDialogId("edit");
+                  }}
+                >
+                  <PencilIcon className="h-4 mr-2 text-muted-foreground w-4" />
+                  Editar
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setDialogId("delete");
+                  }}
+                >
+                  <TrashIcon className="h-4 mr-2 text-destructive w-4" />
+                  Eliminar
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
         {dialogId === "edit" ? (
           <EditPlayer

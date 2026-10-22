@@ -20,7 +20,7 @@ export function PlayerAvatarInput({ name, src, disabled, onChange, onPreparingCh
   useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
   useEffect(() => () => { if (selected) URL.revokeObjectURL(selected); }, [selected]);
   return <div className="space-y-2">
-    <div className="flex items-center justify-center gap-4">
+    <div className="flex flex-wrap items-center justify-center gap-4">
       <PlayerAvatar name={name || "Jugador"} src={selected || (removed ? undefined : src)} size="xl" />
       <input ref={input} hidden type="file" accept={PLAYER_PHOTO_ACCEPT} disabled={disabled || preparing} onChange={async event => {
         const file = event.target.files?.[0]; event.target.value = "";
@@ -46,7 +46,7 @@ export function PlayerAvatarInput({ name, src, disabled, onChange, onPreparingCh
       {preparing && <Button type="button" variant="ghost" onClick={() => preparation.current?.abort()}>Cancelar preparación</Button>}
       {(selected || (!removed && src)) && <Button type="button" variant="ghost" disabled={disabled || preparing} onClick={() => { setSelected(null); setRemoved(true); onChange(null); }}>Quitar foto</Button>}
     </div>
-    {preparing && <p role="status" className="text-sm text-muted-foreground">Preparando foto…</p>}
+    {preparing && <p role="status" className="text-base text-muted-foreground">Preparando foto…</p>}
     <ImageCropper dialogOpen={open} setDialogOpen={value => { setOpen(value); if (value === false) setPreview(null); }} preview={preview} removePreview={() => setPreview(null)} onImageCropped={async blob => { setSelected(URL.createObjectURL(blob)); setRemoved(false); onChange(blob); setPreview(null); }} />
   </div>;
 }

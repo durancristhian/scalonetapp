@@ -158,7 +158,6 @@ export default function ExportEditor({
                 <SelectTrigger
                   id={`${id}-background-control`}
                   aria-labelledby={`${id}-background`}
-                  size="lg"
                 >
                   <SelectValue />
                 </SelectTrigger>
@@ -168,7 +167,6 @@ export default function ExportEditor({
                       key={background.id}
                       value={background.id}
                       textValue={background.label}
-                      size="lg"
                     >
                       <span className="flex min-w-0 items-center gap-3 whitespace-nowrap text-start">
                         <span
@@ -206,7 +204,6 @@ export default function ExportEditor({
                 <SelectTrigger
                   id={`${id}-weather-control`}
                   aria-labelledby={`${id}-weather`}
-                  size="lg"
                 >
                   <SelectValue />
                 </SelectTrigger>
@@ -216,7 +213,6 @@ export default function ExportEditor({
                       key={weather.id}
                       value={weather.id}
                       textValue={weather.label}
-                      size="lg"
                     >
                       <span className="flex min-w-0 items-center gap-3 whitespace-nowrap text-start">
                         <span
@@ -248,7 +244,6 @@ export default function ExportEditor({
                 <SelectTrigger
                   id={`${id}-avatar-control`}
                   aria-labelledby={`${id}-avatar`}
-                  size="lg"
                 >
                   <SelectValue />
                 </SelectTrigger>
@@ -258,7 +253,6 @@ export default function ExportEditor({
                       key={shape}
                       value={shape}
                       textValue={label}
-                      size="lg"
                     >
                       <span className="flex min-w-0 items-center gap-3 whitespace-nowrap text-start">
                         <span
@@ -304,7 +298,7 @@ export default function ExportEditor({
               >
                 <RadioGroupItem
                   variant="button"
-                  className="min-h-11 gap-2"
+                  className="gap-2"
                   id={`${id}-alignment-left`}
                   value="left"
                 >
@@ -313,7 +307,7 @@ export default function ExportEditor({
                 </RadioGroupItem>
                 <RadioGroupItem
                   variant="button"
-                  className="min-h-11 gap-2"
+                  className="gap-2"
                   id={`${id}-alignment-center`}
                   value="center"
                 >
@@ -327,7 +321,7 @@ export default function ExportEditor({
                 key={team.id}
                 className="grid min-w-0 gap-4 border-t [padding-block-start:theme(spacing.4)]"
               >
-                <legend className="max-w-full pe-3 text-sm font-medium [overflow-wrap:anywhere]">
+                <legend className="max-w-full pe-3 text-base font-medium [overflow-wrap:anywhere]">
                   {team.name.trim()}
                 </legend>
                 {IMAGE_EXPORT_PLAYER_ROLES.map(({ id: role, label }) => (
@@ -364,7 +358,6 @@ export default function ExportEditor({
                         aria-labelledby={`${id}-${role}-${team.id}`}
                         data-player-role-control={role}
                         data-role-team={team.id}
-                        size="lg"
                       >
                         <SelectValue />
                       </SelectTrigger>
@@ -372,7 +365,6 @@ export default function ExportEditor({
                         <SelectItem
                           value="none"
                           textValue="No indicado"
-                          size="lg"
                         >
                           <span className="flex min-w-0 items-center gap-3 whitespace-nowrap text-start">
                             <span
@@ -391,7 +383,6 @@ export default function ExportEditor({
                             key={player.id}
                             value={String(player.id)}
                             textValue={player.name}
-                            size="lg"
                           >
                             <span className="flex min-w-0 items-center gap-3 whitespace-nowrap text-start">
                               <span
@@ -445,7 +436,7 @@ export default function ExportEditor({
       </div>
       <footer className="flex flex-wrap items-center gap-3 border-t px-6 py-4">
         <div
-          className="min-w-0 basis-full text-sm"
+          className="min-w-0 basis-full text-base"
           hidden={!error && !processing && !downloaded}
         >
           {error ? (
@@ -464,7 +455,7 @@ export default function ExportEditor({
         <DialogFooter className="ms-auto w-full gap-2 sm:w-auto sm:space-x-0">
           <Button
             type="button"
-            className="min-h-11 flex-1 active:opacity-80"
+            className="flex-1"
             variant="outline"
             disabled={processing}
             onClick={() => updateOptions({ ...DEFAULT_IMAGE_EXPORT_OPTIONS })}
@@ -473,7 +464,7 @@ export default function ExportEditor({
           </Button>
           <Button
             type="button"
-            className="min-h-11 flex-1 active:opacity-80"
+            className="flex-1"
             disabled={disabled || processing}
             onClick={download}
             aria-busy={processing}

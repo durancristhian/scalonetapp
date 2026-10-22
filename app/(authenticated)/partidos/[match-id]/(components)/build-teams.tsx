@@ -66,7 +66,7 @@ export const BuildTeams: FC<BuildTeamsProps> = ({
               </div>
               <Label htmlFor="random">
                 <p className="font-semibold text-base">Lo que toca, toca</p>
-                <p className="font-normal text-sm">
+                <p className="font-normal text-base">
                   Distribuir jugadores 100% al azar en los equipos.
                 </p>
               </Label>
@@ -79,7 +79,7 @@ export const BuildTeams: FC<BuildTeamsProps> = ({
                 <p className="font-semibold text-base">
                   Balancear por posición y nivel
                 </p>
-                <p className="font-normal text-sm">
+                <p className="font-normal text-base">
                   Haremos los equipos lo más parejo posible teniendo en cuenta
                   la posición y el nivel de los jugadores.
                 </p>
