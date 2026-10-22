@@ -98,11 +98,13 @@ export async function GET(request: NextRequest) {
     if (teamsError) {
       return NextResponse.json({ error: teamsError }, { status: 422 });
     }
+    const savedTeams = readSavedTeams(match.teams);
+    const assignedPlayerIds = new Set(savedTeams.flatMap(team => team.players));
 
     const expected = request.headers.get("X-Lineup-Fingerprint");
     if (expected) {
       const players = new Map(match.players.map(player => [player.id, player]));
-      const hydrated = readSavedTeams(match.teams).map(team => ({ ...team,
+      const hydrated = savedTeams.map(team => ({ ...team,
         players: team.players.flatMap(id => { const player = players.get(id); return player ? [player] : []; }),
       }));
       if (expected !== await lineupFingerprint(match.name, hydrated)) {
@@ -163,7 +165,7 @@ export async function GET(request: NextRequest) {
     await waitForImageExport(
       page,
       match.name,
-      options.avatarShape === "none" ? [] : match.players.flatMap((player) => [
+      options.avatarShape === "none" ? [] : match.players.filter(player => assignedPlayerIds.has(player.id)).flatMap((player) => [
         player.avatar,
         getPlayerAvatarUrl(player.name, getImageExportBackground(options.background)!.palette),
       ]),

@@ -319,6 +319,7 @@ export default function ExportEditor({
             {teams.map((team) => (
               <fieldset
                 key={team.id}
+                disabled={processing || !team.players.length}
                 className="grid min-w-0 gap-4 [padding-block-start:theme(spacing.4)]"
               >
                 <legend className="max-w-full text-base font-medium [overflow-wrap:anywhere]">
@@ -337,7 +338,7 @@ export default function ExportEditor({
                       value={String(
                         selections[team.id].assignments[role] ?? "none",
                       )}
-                      disabled={processing}
+                      disabled={processing || !team.players.length}
                       onValueChange={(value) => {
                         setSavedSelections({
                           ...selections,

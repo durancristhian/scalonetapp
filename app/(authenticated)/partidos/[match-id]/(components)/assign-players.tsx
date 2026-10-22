@@ -43,9 +43,9 @@ export const AssignPlayers: FC<AssignPlayersProps> = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Esperan un lugar</CardTitle>
+        <CardTitle>Jugadores libres</CardTitle>
         <CardDescription>
-          Selecciona jugadores para asignalos a uno de los equipos.
+          Podés asignarlos a un equipo o dejarlos fuera de la imagen.
         </CardDescription>
       </CardHeader>
       <CardContent>
