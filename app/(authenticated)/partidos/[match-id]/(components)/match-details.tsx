@@ -27,6 +27,7 @@ type MatchDetailsProps = {
 export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
   const {
     baseTeams,
+    comparisonTeams,
     assignSelectionToTeam,
     balanceTeams,
     createNewTeam,
@@ -51,6 +52,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
     teams,
     areTeamsValid,
     baseTeams,
+    comparisonTeams,
   );
   const busy = operation !== null;
 

@@ -24,23 +24,25 @@ export const useTeamActions = (
   teams: Team[],
   valid: boolean,
   baseTeams: string,
+  comparisonTeams: string = baseTeams,
 ) => {
   const { errorAlert, successAlert } = useAlerts();
   const [operation, setOperation] = useState<"save" | "export" | null>(null);
   const operationLock = useRef(false);
   // A successful save is the baseline even before server props refresh.
   const [savedSnapshot, setSavedSnapshot] = useState({
-    matchId: match.id, baseTeams, teams: baseTeams,
+    matchId: match.id, baseTeams, teams: baseTeams, comparisonTeams,
   });
   const baseChanged = savedSnapshot.matchId !== match.id || savedSnapshot.baseTeams !== baseTeams;
   const savedTeams = baseChanged ? baseTeams : savedSnapshot.teams;
+  const savedComparison = baseChanged ? comparisonTeams : savedSnapshot.comparisonTeams;
   if (baseChanged) {
-    setSavedSnapshot({ matchId: match.id, baseTeams, teams: baseTeams });
+    setSavedSnapshot({ matchId: match.id, baseTeams, teams: baseTeams, comparisonTeams });
   }
   const payload = getTeamsToSave(
     teams.map(team => ({ ...team, name: team.name.trim() })),
   );
-  const hasUnsavedChanges = haveTeamsChanged(payload, savedTeams);
+  const hasUnsavedChanges = haveTeamsChanged(payload, savedComparison);
 
   const run = async (
     action: "save" | "export",
@@ -64,7 +66,7 @@ export const useTeamActions = (
           { teams: payload, expectedTeams: savedTeams },
           "/partidos/[match-id]",
         ));
-        setSavedSnapshot({ matchId: match.id, baseTeams, teams: payload });
+        setSavedSnapshot({ matchId: match.id, baseTeams, teams: payload, comparisonTeams: payload });
         trackAnalytics("teams_saved");
       }
 

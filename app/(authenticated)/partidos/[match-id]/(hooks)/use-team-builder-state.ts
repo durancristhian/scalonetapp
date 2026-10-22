@@ -48,6 +48,7 @@ type UseTeamsBuilderStateResult = {
   removeTeam: (teamId: string) => void;
   selectedIds: number[];
   baseTeams: string;
+  comparisonTeams: string;
   teams: Team[];
   togglePlayer: (id: number) => void;
   unselectedPlayers: Player[];
@@ -362,6 +363,9 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
 
   return {
     baseTeams,
+    // A new match's generated teams are the initial editor state, not a user
+    // change. Keep nonempty or malformed saved data intact for pending repairs.
+    comparisonTeams: haveTeamsChanged(baseTeams, "[]") ? baseTeams : getTeamsToSave(DEFAULT_TEAMS),
     assignSelectionToTeam,
     balanceTeams,
     createNewTeam,
