@@ -56,11 +56,11 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
   const busy = operation !== null;
 
   return (
-    <fieldset disabled={busy} aria-label="Preparación del partido" className="[min-inline-size:0] grid grid-cols-1 md:grid-cols-[minmax(20rem,1fr)_repeat(2,minmax(0,1fr))] gap-8">
-      <div className="min-w-0 md:col-span-1">
+    <fieldset disabled={busy} aria-label="Preparación del partido" className="[min-inline-size:0] grid grid-cols-1 lg:grid-cols-[minmax(20rem,1fr)_minmax(0,2fr)] gap-6 lg:gap-8">
+      <div className="min-w-0">
         <MatchPlayers players={match.players} />
       </div>
-      <div className="min-w-0 md:col-span-2">
+      <div className="min-w-0">
         {match.players.length ? (
           <div className="space-y-8">
             {unselectedPlayers.length ? (
@@ -74,9 +74,9 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
               />
             ) : null}
             <div className="space-y-4">
-              <div className="flex gap-2 items-center justify-between">
+              <div className="flex flex-wrap gap-3 items-center justify-between">
                 <h1 className="font-bold text-xl">Equipos</h1>
-                <div className="space-x-2">
+                <div className="flex flex-wrap gap-2">
                   <BuildTeams
                     disabled={teams.length !== TEAMS_PER_MATCH || match.players.length > MAX_PLAYERS_PER_MATCH}
                     onSave={(preset) => {
@@ -103,7 +103,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                   {teams.length < TEAMS_PER_MATCH ? <Button onClick={createNewTeam}>Agregar</Button> : null}
                 </div>
               </div>
-              <div className="grid lg:grid-cols-2 gap-4">
+              <div className="grid xl:grid-cols-2 gap-4">
                 {teams.map((team) => (
                   <TeamCard
                     key={team.id}

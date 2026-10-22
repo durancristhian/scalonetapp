@@ -41,10 +41,10 @@ export const MatchItem: FC<MatchItemProps> = ({
   return (
     <Card className="hover:bg-accent transition-colors">
       <div className="flex items-center justify-between">
-        <div className="grow">
+        <div className="min-w-0 grow">
           <Link href={`/partidos/${match.id}`}>
             <div className="p-4 space-y-1">
-              <CardTitle>{match.name}</CardTitle>
+              <CardTitle className="line-clamp-2 [overflow-wrap:anywhere]" title={match.name}>{match.name}</CardTitle>
               <CardDescription>
                 Última actualización:{" "}
                 {formatDistanceToNow(match.updatedAt, {

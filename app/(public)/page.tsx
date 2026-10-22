@@ -50,7 +50,7 @@ const Page: FC = () => {
             Demostrá tu habilidad para formar equipos ideales.
           </p>
         </motion.div>
-        <div className="h-[36px]">
+        <div className="min-h-12">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
