@@ -319,9 +319,9 @@ export default function ExportEditor({
             {teams.map((team) => (
               <fieldset
                 key={team.id}
-                className="grid min-w-0 gap-4 border-t [padding-block-start:theme(spacing.4)]"
+                className="grid min-w-0 gap-4 [padding-block-start:theme(spacing.4)]"
               >
-                <legend className="max-w-full pe-3 text-base font-medium [overflow-wrap:anywhere]">
+                <legend className="max-w-full text-base font-medium [overflow-wrap:anywhere]">
                   {team.name.trim()}
                 </legend>
                 {IMAGE_EXPORT_PLAYER_ROLES.map(({ id: role, label }) => (
