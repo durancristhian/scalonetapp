@@ -128,7 +128,7 @@ export default function ExportEditor({
         if (processing) event.preventDefault();
       }}
     >
-      <DialogHeader className="border-b p-4 pe-12 sm:p-6 sm:pe-12 text-start">
+      <DialogHeader className="border-b p-4 sm:p-6 text-start">
         <DialogTitle>Exportar</DialogTitle>
         <DialogDescription>
           Personalizá la imagen de tus equipos.
