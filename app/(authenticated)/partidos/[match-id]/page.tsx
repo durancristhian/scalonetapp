@@ -42,7 +42,7 @@ const Page: FC<PageProps> = async (props) => {
     <div className="py-4 md:py-8 space-y-4">
       <div className="max-w-7xl mx-auto px-4 w-full">
         <div className="space-y-4">
-          <div className="flex gap-4 items-center">
+          <div className="flex min-h-12 gap-4 items-center">
             <div className="flex-shrink-0">
               <Button variant="outline" size="icon" asChild>
                 <Link href="/partidos" aria-label="Volver a partidos">

@@ -58,7 +58,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
 
   return (
     <fieldset disabled={busy} aria-label="Preparación del partido" className="[min-inline-size:0] grid grid-cols-1 lg:grid-cols-[minmax(20rem,1fr)_minmax(0,2fr)] gap-6 lg:gap-8">
-      <div className="min-w-0">
+      <div className="min-w-0 lg:sticky lg:self-start lg:[inset-block-start:calc(theme(spacing.14)+1px+theme(spacing.4))]">
         <MatchPlayers players={match.players} />
       </div>
       <div className="min-w-0">

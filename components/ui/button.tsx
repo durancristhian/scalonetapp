@@ -23,7 +23,8 @@ const buttonVariants = cva(
         default: "h-12 min-h-12 px-4 py-2",
         sm: "h-10 min-h-10 rounded-md px-3",
         lg: "h-14 min-h-14 rounded-md px-8",
-        icon: "size-12 min-h-12 shrink-0",
+        // Keep the visible control compact while extending its pointer target to 48px.
+        icon: "relative size-8 min-h-8 shrink-0 p-0 after:absolute after:-inset-2 after:content-[''] data-[state=open]:bg-accent [&_svg]:size-4 [&_svg]:shrink-0",
       },
     },
     defaultVariants: {

@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/utils/cn";
+import { buttonVariants } from "@/components/ui/button";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { XIcon } from "lucide-react";
 import * as React from "react";
@@ -46,7 +47,13 @@ const DialogContent = React.forwardRef<
       {...props}
     >
       {children}
-      <DialogPrimitive.Close disabled={closeDisabled} className="absolute end-0 [inset-block-start:0] grid size-12 place-items-center rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+      <DialogPrimitive.Close
+        disabled={closeDisabled}
+        className={cn(
+          buttonVariants({ variant: "ghost", size: "icon" }),
+          "absolute end-2 [inset-block-start:theme(spacing.2)] text-muted-foreground",
+        )}
+      >
         <XIcon className="h-4 w-4" />
         <span className="sr-only">{closeLabel}</span>
       </DialogPrimitive.Close>
