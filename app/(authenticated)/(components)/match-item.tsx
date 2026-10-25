@@ -59,7 +59,7 @@ export const MatchItem: FC<MatchItemProps> = ({
           })}
         </CardDescription>
       </Link>
-      <div className="absolute end-0 [inset-block-start:0]">
+      <div className="absolute end-2 [inset-block-start:theme(spacing.2)]">
         <DropdownMenu open={menuOpened} onOpenChange={setMenuOpened}>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" aria-label={`Acciones de ${match.name}`}>

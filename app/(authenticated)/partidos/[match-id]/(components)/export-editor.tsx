@@ -118,7 +118,7 @@ export default function ExportEditor({
 
   return (
     <DialogContent
-      className="h-[min(50rem,90dvh)] max-h-[90dvh] w-[calc(100%_-_2rem)] grid-rows-[auto_minmax(0,1fr)_auto] gap-0 overflow-clip rounded-lg p-0 lg:w-[calc(100%_-_4rem)] lg:max-w-screen-2xl motion-reduce:animate-none"
+      className="h-[min(50rem,90dvh)] max-h-[90dvh] w-[calc(100%_-_2rem)] grid-rows-[auto_minmax(0,1fr)_auto] gap-0 overflow-clip rounded-lg p-0 sm:p-0 lg:w-[calc(100%_-_4rem)] lg:max-w-screen-2xl motion-reduce:animate-none"
       closeLabel="Cerrar"
       closeDisabled={processing}
       onEscapeKeyDown={(event) => {

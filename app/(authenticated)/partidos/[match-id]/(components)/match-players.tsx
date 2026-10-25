@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { byName } from "@/utils/by-name";
+import { cn } from "@/utils/cn";
 import { MAX_PLAYERS_PER_MATCH } from "@/utils/player-limits";
 import { type Player } from "@prisma/client";
 import { EllipsisVerticalIcon, PencilIcon, TrashIcon } from "lucide-react";
@@ -35,9 +36,11 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
   const atPlayerLimit = players.length >= MAX_PLAYERS_PER_MATCH;
   const canListPlayers = Array.isArray(players) && players.length;
 
+  // Desktop height leaves room for the app header/footer (7rem + borders),
+  // page padding (4rem), match heading (3rem), and heading gap (1rem).
   return (
-    <Card>
-      <CardHeader className="flex-row flex-wrap gap-3 items-center justify-between space-y-0 p-4 sm:p-6">
+    <Card className="lg:flex lg:h-[calc(100dvh-15rem-2px)] lg:min-h-48 lg:flex-col">
+      <CardHeader className="flex-row flex-wrap gap-3 items-center justify-between space-y-0 p-4 sm:p-6 lg:shrink-0">
         <div className="min-w-0 flex-1 space-y-1">
           <CardTitle>Jugadores convocados</CardTitle>
           {players.length ? (
@@ -51,16 +54,17 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
           disabled={atPlayerLimit}
         />
       </CardHeader>
-      {atPlayerLimit ? (
-        <CardContent>
-          <PlayerLimitAlert />
-        </CardContent>
-      ) : null}
       {canListPlayers ? (
-        <CardContent className="px-4 pe-2 sm:px-6 sm:pe-3">
+        <CardContent className="px-4 pe-2 sm:px-6 sm:pe-3 lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
           {/* Keep large rosters scrollable independently of the team builder. */}
-          <ScrollArea className={players.length > 10 ? "h-96" : "h-auto"}>
-            <div className="me-3">
+          <ScrollArea
+            className={cn(
+              players.length > 10 ? "h-96" : "h-auto",
+              "lg:h-auto lg:min-h-0 lg:flex-1 lg:[&>[data-radix-scroll-area-viewport]]:overscroll-y-contain",
+            )}
+          >
+            <div className="me-3 space-y-4">
+              {atPlayerLimit ? <PlayerLimitAlert /> : null}
               <ul className="space-y-2">
                 {[...players].sort(byName).map((player, idx) => {
                   return (
