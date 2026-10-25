@@ -54,11 +54,6 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
           disabled={atPlayerLimit}
         />
       </CardHeader>
-      {atPlayerLimit ? (
-        <CardContent className="lg:shrink-0">
-          <PlayerLimitAlert />
-        </CardContent>
-      ) : null}
       {canListPlayers ? (
         <CardContent className="px-4 pe-2 sm:px-6 sm:pe-3 lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
           {/* Keep large rosters scrollable independently of the team builder. */}
@@ -68,7 +63,8 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
               "lg:h-auto lg:min-h-0 lg:flex-1 lg:[&>[data-radix-scroll-area-viewport]]:overscroll-y-contain",
             )}
           >
-            <div className="me-3">
+            <div className="me-3 space-y-4">
+              {atPlayerLimit ? <PlayerLimitAlert /> : null}
               <ul className="space-y-2">
                 {[...players].sort(byName).map((player, idx) => {
                   return (
