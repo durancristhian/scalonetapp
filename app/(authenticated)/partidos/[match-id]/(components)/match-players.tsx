@@ -5,6 +5,7 @@ import {
 import { DeletePlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/delete-player";
 import { EditPlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/edit-player";
 import { AnimatedListItem } from "@/components/animated-list-item";
+import { useRosterViewport } from "@/app/(authenticated)/partidos/[match-id]/(hooks)/use-roster-viewport";
 import { PlayerRow } from "@/components/player-row";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,52 +34,56 @@ type MatchPlayersProps = {
 };
 
 export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
+  const columnRef = useRosterViewport();
   const atPlayerLimit = players.length >= MAX_PLAYERS_PER_MATCH;
   const canListPlayers = Array.isArray(players) && players.length;
 
-  // Desktop height leaves room for the app header/footer (7rem + borders),
-  // page padding (4rem), match heading (3rem), and heading gap (1rem).
   return (
-    <Card className="lg:flex lg:h-[calc(100dvh-15rem-2px)] lg:min-h-48 lg:flex-col">
-      <CardHeader className="flex-row flex-wrap gap-3 items-center justify-between space-y-0 p-4 sm:p-6 lg:shrink-0">
-        <div className="min-w-0 flex-1 space-y-1">
-          <CardTitle>Jugadores convocados</CardTitle>
-          {players.length ? (
-            <CardDescription>
-              {players.length} de {MAX_PLAYERS_PER_MATCH}
-            </CardDescription>
-          ) : null}
-        </div>
-        <AddPlayer
-          currentPlayerCount={players.length}
-          disabled={atPlayerLimit}
-        />
-      </CardHeader>
-      {canListPlayers ? (
-        <CardContent className="px-4 pe-2 sm:px-6 sm:pe-3 lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
-          {/* Keep large rosters scrollable independently of the team builder. */}
-          <ScrollArea
-            className={cn(
-              players.length > 10 ? "h-96" : "h-auto",
-              "lg:h-auto lg:min-h-0 lg:flex-1 lg:[&>[data-radix-scroll-area-viewport]]:overscroll-y-contain",
-            )}
-          >
-            <div className="me-3 space-y-4">
-              {atPlayerLimit ? <PlayerLimitAlert /> : null}
-              <ul className="space-y-2">
-                {[...players].sort(byName).map((player, idx) => {
-                  return (
-                    <AnimatedListItem key={player.id} listIndex={idx}>
-                      <MatchPlayer player={player} />
-                    </AnimatedListItem>
-                  );
-                })}
-              </ul>
+    <div ref={columnRef} className="min-w-0 lg:[min-block-size:var(--roster-min-height,calc(100dvh-15rem-2px))]">
+      {/* A zero-height sticky anchor keeps card resizing out of page layout. */}
+      <div className="lg:sticky lg:[inset-block-start:var(--roster-inset,73px)] lg:[block-size:0]">
+        <Card className="lg:flex lg:[block-size:var(--roster-height,calc(100dvh-15rem-2px))] lg:flex-col">
+          <CardHeader className="flex-row flex-wrap gap-3 items-center justify-between space-y-0 p-4 sm:p-6 lg:shrink-0">
+            <div className="min-w-0 flex-1 space-y-1">
+              <CardTitle>Jugadores convocados</CardTitle>
+              {players.length ? (
+                <CardDescription>
+                  {players.length} de {MAX_PLAYERS_PER_MATCH}
+                </CardDescription>
+              ) : null}
             </div>
-          </ScrollArea>
-        </CardContent>
-      ) : null}
-    </Card>
+            <AddPlayer
+              currentPlayerCount={players.length}
+              disabled={atPlayerLimit}
+            />
+          </CardHeader>
+          {canListPlayers ? (
+            <CardContent className="px-4 pe-2 sm:px-6 sm:pe-3 lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
+              {/* Keep large rosters scrollable independently of the team builder. */}
+              <ScrollArea
+                className={cn(
+                  players.length > 10 ? "h-96" : "h-auto",
+                  "lg:h-auto lg:min-h-0 lg:flex-1 lg:[&>[data-radix-scroll-area-viewport]]:overscroll-y-contain",
+                )}
+              >
+                <div className="me-3 space-y-4">
+                  {atPlayerLimit ? <PlayerLimitAlert /> : null}
+                  <ul className="space-y-2">
+                    {[...players].sort(byName).map((player, idx) => {
+                      return (
+                        <AnimatedListItem key={player.id} listIndex={idx}>
+                          <MatchPlayer player={player} />
+                        </AnimatedListItem>
+                      );
+                    })}
+                  </ul>
+                </div>
+              </ScrollArea>
+            </CardContent>
+          ) : null}
+        </Card>
+      </div>
+    </div>
   );
 };
 

@@ -39,7 +39,7 @@ const Page: FC<PageProps> = async (props) => {
   }
 
   return (
-    <div className="py-4 md:py-8 space-y-4">
+    <div data-match-page className="py-4 md:py-8 space-y-4">
       <div className="max-w-7xl mx-auto px-4 w-full">
         <div className="space-y-4">
           <div className="flex min-h-12 gap-4 items-center">
