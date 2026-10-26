@@ -10,26 +10,38 @@ import { useEffect, useRef, useState } from "react";
 export function ExportPreview(props: TeamExportProps) {
   const viewport = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLDivElement>(null);
-  const [size, setSize] = useState({ width: 0, height: 0 });
+  const [size, setSize] = useState({ width: 0, height: 0, contentHeight: 0 });
 
   useEffect(() => {
     const container = viewport.current;
     const content = canvas.current;
     if (!container || !content) return;
     const observer = new ResizeObserver(() => {
-      setSize({ width: container.clientWidth, height: content.offsetHeight });
+      setSize({
+        width: container.clientWidth,
+        height: container.clientHeight,
+        contentHeight: content.offsetHeight,
+      });
     });
     observer.observe(container);
     observer.observe(content);
     return () => observer.disconnect();
   }, []);
 
-  const scale = size.width / IMAGE_EXPORT_WIDTH;
+  const scale = size.contentHeight
+    ? Math.min(size.width / IMAGE_EXPORT_WIDTH, size.height / size.contentHeight)
+    : 0;
   return (
-    <div ref={viewport} className="my-auto w-full shrink-0">
+    <div
+      ref={viewport}
+      className="grid min-h-0 min-w-0 flex-1 place-items-center overflow-clip"
+    >
       <div
         className="relative overflow-clip shadow-md"
-        style={{ height: size.height * scale }}
+        style={{
+          width: IMAGE_EXPORT_WIDTH * scale,
+          height: size.contentHeight * scale,
+        }}
       >
         <div
           ref={canvas}

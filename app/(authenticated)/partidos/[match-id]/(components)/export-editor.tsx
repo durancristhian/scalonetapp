@@ -420,8 +420,7 @@ export default function ExportEditor({
             aria-label="Vista previa"
           >
             <div
-              className="flex min-h-0 min-w-0 flex-col overflow-auto overscroll-contain p-4 sm:p-6 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
-              tabIndex={0}
+              className="flex min-h-0 min-w-0 flex-col overflow-clip p-4 sm:p-6"
               role="region"
               aria-label="Imagen de los equipos"
             >
