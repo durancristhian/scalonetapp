@@ -18,8 +18,8 @@ function readTeams(serialized: string, playerIds: number[]): BaseTeam[] {
   return [];
 }
 
-function playerKey(player: { name: string; level: number; position: string }): string {
-  return JSON.stringify([player.name, player.level, player.position]);
+function playerKey(player: { name: string; level: number; position: string; avatar: string }): string {
+  return JSON.stringify([player.name, player.level, player.position, player.avatar]);
 }
 
 export async function duplicateMatch(id: number, userId: string): Promise<DuplicateMatchResult> {
@@ -51,8 +51,8 @@ export async function duplicateMatch(id: number, userId: string): Promise<Duplic
     for (let offset = 0; offset < source.players.length; offset += MAX_PLAYERS_BATCH) {
       const batch = source.players.slice(offset, offset + MAX_PLAYERS_BATCH);
       const created = await transaction.player.createManyAndReturn({
-        data: batch.map(({ name, level, position }) => ({ name, level, position, matchId: copy.id })),
-        select: { id: true, name: true, level: true, position: true },
+        data: batch.map(({ name, level, position, avatar }) => ({ name, level, position, avatar, matchId: copy.id })),
+        select: { id: true, name: true, level: true, position: true, avatar: true },
       });
       // RETURNING order is unspecified. Attributes also distinguish legacy duplicate names.
       const idsByPlayer = new Map<string, number[]>();
