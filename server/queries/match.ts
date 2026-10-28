@@ -16,7 +16,7 @@ export const getMatchesQuery: (options?: {
     throw new Error(ERROR_MESSAGES.unauthorized);
   }
 
-  const take = options?.take || 10;
+  const take = options?.take;
 
   return await prisma.$transaction([
     prisma.match.findMany({
