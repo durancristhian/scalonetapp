@@ -1,0 +1,36 @@
+.cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-inline-size: 0;
+  text-align: start;
+}
+.cell[data-alignment="center"] { align-items: center; text-align: center; }
+.portrait { position: relative; flex: none; inline-size: 96px; block-size: 96px; }
+.avatar { border-color: color-mix(in oklch, var(--export-frame-color) 70%, black); }
+.label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  inline-size: fit-content;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  padding-block: 6px;
+  padding-inline: 10px;
+  border-radius: 8px;
+  background: var(--export-label-color);
+  color: white;
+  font-size: 24px;
+  line-height: 28px;
+  font-weight: 700;
+}
+.name {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: clip;
+  overflow-wrap: anywhere;
+  min-inline-size: 0;
+  margin: 0;
+}

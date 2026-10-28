@@ -6,6 +6,7 @@ import {
 } from "@/components/team-export/team-export";
 import { IMAGE_EXPORT_WIDTH } from "@/utils/image-export-options";
 import { useEffect, useRef, useState } from "react";
+import styles from "./export-preview.module.css";
 
 export function ExportPreview(props: TeamExportProps) {
   const viewport = useRef<HTMLDivElement>(null);
@@ -34,10 +35,10 @@ export function ExportPreview(props: TeamExportProps) {
   return (
     <div
       ref={viewport}
-      className="grid min-h-0 min-w-0 flex-1 place-items-center overflow-clip"
+      className={styles.viewport}
     >
       <div
-        className="relative overflow-clip shadow-md"
+        className={styles.frame}
         style={{
           width: IMAGE_EXPORT_WIDTH * scale,
           height: size.contentHeight * scale,
@@ -45,8 +46,8 @@ export function ExportPreview(props: TeamExportProps) {
       >
         <div
           ref={canvas}
-          className="absolute [inset-block-start:0] start-0 w-[1280px] origin-top-left"
-          style={{ transform: `scale(${scale})` }}
+          className={styles.canvas}
+          style={{ inlineSize: IMAGE_EXPORT_WIDTH, transform: `scale(${scale})` }}
         >
           <TeamExport {...props} />
         </div>

@@ -1,0 +1,4 @@
+.base { fill: var(--export-pitch-base); }
+.stripe { fill: var(--export-pitch-stripe); }
+.texture { opacity: .12; }
+[data-surface="natural"] > .texture, [data-surface="potrero"] > .texture { opacity: .9; }

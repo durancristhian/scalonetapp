@@ -1,0 +1,5 @@
+.back { fill: var(--export-scene-edge); }
+.tread { fill: var(--export-stand-tread); }
+.riser { fill: none; stroke: var(--export-stand-riser); stroke-width: 5px; }
+.highlight { fill: none; stroke: var(--export-divider-color); stroke-width: 1px; opacity: .3; }
+.rail { stroke: var(--export-divider-color); stroke-width: 2px; opacity: .5; }
