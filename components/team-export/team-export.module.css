@@ -1,0 +1,25 @@
+.canvas {
+  --export-paper: oklch(1 0 none);
+  --export-ink: oklch(27% .018 158);
+  --export-label-color: color-mix(in oklch, var(--export-frame-color) 90%, black);
+  --export-scene-edge: color-mix(in oklch, var(--export-frame-color) 46%, black);
+  --export-pitch-base: color-mix(in oklch, var(--export-surface-color) 84%, black);
+  --export-pitch-stripe: color-mix(in oklch, var(--export-pitch-base) 90%, white);
+  --export-stand-tread: color-mix(in oklch, var(--export-frame-color) 80%, var(--export-divider-color));
+  --export-stand-riser: color-mix(in oklch, var(--export-frame-color) 55%, black);
+  --export-lamp-color: oklch(95% .038 108);
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  inline-size: var(--export-width);
+  background: var(--export-paper);
+  color: white;
+  font-size: 24px;
+  line-height: 28px;
+  text-transform: uppercase;
+  overflow-wrap: break-word;
+}
+
+.canvas, .canvas * { box-sizing: border-box; }

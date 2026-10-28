@@ -1,0 +1,16 @@
+.teams {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  block-size: var(--export-field-height);
+}
+.roster {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(var(--export-row-count), var(--export-cell-height));
+  align-content: space-between;
+  align-items: start;
+  column-gap: var(--export-column-gap);
+  min-inline-size: 0;
+  padding-inline: var(--export-team-inset);
+  padding-block: var(--export-field-inset);
+}

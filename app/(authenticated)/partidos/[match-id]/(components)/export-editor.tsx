@@ -46,6 +46,7 @@ import {
 import { byName } from "@/utils/by-name";
 import { ExportPreview } from "./export-preview";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/utils/cn";
 
 type ExportEditorProps = {
   matchId: number;
@@ -129,13 +130,18 @@ export default function ExportEditor({
       }}
     >
       <DialogHeader className="border-b p-4 sm:p-6 text-start">
-        <DialogTitle>Exportar</DialogTitle>
+        <div className="flex min-w-0 items-center justify-between gap-3 pe-12">
+          <DialogTitle className="min-w-0 pe-0">Exportar</DialogTitle>
+          <Button type="button" variant="outline" className="shrink-0 lg:hidden" disabled={processing} aria-label={showPreview ? "Ver opciones" : "Ver imagen"} aria-expanded={showPreview} onClick={() => setShowPreview(value => !value)}>
+            {showPreview ? "Opciones" : "Ver imagen"}
+          </Button>
+        </div>
         <DialogDescription>
           Personalizá la imagen de tus equipos.
         </DialogDescription>
       </DialogHeader>
       <div className="grid min-h-0 min-w-0 grid-cols-1 lg:grid-cols-[theme(spacing.80)_minmax(0,1fr)]">
-        <div className="min-h-0 min-w-0 overflow-auto overscroll-contain p-4 sm:p-6">
+        <div className={cn("min-h-0 min-w-0 overflow-auto overscroll-contain p-4 sm:p-6", showPreview && "hidden lg:block")}>
           <fieldset
             disabled={processing}
             className="grid min-w-0 gap-6 disabled:opacity-60"
@@ -416,7 +422,7 @@ export default function ExportEditor({
         </div>
         {showPreview ? (
           <section
-            className="grid min-h-0 min-w-0 grid-rows-[minmax(0,1fr)] border-s bg-muted"
+            className="grid min-h-0 min-w-0 grid-rows-[minmax(0,1fr)] bg-muted lg:border-s"
             aria-label="Vista previa"
           >
             <div

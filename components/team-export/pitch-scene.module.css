@@ -1,0 +1,8 @@
+.scene {
+  position: relative;
+  block-size: var(--export-scene-height);
+  overflow: clip;
+  background: var(--export-scene-edge);
+}
+.illustration { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; pointer-events: none; }
+.players { position: relative; padding-block-start: var(--export-stand-height); }

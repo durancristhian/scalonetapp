@@ -1,0 +1,64 @@
+.heading {
+  display: grid;
+  --heading-ink: oklch(21.6% .006 56.043);
+  --heading-accent: oklch(35% .042 158);
+  --heading-border: oklch(87% .006 56);
+  gap: 20px;
+  padding-block: 28px 22px;
+  background: var(--export-paper);
+  color: var(--heading-ink);
+  text-transform: none;
+}
+
+.matchHeading {
+  position: relative;
+  margin-inline: var(--export-team-inset);
+  padding-block-end: 22px;
+  border-block-end: 1px solid var(--heading-border);
+}
+
+.matchHeading::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-end: -1px;
+  inline-size: 72px;
+  block-size: 3px;
+  background: var(--heading-accent);
+}
+
+.matchTitle {
+  min-inline-size: 0;
+  margin: 0;
+  font-size: 46px;
+  line-height: 1.15;
+  font-weight: 750;
+  letter-spacing: -.035em;
+  text-align: start;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
+.teamTitles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+}
+
+.teamTitleSlot {
+  display: flex;
+  min-inline-size: 0;
+  padding-inline: var(--export-team-inset);
+}
+.teamTitle {
+  flex: 1;
+  min-inline-size: 0;
+  margin: 0;
+  font-size: 32px;
+  line-height: 1.25;
+  font-weight: 650;
+  letter-spacing: -.02em;
+  text-align: start;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
