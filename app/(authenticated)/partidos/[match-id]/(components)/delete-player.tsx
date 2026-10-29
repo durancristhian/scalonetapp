@@ -18,9 +18,10 @@ import { type FC, useRef, useState } from "react";
 type DeletePlayerProps = {
   id: number;
   onClose: () => void;
+  onCloseAutoFocus: () => void;
 };
 
-export const DeletePlayer: FC<DeletePlayerProps> = ({ id, onClose }) => {
+export const DeletePlayer: FC<DeletePlayerProps> = ({ id, onClose, onCloseAutoFocus }) => {
   const [processing, setIsProcessing] = useState(false);
   const lock = useRef(false);
   const { errorAlert } = useAlerts();
@@ -51,7 +52,7 @@ export const DeletePlayer: FC<DeletePlayerProps> = ({ id, onClose }) => {
 
   return (
     <AlertDialog open>
-      <AlertDialogContent onEscapeKeyDown={event => { if (lock.current) event.preventDefault(); else onClose(); }}>
+      <AlertDialogContent onCloseAutoFocus={onCloseAutoFocus} onEscapeKeyDown={event => { if (lock.current) event.preventDefault(); else onClose(); }}>
         <AlertDialogHeader>
           <AlertDialogTitle>¿Eliminar este jugador?</AlertDialogTitle>
           <AlertDialogDescription className="max-md:text-balance">

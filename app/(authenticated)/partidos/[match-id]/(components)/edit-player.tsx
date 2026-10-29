@@ -18,9 +18,10 @@ import { type FC } from "react";
 type EditPlayerProps = {
   player: Player;
   onClose: () => void;
+  onCloseAutoFocus: () => void;
 };
 
-export const EditPlayer: FC<EditPlayerProps> = ({ player, onClose }) => {
+export const EditPlayer: FC<EditPlayerProps> = ({ player, onClose, onCloseAutoFocus }) => {
   const { errorAlert } = useAlerts();
 
   const onSubmit: (values: PlayerSchema, photo?: Blob | null) => Promise<void> = async (values, photo) => {
@@ -48,7 +49,7 @@ export const EditPlayer: FC<EditPlayerProps> = ({ player, onClose }) => {
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent onCloseAutoFocus={onCloseAutoFocus} className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Editar ficha del jugador</DialogTitle>
           <DialogDescription className="sr-only">
