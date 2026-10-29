@@ -1,28 +1,24 @@
 export class Telegram {
-  sendMessage(message: string) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const botId = process.env.TELEGRAM_BOTID;
-        const chatId = process.env.TELEGRAM_CHATID;
+  async sendMessage(message: string): Promise<void> {
+    const botId = process.env.TELEGRAM_BOTID;
+    const chatId = process.env.TELEGRAM_CHATID;
 
-        if (!botId || !chatId) {
-          reject(
-            `'TELEGRAM_BOTID' and 'TELEGRAM_CHATID' env vars are not configured`
-          );
+    if (!botId || !chatId) {
+      throw new Error("Telegram credentials are not configured");
+    }
 
-          return;
-        }
+    const text = encodeURIComponent(message);
+    const response = await fetch(
+      `https://api.telegram.org/bot${botId}/sendMessage?chat_id=${chatId}&text=${text}`
+    );
 
-        const text = encodeURIComponent(message);
+    if (!response.ok) {
+      throw new Error("Telegram rejected the message");
+    }
 
-        const res = await fetch(
-          `https://api.telegram.org/bot${botId}/sendMessage?chat_id=${chatId}&text=${text}`
-        );
-
-        resolve(res);
-      } catch (error) {
-        reject(error);
-      }
-    });
+    const result: unknown = await response.json();
+    if (typeof result !== "object" || result === null || !("ok" in result) || result.ok !== true) {
+      throw new Error("Telegram did not confirm delivery");
+    }
   }
 }

@@ -8,9 +8,10 @@ import { type FC } from "react";
 
 type MatchsListProps = {
   matches: Match[];
+  atMatchLimit: boolean;
 };
 
-export const MatchesList: FC<MatchsListProps> = ({ matches }) => {
+export const MatchesList: FC<MatchsListProps> = ({ matches, atMatchLimit }) => {
   const canListMatches = Array.isArray(matches) && matches.length;
 
   if (!canListMatches) {
@@ -27,10 +28,7 @@ export const MatchesList: FC<MatchsListProps> = ({ matches }) => {
         <AnimatedListItem key={match.id} listIndex={idx}>
           <MatchItem
             match={match}
-            disableDuplication={
-              matches.length >=
-              Number(process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER)
-            }
+            disableDuplication={atMatchLimit}
           />
         </AnimatedListItem>
       ))}

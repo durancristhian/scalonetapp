@@ -1,6 +1,6 @@
 "use server";
 
-import { type FeedbackSchema } from "@/schemas/feedback";
+import { FEEDBACK_SCHEMA, type FeedbackSchema } from "@/schemas/feedback";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { Telegram } from "@/utils/telegram";
 import { auth, currentUser } from "@clerk/nextjs/server";
@@ -17,6 +17,8 @@ export const feedbackAction: (data: FeedbackSchema) => Promise<void> = async (
       throw new Error(ERROR_MESSAGES.unauthorized);
     }
 
+    const feedback = FEEDBACK_SCHEMA.parse(data);
+
     /* We generate the expected message format */
     const message = [
       `User id: ${userId}`,
@@ -29,7 +31,7 @@ export const feedbackAction: (data: FeedbackSchema) => Promise<void> = async (
             : emailAddress
         )
         .join(", ")}`,
-      `Message: ${data.message}`,
+      `Message: ${feedback.message}`,
     ].join("\n");
 
     const telegram = new Telegram();

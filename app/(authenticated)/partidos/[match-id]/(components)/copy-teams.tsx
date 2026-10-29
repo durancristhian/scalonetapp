@@ -12,7 +12,7 @@ type CopyTeamsProps = {
 };
 
 export const CopyTeams: FC<CopyTeamsProps> = ({ teams }) => {
-  const { successAlert } = useAlerts();
+  const { successAlert, errorAlert } = useAlerts();
 
   const copyTeams = () => {
     const text = `${teams
@@ -26,10 +26,17 @@ export const CopyTeams: FC<CopyTeamsProps> = ({ teams }) => {
       })
       .join("\n\n")}`;
 
-    copy(text);
+    try {
+      if (copy(text)) {
+        successAlert({ title: "¡Equipos copiados al portapapeles!" });
+        return;
+      }
+    } catch {
+      // Clipboard access can also throw when the browser denies it.
+    }
 
-    successAlert({
-      title: "¡Equipos copiados al portapapeles!",
+    errorAlert({
+      title: "No pudimos copiar los equipos. Volvé a intentarlo y permití el acceso al portapapeles.",
     });
   };
 

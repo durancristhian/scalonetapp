@@ -13,7 +13,7 @@ const Page: FC = async () => {
   const [matches, totalCount] = await getMatchesQuery();
 
   const atMatchLimit =
-    totalCount >= Number(process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER);
+    totalCount >= Number(process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER ?? 100);
 
   return (
     <div className="py-4 md:py-8">
@@ -24,7 +24,7 @@ const Page: FC = async () => {
             <AddMatch disabled={atMatchLimit} />
           </div>
           {atMatchLimit ? <MatchLimitAlert /> : null}
-          <MatchesList matches={matches} />
+          <MatchesList matches={matches} atMatchLimit={atMatchLimit} />
         </div>
       </div>
     </div>

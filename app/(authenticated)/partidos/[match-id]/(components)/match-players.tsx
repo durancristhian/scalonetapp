@@ -27,7 +27,7 @@ import { cn } from "@/utils/cn";
 import { MAX_PLAYERS_PER_MATCH } from "@/utils/player-limits";
 import { type Player } from "@prisma/client";
 import { EllipsisVerticalIcon, PencilIcon, TrashIcon } from "lucide-react";
-import { type FC, useState } from "react";
+import { type FC, useRef, useState } from "react";
 
 type MatchPlayersProps = {
   players: Player[];
@@ -93,8 +93,9 @@ type MatchPlayerProps = {
 
 const MatchPlayer: FC<MatchPlayerProps> = ({ player }) => {
   const [menuOpened, setMenuOpened] = useState(false);
-  /* This is not great at all but enough for now due to the small amout of options we have in the dropdown menu */
   const [dialogId, setDialogId] = useState<"edit" | "delete" | null>(null);
+  const pendingDialog = useRef<typeof dialogId>(null);
+  const menuTrigger = useRef<HTMLButtonElement>(null);
 
   return (
     <Card>
@@ -104,6 +105,7 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player }) => {
             <DropdownMenu open={menuOpened} onOpenChange={setMenuOpened}>
               <DropdownMenuTrigger asChild>
                 <Button
+                  ref={menuTrigger}
                   variant="ghost"
                   size="icon"
                   aria-label={`Acciones de ${player.name}`}
@@ -112,18 +114,26 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player }) => {
                 </Button>
               </DropdownMenuTrigger>
               {/* Margin here helps to detach the menu from the limit of the screen (specially in mobile) */}
-              <DropdownMenuContent className="mr-4">
+              <DropdownMenuContent
+                className="mr-4"
+                onCloseAutoFocus={() => {
+                  // Wait for the menu's exit and modal cleanup before opening a dialog.
+                  const nextDialog = pendingDialog.current;
+                  pendingDialog.current = null;
+                  if (nextDialog) setDialogId(nextDialog);
+                }}
+              >
                 <DropdownMenuItem
-                  onClick={() => {
-                    setDialogId("edit");
+                  onSelect={() => {
+                    pendingDialog.current = "edit";
                   }}
                 >
                   <PencilIcon className="h-4 mr-2 text-muted-foreground w-4" />
                   Editar
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => {
-                    setDialogId("delete");
+                  onSelect={() => {
+                    pendingDialog.current = "delete";
                   }}
                 >
                   <TrashIcon className="h-4 mr-2 text-destructive w-4" />
@@ -136,6 +146,7 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player }) => {
         {dialogId === "edit" ? (
           <EditPlayer
             player={player}
+            onCloseAutoFocus={() => menuTrigger.current?.focus()}
             onClose={() => {
               setDialogId(null);
               setMenuOpened(false);
@@ -145,6 +156,7 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player }) => {
         {dialogId === "delete" ? (
           <DeletePlayer
             id={player.id}
+            onCloseAutoFocus={() => menuTrigger.current?.focus()}
             onClose={() => {
               setDialogId(null);
               setMenuOpened(false);
