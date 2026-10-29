@@ -1,7 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { type FC, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { type FC, useEffect, useTransition } from "react";
 
 type ErrorProps = {
   error: Error & { digest?: string };
@@ -9,6 +10,9 @@ type ErrorProps = {
 };
 
 const Error: FC<ErrorProps> = ({ error, reset }) => {
+  const router = useRouter();
+  const [retrying, startTransition] = useTransition();
+
   useEffect(() => {
     /* TODO: Log the error to an error reporting service */
     console.error(error);
@@ -25,11 +29,15 @@ const Error: FC<ErrorProps> = ({ error, reset }) => {
             vos.
           </p>
           <Button
+            disabled={retrying}
             onClick={() => {
-              reset();
+              startTransition(() => {
+                router.refresh();
+                reset();
+              });
             }}
           >
-            Reintentar
+            {retrying ? "Reintentando..." : "Reintentar"}
           </Button>
         </div>
       </div>
