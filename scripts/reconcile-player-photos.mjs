@@ -1,9 +1,8 @@
 import { list, del } from "@vercel/blob";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../utils/prisma.ts";
 const origin = process.env.PLAYER_PHOTO_ORIGIN;
 if (!origin || !process.env.BLOB_READ_WRITE_TOKEN)
   throw new Error("Explicit photo store configuration required");
-const prisma = new PrismaClient();
 const remove = process.argv.includes("--delete");
 let cursor,
   candidates = 0,

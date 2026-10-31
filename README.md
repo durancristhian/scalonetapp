@@ -38,6 +38,10 @@ npm run dev
 
 Open [localhost:3000](http://localhost:3000). Keep this port for local image exports.
 Environment files are ignored by Git; use development credentials only.
+Prisma CLI reads `POSTGRES_URL_NON_POOLING` through [prisma.config.ts](prisma.config.ts);
+the application uses pooled `POSTGRES_PRISMA_URL`. Keep the explicit `--env-file`
+for local Prisma commands. `prisma generate` needs neither URL; migration commands
+require the nonpooling URL. Vercel supplies these variables directly.
 
 ## Formatting
 
