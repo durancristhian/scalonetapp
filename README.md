@@ -37,6 +37,11 @@ npm run dev
 Open [localhost:3000](http://localhost:3000). Keep this port for local image exports.
 Environment files are ignored by Git; use development credentials only.
 
+## Formatting
+
+Run `npm run format` to format the repository and `npm run format:check` to check it.
+Prettier runs independently of ESLint.
+
 ## Frontend behavior tests
 
 Run without an environment file, database or Clerk session:
