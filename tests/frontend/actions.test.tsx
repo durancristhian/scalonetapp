@@ -204,18 +204,21 @@ describe("edit player", () => {
 });
 
 describe("clipboard", () => {
-  it.each([true, false, "throw"])(
-    "should report the actual clipboard result when copy returns %s",
+  it.each([true, false, "reject", "throw"])(
+    "should wait for the clipboard outcome and allow retry after %s",
     async (outcome) => {
       const value = teams([
         player(1, { name: "Zoe" }),
         player(2, { name: "Ana" }),
       ]);
       const before = structuredClone(value);
-      vi.mocked(copy).mockImplementation(() => {
-        if (outcome === "throw") throw Error("denied");
-        return outcome === true;
-      });
+      const pending = deferred<boolean>();
+      vi.mocked(copy)
+        .mockReset()
+        .mockImplementation(() => {
+          if (outcome === "throw") throw Error("denied");
+          return pending.promise;
+        });
       const user = userEvent.setup();
       render(
         <>
@@ -224,6 +227,18 @@ describe("clipboard", () => {
         </>,
       );
       await user.click(screen.getByRole("button", { name: "Copiar" }));
+      if (outcome !== "throw") {
+        expect(
+          screen.queryByText("¡Equipos copiados al portapapeles!"),
+        ).not.toBeInTheDocument();
+        expect(
+          screen.queryByText(/No pudimos copiar los equipos/),
+        ).not.toBeInTheDocument();
+        await act(async () => {
+          if (outcome === "reject") pending.reject(Error("denied"));
+          else pending.resolve(outcome === true);
+        });
+      }
       expect(
         await screen.findByText(
           outcome === true
@@ -239,6 +254,16 @@ describe("clipboard", () => {
         "Azules:\n- Ana\n- Zoe\n\nRojos:\n",
       );
       expect(value).toEqual(before);
+      if (outcome !== true) {
+        vi.mocked(copy).mockResolvedValueOnce(true);
+        await user.click(screen.getByRole("button", { name: "Copiar" }));
+        expect(
+          await screen.findByText("¡Equipos copiados al portapapeles!"),
+        ).toBeVisible();
+        expect(vi.mocked(copy).mock.calls[1]).toEqual([
+          "Azules:\n- Ana\n- Zoe\n\nRojos:\n",
+        ]);
+      }
     },
   );
 });
