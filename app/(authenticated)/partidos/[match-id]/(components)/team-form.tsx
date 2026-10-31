@@ -37,7 +37,7 @@ export const TeamForm: FC<TeamFormProps> = ({ onSubmit, values }) => {
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem className="space-y-0">
+            <FormItem className="gap-0">
               <FormLabel className="sr-only">Nombre del equipo</FormLabel>
               <FormControl>
                 <Input
