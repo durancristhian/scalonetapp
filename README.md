@@ -54,6 +54,8 @@ npx playwright install chromium  # once per machine
 npm run test:frontend
 ```
 
+`npm run typecheck` generates Next.js route types before checking TypeScript, without starting a server.
+
 `npm test` runs Vitest; `npm run test:watch` enables watch mode.
 `npm run test:browser` runs the isolated Playwright fixture.
 

@@ -16,7 +16,7 @@
     "test:browser": "playwright test",
     "test:browser:serve": "vite --config tests/browser/vite.config.mts",
     "test:frontend": "npm run test && npm run test:browser",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "format": "prettier . --write",
     "format:check": "prettier . --check"
   },
