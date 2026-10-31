@@ -5,8 +5,11 @@ import {
   type TeamExportProps,
 } from "@/components/team-export/team-export";
 import { IMAGE_EXPORT_WIDTH } from "@/utils/image-export-options";
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import styles from "./export-preview.module.css";
+
+// Resizing the preview changes its scale, not the export composition.
+const MemoizedTeamExport = memo(TeamExport);
 
 export function ExportPreview(props: TeamExportProps) {
   const viewport = useRef<HTMLDivElement>(null);
@@ -49,7 +52,7 @@ export function ExportPreview(props: TeamExportProps) {
           className={styles.canvas}
           style={{ inlineSize: IMAGE_EXPORT_WIDTH, transform: `scale(${scale})` }}
         >
-          <TeamExport {...props} />
+          <MemoizedTeamExport {...props} />
         </div>
       </div>
     </div>
