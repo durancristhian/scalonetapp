@@ -56,5 +56,5 @@ npm run test:frontend
 `npm run test:browser` runs the isolated Playwright fixture.
 
 Visual comparisons, authentication and backend verification are outside this suite.
-[CI](.github/workflows/frontend-tests.yml) runs lint, typecheck and both suites on PRs
+[CI](.github/workflows/frontend-tests.yml) runs formatting checks, lint, typecheck and both suites on PRs
 and pushes to `main`.
