@@ -21,7 +21,7 @@ import {
   TrashIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { type FC, useState } from "react";
+import { type FC, useRef, useState } from "react";
 
 type MatchItemProps = {
   disableDuplication: boolean;
@@ -36,6 +36,13 @@ export const MatchItem: FC<MatchItemProps> = ({
   const [dialogId, setDialogId] = useState<
     "duplicate" | "edit" | "delete" | null
   >(null);
+
+  const pendingDialog = useRef<typeof dialogId>(null);
+  const menuTrigger = useRef<HTMLButtonElement>(null);
+  const restoreFocus = (event: Event) => {
+    event.preventDefault();
+    menuTrigger.current?.focus();
+  };
 
   return (
     <Card className="relative hover:bg-accent transition-colors">
@@ -62,6 +69,7 @@ export const MatchItem: FC<MatchItemProps> = ({
         <DropdownMenu open={menuOpened} onOpenChange={setMenuOpened}>
           <DropdownMenuTrigger asChild>
             <Button
+              ref={menuTrigger}
               variant="ghost"
               size="icon"
               aria-label={`Acciones de ${match.name}`}
@@ -69,10 +77,17 @@ export const MatchItem: FC<MatchItemProps> = ({
               <EllipsisVerticalIcon className="h-4 text-muted-foreground w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="mr-4">
+          <DropdownMenuContent
+            className="mr-4"
+            onCloseAutoFocus={() => {
+              const nextDialog = pendingDialog.current;
+              pendingDialog.current = null;
+              if (nextDialog) setDialogId(nextDialog);
+            }}
+          >
             <DropdownMenuItem
-              onClick={() => {
-                setDialogId("duplicate");
+              onSelect={() => {
+                pendingDialog.current = "duplicate";
               }}
               disabled={disableDuplication}
             >
@@ -80,16 +95,16 @@ export const MatchItem: FC<MatchItemProps> = ({
               Duplicar
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => {
-                setDialogId("edit");
+              onSelect={() => {
+                pendingDialog.current = "edit";
               }}
             >
               <PencilIcon className="h-4 mr-2 text-muted-foreground w-4" />
               Editar
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => {
-                setDialogId("delete");
+              onSelect={() => {
+                pendingDialog.current = "delete";
               }}
             >
               <TrashIcon className="h-4 mr-2 text-destructive w-4" />
@@ -100,6 +115,7 @@ export const MatchItem: FC<MatchItemProps> = ({
         {dialogId === "duplicate" ? (
           <DuplicateMatch
             id={match.id}
+            onCloseAutoFocus={restoreFocus}
             onClose={() => {
               setDialogId(null);
               setMenuOpened(false);
@@ -109,6 +125,7 @@ export const MatchItem: FC<MatchItemProps> = ({
         {dialogId === "edit" ? (
           <EditMatch
             match={match}
+            onCloseAutoFocus={restoreFocus}
             onClose={() => {
               setDialogId(null);
               setMenuOpened(false);
@@ -118,6 +135,7 @@ export const MatchItem: FC<MatchItemProps> = ({
         {dialogId === "delete" ? (
           <DeleteMatch
             id={match.id}
+            onCloseAutoFocus={restoreFocus}
             onClose={() => {
               setDialogId(null);
               setMenuOpened(false);

@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, it, vi } from "vitest";
 import { MatchesList } from "@/app/(authenticated)/(components)/matches-list";
@@ -40,5 +40,29 @@ it.each([true, false])(
     const duplicate = screen.getByRole("menuitem", { name: "Duplicar" });
     if (atLimit) expect(duplicate).toHaveAttribute("aria-disabled", "true");
     else expect(duplicate).not.toHaveAttribute("aria-disabled", "true");
+  },
+);
+
+it.each(["Duplicar", "Editar", "Eliminar"])(
+  "should restore focus and allow reopening after quickly escaping %s",
+  async (action) => {
+    const user = userEvent.setup();
+    render(<MatchesList matches={[match()]} atMatchLimit={false} />);
+    const trigger = screen.getByRole("button", {
+      name: "Acciones de Amistoso",
+    });
+    for (let attempt = 0; attempt < 2; attempt++) {
+      await user.click(trigger);
+      await user.click(screen.getByRole("menuitem", { name: action }));
+      expect(
+        await screen.findByRole(action === "Editar" ? "dialog" : "alertdialog"),
+      ).toBeVisible();
+      await user.tab();
+      await user.keyboard("{Escape}");
+      await waitFor(() => expect(trigger).toHaveFocus());
+      await user.click(trigger);
+      expect(screen.getByRole("menuitem", { name: action })).toBeVisible();
+      await user.keyboard("{Escape}");
+    }
   },
 );

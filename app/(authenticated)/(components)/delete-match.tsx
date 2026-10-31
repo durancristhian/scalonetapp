@@ -24,9 +24,14 @@ import { type FC, useRef, useState } from "react";
 type DeleteMatchProps = {
   id: number;
   onClose: () => void;
+  onCloseAutoFocus?: (event: Event) => void;
 };
 
-export const DeleteMatch: FC<DeleteMatchProps> = ({ id, onClose }) => {
+export const DeleteMatch: FC<DeleteMatchProps> = ({
+  id,
+  onClose,
+  onCloseAutoFocus,
+}) => {
   const [processing, setIsProcessing] = useState(false);
   const lock = useRef(false);
   const { errorAlert, successAlert } = useAlerts();
@@ -65,6 +70,7 @@ export const DeleteMatch: FC<DeleteMatchProps> = ({ id, onClose }) => {
   return (
     <AlertDialog open>
       <AlertDialogContent
+        onCloseAutoFocus={onCloseAutoFocus}
         onEscapeKeyDown={(event) => {
           if (lock.current) event.preventDefault();
           else onClose();
