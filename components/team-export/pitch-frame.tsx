@@ -1,7 +1,6 @@
 import type { PitchGeometry } from "./pitch-geometry";
 import styles from "./pitch-frame.module.css";
 
-// The pitch's outline and thickness live here, separately from its surface.
 export function PitchFrame({ geometry }: { geometry: PitchGeometry }) {
   return (
     <g data-export-pitch-frame>

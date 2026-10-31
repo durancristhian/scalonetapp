@@ -26,7 +26,6 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const match = await getMatch((await params)["match-id"]);
-  // Keep user-entered $ sequences literal instead of applying Next's template.
   return {
     title: {
       absolute: `${match?.name ?? "Página no encontrada"} | Scalonet.app`,

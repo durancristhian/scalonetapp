@@ -15,9 +15,7 @@ function readTeams(serialized: string, playerIds: number[]): BaseTeam[] {
     const value: unknown = JSON.parse(serialized);
     if (Array.isArray(value) && !value.length) return [];
     if (!getSavedTeamsError(value, playerIds)) return value as BaseTeam[];
-  } catch {
-    // Legacy saved teams may be malformed. The current roster can still be copied.
-  }
+  } catch {}
   return [];
 }
 
@@ -41,8 +39,6 @@ export async function duplicateMatch(
 ): Promise<DuplicateMatchResult> {
   return prisma.$transaction(async (transaction) => {
     await lockMatchOwner(transaction, userId);
-    // Lock this owner's matches in a stable order: concurrent copies must see
-    // each other's names/counts. Player additions also lock their parent match.
     await transaction.$queryRaw`
       SELECT "id" FROM "Match" WHERE "userId" = ${userId} ORDER BY "id" FOR UPDATE
     `;
@@ -99,7 +95,6 @@ export async function duplicateMatch(
           avatar: true,
         },
       });
-      // RETURNING order is unspecified. Attributes also distinguish legacy duplicate names.
       const idsByPlayer = new Map<string, number[]>();
       for (const player of created) {
         const key = playerKey(player);

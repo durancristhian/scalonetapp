@@ -17,7 +17,6 @@ const roster = [player(1), player(2)];
 const lineup = teams([roster[0]], [roster[1]]);
 const saved = getTeamsToSave(lineup);
 
-// A minimal consumer: real orchestration hook, visible pending/error/dirty state.
 function Actions({
   value = match(roster),
   current = lineup,

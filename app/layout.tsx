@@ -24,7 +24,6 @@ export const metadata: Metadata = {
     default: "Scalonet.app",
     template: "%s | Scalonet.app",
   },
-  // Only public pages explicitly opt into search indexing.
   robots: { index: false, follow: false },
 };
 
@@ -33,10 +32,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
     <ClerkProvider
       dynamic
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
-      /* After login we redirect to the dashboard */
       signInForceRedirectUrl="/dashboard"
       signUpForceRedirectUrl="/dashboard"
-      /* After logout we redirect to the public landing page */
       afterSignOutUrl="/"
     >
       <html lang="es">

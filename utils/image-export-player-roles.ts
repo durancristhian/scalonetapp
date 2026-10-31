@@ -43,8 +43,6 @@ export function isImageExportTeamSelections(
   });
 }
 
-// Compare team membership, not order or names. A changed roster clears its
-// assignments, even when the previously selected players are still present.
 export function reconcileImageExportTeamSelections(
   teams: Team[],
   saved: ImageExportTeamSelections,
@@ -112,8 +110,6 @@ export function readImageExportTeamSelections(
   );
 }
 
-// Observe changes while the editor is closed too. Do not initialize roles before
-// the first export configuration, so unique-goalkeeper preselection still works.
 export function invalidateImageExportTeamSelections(
   matchId: number,
   teams: Team[],
@@ -133,7 +129,5 @@ export function storeImageExportTeamSelections(
 ): void {
   try {
     localStorage.setItem(storageKey(matchId), JSON.stringify(selections));
-  } catch {
-    // Keep the current selection usable without browser persistence.
-  }
+  } catch {}
 }

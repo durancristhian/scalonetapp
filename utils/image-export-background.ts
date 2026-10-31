@@ -53,8 +53,6 @@ export function getImageExportBackgroundStyle(
   } as CSSProperties;
 }
 
-// External SVGs cannot inherit the page's CSS variables. Set their own variables
-// and literal fallbacks from the same surface colors used by the export frame.
 export function colorizeExportBackground(
   svg: string,
   background: ImageExportBackgroundId,

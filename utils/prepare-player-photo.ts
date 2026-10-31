@@ -13,7 +13,6 @@ export const PLAYER_PHOTO_SELECTION_ERROR =
   "Selecciona una foto JPG, PNG, WebP o HEIC de hasta 50 MB.";
 const CONVERSION_ERROR = "No pudimos preparar esta foto HEIC. Prueba con otra.";
 
-// Some file pickers omit HEIC's MIME type, so inspect its container brand too.
 async function isHeic(file: File): Promise<boolean> {
   if (HEIC_TYPES.has(file.type) || /\.heic$|\.heif$/i.test(file.name))
     return true;
@@ -44,8 +43,6 @@ export async function preparePlayerPhoto(
   }
 
   return new Promise((resolve, reject) => {
-    // A dedicated worker owns conversion (including the decoder's child worker).
-    // Termination releases the decoder on success, cancellation, failure or timeout.
     let worker: Worker;
     try {
       worker = new Worker(

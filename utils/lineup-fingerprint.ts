@@ -1,6 +1,5 @@
 import type { Team } from "@/types/team";
 
-// Both sides hash the exact lineup shown in the preview, including player edits.
 export async function lineupFingerprint(
   name: string,
   teams: Team[],

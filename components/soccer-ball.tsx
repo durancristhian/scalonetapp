@@ -1,9 +1,3 @@
-/*
-    By: ph
-    See: https://v0.app/icon/ph/soccer-ball-fill
-    Example: <IconPhSoccerBallFill width="24px" height="24px" style={{color: "#000000"}} />
-*/
-
 import { type SVGProps } from "react";
 
 export const SoccerBall = ({

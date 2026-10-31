@@ -8,7 +8,6 @@ import { IMAGE_EXPORT_WIDTH } from "@/utils/image-export-options";
 import { memo, useEffect, useRef, useState } from "react";
 import styles from "./export-preview.module.css";
 
-// Resizing the preview changes its scale, not the export composition.
 const MemoizedTeamExport = memo(TeamExport);
 
 export function ExportPreview(props: TeamExportProps) {

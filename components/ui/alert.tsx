@@ -1,7 +1,6 @@
 import { cn } from "@/utils/cn";
 import * as React from "react";
 
-// shadcn Alert, using this application's Tailwind 3 tokens and spacing.
 const Alert = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>

@@ -110,7 +110,6 @@ export function ImageCropper({
 
     try {
       if (!croppedImageUrl) throw new Error("Crop not ready");
-      /* Transform croppedImage (base64) to Blob */
       const array = [];
       const blobBin = atob(croppedImageUrl?.split(",")[1] || "");
 
@@ -190,7 +189,6 @@ export function ImageCropper({
   );
 }
 
-// Helper function to center the crop
 const centerAspectCrop: (opts: {
   aspect: number;
   height: number;

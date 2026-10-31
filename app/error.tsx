@@ -14,7 +14,6 @@ const Error: FC<ErrorProps> = ({ error, reset }) => {
   const [retrying, startTransition] = useTransition();
 
   useEffect(() => {
-    /* TODO: Log the error to an error reporting service */
     console.error(error);
   }, [error]);
 

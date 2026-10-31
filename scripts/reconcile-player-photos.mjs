@@ -1,5 +1,3 @@
-// Run with explicitly selected DB/Blob environment. Dry-run unless --delete is passed.
-// Reconciles failed cleanup without adding a scheduled job or quota counter.
 import { list, del } from "@vercel/blob";
 import { PrismaClient } from "@prisma/client";
 const origin = process.env.PLAYER_PHOTO_ORIGIN;

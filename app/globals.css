@@ -59,7 +59,6 @@
   }
 }
 
-/* Neutral stone pattern, independent of the export palette. */
 .bg-pattern {
   background-image:
     radial-gradient(oklch(0.923 0.003 48.717) 2px, transparent 2px),

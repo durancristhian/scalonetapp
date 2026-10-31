@@ -43,7 +43,6 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
       ref={columnRef}
       className="min-w-0 lg:[min-block-size:var(--roster-min-height,calc(100dvh-15rem-2px))]"
     >
-      {/* A zero-height sticky anchor keeps card resizing out of page layout. */}
       <div className="lg:sticky lg:[inset-block-start:var(--roster-inset,73px)] lg:[block-size:0]">
         <Card className="lg:flex lg:[block-size:var(--roster-height,calc(100dvh-15rem-2px))] lg:flex-col">
           <CardHeader className="flex-row flex-wrap gap-3 items-center justify-between space-y-0 p-4 sm:p-6 lg:shrink-0">
@@ -62,7 +61,6 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
           </CardHeader>
           {canListPlayers ? (
             <CardContent className="px-4 pe-2 sm:px-6 sm:pe-3 lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
-              {/* Keep large rosters scrollable independently of the team builder. */}
               <ScrollArea
                 className={cn(
                   players.length > 10 ? "h-96" : "h-auto",
@@ -116,11 +114,9 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player }) => {
                   <EllipsisVerticalIcon className="h-4 text-muted-foreground w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              {/* Margin here helps to detach the menu from the limit of the screen (specially in mobile) */}
               <DropdownMenuContent
                 className="mr-4"
                 onCloseAutoFocus={() => {
-                  // Wait for the menu's exit and modal cleanup before opening a dialog.
                   const nextDialog = pendingDialog.current;
                   pendingDialog.current = null;
                   if (nextDialog) setDialogId(nextDialog);

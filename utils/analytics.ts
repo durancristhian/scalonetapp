@@ -27,7 +27,6 @@ export function analyticsExcluded(): boolean {
       !!localStorage.getItem("umami.disabled")
     );
   } catch {
-    // If browser privacy settings deny storage, omit analytics.
     return true;
   }
 }
@@ -45,11 +44,8 @@ export function flushAnalytics() {
   if (!window.umami) return;
   for (const payload of pending.splice(0)) {
     try {
-      // Object form deliberately avoids Umami's automatic URL/title/referrer defaults.
       void Promise.resolve(window.umami.track(payload)).catch(() => {});
-    } catch {
-      // Tracking must never affect the operation being measured.
-    }
+    } catch {}
   }
 }
 
@@ -81,7 +77,6 @@ export function trackAnalytics(name?: AnalyticsEvent, data?: AnalyticsData) {
         source.hostname !== "www.scalonet.app" &&
         source.hostname !== "scalonet.app"
       ) {
-        // Discovery source only, never the referring path, query or fragment.
         referrer = `https://${source.hostname}/`;
       }
     }
@@ -96,7 +91,5 @@ export function trackAnalytics(name?: AnalyticsEvent, data?: AnalyticsData) {
         ...(data ? { data: { ...data } } : {}),
       });
     flushAnalytics();
-  } catch {
-    // Analytics is best effort, including malformed browser metadata.
-  }
+  } catch {}
 }

@@ -88,7 +88,6 @@ export const duplicateMatchAction = async (
       revalidatePath("/dashboard");
       revalidatePath("/partidos");
     } catch (error) {
-      // The copy already committed. Don't invite a second copy because refresh failed.
       reportServerError(error, {
         operation: "match.duplicate.revalidate",
         matchId: id,

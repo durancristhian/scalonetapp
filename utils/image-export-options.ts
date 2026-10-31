@@ -77,16 +77,12 @@ export function readImageExportOptions(): ImageExportOptions {
       localStorage.getItem(IMAGE_EXPORT_STORAGE_KEY) ?? "null",
     );
     if (isImageExportOptions(stored)) return stored;
-  } catch {
-    // Storage may be unavailable or contain invalid preferences.
-  }
+  } catch {}
   return { ...DEFAULT_IMAGE_EXPORT_OPTIONS };
 }
 
 export function storeImageExportOptions(options: ImageExportOptions): void {
   try {
     localStorage.setItem(IMAGE_EXPORT_STORAGE_KEY, JSON.stringify(options));
-  } catch {
-    // The editor still works when this browser cannot persist preferences.
-  }
+  } catch {}
 }

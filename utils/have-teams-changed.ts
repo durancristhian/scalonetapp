@@ -14,7 +14,6 @@ const comparisonKey = (serialized: string): string | null => {
         !team.players.every(Number.isSafeInteger)
       )
         return null;
-      // Preserve duplicate assignments and malformed records as pending repairs.
       teams.push({
         id: team.id,
         name: team.name.trim(),
@@ -27,7 +26,6 @@ const comparisonKey = (serialized: string): string | null => {
   }
 };
 
-// Player order and surrounding name whitespace do not change the teams.
 export const haveTeamsChanged = (current: string, saved: string): boolean => {
   const currentKey = comparisonKey(current);
   const savedKey = comparisonKey(saved);

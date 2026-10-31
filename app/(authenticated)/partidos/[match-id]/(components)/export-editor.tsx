@@ -83,7 +83,6 @@ export default function ExportEditor({
   const palette = getImageExportBackground(options.background)!.palette;
 
   useEffect(() => {
-    // Advance the remembered roster even if match data changes while open.
     setSavedSelections((saved) =>
       reconcileImageExportTeamSelections(teams, saved),
     );

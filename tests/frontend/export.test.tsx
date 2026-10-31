@@ -11,7 +11,6 @@ import {
 } from "@/utils/image-export-options";
 import { player, teams } from "../fixtures";
 
-// next/font is transformed by Next at build time; font loading is outside these behavior tests.
 vi.mock("@/utils/fonts", () => ({ workSans: { className: "test-font" } }));
 const roster = [
   player(1, { name: "Ana", position: "goa" }),

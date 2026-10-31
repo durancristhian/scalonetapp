@@ -3,7 +3,6 @@ import { cleanup } from "@testing-library/react";
 import { afterEach } from "vitest";
 import { toast } from "sonner";
 
-// jsdom has no layout engine. These browser APIs support real Radix components.
 class ResizeObserver {
   observe() {}
   unobserve() {}

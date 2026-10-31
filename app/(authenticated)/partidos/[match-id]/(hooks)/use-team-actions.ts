@@ -32,7 +32,6 @@ export const useTeamActions = (
   const { errorAlert, successAlert } = useAlerts();
   const [operation, setOperation] = useState<"save" | "export" | null>(null);
   const operationLock = useRef(false);
-  // A successful save is the baseline even before server props refresh.
   const [savedSnapshot, setSavedSnapshot] = useState({
     matchId: match.id,
     baseTeams,
@@ -63,7 +62,6 @@ export const useTeamActions = (
     options: ImageExportOptions = DEFAULT_IMAGE_EXPORT_OPTIONS,
     selections: ImageExportTeamSelections = {},
   ): Promise<string | null> => {
-    // Block a second click before React commits the disabled state.
     if (operationLock.current || !valid)
       return "No se pudo iniciar la operación. Intentá de nuevo.";
     if (action === "save" && !hasUnsavedChanges) return null;
@@ -73,7 +71,6 @@ export const useTeamActions = (
 
     let stage: "save" | "image" = "save";
     try {
-      // Export also syncs ordering so its preview fingerprint matches the server.
       if (payload !== savedTeams) {
         unwrapActionResult(
           await editMatchAction(

@@ -1,6 +1,5 @@
 import type { BaseTeam } from "@/types/team";
 
-// Recover the usable assignments. Unknown structures cannot be rendered safely.
 export function readSavedTeams(serialized: string): BaseTeam[] {
   try {
     const value: unknown = JSON.parse(serialized);

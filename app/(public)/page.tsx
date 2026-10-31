@@ -14,7 +14,6 @@ const Page: FC = () => {
   const router = useRouter();
 
   useEffect(() => {
-    /* If we have a valid userId, we redirect the user to the /dashboard */
     if (isLoaded && userId) {
       router.push("/dashboard");
     }

@@ -14,14 +14,12 @@ export function isManagedPhoto(url: string): boolean {
   }
 }
 
-// Never delete legacy/external images or an object still referenced by a player.
 export async function removeUnusedPhoto(url: string) {
   if (!isManagedPhoto(url)) return;
   try {
     if (await prisma.player.count({ where: { avatar: url } })) return;
     await del(url);
   } catch {
-    // Keep a safe object identifier for operational reconciliation, never tokens.
     console.error("player_photo_cleanup_failed", new URL(url).pathname);
   }
 }

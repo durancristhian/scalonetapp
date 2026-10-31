@@ -37,8 +37,6 @@ function CaptainMark() {
   );
 }
 
-// Keep role content independent of placement. More roles can share these slots
-// without adding badges inside the avatar's clipping box.
 const roleIcons = { goalkeeper: GoalkeeperGlove, captain: CaptainMark };
 
 type Props = {

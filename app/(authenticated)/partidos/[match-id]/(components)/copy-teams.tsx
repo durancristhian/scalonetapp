@@ -31,9 +31,7 @@ export const CopyTeams: FC<CopyTeamsProps> = ({ teams }) => {
         successAlert({ title: "¡Equipos copiados al portapapeles!" });
         return;
       }
-    } catch {
-      // Clipboard access can also throw when the browser denies it.
-    }
+    } catch {}
 
     errorAlert({
       title:
