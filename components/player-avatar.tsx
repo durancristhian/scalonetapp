@@ -7,7 +7,7 @@ import {
   type ColorPaletteId,
 } from "@/utils/color-palettes";
 import { cn } from "@/utils/cn";
-import { useEffect, useState, type FC } from "react";
+import { useEffect, useRef, useState, type FC } from "react";
 
 type AvatarSize = "sm" | "md" | "lg" | "xl";
 
@@ -29,20 +29,13 @@ export const PlayerAvatar: FC<PlayerAvatarProps> = ({
   className,
 }) => {
   const [failed, setFailed] = useState<string | undefined>();
+  const photoTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   useEffect(() => {
     if (!src) return;
-    const probe = new Image();
-    const timer = setTimeout(() => setFailed(src), 5000);
-    probe.onload = () => clearTimeout(timer);
-    probe.onerror = () => {
-      clearTimeout(timer);
-      setFailed(src);
-    };
-    probe.src = src;
+    // AvatarImage already preloads the photo. Reuse its loading status below.
+    photoTimeout.current = setTimeout(() => setFailed(src), 5000);
     return () => {
-      clearTimeout(timer);
-      probe.onload = null;
-      probe.onerror = null;
+      clearTimeout(photoTimeout.current);
     };
   }, [src]);
   const image = src && failed !== src ? src : getPlayerAvatarUrl(name, palette);
@@ -61,6 +54,9 @@ export const PlayerAvatar: FC<PlayerAvatarProps> = ({
       <AvatarImage
         src={image}
         onLoadingStatusChange={(status) => {
+          if (status === "loaded" || status === "error") {
+            clearTimeout(photoTimeout.current);
+          }
           if (status === "error" && src) setFailed(src);
         }}
         alt={`Avatar de ${name}`}

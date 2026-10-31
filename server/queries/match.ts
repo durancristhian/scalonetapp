@@ -28,9 +28,6 @@ export const getMatchesQuery: (options?: {
       orderBy: {
         updatedAt: "desc",
       },
-      include: {
-        players: true,
-      },
       take,
     }),
     prisma.match.count({
