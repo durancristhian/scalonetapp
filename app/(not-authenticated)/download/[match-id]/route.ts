@@ -33,6 +33,8 @@ const getBrowser: () => Promise<Browser> = async () => {
       (mod) => mod.default,
     );
 
+    chromium.setGraphicsMode = false;
+
     const puppeteerCore = await import("puppeteer-core").then(
       (mod) => mod.default,
     );
