@@ -1,6 +1,6 @@
 "use client";
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
-import { ImageCropper } from "@/components/image-cropper";
+import { type ImageCropper as ImageCropperComponent } from "@/components/image-cropper";
 import { PlayerAvatar } from "@/components/player-avatar";
 import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
@@ -11,6 +11,7 @@ export function PlayerAvatarInput({ name, src, disabled, onChange, onPreparingCh
   const input = useRef<HTMLInputElement>(null);
   const preparation = useRef<AbortController | null>(null);
   const [preparing, setPreparing] = useState(false);
+  const [ImageCropper, setImageCropper] = useState<typeof ImageCropperComponent | null>(null);
   useEffect(() => () => { preparation.current?.abort(); preparation.current = null; }, []);
   const [preview, setPreview] = useState<string | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
@@ -30,11 +31,18 @@ export function PlayerAvatarInput({ name, src, disabled, onChange, onPreparingCh
         preparation.current = controller;
         setPreparing(true); onPreparingChange(true);
         try {
-          const source = await preparePlayerPhoto(file, controller.signal);
+          const [source, { ImageCropper: Cropper }] = await Promise.all([
+            preparePlayerPhoto(file, controller.signal),
+            import("@/components/image-cropper").catch(() => {
+              throw new Error("No pudimos cargar el recortador. Prueba con otra foto.");
+            }),
+          ]);
           if (controller.signal.aborted) return;
+          setImageCropper(() => Cropper);
           setPreview(URL.createObjectURL(source)); setOpen(true);
         } catch (error) {
           if (!controller.signal.aborted) errorAlert({ title: error instanceof Error ? error.message : "No pudimos preparar esta foto. Prueba con otra." });
+          controller.abort();
         } finally {
           if (preparation.current === controller) {
             preparation.current = null;
@@ -47,6 +55,6 @@ export function PlayerAvatarInput({ name, src, disabled, onChange, onPreparingCh
       {(selected || (!removed && src)) && <Button type="button" variant="ghost" disabled={disabled || preparing} onClick={() => { setSelected(null); setRemoved(true); onChange(null); }}>Quitar foto</Button>}
     </div>
     {preparing && <p role="status" className="text-base text-muted-foreground">Preparando foto…</p>}
-    <ImageCropper dialogOpen={open} setDialogOpen={value => { setOpen(value); if (value === false) setPreview(null); }} preview={preview} removePreview={() => setPreview(null)} onImageCropped={async blob => { setSelected(URL.createObjectURL(blob)); setRemoved(false); onChange(blob); setPreview(null); }} />
+    {ImageCropper && <ImageCropper dialogOpen={open} setDialogOpen={value => { setOpen(value); if (value === false) setPreview(null); }} preview={preview} removePreview={() => setPreview(null)} onImageCropped={async blob => { setSelected(URL.createObjectURL(blob)); setRemoved(false); onChange(blob); setPreview(null); }} />}
   </div>;
 }
