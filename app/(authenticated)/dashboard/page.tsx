@@ -24,7 +24,9 @@ const Page: FC = async () => {
       <div className="max-w-7xl mx-auto px-4 w-full">
         <div className="space-y-4">
           <div className="flex flex-wrap gap-3 items-center justify-between">
-            <h2 className="min-w-0 flex-1 basis-48 font-bold text-xl">Últimos partidos actualizados</h2>
+            <h2 className="min-w-0 flex-1 basis-48 font-bold text-xl">
+              Últimos partidos actualizados
+            </h2>
             <AddMatch disabled={atMatchLimit} />
           </div>
           {atMatchLimit ? <MatchLimitAlert /> : null}

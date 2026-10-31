@@ -51,7 +51,8 @@ export async function waitForImageExport(
       );
 
       const backgroundImages = backgrounds.map(
-        (background) => new Promise<void>((resolve, reject) => {
+        (background) =>
+          new Promise<void>((resolve, reject) => {
             const image = new Image();
             const timer = setTimeout(
               () => reject(new Error("Image export background did not load.")),

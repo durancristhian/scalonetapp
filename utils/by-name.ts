@@ -2,8 +2,8 @@
 export const byName: <
   T extends {
     name: string;
-  }
+  },
 >(
   itemA: T,
-  itemB: T
+  itemB: T,
 ) => number = (itemA, itemB) => itemA.name.localeCompare(itemB.name);

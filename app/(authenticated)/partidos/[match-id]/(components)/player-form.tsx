@@ -47,7 +47,11 @@ type PlayerFormProps = {
   values?: PlayerSchema;
 };
 
-export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values, avatar }) => {
+export const PlayerForm: FC<PlayerFormProps> = ({
+  onSubmit,
+  values,
+  avatar,
+}) => {
   const id = useId();
   const [photoPreparing, setPhotoPreparing] = useState(false);
   const [photo, setPhoto] = useState<Blob | null | undefined>();
@@ -61,7 +65,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values, avatar }) =>
     values,
   });
   const onSubmitHandler: (values: PlayerSchema) => Promise<void> = async (
-    values
+    values,
   ) => {
     if (photoPreparing) return;
     try {
@@ -87,7 +91,13 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values, avatar }) =>
             </FormItem>
           )}
         />
-        <PlayerAvatarInput name={form.watch("name")} src={avatar} disabled={form.formState.isSubmitting} onChange={setPhoto} onPreparingChange={setPhotoPreparing} />
+        <PlayerAvatarInput
+          name={form.watch("name")}
+          src={avatar}
+          disabled={form.formState.isSubmitting}
+          onChange={setPhoto}
+          onPreparingChange={setPhotoPreparing}
+        />
         <FormField
           control={form.control}
           name="position"
@@ -158,7 +168,9 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values, avatar }) =>
           <Button
             type="submit"
             disabled={
-              photoPreparing || !form.formState.isValid || form.formState.isSubmitting
+              photoPreparing ||
+              !form.formState.isValid ||
+              form.formState.isSubmitting
             }
           >
             {form.formState.isSubmitting ? (

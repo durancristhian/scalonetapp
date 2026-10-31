@@ -1,7 +1,7 @@
 import { type PlayerSchema } from "@/schemas/player";
 
 export const getPlayersFromLines: (lines: string[]) => PlayerSchema[] = (
-  lines
+  lines,
 ) => {
   return lines.map((line) => ({
     name: line,

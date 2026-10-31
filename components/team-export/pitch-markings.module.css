@@ -1,2 +1,10 @@
-.markings { fill: none; stroke: var(--export-marking-color); stroke-width: 2px; opacity: .4; }
-.center { fill: var(--export-marking-color); stroke: none; }
+.markings {
+  fill: none;
+  stroke: var(--export-marking-color);
+  stroke-width: 2px;
+  opacity: 0.4;
+}
+.center {
+  fill: var(--export-marking-color);
+  stroke: none;
+}

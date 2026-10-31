@@ -1,4 +1,7 @@
-import { IMAGE_EXPORT_WIDTH, type ImageExportOptions } from "@/utils/image-export-options";
+import {
+  IMAGE_EXPORT_WIDTH,
+  type ImageExportOptions,
+} from "@/utils/image-export-options";
 import type { Team } from "@/types/team";
 
 // Shared measurements for the illustration and the flat roster placed over it.
@@ -18,13 +21,28 @@ export const EXPORT_LAYOUT = {
 
 export function getExportLayout(teams: Team[], options: ImageExportOptions) {
   const showAvatars = options.avatarShape !== "none";
-  const rows = Math.max(1, ...teams.map(team => Math.ceil(team.players.length / 2)));
-  const cellHeight = showAvatars ? EXPORT_LAYOUT.avatarCellHeight : EXPORT_LAYOUT.textCellHeight;
-  const fieldHeight = Math.max(
-    showAvatars ? EXPORT_LAYOUT.minFieldHeight : EXPORT_LAYOUT.minTextFieldHeight,
-    rows * cellHeight + (rows - 1) * EXPORT_LAYOUT.rowGap + 2 * EXPORT_LAYOUT.fieldInset,
+  const rows = Math.max(
+    1,
+    ...teams.map((team) => Math.ceil(team.players.length / 2)),
   );
-  return { ...EXPORT_LAYOUT, rows, cellHeight, fieldHeight, sceneHeight: fieldHeight + EXPORT_LAYOUT.standHeight };
+  const cellHeight = showAvatars
+    ? EXPORT_LAYOUT.avatarCellHeight
+    : EXPORT_LAYOUT.textCellHeight;
+  const fieldHeight = Math.max(
+    showAvatars
+      ? EXPORT_LAYOUT.minFieldHeight
+      : EXPORT_LAYOUT.minTextFieldHeight,
+    rows * cellHeight +
+      (rows - 1) * EXPORT_LAYOUT.rowGap +
+      2 * EXPORT_LAYOUT.fieldInset,
+  );
+  return {
+    ...EXPORT_LAYOUT,
+    rows,
+    cellHeight,
+    fieldHeight,
+    sceneHeight: fieldHeight + EXPORT_LAYOUT.standHeight,
+  };
 }
 
 export type ExportLayout = ReturnType<typeof getExportLayout>;

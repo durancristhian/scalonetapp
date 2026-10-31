@@ -39,7 +39,10 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
   const canListPlayers = Array.isArray(players) && players.length;
 
   return (
-    <div ref={columnRef} className="min-w-0 lg:[min-block-size:var(--roster-min-height,calc(100dvh-15rem-2px))]">
+    <div
+      ref={columnRef}
+      className="min-w-0 lg:[min-block-size:var(--roster-min-height,calc(100dvh-15rem-2px))]"
+    >
       {/* A zero-height sticky anchor keeps card resizing out of page layout. */}
       <div className="lg:sticky lg:[inset-block-start:var(--roster-inset,73px)] lg:[block-size:0]">
         <Card className="lg:flex lg:[block-size:var(--roster-height,calc(100dvh-15rem-2px))] lg:flex-col">

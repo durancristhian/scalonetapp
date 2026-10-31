@@ -1,4 +1,7 @@
-import { IMAGE_EXPORT_BACKGROUNDS, type ImageExportBackgroundId } from "./image-export-backgrounds.ts";
+import {
+  IMAGE_EXPORT_BACKGROUNDS,
+  type ImageExportBackgroundId,
+} from "./image-export-backgrounds.ts";
 
 export const IMAGE_EXPORT_AVATARS = [
   { id: "square", label: "Cuadradas" },

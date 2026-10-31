@@ -41,10 +41,17 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
     updateTeamName,
   } = useTeamsBuilderState(match);
 
-  const validationError = useMemo(() => getSavedTeamsError(
-    teams.map(team => ({ ...team, players: team.players.map(player => player.id) })),
-    match.players.map(player => player.id),
-  ), [teams, match.players]);
+  const validationError = useMemo(
+    () =>
+      getSavedTeamsError(
+        teams.map((team) => ({
+          ...team,
+          players: team.players.map((player) => player.id),
+        })),
+        match.players.map((player) => player.id),
+      ),
+    [teams, match.players],
+  );
   const areTeamsValid = !validationError;
 
   const { hasUnsavedChanges, operation, save, exportTeams } = useTeamActions(
@@ -57,7 +64,11 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
   const busy = operation !== null;
 
   return (
-    <fieldset disabled={busy} aria-label="Preparación del partido" className="[min-inline-size:0] grid grid-cols-1 lg:grid-cols-[minmax(20rem,1fr)_minmax(0,2fr)] gap-6 lg:gap-8">
+    <fieldset
+      disabled={busy}
+      aria-label="Preparación del partido"
+      className="[min-inline-size:0] grid grid-cols-1 lg:grid-cols-[minmax(20rem,1fr)_minmax(0,2fr)] gap-6 lg:gap-8"
+    >
       <MatchPlayers players={match.players} />
       <div className="min-w-0">
         <div className="space-y-8">
@@ -76,7 +87,11 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
               <h1 className="font-bold text-xl">Equipos</h1>
               <div className="flex flex-wrap gap-2">
                 <BuildTeams
-                  disabled={!match.players.length || teams.length !== TEAMS_PER_MATCH || match.players.length > MAX_PLAYERS_PER_MATCH}
+                  disabled={
+                    !match.players.length ||
+                    teams.length !== TEAMS_PER_MATCH ||
+                    match.players.length > MAX_PLAYERS_PER_MATCH
+                  }
                   onSave={(preset) => {
                     switch (preset) {
                       case "random": {
@@ -97,7 +112,9 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                     unselectedPlayers.length < match.players.length
                   }
                 />
-                {teams.length < TEAMS_PER_MATCH ? <Button onClick={createNewTeam}>Agregar</Button> : null}
+                {teams.length < TEAMS_PER_MATCH ? (
+                  <Button onClick={createNewTeam}>Agregar</Button>
+                ) : null}
               </div>
             </div>
             <div className="grid xl:grid-cols-2 gap-4">
@@ -112,7 +129,9 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                 />
               ))}
             </div>
-            {validationError ? <TeamsValidationAlert message={validationError} /> : null}
+            {validationError ? (
+              <TeamsValidationAlert message={validationError} />
+            ) : null}
             <div className="flex flex-wrap gap-2 justify-between">
               <CopyTeams teams={teams} />
               <div className="flex flex-wrap gap-2">

@@ -7,6 +7,9 @@ export function unwrapActionResult<T>(result: ActionResult<T>): T {
   return result.data;
 }
 
-export function getActionErrorMessage(error: unknown, fallback: string): string {
+export function getActionErrorMessage(
+  error: unknown,
+  fallback: string,
+): string {
   return error instanceof ActionError ? error.message : fallback;
 }

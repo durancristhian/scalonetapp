@@ -12,6 +12,9 @@ export default defineConfig({
     clearMocks: true,
     restoreMocks: true,
     unstubGlobals: true,
-    env: { NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL: "5", NEXT_PUBLIC_MAX_MATCHES_PER_USER: "100" },
+    env: {
+      NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL: "5",
+      NEXT_PUBLIC_MAX_MATCHES_PER_USER: "100",
+    },
   },
 });

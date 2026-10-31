@@ -10,7 +10,11 @@ type PlayerRowProps = {
   children: ReactNode;
 };
 
-export function PlayerRow({ player, compact = false, children }: PlayerRowProps) {
+export function PlayerRow({
+  player,
+  compact = false,
+  children,
+}: PlayerRowProps) {
   return (
     <div className="grid min-h-12 min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 py-1">
       <PlayerAvatar
@@ -27,7 +31,10 @@ export function PlayerRow({ player, compact = false, children }: PlayerRowProps)
           <Badge variant={player.position} className="justify-center uppercase">
             {PLAYER_POSITIONS[player.position].substring(0, 3)}
           </Badge>
-          <Badge variant="secondary" className="min-w-6 justify-center tabular-nums">
+          <Badge
+            variant="secondary"
+            className="min-w-6 justify-center tabular-nums"
+          >
             {player.level}
           </Badge>
         </div>

@@ -1,12 +1,20 @@
-import { imageExportSearchParams, parseImageExportOptions, type ImageExportOptions } from "./image-export-options.ts";
-import { isImageExportTeamSelections, type ImageExportTeamSelections } from "./image-export-player-roles.ts";
+import {
+  imageExportSearchParams,
+  parseImageExportOptions,
+  type ImageExportOptions,
+} from "./image-export-options.ts";
+import {
+  isImageExportTeamSelections,
+  type ImageExportTeamSelections,
+} from "./image-export-player-roles.ts";
 
 export function imageExportRequestSearchParams(
   options: ImageExportOptions,
   selections: ImageExportTeamSelections,
 ): URLSearchParams {
   const params = imageExportSearchParams(options);
-  if (Object.keys(selections).length) params.set("roles", JSON.stringify(selections));
+  if (Object.keys(selections).length)
+    params.set("roles", JSON.stringify(selections));
   return params;
 }
 
@@ -22,7 +30,9 @@ export function parseImageExportRequest(params: URLSearchParams): {
   if (!options) return null;
   try {
     const selections: unknown = roles.length ? JSON.parse(roles[0]) : {};
-    return isImageExportTeamSelections(selections) ? { options, selections } : null;
+    return isImageExportTeamSelections(selections)
+      ? { options, selections }
+      : null;
   } catch {
     return null;
   }

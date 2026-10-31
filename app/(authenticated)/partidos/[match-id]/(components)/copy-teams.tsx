@@ -36,7 +36,8 @@ export const CopyTeams: FC<CopyTeamsProps> = ({ teams }) => {
     }
 
     errorAlert({
-      title: "No pudimos copiar los equipos. Volvé a intentarlo y permití el acceso al portapapeles.",
+      title:
+        "No pudimos copiar los equipos. Volvé a intentarlo y permití el acceso al portapapeles.",
     });
   };
 

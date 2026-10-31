@@ -1,6 +1,9 @@
 "use client";
 
-import { unwrapActionResult, getActionErrorMessage } from "@/utils/action-result";
+import {
+  unwrapActionResult,
+  getActionErrorMessage,
+} from "@/utils/action-result";
 
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { SoccerBall } from "@/components/soccer-ball";
@@ -47,7 +50,10 @@ export const DeleteMatch: FC<DeleteMatchProps> = ({ id, onClose }) => {
     } catch (error) {
       if (error instanceof Error) {
         errorAlert({
-          title: getActionErrorMessage(error, ERROR_MESSAGES.match_delete_error),
+          title: getActionErrorMessage(
+            error,
+            ERROR_MESSAGES.match_delete_error,
+          ),
         });
       }
 
@@ -58,7 +64,12 @@ export const DeleteMatch: FC<DeleteMatchProps> = ({ id, onClose }) => {
 
   return (
     <AlertDialog open>
-      <AlertDialogContent onEscapeKeyDown={event => { if (lock.current) event.preventDefault(); else onClose(); }}>
+      <AlertDialogContent
+        onEscapeKeyDown={(event) => {
+          if (lock.current) event.preventDefault();
+          else onClose();
+        }}
+      >
         <AlertDialogHeader>
           <AlertDialogTitle>¿Eliminar este partido?</AlertDialogTitle>
           <AlertDialogDescription className="max-md:text-balance">
@@ -67,7 +78,9 @@ export const DeleteMatch: FC<DeleteMatchProps> = ({ id, onClose }) => {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={processing} onClick={onClose}>Cancelar</AlertDialogCancel>
+          <AlertDialogCancel disabled={processing} onClick={onClose}>
+            Cancelar
+          </AlertDialogCancel>
           <Button onClick={onDeleteMatch} disabled={processing}>
             {processing ? (
               <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />

@@ -38,7 +38,10 @@ export const useRosterViewport = () => {
       // taller, but growing the sticky card must never push the footer away.
       const minHeight = Math.max(
         0,
-        window.innerHeight - (columnTop + window.scrollY) - footerRect.height - pagePadding,
+        window.innerHeight -
+          (columnTop + window.scrollY) -
+          footerRect.height -
+          pagePadding,
       );
       column.style.setProperty("--roster-min-height", `${minHeight}px`);
       column.style.setProperty("--roster-inset", `${inset}px`);
@@ -53,9 +56,11 @@ export const useRosterViewport = () => {
     };
     const observer = new ResizeObserver(schedule);
     // The title may wrap, and the header, teams and footer can all resize.
-    [header, footer, page, column, page.querySelector("h2")].forEach((element) => {
-      if (element) observer.observe(element);
-    });
+    [header, footer, page, column, page.querySelector("h2")].forEach(
+      (element) => {
+        if (element) observer.observe(element);
+      },
+    );
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
     desktop.addEventListener("change", schedule);

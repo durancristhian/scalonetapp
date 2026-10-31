@@ -9,7 +9,20 @@ import "@/app/globals.css";
 const roster = [player(1, { name: "Ana" })];
 function Fixture() {
   const [clicks, setClicks] = useState(0);
-  return <><button onClick={() => setClicks(value => value + 1)}>Comprobar clics: {clicks}</button>
-    <PathParamsContext.Provider value={{ "match-id": "1" }}><MatchPlayers players={roster} /></PathParamsContext.Provider><Toaster /></>;
+  return (
+    <>
+      <button onClick={() => setClicks((value) => value + 1)}>
+        Comprobar clics: {clicks}
+      </button>
+      <PathParamsContext.Provider value={{ "match-id": "1" }}>
+        <MatchPlayers players={roster} />
+      </PathParamsContext.Provider>
+      <Toaster />
+    </>
+  );
 }
-createRoot(document.getElementById("root")!).render(<StrictMode><Fixture /></StrictMode>);
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <Fixture />
+  </StrictMode>,
+);

@@ -1,6 +1,9 @@
 "use client";
 
-import { unwrapActionResult, getActionErrorMessage } from "@/utils/action-result";
+import {
+  unwrapActionResult,
+  getActionErrorMessage,
+} from "@/utils/action-result";
 
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { MatchForm } from "@/app/(authenticated)/(components)/match-form";
@@ -28,7 +31,9 @@ export const EditMatch: FC<EditMatchProps> = ({ match, onClose }) => {
   const onMatchSubmit: (values: MatchSchema) => Promise<void> = (values) => {
     return new Promise(async (resolve, reject) => {
       try {
-        unwrapActionResult(await editMatchAction(match.id, values, "/dashboard"));
+        unwrapActionResult(
+          await editMatchAction(match.id, values, "/dashboard"),
+        );
 
         onClose();
 
@@ -36,7 +41,10 @@ export const EditMatch: FC<EditMatchProps> = ({ match, onClose }) => {
       } catch (error) {
         if (error instanceof Error) {
           errorAlert({
-            title: getActionErrorMessage(error, ERROR_MESSAGES.match_edit_error),
+            title: getActionErrorMessage(
+              error,
+              ERROR_MESSAGES.match_edit_error,
+            ),
           });
         }
 
