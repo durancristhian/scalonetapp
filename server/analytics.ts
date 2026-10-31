@@ -34,7 +34,7 @@ export const analyticsRequestSchema = z
     type: z.literal("event"),
     payload: z
       .object({
-        website: z.string().uuid(),
+        website: z.guid(),
         hostname: z.enum(["www.scalonet.app", "scalonet.app"]),
         url: z.enum(["/", "/dashboard", "/partidos", "/partidos/:match"]),
         title: z.enum(["Home", "Dashboard", "Matches", "Team builder"]),

@@ -2,7 +2,7 @@ import {
   LargeScreenNavigation,
   SmallScreenNavigation,
 } from "@/components/navigation";
-import { SignedIn, UserButton } from "@clerk/nextjs";
+import { Show, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 
 export const Header = () => {
@@ -24,7 +24,7 @@ export const Header = () => {
               <LargeScreenNavigation />
             </div>
           </div>
-          <SignedIn>
+          <Show when="signed-in">
             <div className="shrink-0">
               <UserButton
                 showName
@@ -36,7 +36,7 @@ export const Header = () => {
                 }}
               />
             </div>
-          </SignedIn>
+          </Show>
         </div>
       </div>
     </div>

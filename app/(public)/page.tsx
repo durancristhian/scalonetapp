@@ -4,7 +4,7 @@ import { trackAnalytics } from "@/utils/analytics";
 import { Loader } from "@/components/loader";
 import { ShowOff } from "@/components/show-off";
 import { Button } from "@/components/ui/button";
-import { SignedIn, SignedOut, SignInButton, useAuth } from "@clerk/nextjs";
+import { Show, SignInButton, useAuth } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { type FC, useEffect } from "react";
@@ -21,10 +21,10 @@ const Page: FC = () => {
 
   return (
     <div className="flex flex-col gap-4 items-center justify-center h-full min-h-[inherit] p-2">
-      <SignedIn>
+      <Show when="signed-in">
         <Loader />
-      </SignedIn>
-      <SignedOut>
+      </Show>
+      <Show when="signed-out">
         <div className="mb-4">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -72,7 +72,7 @@ const Page: FC = () => {
             <ShowOff />
           </motion.div>
         </footer>
-      </SignedOut>
+      </Show>
     </div>
   );
 };

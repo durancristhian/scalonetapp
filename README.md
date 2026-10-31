@@ -38,6 +38,10 @@ npm run dev
 
 Open [localhost:3000](http://localhost:3000). Keep this port for local image exports.
 Environment files are ignored by Git; use development credentials only.
+Prisma CLI reads `POSTGRES_URL_NON_POOLING` through [prisma.config.ts](prisma.config.ts);
+the application uses pooled `POSTGRES_PRISMA_URL`. Keep the explicit `--env-file`
+for local Prisma commands. `prisma generate` needs neither URL; migration commands
+require the nonpooling URL. Vercel supplies these variables directly.
 
 ## Formatting
 
@@ -53,6 +57,8 @@ npm ci
 npx playwright install chromium  # once per machine
 npm run test:frontend
 ```
+
+`npm run typecheck` generates Next.js route types before checking TypeScript, without starting a server.
 
 `npm test` runs Vitest; `npm run test:watch` enables watch mode.
 `npm run test:browser` runs the isolated Playwright fixture.
