@@ -62,7 +62,11 @@ export const MatchItem: FC<MatchItemProps> = ({
       <div className="absolute end-2 [inset-block-start:theme(spacing.2)]">
         <DropdownMenu open={menuOpened} onOpenChange={setMenuOpened}>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" aria-label={`Acciones de ${match.name}`}>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={`Acciones de ${match.name}`}
+            >
               <EllipsisVerticalIcon className="h-4 text-muted-foreground w-4" />
             </Button>
           </DropdownMenuTrigger>

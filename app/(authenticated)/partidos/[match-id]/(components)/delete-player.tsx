@@ -1,4 +1,7 @@
-import { unwrapActionResult, getActionErrorMessage } from "@/utils/action-result";
+import {
+  unwrapActionResult,
+  getActionErrorMessage,
+} from "@/utils/action-result";
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { SoccerBall } from "@/components/soccer-ball";
 import {
@@ -21,7 +24,11 @@ type DeletePlayerProps = {
   onCloseAutoFocus: () => void;
 };
 
-export const DeletePlayer: FC<DeletePlayerProps> = ({ id, onClose, onCloseAutoFocus }) => {
+export const DeletePlayer: FC<DeletePlayerProps> = ({
+  id,
+  onClose,
+  onCloseAutoFocus,
+}) => {
   const [processing, setIsProcessing] = useState(false);
   const lock = useRef(false);
   const { errorAlert } = useAlerts();
@@ -41,7 +48,10 @@ export const DeletePlayer: FC<DeletePlayerProps> = ({ id, onClose, onCloseAutoFo
     } catch (error) {
       if (error instanceof Error) {
         errorAlert({
-          title: getActionErrorMessage(error, ERROR_MESSAGES.player_delete_error),
+          title: getActionErrorMessage(
+            error,
+            ERROR_MESSAGES.player_delete_error,
+          ),
         });
       }
 
@@ -52,7 +62,13 @@ export const DeletePlayer: FC<DeletePlayerProps> = ({ id, onClose, onCloseAutoFo
 
   return (
     <AlertDialog open>
-      <AlertDialogContent onCloseAutoFocus={onCloseAutoFocus} onEscapeKeyDown={event => { if (lock.current) event.preventDefault(); else onClose(); }}>
+      <AlertDialogContent
+        onCloseAutoFocus={onCloseAutoFocus}
+        onEscapeKeyDown={(event) => {
+          if (lock.current) event.preventDefault();
+          else onClose();
+        }}
+      >
         <AlertDialogHeader>
           <AlertDialogTitle>¿Eliminar este jugador?</AlertDialogTitle>
           <AlertDialogDescription className="max-md:text-balance">
@@ -61,7 +77,9 @@ export const DeletePlayer: FC<DeletePlayerProps> = ({ id, onClose, onCloseAutoFo
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={processing} onClick={onClose}>Cancelar</AlertDialogCancel>
+          <AlertDialogCancel disabled={processing} onClick={onClose}>
+            Cancelar
+          </AlertDialogCancel>
           <Button onClick={onDeletePlayer} disabled={processing}>
             {processing ? (
               <>

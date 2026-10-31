@@ -46,7 +46,9 @@ export function getArtworkStyle(id: ColorPaletteId = DEFAULT_COLOR_PALETTE) {
   };
 }
 
-export function parseColorPalette(params: URLSearchParams): ColorPaletteId | null {
+export function parseColorPalette(
+  params: URLSearchParams,
+): ColorPaletteId | null {
   const values = params.getAll("palette");
   if (!values.length) return DEFAULT_COLOR_PALETTE;
   return values.length === 1 && isColorPaletteId(values[0]) ? values[0] : null;

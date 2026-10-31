@@ -1,6 +1,9 @@
 // Keep imports at the call site so the bundler can discover their chunks.
 // Retry the loader once after a transient download failure, never its consumers.
-export async function loadModule<T>(load: () => Promise<T>, signal?: AbortSignal): Promise<T> {
+export async function loadModule<T>(
+  load: () => Promise<T>,
+  signal?: AbortSignal,
+): Promise<T> {
   signal?.throwIfAborted();
   try {
     return await load();

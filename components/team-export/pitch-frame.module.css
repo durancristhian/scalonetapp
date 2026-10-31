@@ -1,7 +1,12 @@
-.edge { fill: none; stroke: color-mix(in oklch, var(--export-frame-color) 76%, black); stroke-width: 6px; stroke-linejoin: round; }
+.edge {
+  fill: none;
+  stroke: color-mix(in oklch, var(--export-frame-color) 76%, black);
+  stroke-width: 6px;
+  stroke-linejoin: round;
+}
 .rim {
   fill: none;
   stroke: var(--export-marking-color);
   stroke-width: 2px;
-  opacity: .38;
+  opacity: 0.38;
 }

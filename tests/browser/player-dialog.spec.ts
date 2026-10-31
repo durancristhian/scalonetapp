@@ -2,19 +2,25 @@ import { test, expect } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {
   // Assets and calls stay local. A new browser context isolates every scenario.
-  await page.route("**/*", route => {
+  await page.route("**/*", (route) => {
     const url = new URL(route.request().url());
-    if (url.hostname !== "127.0.0.1") throw new Error(`Unexpected external request: ${url.origin}`);
+    if (url.hostname !== "127.0.0.1")
+      throw new Error(`Unexpected external request: ${url.origin}`);
     return route.continue();
   });
 });
 
-test("should remain clickable after repeated rapid edits when the player dialog saves", async ({ page }) => {
+test("should remain clickable after repeated rapid edits when the player dialog saves", async ({
+  page,
+}) => {
   const errors: string[] = [];
-  page.on("pageerror", error => errors.push(error.message));
+  page.on("pageerror", (error) => errors.push(error.message));
   let saves = 0;
-  await page.route("**/test-actions/player", async route => {
-    expect(route.request().postDataJSON()).toMatchObject({ operation: "edit", id: 1 });
+  await page.route("**/test-actions/player", async (route) => {
+    expect(route.request().postDataJSON()).toMatchObject({
+      operation: "edit",
+      id: 1,
+    });
     saves++;
     await route.fulfill({ json: { ok: true } });
   });
@@ -22,45 +28,72 @@ test("should remain clickable after repeated rapid edits when the player dialog 
   for (let attempt = 1; attempt <= 5; attempt++) {
     await page.getByRole("button", { name: "Acciones de Ana" }).click();
     await page.getByRole("menuitem", { name: "Editar" }).click();
-    const dialog = page.getByRole("dialog", { name: "Editar ficha del jugador" });
-    await dialog.getByRole("textbox", { name: "Nombre", exact: true }).fill(`Ana ${attempt}`);
+    const dialog = page.getByRole("dialog", {
+      name: "Editar ficha del jugador",
+    });
+    await dialog
+      .getByRole("textbox", { name: "Nombre", exact: true })
+      .fill(`Ana ${attempt}`);
     await dialog.getByRole("button", { name: "Guardar", exact: true }).click();
     await expect(dialog).toBeHidden();
-    await page.getByRole("button", { name: `Comprobar clics: ${attempt - 1}` }).click();
-    await expect(page.getByRole("button", { name: `Comprobar clics: ${attempt}` })).toBeVisible();
+    await page
+      .getByRole("button", { name: `Comprobar clics: ${attempt - 1}` })
+      .click();
+    await expect(
+      page.getByRole("button", { name: `Comprobar clics: ${attempt}` }),
+    ).toBeVisible();
   }
   expect(saves).toBe(5);
   expect(errors).toEqual([]);
 });
 
-test("should preserve the draft and recover when a player edit fails", async ({ page }) => {
+test("should preserve the draft and recover when a player edit fails", async ({
+  page,
+}) => {
   let attempts = 0;
-  await page.route("**/test-actions/player", route => {
+  await page.route("**/test-actions/player", (route) => {
     attempts++;
-    return route.fulfill({ json: attempts === 1 ? { ok: false, error: "No autorizado." } : { ok: true } });
+    return route.fulfill({
+      json:
+        attempts === 1 ? { ok: false, error: "No autorizado." } : { ok: true },
+    });
   });
   await page.goto("/");
   await page.getByRole("button", { name: "Acciones de Ana" }).click();
   await page.getByRole("menuitem", { name: "Editar" }).click();
   const dialog = page.getByRole("dialog");
-  await dialog.getByRole("textbox", { name: "Nombre", exact: true }).fill("Ana nueva");
+  await dialog
+    .getByRole("textbox", { name: "Nombre", exact: true })
+    .fill("Ana nueva");
   await dialog.getByRole("button", { name: "Guardar", exact: true }).click();
   await expect(page.getByText("No autorizado.", { exact: true })).toBeVisible();
-  await expect(dialog.getByRole("textbox", { name: "Nombre", exact: true })).toHaveValue("Ana nueva");
+  await expect(
+    dialog.getByRole("textbox", { name: "Nombre", exact: true }),
+  ).toHaveValue("Ana nueva");
   await dialog.getByRole("button", { name: "Guardar", exact: true }).click();
   await expect(dialog).toBeHidden();
   expect(attempts).toBe(2);
 });
 
-test("should keep the page clickable without deleting when confirmation is cancelled", async ({ page }) => {
+test("should keep the page clickable without deleting when confirmation is cancelled", async ({
+  page,
+}) => {
   let requests = 0;
-  await page.route("**/test-actions/player", route => { requests++; return route.fulfill({ json: { ok: true } }); });
+  await page.route("**/test-actions/player", (route) => {
+    requests++;
+    return route.fulfill({ json: { ok: true } });
+  });
   await page.goto("/");
   await page.getByRole("button", { name: "Acciones de Ana" }).click();
   await page.getByRole("menuitem", { name: "Eliminar" }).click();
-  await page.getByRole("alertdialog").getByRole("button", { name: "Cancelar" }).click();
+  await page
+    .getByRole("alertdialog")
+    .getByRole("button", { name: "Cancelar" })
+    .click();
   await expect(page.getByRole("alertdialog")).toBeHidden();
   await page.getByRole("button", { name: "Comprobar clics: 0" }).click();
-  await expect(page.getByRole("button", { name: "Comprobar clics: 1" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Comprobar clics: 1" }),
+  ).toBeVisible();
   expect(requests).toBe(0);
 });

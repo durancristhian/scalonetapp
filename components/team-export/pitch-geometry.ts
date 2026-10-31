@@ -18,17 +18,30 @@ export function createPitchGeometry(fieldHeight: number) {
   }
 
   function path(points: readonly Point[], close = true) {
-    return points.map(([u, v], index) => {
-      const p = project(u, v);
-      return `${index ? "L" : "M"}${p.x.toFixed(2)} ${p.y.toFixed(2)}`;
-    }).join(" ") + (close ? "Z" : "");
+    return (
+      points
+        .map(([u, v], index) => {
+          const p = project(u, v);
+          return `${index ? "L" : "M"}${p.x.toFixed(2)} ${p.y.toFixed(2)}`;
+        })
+        .join(" ") + (close ? "Z" : "")
+    );
   }
 
   return {
-    width, fieldHeight, standHeight,
+    width,
+    fieldHeight,
+    standHeight,
     height: standHeight + fieldHeight,
-    project, atHeight, path,
-    fieldPath: path([[0, 0], [1, 0], [1, 1], [0, 1]]),
+    project,
+    atHeight,
+    path,
+    fieldPath: path([
+      [0, 0],
+      [1, 0],
+      [1, 1],
+      [0, 1],
+    ]),
   };
 }
 

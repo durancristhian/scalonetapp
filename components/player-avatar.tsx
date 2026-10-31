@@ -29,7 +29,9 @@ export const PlayerAvatar: FC<PlayerAvatarProps> = ({
   className,
 }) => {
   const [failed, setFailed] = useState<string | undefined>();
-  const photoTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const photoTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
   useEffect(() => {
     if (!src) return;
     // AvatarImage already preloads the photo. Reuse its loading status below.

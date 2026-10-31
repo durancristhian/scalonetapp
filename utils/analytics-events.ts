@@ -33,12 +33,16 @@ export type ExportAnalyticsData = {
   has_captain: boolean;
   has_goalkeeper: boolean;
 };
-export type PlayersAddedAnalyticsData = { method: "single" | "bulk"; count: number };
+export type PlayersAddedAnalyticsData = {
+  method: "single" | "bulk";
+  count: number;
+};
 export type AnalyticsData = ExportAnalyticsData | PlayersAddedAnalyticsData;
 
 export function analyticsPage(pathname: string): AnalyticsPage | null {
   if (/^\/partidos\/\d+\/?$/.test(pathname)) return "/partidos/:match";
-  if (Object.hasOwn(ANALYTICS_PAGES, pathname)) return pathname as AnalyticsPage;
+  if (Object.hasOwn(ANALYTICS_PAGES, pathname))
+    return pathname as AnalyticsPage;
   return null;
 }
 

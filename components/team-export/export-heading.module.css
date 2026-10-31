@@ -1,8 +1,8 @@
 .heading {
   display: grid;
-  --heading-ink: oklch(21.6% .006 56.043);
-  --heading-accent: oklch(35% .042 158);
-  --heading-border: oklch(87% .006 56);
+  --heading-ink: oklch(21.6% 0.006 56.043);
+  --heading-accent: oklch(35% 0.042 158);
+  --heading-border: oklch(87% 0.006 56);
   gap: 20px;
   padding-block: 28px 22px;
   background: var(--export-paper);
@@ -33,7 +33,7 @@
   font-size: 46px;
   line-height: 1.15;
   font-weight: 750;
-  letter-spacing: -.035em;
+  letter-spacing: -0.035em;
   text-align: start;
   text-wrap: balance;
   overflow-wrap: break-word;
@@ -57,7 +57,7 @@
   font-size: 32px;
   line-height: 1.25;
   font-weight: 650;
-  letter-spacing: -.02em;
+  letter-spacing: -0.02em;
   text-align: start;
   text-wrap: balance;
   overflow-wrap: break-word;

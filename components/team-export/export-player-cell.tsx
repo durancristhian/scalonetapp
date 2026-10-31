@@ -16,16 +16,36 @@ type Props = {
 export function ExportPlayerCell({ player, options, palette, roles }: Props) {
   const showAvatar = options.avatarShape !== "none";
   return (
-    <div className={styles.cell} data-player-id={player.id} data-export-player-cell data-alignment={options.alignment}>
+    <div
+      className={styles.cell}
+      data-player-id={player.id}
+      data-export-player-cell
+      data-alignment={options.alignment}
+    >
       {options.avatarShape !== "none" ? (
         <div className={styles.portrait}>
-          <PlayerAvatar name={player.name} src={player.avatar} size="xl" shape={options.avatarShape} palette={palette} className={styles.avatar} />
-          <PlayerRoleBadges roles={roles} placement="image" shape={options.avatarShape} />
+          <PlayerAvatar
+            name={player.name}
+            src={player.avatar}
+            size="xl"
+            shape={options.avatarShape}
+            palette={palette}
+            className={styles.avatar}
+          />
+          <PlayerRoleBadges
+            roles={roles}
+            placement="image"
+            shape={options.avatarShape}
+          />
         </div>
       ) : null}
       <div className={styles.label} data-export-player-label>
-        {!showAvatar ? <PlayerRoleBadges roles={roles} placement="inline" /> : null}
-        <p className={styles.name} title={player.name} data-export-player-name>{player.name}</p>
+        {!showAvatar ? (
+          <PlayerRoleBadges roles={roles} placement="inline" />
+        ) : null}
+        <p className={styles.name} title={player.name} data-export-player-name>
+          {player.name}
+        </p>
       </div>
     </div>
   );

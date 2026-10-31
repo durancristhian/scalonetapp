@@ -6,9 +6,19 @@
   min-inline-size: 0;
   text-align: start;
 }
-.cell[data-alignment="center"] { align-items: center; text-align: center; }
-.portrait { position: relative; flex: none; inline-size: 96px; block-size: 96px; }
-.avatar { border-color: color-mix(in oklch, var(--export-frame-color) 70%, black); }
+.cell[data-alignment="center"] {
+  align-items: center;
+  text-align: center;
+}
+.portrait {
+  position: relative;
+  flex: none;
+  inline-size: 96px;
+  block-size: 96px;
+}
+.avatar {
+  border-color: color-mix(in oklch, var(--export-frame-color) 70%, black);
+}
 .label {
   display: flex;
   align-items: center;

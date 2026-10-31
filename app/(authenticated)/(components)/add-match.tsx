@@ -1,6 +1,9 @@
 "use client";
 
-import { unwrapActionResult, getActionErrorMessage } from "@/utils/action-result";
+import {
+  unwrapActionResult,
+  getActionErrorMessage,
+} from "@/utils/action-result";
 
 import { trackAnalytics } from "@/utils/analytics";
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
@@ -38,9 +41,9 @@ export const MatchLimitAlert = () => (
     <InfoIcon aria-hidden="true" />
     <AlertTitle>¡Alto ahí, entrenador! ¡Llegaste al límite!</AlertTitle>
     <AlertDescription>
-      Ya tienes {process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER} partidos
-      creados. Te sugerimos eliminar alguno para darle lugar a nuevas
-      glorias futbolísticas!
+      Ya tienes {process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER} partidos creados.
+      Te sugerimos eliminar alguno para darle lugar a nuevas glorias
+      futbolísticas!
     </AlertDescription>
   </Alert>
 );
@@ -50,7 +53,7 @@ const EnabledContent: FC = () => {
   const { successAlert, errorAlert } = useAlerts();
 
   const onMatchSubmit: (values: MatchSchema) => Promise<void> = async (
-    values
+    values,
   ) => {
     return new Promise(async (resolve, reject) => {
       try {

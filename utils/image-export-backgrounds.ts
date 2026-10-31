@@ -2,11 +2,18 @@ import { DEFAULT_COLOR_PALETTE, getColorPalette } from "./color-palettes.ts";
 
 // Derive surface tones while keeping the five original avatar colors intact.
 function blendColors(base: string, accent: string, amount: number): string {
-  return "#" + [1, 3, 5].map((offset) => {
-    const from = parseInt(base.slice(offset, offset + 2), 16);
-    const to = parseInt(accent.slice(offset, offset + 2), 16);
-    return Math.round(from + (to - from) * amount).toString(16).padStart(2, "0");
-  }).join("");
+  return (
+    "#" +
+    [1, 3, 5]
+      .map((offset) => {
+        const from = parseInt(base.slice(offset, offset + 2), 16);
+        const to = parseInt(accent.slice(offset, offset + 2), 16);
+        return Math.round(from + (to - from) * amount)
+          .toString(16)
+          .padStart(2, "0");
+      })
+      .join("")
+  );
 }
 
 const synthetic = getColorPalette(DEFAULT_COLOR_PALETTE).colors;
@@ -67,4 +74,5 @@ export const IMAGE_EXPORT_BACKGROUNDS = [
   },
 ] as const;
 
-export type ImageExportBackgroundId = (typeof IMAGE_EXPORT_BACKGROUNDS)[number]["id"];
+export type ImageExportBackgroundId =
+  (typeof IMAGE_EXPORT_BACKGROUNDS)[number]["id"];

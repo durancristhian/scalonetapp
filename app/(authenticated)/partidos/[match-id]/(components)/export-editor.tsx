@@ -132,7 +132,15 @@ export default function ExportEditor({
       <DialogHeader className="border-b p-4 sm:p-6 text-start">
         <div className="flex min-w-0 items-center justify-between gap-3 pe-12">
           <DialogTitle className="min-w-0 pe-0">Exportar</DialogTitle>
-          <Button type="button" variant="outline" className="shrink-0 lg:hidden" disabled={processing} aria-label={showPreview ? "Ver opciones" : "Ver imagen"} aria-expanded={showPreview} onClick={() => setShowPreview(value => !value)}>
+          <Button
+            type="button"
+            variant="outline"
+            className="shrink-0 lg:hidden"
+            disabled={processing}
+            aria-label={showPreview ? "Ver opciones" : "Ver imagen"}
+            aria-expanded={showPreview}
+            onClick={() => setShowPreview((value) => !value)}
+          >
             {showPreview ? "Opciones" : "Ver imagen"}
           </Button>
         </div>
@@ -141,7 +149,12 @@ export default function ExportEditor({
         </DialogDescription>
       </DialogHeader>
       <div className="grid min-h-0 min-w-0 grid-cols-1 lg:grid-cols-[theme(spacing.80)_minmax(0,1fr)]">
-        <div className={cn("min-h-0 min-w-0 overflow-auto overscroll-contain p-4 sm:p-6", showPreview && "hidden lg:block")}>
+        <div
+          className={cn(
+            "min-h-0 min-w-0 overflow-auto overscroll-contain p-4 sm:p-6",
+            showPreview && "hidden lg:block",
+          )}
+        >
           <fieldset
             disabled={processing}
             className="grid min-w-0 gap-6 disabled:opacity-60"
@@ -255,11 +268,7 @@ export default function ExportEditor({
                 </SelectTrigger>
                 <SelectContent className="w-[var(--radix-select-trigger-width)]">
                   {IMAGE_EXPORT_AVATARS.map(({ id: shape, label }) => (
-                    <SelectItem
-                      key={shape}
-                      value={shape}
-                      textValue={label}
-                    >
+                    <SelectItem key={shape} value={shape} textValue={label}>
                       <span className="flex min-w-0 items-center gap-3 whitespace-nowrap text-start">
                         <span
                           aria-hidden="true"
@@ -369,10 +378,7 @@ export default function ExportEditor({
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="w-[var(--radix-select-trigger-width)]">
-                        <SelectItem
-                          value="none"
-                          textValue="No indicado"
-                        >
+                        <SelectItem value="none" textValue="No indicado">
                           <span className="flex min-w-0 items-center gap-3 whitespace-nowrap text-start">
                             <span
                               className="grid size-8 shrink-0 place-items-center"

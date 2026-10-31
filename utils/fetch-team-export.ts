@@ -15,7 +15,12 @@ export const fetchTeamExport = async (
 ): Promise<Blob> => {
   const response = await fetch(
     `/download/${matchId}?${imageExportRequestSearchParams(options, selections)}`,
-    { cache: "no-store", headers: fingerprint ? { "X-Lineup-Fingerprint": fingerprint } : undefined },
+    {
+      cache: "no-store",
+      headers: fingerprint
+        ? { "X-Lineup-Fingerprint": fingerprint }
+        : undefined,
+    },
   );
 
   if (response.status === 409) {

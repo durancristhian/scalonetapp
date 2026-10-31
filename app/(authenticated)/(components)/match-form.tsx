@@ -43,7 +43,7 @@ export const MatchForm: FC<MatchFormProps> = ({ onSubmit, values }) => {
   });
 
   const onSubmitHandler: (values: MatchSchema) => Promise<void> = async (
-    values
+    values,
   ) => {
     try {
       await onSubmit(values);

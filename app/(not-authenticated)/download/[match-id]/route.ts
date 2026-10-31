@@ -8,11 +8,12 @@ import {
   getImageExportTarget,
   ImageExportConfigurationError,
 } from "@/utils/image-export-target";
-import {
-  IMAGE_EXPORT_WIDTH,
-} from "@/utils/image-export-options";
+import { IMAGE_EXPORT_WIDTH } from "@/utils/image-export-options";
 import { parseImageExportRequest } from "@/utils/image-export-request";
-import { getImageExportBackground, getImageExportBackgroundUrls } from "@/utils/image-export-background";
+import {
+  getImageExportBackground,
+  getImageExportBackgroundUrls,
+} from "@/utils/image-export-background";
 import { type NextRequest, NextResponse } from "next/server";
 import { type Browser } from "puppeteer-core";
 import { getSavedTeamsError } from "@/utils/team-validation";
@@ -95,22 +96,40 @@ export async function GET(request: NextRequest) {
     }
 
     let teams: unknown;
-    try { teams = JSON.parse(match.teams); } catch { teams = null; }
-    const teamsError = getSavedTeamsError(teams, match.players.map(player => player.id));
+    try {
+      teams = JSON.parse(match.teams);
+    } catch {
+      teams = null;
+    }
+    const teamsError = getSavedTeamsError(
+      teams,
+      match.players.map((player) => player.id),
+    );
     if (teamsError) {
       return NextResponse.json({ error: teamsError }, { status: 422 });
     }
     const savedTeams = readSavedTeams(match.teams);
-    const assignedPlayerIds = new Set(savedTeams.flatMap(team => team.players));
+    const assignedPlayerIds = new Set(
+      savedTeams.flatMap((team) => team.players),
+    );
 
     const expected = request.headers.get("X-Lineup-Fingerprint");
     if (expected) {
-      const players = new Map(match.players.map(player => [player.id, player]));
-      const hydrated = savedTeams.map(team => ({ ...team,
-        players: team.players.flatMap(id => { const player = players.get(id); return player ? [player] : []; }),
+      const players = new Map(
+        match.players.map((player) => [player.id, player]),
+      );
+      const hydrated = savedTeams.map((team) => ({
+        ...team,
+        players: team.players.flatMap((id) => {
+          const player = players.get(id);
+          return player ? [player] : [];
+        }),
       }));
-      if (expected !== await lineupFingerprint(match.name, hydrated)) {
-        return NextResponse.json({ error: ERROR_MESSAGES.match_export_changed }, { status: 409 });
+      if (expected !== (await lineupFingerprint(match.name, hydrated))) {
+        return NextResponse.json(
+          { error: ERROR_MESSAGES.match_export_changed },
+          { status: 409 },
+        );
       }
     }
 
@@ -144,7 +163,8 @@ export async function GET(request: NextRequest) {
           (window as ImageExportWindow).__SCALONETA_EXPORT_MATCH__ = data;
           (window as ImageExportWindow).__SCALONETA_EXPORT_OPTIONS__ =
             imageOptions;
-          (window as ImageExportWindow).__SCALONETA_EXPORT_PLAYER_ROLES__ = playerRoles;
+          (window as ImageExportWindow).__SCALONETA_EXPORT_PLAYER_ROLES__ =
+            playerRoles;
         }
       },
       match,
@@ -167,10 +187,17 @@ export async function GET(request: NextRequest) {
     await waitForImageExport(
       page,
       match.name,
-      options.avatarShape === "none" ? [] : match.players.filter(player => assignedPlayerIds.has(player.id)).flatMap((player) => [
-        player.avatar,
-        getPlayerAvatarUrl(player.name, getImageExportBackground(options.background)!.palette),
-      ]),
+      options.avatarShape === "none"
+        ? []
+        : match.players
+            .filter((player) => assignedPlayerIds.has(player.id))
+            .flatMap((player) => [
+              player.avatar,
+              getPlayerAvatarUrl(
+                player.name,
+                getImageExportBackground(options.background)!.palette,
+              ),
+            ]),
       getImageExportBackgroundUrls(options),
     );
 

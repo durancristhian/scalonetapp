@@ -6,7 +6,7 @@ import { Telegram } from "@/utils/telegram";
 import { auth, currentUser } from "@clerk/nextjs/server";
 
 export const feedbackAction: (data: FeedbackSchema) => Promise<void> = async (
-  data
+  data,
 ) => {
   try {
     const { userId } = await auth();
@@ -28,7 +28,7 @@ export const feedbackAction: (data: FeedbackSchema) => Promise<void> = async (
           /* If the email is the primary one, we add a little note to it */
           user.primaryEmailAddressId && id === user.primaryEmailAddressId
             ? `${emailAddress} (Primary)`
-            : emailAddress
+            : emailAddress,
         )
         .join(", ")}`,
       `Message: ${feedback.message}`,

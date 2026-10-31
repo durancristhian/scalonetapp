@@ -45,7 +45,10 @@ export function ImageCropper({
   const [crop, setCrop] = useState<Crop>();
   const [croppedImageUrl, setCroppedImageUrl] = useState<string>("");
   const imgRef = useRef<HTMLImageElement | null>(null);
-  useEffect(() => { setCrop(undefined); setCroppedImageUrl(""); }, [preview]);
+  useEffect(() => {
+    setCrop(undefined);
+    setCroppedImageUrl("");
+  }, [preview]);
 
   function onImageLoad(event: SyntheticEvent<HTMLImageElement>) {
     const { width, height } = event.currentTarget;
@@ -69,7 +72,14 @@ export function ImageCropper({
     const scaleX = image.naturalWidth / image.width;
     const scaleY = image.naturalHeight / image.height;
 
-    const edge = Math.max(1, Math.min(512, Math.round(crop.width * scaleX), Math.round(crop.height * scaleY)));
+    const edge = Math.max(
+      1,
+      Math.min(
+        512,
+        Math.round(crop.width * scaleX),
+        Math.round(crop.height * scaleY),
+      ),
+    );
     canvas.width = edge;
     canvas.height = edge;
 
@@ -88,7 +98,7 @@ export function ImageCropper({
         0,
         0,
         canvas.width,
-        canvas.height
+        canvas.height,
       );
     }
 
@@ -114,7 +124,9 @@ export function ImageCropper({
       await onImageCropped(file);
 
       setDialogOpen(false);
-    } catch { errorAlert({ title: "No pudimos preparar esta foto. Prueba con otra." }); }
+    } catch {
+      errorAlert({ title: "No pudimos preparar esta foto. Prueba con otra." });
+    }
 
     setUploadingImage(false);
   }
@@ -162,7 +174,11 @@ export function ImageCropper({
               Cancelar
             </Button>
           </DialogClose>
-          <Button onClick={onCrop} disabled={uploadingImage || !croppedImageUrl} type="button">
+          <Button
+            onClick={onCrop}
+            disabled={uploadingImage || !croppedImageUrl}
+            type="button"
+          >
             {uploadingImage ? (
               <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
             ) : null}
@@ -189,9 +205,9 @@ const centerAspectCrop: (opts: {
       },
       aspect,
       width,
-      height
+      height,
     ),
     width,
-    height
+    height,
   );
 };

@@ -1,7 +1,9 @@
 "use client";
 
-import { unwrapActionResult, getActionErrorMessage } from "@/utils/action-result";
-
+import {
+  unwrapActionResult,
+  getActionErrorMessage,
+} from "@/utils/action-result";
 
 import { savePlayerPhoto } from "@/utils/save-player-photo";
 import { trackAnalytics } from "@/utils/analytics";
@@ -36,7 +38,10 @@ type AddPlayerProps = {
   disabled?: boolean;
 };
 
-export const AddPlayer: FC<AddPlayerProps> = ({ currentPlayerCount, disabled }) => {
+export const AddPlayer: FC<AddPlayerProps> = ({
+  currentPlayerCount,
+  disabled,
+}) => {
   if (disabled) {
     return <Button disabled>Agregar</Button>;
   }
@@ -49,21 +54,25 @@ export const PlayerLimitAlert = () => (
     <InfoIcon aria-hidden="true" />
     <AlertTitle>¡No hay más espacio en el banco!</AlertTitle>
     <AlertDescription>
-      ¡Has alcanzado el máximo de{" "}
-      {MAX_PLAYERS_PER_MATCH} jugadores! Si
-      necesitas añadir más estrellas, considera liberar espacio
-      eliminando un jugador existente.
+      ¡Has alcanzado el máximo de {MAX_PLAYERS_PER_MATCH} jugadores! Si
+      necesitas añadir más estrellas, considera liberar espacio eliminando un
+      jugador existente.
     </AlertDescription>
   </Alert>
 );
 
-const EnabledContent: FC<{ currentPlayerCount: number }> = ({ currentPlayerCount }) => {
+const EnabledContent: FC<{ currentPlayerCount: number }> = ({
+  currentPlayerCount,
+}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const params = useParams();
   const matchId = Number(params["match-id"]);
   const { errorAlert } = useAlerts();
 
-  const onPlayerSubmit: (values: PlayerSchema, photo?: Blob | null) => Promise<void> = (values, photo) => {
+  const onPlayerSubmit: (
+    values: PlayerSchema,
+    photo?: Blob | null,
+  ) => Promise<void> = (values, photo) => {
     return new Promise(async (resolve, reject) => {
       try {
         const id = unwrapActionResult(await addPlayerAction(matchId, values));
@@ -77,7 +86,10 @@ const EnabledContent: FC<{ currentPlayerCount: number }> = ({ currentPlayerCount
       } catch (error) {
         if (error instanceof Error) {
           errorAlert({
-            title: getActionErrorMessage(error, ERROR_MESSAGES.player_add_error),
+            title: getActionErrorMessage(
+              error,
+              ERROR_MESSAGES.player_add_error,
+            ),
           });
         }
 
@@ -87,12 +99,15 @@ const EnabledContent: FC<{ currentPlayerCount: number }> = ({ currentPlayerCount
   };
 
   const onMultiplePlayersSubmit: (values: PlayerSchema[]) => Promise<void> = (
-    values
+    values,
   ) => {
     return new Promise(async (resolve, reject) => {
       try {
         unwrapActionResult(await addMultiplePlayersAction(matchId, values));
-        trackAnalytics("players_added", { method: "bulk", count: values.length });
+        trackAnalytics("players_added", {
+          method: "bulk",
+          count: values.length,
+        });
 
         setDialogOpen(false);
 
@@ -100,7 +115,10 @@ const EnabledContent: FC<{ currentPlayerCount: number }> = ({ currentPlayerCount
       } catch (error) {
         if (error instanceof Error) {
           errorAlert({
-            title: getActionErrorMessage(error, ERROR_MESSAGES.player_multiple_add_error),
+            title: getActionErrorMessage(
+              error,
+              ERROR_MESSAGES.player_multiple_add_error,
+            ),
           });
         }
 
@@ -130,7 +148,10 @@ const EnabledContent: FC<{ currentPlayerCount: number }> = ({ currentPlayerCount
             <PlayerForm onSubmit={onPlayerSubmit} />
           </TabsContent>
           <TabsContent value="multiple">
-            <MultiplePlayersForm currentPlayerCount={currentPlayerCount} onSubmit={onMultiplePlayersSubmit} />
+            <MultiplePlayersForm
+              currentPlayerCount={currentPlayerCount}
+              onSubmit={onMultiplePlayersSubmit}
+            />
           </TabsContent>
         </Tabs>
       </DialogContent>

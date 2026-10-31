@@ -58,7 +58,7 @@ export const SmallScreenNavigation = () => {
               <Link
                 href={navItem.path}
                 className={clsx(
-                  isRouteActive(pathname, navItem.path) && "underline"
+                  isRouteActive(pathname, navItem.path) && "underline",
                 )}
               >
                 {navItem.label}
@@ -101,5 +101,5 @@ export const LargeScreenNavigation = () => {
 
 const isRouteActive: (currPathname: string, navPathname: string) => boolean = (
   currPathname,
-  navPathname
+  navPathname,
 ) => currPathname.startsWith(navPathname);

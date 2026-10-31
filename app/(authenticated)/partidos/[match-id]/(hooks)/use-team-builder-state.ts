@@ -56,15 +56,21 @@ type UseTeamsBuilderStateResult = {
 };
 
 type UseTeamsBuilderState = (
-  match: MatchWithPlayers
+  match: MatchWithPlayers,
 ) => UseTeamsBuilderStateResult;
 
 export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
-  const [builder, setBuilder] = useState(() => ({ teams: getInitialTeams(match), baseTeams: match.teams, matchId: match.id }));
-  const { teams, baseTeams } = builder;
-  const setTeams: Dispatch<SetStateAction<Team[]>> = next => setBuilder(current => ({
-    ...current, teams: typeof next === "function" ? next(current.teams) : next,
+  const [builder, setBuilder] = useState(() => ({
+    teams: getInitialTeams(match),
+    baseTeams: match.teams,
+    matchId: match.id,
   }));
+  const { teams, baseTeams } = builder;
+  const setTeams: Dispatch<SetStateAction<Team[]>> = (next) =>
+    setBuilder((current) => ({
+      ...current,
+      teams: typeof next === "function" ? next(current.teams) : next,
+    }));
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   useEffect(() => {
@@ -79,8 +85,8 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
   useEffect(() => {
     const playerIds = new Set(match.players.map((player) => player.id));
 
-    setSelectedIds(ids => {
-      const remaining = ids.filter(id => playerIds.has(id));
+    setSelectedIds((ids) => {
+      const remaining = ids.filter((id) => playerIds.has(id));
       return remaining.length === ids.length ? ids : remaining;
     });
 
@@ -90,11 +96,11 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
         const nextTeam = { ...currTeam };
 
         const playersInTeam = nextTeam.players.filter((player) =>
-          playerIds.has(player.id)
+          playerIds.has(player.id),
         );
         const updatedPlayersInTeam = playersInTeam
           .map((player) =>
-            match.players.find((matchPlayer) => matchPlayer.id === player.id)
+            match.players.find((matchPlayer) => matchPlayer.id === player.id),
           )
           .filter(Boolean);
 
@@ -116,7 +122,10 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
       const changedMatch = current.matchId !== match.id;
       return {
         teams: changedMatch || clean ? incoming : reconciled,
-        baseTeams: changedMatch || clean || rosterOnly || acknowledged ? match.teams : current.baseTeams,
+        baseTeams:
+          changedMatch || clean || rosterOnly || acknowledged
+            ? match.teams
+            : current.baseTeams,
         matchId: match.id,
       };
     });
@@ -124,10 +133,10 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
 
   const assignSelectionToTeam: UseTeamsBuilderStateResult["assignSelectionToTeam"] =
     (teamId) => {
-      const target = teams.find(team => team.id === teamId);
+      const target = teams.find((team) => team.id === teamId);
       if (!target) return;
       setTeams((currTeams) => {
-        const currentTarget = currTeams.find(team => team.id === teamId);
+        const currentTarget = currTeams.find((team) => team.id === teamId);
         if (!currentTarget) return currTeams;
         /* We loop over all the teams since an update might include removing players from another team, not only adding them to the specified team */
         return currTeams.map((currTeam) => {
@@ -136,23 +145,23 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
           /* If the selection is meant to be for the specified team id */
           if (currTeam.id === teamId) {
             const existingIds = new Set(
-              currTeam.players.map((player) => player.id)
+              currTeam.players.map((player) => player.id),
             );
             const nextSelectedPlayers = match.players.filter((player) =>
-              selectedIds.includes(player.id)
+              selectedIds.includes(player.id),
             );
 
             /* We compute the next players array based on the current data + the new selection without the already added players */
             nextTeam.players = [
               ...nextTeam.players,
               ...nextSelectedPlayers.filter(
-                (player) => !existingIds.has(player.id)
+                (player) => !existingIds.has(player.id),
               ),
             ];
           } else {
             /* If the team is not supposed to get this selection, we remove the coincidences */
             nextTeam.players = currTeam.players.filter(
-              (player) => !selectedIds.includes(player.id)
+              (player) => !selectedIds.includes(player.id),
             );
           }
 
@@ -166,19 +175,19 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
 
   const createBalancedTeams: (
     players: Player[],
-    numberOfChunks: number
+    numberOfChunks: number,
   ) => Player[][] = (players, numberOfChunks) => {
     /* We create the data-structure we'll return at the end */
     const teams: Player[][] = Array.from(
       {
         length: numberOfChunks,
       },
-      () => []
+      () => [],
     );
 
     /* We get the positions in use in the current players list */
     const playerPositionsInUse = Array.from(
-      new Set(players.map((player) => player.position))
+      new Set(players.map((player) => player.position)),
     );
 
     const playersByPosition: Record<string, Player[]> =
@@ -187,7 +196,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
           ...acc,
           [curr]: players.filter((player) => player.position === curr),
         }),
-        {}
+        {},
       );
 
     const teamLevels: number[] = Array(numberOfChunks).fill(0);
@@ -221,14 +230,18 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
 
     // Distribute players for each position
     playerPositionsInUse.forEach((position) =>
-      distributePlayers(playersByPosition[position])
+      distributePlayers(playersByPosition[position]),
     );
 
     return teams;
   };
 
   const balanceTeams: UseTeamsBuilderStateResult["balanceTeams"] = () => {
-    if (teams.length !== TEAMS_PER_MATCH || match.players.length > MAX_PLAYERS_PER_MATCH) return;
+    if (
+      teams.length !== TEAMS_PER_MATCH ||
+      match.players.length > MAX_PLAYERS_PER_MATCH
+    )
+      return;
     const balancedTeams = createBalancedTeams([...match.players], teams.length);
 
     setTeams((currTeams) => {
@@ -241,13 +254,15 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
 
   const createNewTeam: UseTeamsBuilderStateResult["createNewTeam"] = () => {
     setTeams((currTeams) =>
-      currTeams.length < TEAMS_PER_MATCH ? currTeams.concat([createEmptyTeam("Nuevo equipo")]) : currTeams
+      currTeams.length < TEAMS_PER_MATCH
+        ? currTeams.concat([createEmptyTeam("Nuevo equipo")])
+        : currTeams,
     );
   };
 
   const getUnselectedPlayers = () => {
     const idsInUse = teams.flatMap((team) =>
-      team.players.map((player) => player.id)
+      team.players.map((player) => player.id),
     );
 
     return match.players.filter((player) => !idsInUse.includes(player.id));
@@ -256,7 +271,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
   /* Thank you ChatGPT */
   const chunkArray: <T>(array: T[], numberOfChunks: number) => T[][] = (
     array,
-    numberOfChunks
+    numberOfChunks,
   ) => {
     /* Base chunk size */
     const chunkSize = Math.floor(array.length / numberOfChunks);
@@ -281,7 +296,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
   };
 
   const updateTeamsWithPlayerChunks: (players: Player[]) => void = (
-    players
+    players,
   ) => {
     setTeams((currTeams) => {
       const nextTeams = chunkArray<Player>([...players], currTeams.length);
@@ -294,7 +309,11 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
   };
 
   const randomizeTeams: UseTeamsBuilderStateResult["randomizeTeams"] = () => {
-    if (teams.length !== TEAMS_PER_MATCH || match.players.length > MAX_PLAYERS_PER_MATCH) return;
+    if (
+      teams.length !== TEAMS_PER_MATCH ||
+      match.players.length > MAX_PLAYERS_PER_MATCH
+    )
+      return;
     const shuffledPlayers = shuffle([...match.players]);
 
     updateTeamsWithPlayerChunks(shuffledPlayers);
@@ -309,22 +328,26 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
           }
 
           const nextPlayers = currTeam.players.filter(
-            (player) => player.id !== playerId
+            (player) => player.id !== playerId,
           );
 
           const nextTeam: Team = { ...currTeam, players: nextPlayers };
 
           return nextTeam;
-        })
+        }),
       );
     };
 
   const removeTeam: UseTeamsBuilderStateResult["removeTeam"] = (teamId) => {
-    setTeams((currTeams) => currTeams.length > TEAMS_PER_MATCH ? currTeams.filter((team) => team.id !== teamId) : currTeams);
+    setTeams((currTeams) =>
+      currTeams.length > TEAMS_PER_MATCH
+        ? currTeams.filter((team) => team.id !== teamId)
+        : currTeams,
+    );
   };
 
   const togglePlayer: UseTeamsBuilderStateResult["togglePlayer"] = (
-    playerId
+    playerId,
   ) => {
     setSelectedIds((currSelectedIds) => {
       const nextState = [...currSelectedIds];
@@ -345,7 +368,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
 
   const updateTeamName: UseTeamsBuilderStateResult["updateTeamName"] = (
     teamId,
-    newName
+    newName,
   ) => {
     setTeams((currTeams) =>
       currTeams.map((currTeam) => {
@@ -357,7 +380,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
         nextTeam.name = newName;
 
         return nextTeam;
-      })
+      }),
     );
   };
 
@@ -365,7 +388,9 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
     baseTeams,
     // A new match's generated teams are the initial editor state, not a user
     // change. Keep nonempty or malformed saved data intact for pending repairs.
-    comparisonTeams: haveTeamsChanged(baseTeams, "[]") ? baseTeams : getTeamsToSave(DEFAULT_TEAMS),
+    comparisonTeams: haveTeamsChanged(baseTeams, "[]")
+      ? baseTeams
+      : getTeamsToSave(DEFAULT_TEAMS),
     assignSelectionToTeam,
     balanceTeams,
     createNewTeam,

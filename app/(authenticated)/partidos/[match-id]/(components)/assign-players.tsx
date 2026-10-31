@@ -57,7 +57,9 @@ export const AssignPlayers: FC<AssignPlayersProps> = ({
             onValueChange={(values) => {
               const nextIds = new Set(values.map(Number));
               for (const player of players) {
-                if (nextIds.has(player.id) !== selectedIds.includes(player.id)) {
+                if (
+                  nextIds.has(player.id) !== selectedIds.includes(player.id)
+                ) {
                   togglePlayer(player.id);
                 }
               }
@@ -76,7 +78,9 @@ export const AssignPlayers: FC<AssignPlayersProps> = ({
                   name={player.name}
                   size="sm"
                 />
-                <span className="min-w-0 line-clamp-2" title={player.name}>{player.name}</span>
+                <span className="min-w-0 line-clamp-2" title={player.name}>
+                  {player.name}
+                </span>
               </ToggleGroupItem>
             ))}
           </ToggleGroup>
@@ -89,9 +93,7 @@ export const AssignPlayers: FC<AssignPlayersProps> = ({
                 setSelectedTeamId("");
               }}
             >
-              <SelectTrigger
-                aria-label="Asignar jugadores al equipo"
-              >
+              <SelectTrigger aria-label="Asignar jugadores al equipo">
                 <SelectValue placeholder="Elige un equipo..." />
               </SelectTrigger>
               <SelectContent>

@@ -1,4 +1,20 @@
-.pole { fill: none; stroke: var(--export-divider-color); stroke-width: 3px; opacity: .6; }
-.glow { fill: var(--export-lamp-color); opacity: .18; }
-.housing { fill: color-mix(in oklch, var(--export-frame-color) 65%, var(--export-divider-color)); }
-.lamp { fill: var(--export-lamp-color); }
+.pole {
+  fill: none;
+  stroke: var(--export-divider-color);
+  stroke-width: 3px;
+  opacity: 0.6;
+}
+.glow {
+  fill: var(--export-lamp-color);
+  opacity: 0.18;
+}
+.housing {
+  fill: color-mix(
+    in oklch,
+    var(--export-frame-color) 65%,
+    var(--export-divider-color)
+  );
+}
+.lamp {
+  fill: var(--export-lamp-color);
+}

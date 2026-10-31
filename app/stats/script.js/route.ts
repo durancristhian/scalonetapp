@@ -17,6 +17,9 @@ export async function GET() {
       },
     });
   } catch {
-    return new Response(null, { status: 503, headers: { "Cache-Control": "no-store" } });
+    return new Response(null, {
+      status: 503,
+      headers: { "Cache-Control": "no-store" },
+    });
   }
 }

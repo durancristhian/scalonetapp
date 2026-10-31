@@ -9,11 +9,24 @@ class ResizeObserver {
   unobserve() {}
   disconnect() {}
 }
-Object.defineProperty(globalThis, "ResizeObserver", { configurable: true, writable: true, value: ResizeObserver });
-Object.defineProperty(window, "matchMedia", { writable: true, value: (media: string) => ({
-  matches: false, media, onchange: null,
-  addListener() {}, removeListener() {}, addEventListener() {}, removeEventListener() {}, dispatchEvent: () => true,
-}) });
+Object.defineProperty(globalThis, "ResizeObserver", {
+  configurable: true,
+  writable: true,
+  value: ResizeObserver,
+});
+Object.defineProperty(window, "matchMedia", {
+  writable: true,
+  value: (media: string) => ({
+    matches: false,
+    media,
+    onchange: null,
+    addListener() {},
+    removeListener() {},
+    addEventListener() {},
+    removeEventListener() {},
+    dispatchEvent: () => true,
+  }),
+});
 Element.prototype.scrollIntoView = () => {};
 Element.prototype.hasPointerCapture = () => false;
 Element.prototype.setPointerCapture = () => {};
