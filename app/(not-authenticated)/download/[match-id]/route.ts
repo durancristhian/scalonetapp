@@ -24,7 +24,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 const CHROMIUM_PACK_URL =
-  "https://github.com/Sparticuz/chromium/releases/download/v138.0.2/chromium-v138.0.2-pack.x64.tar";
+  "https://github.com/Sparticuz/chromium/releases/download/v153.0.0/chromium-v153.0.0-pack.x64.tar";
 let chromiumExecutablePath: Promise<string> | undefined;
 
 const getBrowser: () => Promise<Browser> = async () => {
@@ -47,7 +47,7 @@ const getBrowser: () => Promise<Browser> = async () => {
       });
 
     return puppeteerCore.launch({
-      args: puppeteerCore.defaultArgs({
+      args: await puppeteerCore.defaultArgs({
         args: chromium.args,
         headless: "shell",
       }),
