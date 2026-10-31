@@ -2,12 +2,12 @@
 
 ## Scope
 
-- Keep development instructions, design guidance and reusable product tests in this repository. These instructions replace the former CEO routing policy.
-- Write documentation in English. Communicate with the owner in Spanish; preserve existing Spanish UI copy.
+- Keep development instructions, design guidance and reusable product tests in this repository.
+- Write documentation in English. Preserve existing Spanish UI copy.
 - Make the smallest coherent change. Preserve unrelated work.
 - For UI work, read [DESIGN.md](DESIGN.md). For local setup, read [README.md](README.md).
 - Update the relevant document when a change alters a lasting rule or workflow. Keep instructions short; add files only when needed.
-- Keep temporary checks and evidence in ignored scratch space. Add permanent validation tooling only when the task requires it; existing CEO scripts remain optional legacy tools.
+- Keep temporary checks and evidence in ignored scratch space. Add permanent validation tooling only when the task requires it.
 - Merge and Production actions require explicit authorization.
 
 ## Product contracts
