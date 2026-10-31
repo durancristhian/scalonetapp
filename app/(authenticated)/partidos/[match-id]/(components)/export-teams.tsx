@@ -6,12 +6,13 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { type Team } from "@/types/team";
 import { type ImageExportOptions } from "@/utils/image-export-options";
 import dynamic from "next/dynamic";
+import { loadModule } from "@/utils/load-module";
 import { useState } from "react";
 import { type ImageExportTeamSelections } from "@/utils/image-export-player-roles";
 import { getTeamCountError } from "@/utils/team-count";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-const ExportEditor = dynamic(() => import("./export-editor"));
+const ExportEditor = dynamic(() => loadModule(() => import("./export-editor")));
 
 type ExportTeamsProps = {
   matchId: number;

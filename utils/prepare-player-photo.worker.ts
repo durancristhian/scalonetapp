@@ -1,3 +1,5 @@
+import { loadModule } from "./load-module";
+
 // heic-to and its libheif decoder are loaded only for HEIC, inside this worker.
 // Distribution notices and corresponding-source links: /licenses/heic.txt.
 self.onmessage = async (event: MessageEvent<File>) => {
@@ -7,7 +9,7 @@ self.onmessage = async (event: MessageEvent<File>) => {
     try {
       bitmap = await createImageBitmap(event.data);
     } catch {
-      const { heicTo } = await import("heic-to/next");
+      const { heicTo } = await loadModule(() => import("heic-to/next"));
       bitmap = await heicTo({ blob: event.data, type: "bitmap" });
     }
     // Keep an oriented, lossless preview with room to crop, without retaining

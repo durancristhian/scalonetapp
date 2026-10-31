@@ -4,9 +4,11 @@ import { type ImageCropper as ImageCropperComponent } from "@/components/image-c
 import { PlayerAvatar } from "@/components/player-avatar";
 import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
+import { loadModule } from "@/utils/load-module";
 import { PLAYER_PHOTO_ACCEPT, preparePlayerPhoto } from "@/utils/prepare-player-photo";
 
 type Props = { name: string; src?: string; disabled?: boolean; onChange: (photo: Blob | null) => void; onPreparingChange: (preparing: boolean) => void };
+
 export function PlayerAvatarInput({ name, src, disabled, onChange, onPreparingChange }: Props) {
   const input = useRef<HTMLInputElement>(null);
   const preparation = useRef<AbortController | null>(null);
@@ -33,8 +35,8 @@ export function PlayerAvatarInput({ name, src, disabled, onChange, onPreparingCh
         try {
           const [source, { ImageCropper: Cropper }] = await Promise.all([
             preparePlayerPhoto(file, controller.signal),
-            import("@/components/image-cropper").catch(() => {
-              throw new Error("No pudimos cargar el recortador. Prueba con otra foto.");
+            loadModule(() => import("@/components/image-cropper"), controller.signal).catch(() => {
+              throw new Error("No pudimos abrir el editor de fotos. Intenta nuevamente. Si el problema continúa, recarga la página.");
             }),
           ]);
           if (controller.signal.aborted) return;
