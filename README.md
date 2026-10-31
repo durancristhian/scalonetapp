@@ -11,7 +11,7 @@ Development documentation lives here and is updated alongside relevant changes.
 
 ## Run locally
 
-Requires Node.js 24, a PostgreSQL database, and a [Clerk](https://clerk.com) development application.
+Requires Node.js 26, a PostgreSQL database, and a [Clerk](https://clerk.com) development application.
 
 ```bash
 nvm install
