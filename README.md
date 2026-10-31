@@ -20,6 +20,8 @@ npm ci
 cp -n .env.template .env.local
 ```
 
+In a new worktree, copy the required ignored environment files from the main checkout into that worktree before starting services or environment-dependent checks. Copy only the variables needed for the task, keep secrets out of logs and Git, and verify Clerk test keys and an owned, isolated PostgreSQL database before any Development mutations. Existing environment files may point to Production; replace those connections rather than using them for local checks.
+
 In `.env.local`, set:
 
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` from Clerk Development.
