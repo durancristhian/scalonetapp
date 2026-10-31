@@ -8,6 +8,9 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
+      "@/server/actions/match": fileURLToPath(
+        new URL("./fixture/match-actions.ts", import.meta.url),
+      ),
       "@/server/actions/player": fileURLToPath(
         new URL("./fixture/player-actions.ts", import.meta.url),
       ),

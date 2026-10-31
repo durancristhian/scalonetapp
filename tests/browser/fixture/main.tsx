@@ -3,7 +3,8 @@ import { createRoot } from "react-dom/client";
 import { PathParamsContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
 import { Toaster } from "sonner";
 import { MatchPlayers } from "@/app/(authenticated)/partidos/[match-id]/(components)/match-players";
-import { player } from "../../fixtures";
+import { MatchItem } from "@/app/(authenticated)/(components)/match-item";
+import { match, player } from "../../fixtures";
 import "@/app/globals.css";
 
 const roster = [player(1, { name: "Ana" })];
@@ -14,6 +15,7 @@ function Fixture() {
       <button onClick={() => setClicks((value) => value + 1)}>
         Comprobar clics: {clicks}
       </button>
+      <MatchItem match={match()} disableDuplication={false} />
       <PathParamsContext.Provider value={{ "match-id": "1" }}>
         <MatchPlayers players={roster} />
       </PathParamsContext.Provider>

@@ -28,9 +28,14 @@ const duplicateErrors = {
 type DuplicateMatchProps = {
   id: number;
   onClose: () => void;
+  onCloseAutoFocus?: (event: Event) => void;
 };
 
-export const DuplicateMatch: FC<DuplicateMatchProps> = ({ id, onClose }) => {
+export const DuplicateMatch: FC<DuplicateMatchProps> = ({
+  id,
+  onClose,
+  onCloseAutoFocus,
+}) => {
   const [processing, setIsProcessing] = useState(false);
   const pending = useRef(false);
   const { errorAlert, successAlert } = useAlerts();
@@ -68,6 +73,7 @@ export const DuplicateMatch: FC<DuplicateMatchProps> = ({ id, onClose }) => {
   return (
     <AlertDialog open>
       <AlertDialogContent
+        onCloseAutoFocus={onCloseAutoFocus}
         onEscapeKeyDown={(event) => {
           if (pending.current) event.preventDefault();
           else onClose();

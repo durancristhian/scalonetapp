@@ -23,9 +23,14 @@ import { type FC } from "react";
 type EditMatchProps = {
   match: Match;
   onClose: () => void;
+  onCloseAutoFocus?: (event: Event) => void;
 };
 
-export const EditMatch: FC<EditMatchProps> = ({ match, onClose }) => {
+export const EditMatch: FC<EditMatchProps> = ({
+  match,
+  onClose,
+  onCloseAutoFocus,
+}) => {
   const { errorAlert } = useAlerts();
 
   const onMatchSubmit: (values: MatchSchema) => Promise<void> = (values) => {
@@ -55,7 +60,10 @@ export const EditMatch: FC<EditMatchProps> = ({ match, onClose }) => {
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent
+        className="sm:max-w-lg"
+        onCloseAutoFocus={onCloseAutoFocus}
+      >
         <DialogHeader>
           <DialogTitle>¿Listo para un cambio?</DialogTitle>
           <DialogDescription className="max-md:text-balance">
