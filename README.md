@@ -1,5 +1,14 @@
 # scalonetapp
 
+Build two football teams, save lineups and export a shareable image.
+
+## Development guidance
+
+- [AGENTS.md](AGENTS.md): working rules, product contracts and verification.
+- [DESIGN.md](DESIGN.md): the current visual system.
+
+Development documentation lives here and is updated alongside relevant changes.
+
 ## Run locally
 
 Requires Node.js 24, a PostgreSQL database, and a [Clerk](https://clerk.com) development application.
