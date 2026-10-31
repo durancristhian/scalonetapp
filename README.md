@@ -36,3 +36,20 @@ npm run dev
 
 Open [localhost:3000](http://localhost:3000). Keep this port for local image exports.
 Environment files are ignored by Git; use development credentials only.
+
+## Frontend behavior tests
+
+Run without an environment file, database or Clerk session:
+
+```bash
+npm ci
+npx playwright install chromium  # once per machine
+npm run test:frontend
+```
+
+`npm test` runs Vitest; `npm run test:watch` enables watch mode.
+`npm run test:browser` runs the isolated Playwright fixture.
+
+Visual comparisons, authentication and backend verification are outside this suite.
+[CI](.github/workflows/frontend-tests.yml) runs lint, typecheck and both suites on PRs
+and pushes to `main`.

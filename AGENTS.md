@@ -6,7 +6,8 @@
 - Write documentation in English. Preserve existing Spanish UI copy.
 - Make the smallest coherent change. Preserve unrelated work.
 - For UI work, read [DESIGN.md](DESIGN.md). For local setup, read [README.md](README.md).
-- Update the relevant document when a change alters a lasting rule or workflow. Keep instructions short; add files only when needed.
+- Update docs only for lasting contract or workflow changes. Keep README for setup and commands; AGENTS for development rules.
+- Make the smallest sufficient doc edit in the existing section. Link to code/config instead of duplicating it; omit implementation walkthroughs, coverage inventories and run logs. Review the doc diff for redundancy before handoff.
 - Keep temporary checks and evidence in ignored scratch space. Add permanent validation tooling only when the task requires it.
 - Merge and Production actions require explicit authorization.
 
@@ -22,6 +23,8 @@
 
 - Reproduce a reported bug in the affected flow before choosing a fix.
 - Run checks proportionate to the change using the current `package.json` scripts. Exercise the affected journey with synthetic data in Development or Preview.
+- For frontend behavior changes, run the affected Vitest tests during development and `npm run test:frontend` before handoff. See [Frontend behavior tests](README.md#frontend-behavior-tests) for setup and scope.
+- Test frontend behavior with real components and minimal external-boundary substitutes. Reserve browser tests for behaviors requiring a real browser; omit visual baselines and exact render counts.
 - For roster or export changes, check save/reload, partial teams, stale tabs and preview/PNG agreement where affected.
 - For UI changes, check 320x568, 768x1024, 1024x768 and 1280x800 CSS-pixel viewports. Check immediately around relevant breakpoints.
 - For broad responsive changes, add 390x844 and 1440x900; for height-sensitive changes, add 844x390 and keyboard/dialog reachability.
