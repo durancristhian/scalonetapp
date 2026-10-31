@@ -22,6 +22,8 @@
 
 - Reproduce a reported bug in the affected flow before choosing a fix.
 - Run checks proportionate to the change using the current `package.json` scripts. Exercise the affected journey with synthetic data in Development or Preview.
+- For frontend behavior changes, run the affected Vitest tests during development and `npm run test:frontend` before handoff. See [Frontend behavior tests](README.md#frontend-behavior-tests) for setup, coverage and isolation boundaries.
+- Keep frontend tests focused on observable behavior with real components and minimal external-boundary substitutes. Reserve browser tests for behaviors that need a real browser.
 - For roster or export changes, check save/reload, partial teams, stale tabs and preview/PNG agreement where affected.
 - For UI changes, check 320x568, 768x1024, 1024x768 and 1280x800 CSS-pixel viewports. Check immediately around relevant breakpoints.
 - For broad responsive changes, add 390x844 and 1440x900; for height-sensitive changes, add 844x390 and keyboard/dialog reachability.
