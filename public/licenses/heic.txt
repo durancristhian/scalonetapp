@@ -1,7 +1,7 @@
 HEIC photo conversion notices
 
-Scaloneta uses heic-to 1.6.6, by Hopper Gee, distributed under LGPL-3.0-or-later.
-It includes libheif 1.23.6 and libde265 1.0.16, under LGPL-3.0-or-later.
+Scaloneta uses heic-to 1.6.7, by Hopper Gee, distributed under LGPL-3.0-or-later.
+It includes libheif 1.23.7 and libde265 1.0.16, under LGPL-3.0-or-later.
 The library is used without modifications. It is loaded separately, on demand,
 in a browser worker. No photo is sent to a conversion service.
 
@@ -12,10 +12,10 @@ License texts distributed with this application:
 /licenses/GPL-3.0.txt
 
 Corresponding library sources and build instructions (exact versions):
-https://github.com/hoppergee/heic-to/tree/v1.6.6
-https://github.com/hoppergee/heic-to/blob/v1.6.6/README.md
-https://registry.npmjs.org/heic-to/-/heic-to-1.6.6.tgz
-https://github.com/strukturag/libheif/tree/v1.23.6
+https://github.com/hoppergee/heic-to/tree/v1.6.7
+https://github.com/hoppergee/heic-to/blob/v1.6.7/README.md
+https://registry.npmjs.org/heic-to/-/heic-to-1.6.7.tgz
+https://github.com/strukturag/libheif/tree/v1.23.7
 https://github.com/strukturag/libde265/tree/v1.0.16
 
 Application integration source:
