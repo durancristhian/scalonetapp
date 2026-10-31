@@ -17,7 +17,6 @@ const response = (error: string, status: number) =>
   Response.json({ error }, { status });
 
 async function ownedPlayer(request: Request, context: Context) {
-  // Cookie-authenticated mutations must originate from this application.
   if (request.headers.get("origin") !== new URL(request.url).origin)
     return response("Solicitud no permitida.", 403);
   const { userId } = await auth();

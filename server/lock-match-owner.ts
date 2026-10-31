@@ -4,6 +4,5 @@ export async function lockMatchOwner(
   transaction: Prisma.TransactionClient,
   userId: string,
 ) {
-  // A parent-row lock cannot serialize creation for an account with no matches.
   await transaction.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${userId}, 0))::text`;
 }

@@ -31,7 +31,6 @@ export async function waitForImageExport(
         );
       });
 
-      // Radix preloads avatars before inserting <img>, so inspect expected URLs.
       const images = urls.map(
         (url) =>
           new Promise<void>((resolve) => {
@@ -42,7 +41,6 @@ export async function waitForImageExport(
               image.onerror = null;
               resolve();
             };
-            // Failed or stalled avatars retain the UI's existing fallback.
             const timer = setTimeout(finish, 5_000);
             image.onload = finish;
             image.onerror = finish;

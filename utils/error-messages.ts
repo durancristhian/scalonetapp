@@ -1,9 +1,7 @@
 export const ERROR_MESSAGES = {
-  /* feedback */
   feedback_submit_error:
     "Ocurrió un error al enviar su feedback. Por favor, intente nuevamente.",
 
-  /* general */
   export_failed: "Ocurrió un error al exportar la imágen.",
   not_found: "No encontrado.",
   required: "Campo requerido.",
@@ -11,7 +9,6 @@ export const ERROR_MESSAGES = {
   too_large: "40 caracteres máximo.",
   unauthorized: "No autorizado.",
 
-  /* match */
   match_add_error:
     "Ocurrió un error al crear el partido. Por favor, intente nuevamente.",
   match_delete_error:
@@ -35,7 +32,6 @@ export const ERROR_MESSAGES = {
   match_players_repeated:
     "Ya existe un jugador con alguno de estos nombres en este partido.",
 
-  /* player */
   player_add_error:
     "Ocurrió un error al crear el jugador. Por favor, intente nuevamente.",
   player_delete_error:

@@ -4,8 +4,6 @@ import {
 } from "@/utils/image-export-options";
 import type { Team } from "@/types/team";
 
-// Shared measurements for the illustration and the flat roster placed over it.
-// Typography, colors and borders belong to each part's stylesheet.
 export const EXPORT_LAYOUT = {
   width: IMAGE_EXPORT_WIDTH,
   standHeight: 64,

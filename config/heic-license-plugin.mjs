@@ -40,7 +40,6 @@ export function heicLicensePlugin(webpack) {
     apply(compiler) {
       compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
         compilation.hooks.processAssets.tap(
-          // Run after minification but before source maps and content hashes.
           {
             name: pluginName,
             stage: webpack.Compilation.PROCESS_ASSETS_STAGE_OPTIMIZE_SIZE + 1,

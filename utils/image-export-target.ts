@@ -42,7 +42,6 @@ export function getImageExportRequestHeaders(
   headers: Record<string, string>,
   target: ImageExportTarget,
 ): Record<string, string> {
-  // Redirects can inherit headers. Remove the secret before checking each origin.
   const scopedHeaders = Object.fromEntries(
     Object.entries(headers).filter(
       ([name]) => name.toLowerCase() !== "x-vercel-protection-bypass",

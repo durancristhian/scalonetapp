@@ -1,4 +1,3 @@
-/* Fn to alphabetically sort objects by their name property */
 export const byName: <
   T extends {
     name: string;

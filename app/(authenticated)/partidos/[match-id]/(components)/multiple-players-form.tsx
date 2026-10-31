@@ -51,13 +51,11 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
     },
     resolver: zodResolver(schema),
   });
-  /* We listen for changes in the players string */
   const players = useWatch({
     name: "players",
     control: form.control,
   });
 
-  /* We count the valid lines in the form */
   const lines = useMemo(() => {
     return getLinesFromString(players);
   }, [players]);

@@ -16,7 +16,6 @@ import { feedbackAction } from "@/server/actions/feedback";
 import copy from "copy-to-clipboard";
 import { deferred, match, player, teams } from "../fixtures";
 
-// Only the server/clipboard boundaries are replaced. Forms, dialogs and toasts are real.
 vi.mock("@/server/actions/match", () => ({
   addMatchAction: vi.fn(),
   deleteMatchAction: vi.fn(),

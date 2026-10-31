@@ -33,7 +33,6 @@ export const MatchItem: FC<MatchItemProps> = ({
   disableDuplication,
 }) => {
   const [menuOpened, setMenuOpened] = useState(false);
-  /* This is not great at all but enough for now due to the small amout of options we have in the dropdown menu */
   const [dialogId, setDialogId] = useState<
     "duplicate" | "edit" | "delete" | null
   >(null);
@@ -70,7 +69,6 @@ export const MatchItem: FC<MatchItemProps> = ({
               <EllipsisVerticalIcon className="h-4 text-muted-foreground w-4" />
             </Button>
           </DropdownMenuTrigger>
-          {/* Margin here helps to detach the menu from the limit of the screen (specially in mobile) */}
           <DropdownMenuContent className="mr-4">
             <DropdownMenuItem
               onClick={() => {

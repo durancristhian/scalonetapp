@@ -23,7 +23,6 @@ export type TeamExportProps = {
   playerRoles?: ImageExportTeamSelections;
 };
 
-// The editor preview and the PNG route both render this composition.
 export function TeamExport({
   name,
   teams,

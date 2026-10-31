@@ -1,5 +1,3 @@
-// The only browser fixture replacement: Next Server Actions need a Next runtime.
-// Keep outcomes controllable through HTTP so tests can exercise pending/error states.
 async function request(operation: string, id?: number, data?: unknown) {
   const response = await fetch("/test-actions/player", {
     method: "POST",

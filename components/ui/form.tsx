@@ -167,7 +167,6 @@ const FormMessage = React.forwardRef<
 });
 FormMessage.displayName = "FormMessage";
 
-/* Inspiration: https://github.com/shadcn-ui/ui/pull/3475 */
 const FormRootError = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>

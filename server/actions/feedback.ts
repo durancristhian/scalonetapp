@@ -12,20 +12,16 @@ export const feedbackAction: (data: FeedbackSchema) => Promise<void> = async (
     const { userId } = await auth();
     const user = await currentUser();
 
-    /* We check auth */
     if (!userId || !user) {
       throw new Error(ERROR_MESSAGES.unauthorized);
     }
 
     const feedback = FEEDBACK_SCHEMA.parse(data);
 
-    /* We generate the expected message format */
     const message = [
       `User id: ${userId}`,
-      /* We loop over the emailAddresses just in case the user has more than 1 */
       `User emails: ${user.emailAddresses
         .map(({ id, emailAddress }) =>
-          /* If the email is the primary one, we add a little note to it */
           user.primaryEmailAddressId && id === user.primaryEmailAddressId
             ? `${emailAddress} (Primary)`
             : emailAddress,

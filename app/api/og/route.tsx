@@ -4,10 +4,8 @@ export async function GET() {
   return new ImageResponse(
     <div
       style={{
-        /* bg-accent */
         background: "#f5f5f4",
         alignItems: "center",
-        /* text-foreground */
         color: "#0c0a09",
         display: "flex",
         flexDirection: "column",
@@ -23,7 +21,6 @@ export async function GET() {
       </div>
       <div
         style={{
-          /* text-muted-foreground */
           color: "#78716c",
           fontSize: 36,
         }}
@@ -32,7 +29,6 @@ export async function GET() {
       </div>
       <div
         style={{
-          /* text-muted-foreground */
           color: "#78716c",
           fontSize: 36,
         }}

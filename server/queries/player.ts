@@ -16,7 +16,6 @@ async function addPlayersAtomically<T>(
 ): Promise<T> {
   return prisma.$transaction(
     async (transaction) => {
-      // All individual/bulk additions lock the same parent row before counting.
       const matches = await transaction.$queryRaw<{ id: number }[]>`
       SELECT "id" FROM "Match" WHERE "id" = ${matchId} AND "userId" = ${userId} FOR UPDATE
     `;
@@ -108,7 +107,6 @@ export const deletePlayerQuery: (
     });
     if (!player) throw new ExpectedActionError(ERROR_MESSAGES.not_found);
 
-    // Roster changes and team saves must lock the parent before changing either.
     const [match] = await transaction.$queryRaw<
       { id: number; teams: string }[]
     >`

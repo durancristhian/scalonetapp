@@ -4,8 +4,6 @@ import { ERROR_MESSAGES } from "./error-messages.ts";
 
 export const MAX_TEAM_NAME_LENGTH = 40;
 
-// Validate assignment integrity, not completion. Empty teams and free players
-// are valid in the builder, persistence, duplication and PNG export.
 export function getSavedTeamsError(
   value: unknown,
   matchPlayerIds: readonly number[],

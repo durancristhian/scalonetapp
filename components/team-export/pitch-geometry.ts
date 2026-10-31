@@ -2,8 +2,6 @@ import { EXPORT_LAYOUT } from "./export-layout";
 
 type Point = readonly [number, number];
 
-// Shared top-down coordinates keep the frame, surface and markings rectangular.
-// Player cells use their own grid and remain equally sized and readable.
 export function createPitchGeometry(fieldHeight: number) {
   const { width, standHeight } = EXPORT_LAYOUT;
   function project(u: number, v: number) {

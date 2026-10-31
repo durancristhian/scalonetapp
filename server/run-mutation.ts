@@ -17,7 +17,6 @@ export async function runMutation<T>(
     const { userId } = await auth();
     if (!userId) return { ok: false, error: ERROR_MESSAGES.unauthorized };
     const data = await work(userId);
-    // The mutation has committed. A refresh failure must not invite a retry.
     try {
       revalidatePath("/partidos/[match-id]", "page");
       revalidatePath("/dashboard");

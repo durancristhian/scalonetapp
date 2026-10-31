@@ -9,7 +9,6 @@ import {
 export const runtime = "nodejs";
 const templates = new Map<string, Promise<string>>();
 
-// Public, deterministic artwork. Never reads match or account data.
 export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
   const backgrounds = params.getAll("background");

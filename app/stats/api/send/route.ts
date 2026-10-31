@@ -40,7 +40,6 @@ export async function POST(request: Request) {
       "Content-Type": "application/json",
       "User-Agent": userAgent,
     });
-    // Vercel overwrites this header at its edge. Never forward arbitrary client headers/cookies.
     const ip = request.headers.get("x-vercel-forwarded-for");
     if (process.env.VERCEL === "1" && ip && isIP(ip))
       headers.set("X-Forwarded-For", ip);

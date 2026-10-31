@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 
-// Keep the original exception in server logs; expose only its reference to clients.
 export function reportServerError(
   error: unknown,
   context: { operation: string; matchId?: number; playerId?: number },

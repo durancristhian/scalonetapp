@@ -12,8 +12,6 @@
     "moduleResolution": "bundler",
     "noEmit": true,
     "noImplicitOverride": true,
-    /* TODO: Enable this and fix all the errors */
-    /* "noUncheckedIndexedAccess": true, */
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,

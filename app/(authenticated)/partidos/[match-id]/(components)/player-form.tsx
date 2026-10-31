@@ -22,10 +22,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useId, useState, type FC } from "react";
 import { useForm } from "react-hook-form";
 
-/* Players are categorized from 1 to 10 */
 const PLAYER_LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-/* Description of every player level */
 const LEVEL_MESSAGES: Record<number, string> = {
   1: "Un tronco realmente.",
   2: "Se defiende, pero podría jugar al pelota paleta mejor.",

@@ -1,6 +1,5 @@
 import { readSavedTeams } from "./read-saved-teams.ts";
 
-// A roster deletion is persisted independently of any unsaved builder edits.
 export function removePlayerFromSavedTeams(
   serialized: string,
   playerId: number,
@@ -9,9 +8,7 @@ export function removePlayerFromSavedTeams(
   let changed = true;
   try {
     changed = JSON.stringify(JSON.parse(serialized)) !== JSON.stringify(teams);
-  } catch {
-    /* Repair unusable JSON. */
-  }
+  } catch {}
   const nextTeams = teams.map((team) => {
     const players = team.players.filter((id) => id !== playerId);
     if (players.length === team.players.length) return team;
