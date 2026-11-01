@@ -21,7 +21,6 @@ import ReactCrop, {
   type PixelCrop,
   convertToPixelCrop,
 } from "react-image-crop";
-import "react-image-crop/dist/ReactCrop.css";
 
 const aspect = 1;
 

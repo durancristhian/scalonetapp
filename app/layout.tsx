@@ -31,6 +31,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <ClerkProvider
       dynamic
+      appearance={{ cssLayerName: "vendor" }}
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
       signInForceRedirectUrl="/dashboard"
       signUpForceRedirectUrl="/dashboard"

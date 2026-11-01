@@ -48,7 +48,7 @@ export const MatchItem: FC<MatchItemProps> = ({
     <Card className="relative hover:bg-accent transition-colors">
       <Link
         href={`/partidos/${match.id}`}
-        className="block rounded-[inherit] p-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        className="block rounded-[inherit] p-4"
       >
         <div className="min-h-8 pe-12">
           <CardTitle

@@ -50,7 +50,7 @@ export function ExportTeams({
             <span
               tabIndex={0}
               aria-label="Exportación no disponible"
-              className="inline-flex rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              className="inline-flex rounded-md"
             >
               <Button disabled variant="outline">
                 Exportar
