@@ -1,3 +1,2 @@
 export type ActionResult<T = undefined> =
-  | { ok: true; data: T }
-  | { ok: false; error: string; reference?: string };
+  { ok: true; data: T } | { ok: false; error: string; reference?: string };

@@ -22,10 +22,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useId, useState, type FC } from "react";
 import { useForm } from "react-hook-form";
 
-/* Players are categorized from 1 to 10 */
 const PLAYER_LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-/* Description of every player level */
 const LEVEL_MESSAGES: Record<number, string> = {
   1: "Un tronco realmente.",
   2: "Se defiende, pero podría jugar al pelota paleta mejor.",
@@ -47,7 +45,11 @@ type PlayerFormProps = {
   values?: PlayerSchema;
 };
 
-export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values, avatar }) => {
+export const PlayerForm: FC<PlayerFormProps> = ({
+  onSubmit,
+  values,
+  avatar,
+}) => {
   const id = useId();
   const [photoPreparing, setPhotoPreparing] = useState(false);
   const [photo, setPhoto] = useState<Blob | null | undefined>();
@@ -61,7 +63,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values, avatar }) =>
     values,
   });
   const onSubmitHandler: (values: PlayerSchema) => Promise<void> = async (
-    values
+    values,
   ) => {
     if (photoPreparing) return;
     try {
@@ -87,7 +89,13 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values, avatar }) =>
             </FormItem>
           )}
         />
-        <PlayerAvatarInput name={form.watch("name")} src={avatar} disabled={form.formState.isSubmitting} onChange={setPhoto} onPreparingChange={setPhotoPreparing} />
+        <PlayerAvatarInput
+          name={form.watch("name")}
+          src={avatar}
+          disabled={form.formState.isSubmitting}
+          onChange={setPhoto}
+          onPreparingChange={setPhotoPreparing}
+        />
         <FormField
           control={form.control}
           name="position"
@@ -158,7 +166,9 @@ export const PlayerForm: FC<PlayerFormProps> = ({ onSubmit, values, avatar }) =>
           <Button
             type="submit"
             disabled={
-              photoPreparing || !form.formState.isValid || form.formState.isSubmitting
+              photoPreparing ||
+              !form.formState.isValid ||
+              form.formState.isSubmitting
             }
           >
             {form.formState.isSubmitting ? (

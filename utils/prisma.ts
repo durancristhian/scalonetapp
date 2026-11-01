@@ -1,9 +1,22 @@
-/* https://www.prisma.io/docs/orm/more/help-and-troubleshooting/help-articles/nextjs-prisma-client-dev-practices */
-
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 
 const prismaClientSingleton = () => {
-  return new PrismaClient();
+  return new PrismaClient({
+    adapter: {
+      provider: "postgres",
+      adapterName: "@prisma/adapter-pg",
+      async connect() {
+        const connectionString = process.env.POSTGRES_PRISMA_URL;
+        if (!connectionString)
+          throw new Error("POSTGRES_PRISMA_URL is required");
+        return new PrismaPg({
+          connectionString,
+          connectionTimeoutMillis: 5000,
+        }).connect();
+      },
+    },
+  });
 };
 
 declare const globalThis: {

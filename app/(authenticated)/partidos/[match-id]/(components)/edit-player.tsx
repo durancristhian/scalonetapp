@@ -1,4 +1,7 @@
-import { unwrapActionResult, getActionErrorMessage } from "@/utils/action-result";
+import {
+  unwrapActionResult,
+  getActionErrorMessage,
+} from "@/utils/action-result";
 import { savePlayerPhoto } from "@/utils/save-player-photo";
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { PlayerForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/player-form";
@@ -21,10 +24,17 @@ type EditPlayerProps = {
   onCloseAutoFocus: () => void;
 };
 
-export const EditPlayer: FC<EditPlayerProps> = ({ player, onClose, onCloseAutoFocus }) => {
+export const EditPlayer: FC<EditPlayerProps> = ({
+  player,
+  onClose,
+  onCloseAutoFocus,
+}) => {
   const { errorAlert } = useAlerts();
 
-  const onSubmit: (values: PlayerSchema, photo?: Blob | null) => Promise<void> = async (values, photo) => {
+  const onSubmit: (
+    values: PlayerSchema,
+    photo?: Blob | null,
+  ) => Promise<void> = async (values, photo) => {
     return new Promise(async (resolve, reject) => {
       try {
         unwrapActionResult(await editPlayerAction(player.id, values));
@@ -38,7 +48,10 @@ export const EditPlayer: FC<EditPlayerProps> = ({ player, onClose, onCloseAutoFo
       } catch (error) {
         if (error instanceof Error) {
           errorAlert({
-            title: getActionErrorMessage(error, ERROR_MESSAGES.player_edit_error),
+            title: getActionErrorMessage(
+              error,
+              ERROR_MESSAGES.player_edit_error,
+            ),
           });
         }
 
@@ -49,7 +62,10 @@ export const EditPlayer: FC<EditPlayerProps> = ({ player, onClose, onCloseAutoFo
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent onCloseAutoFocus={onCloseAutoFocus} className="sm:max-w-lg">
+      <DialogContent
+        onCloseAutoFocus={onCloseAutoFocus}
+        className="sm:max-w-lg"
+      >
         <DialogHeader>
           <DialogTitle>Editar ficha del jugador</DialogTitle>
           <DialogDescription className="sr-only">
@@ -57,7 +73,11 @@ export const EditPlayer: FC<EditPlayerProps> = ({ player, onClose, onCloseAutoFo
             jugador.
           </DialogDescription>
         </DialogHeader>
-        <PlayerForm onSubmit={onSubmit} values={player} avatar={player.avatar} />
+        <PlayerForm
+          onSubmit={onSubmit}
+          values={player}
+          avatar={player.avatar}
+        />
       </DialogContent>
     </Dialog>
   );

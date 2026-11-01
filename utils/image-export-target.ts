@@ -13,13 +13,13 @@ type ImageExportTarget = {
 export class ImageExportConfigurationError extends Error {}
 
 export function getImageExportTarget(
-  environment: ExportEnvironment = process.env
+  environment: ExportEnvironment = process.env,
 ): ImageExportTarget {
   if (environment.VERCEL_ENV === "preview") {
     const hostname = environment.VERCEL_URL;
     if (!hostname || !/^[a-z0-9-]+\.vercel\.app$/i.test(hostname)) {
       throw new ImageExportConfigurationError(
-        "Preview image exports require a valid VERCEL_URL deployment hostname."
+        "Preview image exports require a valid VERCEL_URL deployment hostname.",
       );
     }
 
@@ -40,13 +40,12 @@ export function getImageExportTarget(
 export function getImageExportRequestHeaders(
   requestUrl: string,
   headers: Record<string, string>,
-  target: ImageExportTarget
+  target: ImageExportTarget,
 ): Record<string, string> {
-  // Redirects can inherit headers. Remove the secret before checking each origin.
   const scopedHeaders = Object.fromEntries(
     Object.entries(headers).filter(
-      ([name]) => name.toLowerCase() !== "x-vercel-protection-bypass"
-    )
+      ([name]) => name.toLowerCase() !== "x-vercel-protection-bypass",
+    ),
   );
 
   if (target.bypassSecret && new URL(requestUrl).origin === target.origin) {

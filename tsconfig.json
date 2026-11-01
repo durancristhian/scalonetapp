@@ -5,15 +5,13 @@
     "esModuleInterop": true,
     "incremental": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "lib": ["DOM", "ESNext"],
     "module": "ESNext",
     "moduleDetection": "force",
     "moduleResolution": "bundler",
     "noEmit": true,
     "noImplicitOverride": true,
-    /* TODO: Enable this and fix all the errors */
-    /* "noUncheckedIndexedAccess": true, */
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
@@ -29,5 +27,11 @@
     "verbatimModuleSyntax": true
   },
   "exclude": ["node_modules"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ]
 }

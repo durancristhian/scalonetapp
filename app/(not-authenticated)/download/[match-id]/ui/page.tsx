@@ -44,6 +44,11 @@ export default function Page() {
   }));
 
   return (
-    <TeamExport name={data.match.name} teams={teams} options={data.options} playerRoles={data.playerRoles} />
+    <TeamExport
+      name={data.match.name}
+      teams={teams}
+      options={data.options}
+      playerRoles={data.playerRoles}
+    />
   );
 }

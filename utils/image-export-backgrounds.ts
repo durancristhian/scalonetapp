@@ -1,20 +1,24 @@
 import { DEFAULT_COLOR_PALETTE, getColorPalette } from "./color-palettes.ts";
 
-// Derive surface tones while keeping the five original avatar colors intact.
 function blendColors(base: string, accent: string, amount: number): string {
-  return "#" + [1, 3, 5].map((offset) => {
-    const from = parseInt(base.slice(offset, offset + 2), 16);
-    const to = parseInt(accent.slice(offset, offset + 2), 16);
-    return Math.round(from + (to - from) * amount).toString(16).padStart(2, "0");
-  }).join("");
+  return (
+    "#" +
+    [1, 3, 5]
+      .map((offset) => {
+        const from = parseInt(base.slice(offset, offset + 2), 16);
+        const to = parseInt(accent.slice(offset, offset + 2), 16);
+        return Math.round(from + (to - from) * amount)
+          .toString(16)
+          .padStart(2, "0");
+      })
+      .join("")
+  );
 }
 
 const synthetic = getColorPalette(DEFAULT_COLOR_PALETTE).colors;
 const natural = getColorPalette("natural-olive").colors;
 const potrero = getColorPalette("potrero-harvest").colors;
 
-// Each surface owns a complete theme. Edit the original palette in color-palettes
-// or the role assignments here to adjust SVG, frame, dividers and name tags.
 export const IMAGE_EXPORT_BACKGROUNDS = [
   {
     id: "pasto",
@@ -44,7 +48,6 @@ export const IMAGE_EXPORT_BACKGROUNDS = [
       grain: natural[1],
       texture: natural[2],
       frame: natural[1],
-      // A lighter olive keeps this edge green rather than sand-colored.
       divider: blendColors(natural[0], natural[2], 0.35),
       marking: blendColors(natural[0], natural[2], 0.55),
     },
@@ -67,4 +70,5 @@ export const IMAGE_EXPORT_BACKGROUNDS = [
   },
 ] as const;
 
-export type ImageExportBackgroundId = (typeof IMAGE_EXPORT_BACKGROUNDS)[number]["id"];
+export type ImageExportBackgroundId =
+  (typeof IMAGE_EXPORT_BACKGROUNDS)[number]["id"];

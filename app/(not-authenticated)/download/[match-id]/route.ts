@@ -8,11 +8,12 @@ import {
   getImageExportTarget,
   ImageExportConfigurationError,
 } from "@/utils/image-export-target";
-import {
-  IMAGE_EXPORT_WIDTH,
-} from "@/utils/image-export-options";
+import { IMAGE_EXPORT_WIDTH } from "@/utils/image-export-options";
 import { parseImageExportRequest } from "@/utils/image-export-request";
-import { getImageExportBackground, getImageExportBackgroundUrls } from "@/utils/image-export-background";
+import {
+  getImageExportBackground,
+  getImageExportBackgroundUrls,
+} from "@/utils/image-export-background";
 import { type NextRequest, NextResponse } from "next/server";
 import { type Browser } from "puppeteer-core";
 import { getSavedTeamsError } from "@/utils/team-validation";
@@ -22,9 +23,8 @@ import { lineupFingerprint } from "@/utils/lineup-fingerprint";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-// Keep the external browser pack pinned to @sparticuz/chromium-min.
 const CHROMIUM_PACK_URL =
-  "https://github.com/Sparticuz/chromium/releases/download/v138.0.2/chromium-v138.0.2-pack.x64.tar";
+  "https://github.com/Sparticuz/chromium/releases/download/v153.0.0/chromium-v153.0.0-pack.x64.tar";
 let chromiumExecutablePath: Promise<string> | undefined;
 
 const getBrowser: () => Promise<Browser> = async () => {
@@ -33,11 +33,12 @@ const getBrowser: () => Promise<Browser> = async () => {
       (mod) => mod.default,
     );
 
+    chromium.setGraphicsMode = false;
+
     const puppeteerCore = await import("puppeteer-core").then(
       (mod) => mod.default,
     );
 
-    // Concurrent cold exports must share extraction, not partially unpacked files.
     chromiumExecutablePath ??= chromium
       .executablePath(CHROMIUM_PACK_URL)
       .catch((error) => {
@@ -46,7 +47,7 @@ const getBrowser: () => Promise<Browser> = async () => {
       });
 
     return puppeteerCore.launch({
-      args: puppeteerCore.defaultArgs({
+      args: await puppeteerCore.defaultArgs({
         args: chromium.args,
         headless: "shell",
       }),
@@ -58,7 +59,6 @@ const getBrowser: () => Promise<Browser> = async () => {
 
     const browser = await puppeteer.launch();
 
-    /* puppeteer's Browser type difers from puppeteer-core's Browser type so we force-cast this return to make TS happy */
     return browser as unknown as Browser;
   }
 };
@@ -76,13 +76,10 @@ export async function GET(request: NextRequest) {
 
   try {
     const exportTarget = getImageExportTarget();
-    /* pathname here will be /download/[match-id] */
     const pathname = request.nextUrl.pathname;
-    /* We split the string by / and we grab the matchId */
     const [, , matchIdStr] = pathname.split("/");
     const matchId = Number(matchIdStr);
 
-    /* We look for the match data in the db */
     const match = await getMatchByIdQuery(matchId);
 
     if (!match) {
@@ -93,22 +90,40 @@ export async function GET(request: NextRequest) {
     }
 
     let teams: unknown;
-    try { teams = JSON.parse(match.teams); } catch { teams = null; }
-    const teamsError = getSavedTeamsError(teams, match.players.map(player => player.id));
+    try {
+      teams = JSON.parse(match.teams);
+    } catch {
+      teams = null;
+    }
+    const teamsError = getSavedTeamsError(
+      teams,
+      match.players.map((player) => player.id),
+    );
     if (teamsError) {
       return NextResponse.json({ error: teamsError }, { status: 422 });
     }
     const savedTeams = readSavedTeams(match.teams);
-    const assignedPlayerIds = new Set(savedTeams.flatMap(team => team.players));
+    const assignedPlayerIds = new Set(
+      savedTeams.flatMap((team) => team.players),
+    );
 
     const expected = request.headers.get("X-Lineup-Fingerprint");
     if (expected) {
-      const players = new Map(match.players.map(player => [player.id, player]));
-      const hydrated = savedTeams.map(team => ({ ...team,
-        players: team.players.flatMap(id => { const player = players.get(id); return player ? [player] : []; }),
+      const players = new Map(
+        match.players.map((player) => [player.id, player]),
+      );
+      const hydrated = savedTeams.map((team) => ({
+        ...team,
+        players: team.players.flatMap((id) => {
+          const player = players.get(id);
+          return player ? [player] : [];
+        }),
       }));
-      if (expected !== await lineupFingerprint(match.name, hydrated)) {
-        return NextResponse.json({ error: ERROR_MESSAGES.match_export_changed }, { status: 409 });
+      if (expected !== (await lineupFingerprint(match.name, hydrated))) {
+        return NextResponse.json(
+          { error: ERROR_MESSAGES.match_export_changed },
+          { status: 409 },
+        );
       }
     }
 
@@ -128,21 +143,19 @@ export async function GET(request: NextRequest) {
       );
     }
     await page.setViewport({
-      /* The canvas screenshot determines the final image height. */
       height: 300,
       width: IMAGE_EXPORT_WIDTH,
-      /* So images get a better resolution */
       deviceScaleFactor: 2,
     });
     const exportUrl = `${exportTarget.origin}/download/${matchId}/ui`;
-    // Pass this export's data before the page scripts run, without storage or reload.
     await page.evaluateOnNewDocument(
       (data, url, imageOptions, playerRoles) => {
         if (window === window.top && window.location.href === url) {
           (window as ImageExportWindow).__SCALONETA_EXPORT_MATCH__ = data;
           (window as ImageExportWindow).__SCALONETA_EXPORT_OPTIONS__ =
             imageOptions;
-          (window as ImageExportWindow).__SCALONETA_EXPORT_PLAYER_ROLES__ = playerRoles;
+          (window as ImageExportWindow).__SCALONETA_EXPORT_PLAYER_ROLES__ =
+            playerRoles;
         }
       },
       match,
@@ -165,10 +178,17 @@ export async function GET(request: NextRequest) {
     await waitForImageExport(
       page,
       match.name,
-      options.avatarShape === "none" ? [] : match.players.filter(player => assignedPlayerIds.has(player.id)).flatMap((player) => [
-        player.avatar,
-        getPlayerAvatarUrl(player.name, getImageExportBackground(options.background)!.palette),
-      ]),
+      options.avatarShape === "none"
+        ? []
+        : match.players
+            .filter((player) => assignedPlayerIds.has(player.id))
+            .flatMap((player) => [
+              player.avatar,
+              getPlayerAvatarUrl(
+                player.name,
+                getImageExportBackground(options.background)!.palette,
+              ),
+            ]),
       getImageExportBackgroundUrls(options),
     );
 
@@ -176,7 +196,6 @@ export async function GET(request: NextRequest) {
     if (!canvas) throw new Error("Image export canvas did not render.");
     const screenshot = await canvas.screenshot({ type: "png" });
 
-    /* We close the pages and the browser since we don't need it anymore */
     for (const page of await browser.pages()) {
       await page.close();
     }
@@ -185,19 +204,16 @@ export async function GET(request: NextRequest) {
     const response = new NextResponse(Buffer.from(screenshot));
     response.headers.set("content-type", "image/png");
     response.headers.set("Cache-Control", "private, no-store");
-    /* This header makes the response to be downloaded automatically by the user's browser */
     response.headers.set(
       "Content-Disposition",
       `attachment; filename=equipos.png`,
     );
 
-    /* We're done, we return the screenshot */
     return response;
   } catch (error) {
     console.error(error);
 
     if (browser) {
-      /* https://github.com/Sparticuz/chromium?tab=readme-ov-file#im-experiencing-timeouts-or-failures-closing-chromium */
       await Promise.race([browser.close(), browser.close(), browser.close()]);
     }
 

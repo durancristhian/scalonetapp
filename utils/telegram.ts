@@ -9,7 +9,7 @@ export class Telegram {
 
     const text = encodeURIComponent(message);
     const response = await fetch(
-      `https://api.telegram.org/bot${botId}/sendMessage?chat_id=${chatId}&text=${text}`
+      `https://api.telegram.org/bot${botId}/sendMessage?chat_id=${chatId}&text=${text}`,
     );
 
     if (!response.ok) {
@@ -17,7 +17,12 @@ export class Telegram {
     }
 
     const result: unknown = await response.json();
-    if (typeof result !== "object" || result === null || !("ok" in result) || result.ok !== true) {
+    if (
+      typeof result !== "object" ||
+      result === null ||
+      !("ok" in result) ||
+      result.ok !== true
+    ) {
       throw new Error("Telegram did not confirm delivery");
     }
   }

@@ -52,9 +52,8 @@ export const TeamCard: FC<TeamCardProps> = ({
     mid: Player[];
     for: Player[];
   }>(
-    /* Players are already sorted by name, so we just group them by position */
     (acc, curr) => ({ ...acc, [curr.position]: [...acc[curr.position], curr] }),
-    { goa: [], def: [], mid: [], for: [] }
+    { goa: [], def: [], mid: [], for: [] },
   );
 
   return (

@@ -32,16 +32,12 @@ export const TeamForm: FC<TeamFormProps> = ({ onSubmit, values }) => {
 
   return (
     <Form {...form}>
-      <form
-        /* This form is special since we also submit data on each form change */
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem className="space-y-0">
+            <FormItem className="gap-0">
               <FormLabel className="sr-only">Nombre del equipo</FormLabel>
               <FormControl>
                 <Input

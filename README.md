@@ -11,7 +11,7 @@ Development documentation lives here and is updated alongside relevant changes.
 
 ## Run locally
 
-Requires Node.js 24, a PostgreSQL database, and a [Clerk](https://clerk.com) development application.
+Requires Node.js 26, a PostgreSQL database, and a [Clerk](https://clerk.com) development application.
 
 ```bash
 nvm install
@@ -19,6 +19,8 @@ nvm use
 npm ci
 cp -n .env.template .env.local
 ```
+
+In a new worktree, copy the required ignored environment files from the main checkout into that worktree before starting services or environment-dependent checks. Copy only the variables needed for the task, keep secrets out of logs and Git, and verify Clerk test keys and an owned, isolated PostgreSQL database before any Development mutations. Existing environment files may point to Production; replace those connections rather than using them for local checks.
 
 In `.env.local`, set:
 
@@ -36,6 +38,15 @@ npm run dev
 
 Open [localhost:3000](http://localhost:3000). Keep this port for local image exports.
 Environment files are ignored by Git; use development credentials only.
+Prisma CLI reads `POSTGRES_URL_NON_POOLING` through [prisma.config.ts](prisma.config.ts);
+the application uses pooled `POSTGRES_PRISMA_URL`. Keep the explicit `--env-file`
+for local Prisma commands. `prisma generate` needs neither URL; migration commands
+require the nonpooling URL. Vercel supplies these variables directly.
+
+## Formatting
+
+Run `npm run format` to format the repository and `npm run format:check` to check it.
+Prettier runs independently of ESLint.
 
 ## Frontend behavior tests
 
@@ -47,9 +58,11 @@ npx playwright install chromium  # once per machine
 npm run test:frontend
 ```
 
+`npm run typecheck` generates Next.js route types before checking TypeScript, without starting a server.
+
 `npm test` runs Vitest; `npm run test:watch` enables watch mode.
 `npm run test:browser` runs the isolated Playwright fixture.
 
 Visual comparisons, authentication and backend verification are outside this suite.
-[CI](.github/workflows/frontend-tests.yml) runs lint, typecheck and both suites on PRs
+[CI](.github/workflows/frontend-tests.yml) runs formatting checks, lint, typecheck and both suites on PRs
 and pushes to `main`.

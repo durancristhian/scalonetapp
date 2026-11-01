@@ -4,7 +4,10 @@ import { useId, type CSSProperties } from "react";
 import type { Team } from "@/types/team";
 import type { ImageExportOptions } from "@/utils/image-export-options";
 import { getImageExportBackgroundStyle } from "@/utils/image-export-background";
-import { reconcileImageExportTeamSelections, type ImageExportTeamSelections } from "@/utils/image-export-player-roles";
+import {
+  reconcileImageExportTeamSelections,
+  type ImageExportTeamSelections,
+} from "@/utils/image-export-player-roles";
 import { workSans } from "@/utils/fonts";
 import { cn } from "@/utils/cn";
 import { ExportHeading } from "./export-heading";
@@ -20,8 +23,12 @@ export type TeamExportProps = {
   playerRoles?: ImageExportTeamSelections;
 };
 
-// The editor preview and the PNG route both render this composition.
-export function TeamExport({ name, teams, options, playerRoles = {} }: TeamExportProps) {
+export function TeamExport({
+  name,
+  teams,
+  options,
+  playerRoles = {},
+}: TeamExportProps) {
   const headingId = useId();
   const layout = getExportLayout(teams, options);
   const selections = reconcileImageExportTeamSelections(teams, playerRoles);
@@ -39,10 +46,21 @@ export function TeamExport({ name, teams, options, playerRoles = {} }: TeamExpor
   } as CSSProperties;
 
   return (
-    <div data-team-export data-export-layout="stadium" data-background={options.background} className={cn(styles.canvas, workSans.className)} style={style}>
+    <div
+      data-team-export
+      data-export-layout="stadium"
+      data-background={options.background}
+      className={cn(styles.canvas, workSans.className)}
+      style={style}
+    >
       <ExportHeading name={name} teams={teams} headingId={headingId} />
       <PitchScene options={options} layout={layout}>
-        <ExportPlayerGrid teams={teams} options={options} selections={selections} headingId={headingId} />
+        <ExportPlayerGrid
+          teams={teams}
+          options={options}
+          selections={selections}
+          headingId={headingId}
+        />
       </PitchScene>
     </div>
   );

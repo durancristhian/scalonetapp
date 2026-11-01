@@ -5,7 +5,12 @@ import { reportServerError } from "@/server/report-error";
 import type { DuplicateMatchResult } from "@/types/duplicate-match";
 import { removeUnusedPhoto } from "@/server/player-photos";
 
-import { MATCH_SCHEMA, MATCH_UPDATE_SCHEMA, type MatchSchema, type MatchUpdateSchema } from "@/schemas/match";
+import {
+  MATCH_SCHEMA,
+  MATCH_UPDATE_SCHEMA,
+  type MatchSchema,
+  type MatchUpdateSchema,
+} from "@/schemas/match";
 import {
   addMatchQuery,
   deleteMatchQuery,
@@ -21,23 +26,47 @@ import { revalidatePath } from "next/cache";
 const ID_SCHEMA = z.number().int().positive().max(2147483647);
 
 export const addMatchAction = async (data: MatchSchema) =>
-  runMutation({ operation: "match.add" }, ERROR_MESSAGES.match_add_error, userId =>
-    addMatchQuery(MATCH_SCHEMA.parse(data), userId));
+  runMutation(
+    { operation: "match.add" },
+    ERROR_MESSAGES.match_add_error,
+    (userId) => addMatchQuery(MATCH_SCHEMA.parse(data), userId),
+  );
 
-export const editMatchAction = async (id: number, data: MatchUpdateSchema, _pathToRevalidate?: string) =>
-  runMutation({ operation: "match.edit", matchId: id }, ERROR_MESSAGES.match_edit_error, async userId => {
-    await editMatchQuery(ID_SCHEMA.parse(id), MATCH_UPDATE_SCHEMA.parse(data), userId);
-  });
+export const editMatchAction = async (
+  id: number,
+  data: MatchUpdateSchema,
+  _pathToRevalidate?: string,
+) =>
+  runMutation(
+    { operation: "match.edit", matchId: id },
+    ERROR_MESSAGES.match_edit_error,
+    async (userId) => {
+      await editMatchQuery(
+        ID_SCHEMA.parse(id),
+        MATCH_UPDATE_SCHEMA.parse(data),
+        userId,
+      );
+    },
+  );
 
 export const deleteMatchAction = async (id: number) =>
-  runMutation({ operation: "match.delete", matchId: id }, ERROR_MESSAGES.match_delete_error, async userId => {
-    const matchId = ID_SCHEMA.parse(id);
-    const photos = await prisma.player.findMany({ where: { matchId, match: { userId } }, select: { avatar: true } });
-    await deleteMatchQuery(matchId, userId);
-    await Promise.all(photos.map(({ avatar }) => removeUnusedPhoto(avatar)));
-  });
+  runMutation(
+    { operation: "match.delete", matchId: id },
+    ERROR_MESSAGES.match_delete_error,
+    async (userId) => {
+      const matchId = ID_SCHEMA.parse(id);
+      const photos = await prisma.player.findMany({
+        where: { matchId, match: { userId } },
+        select: { avatar: true },
+      });
+      await deleteMatchQuery(matchId, userId);
+      await Promise.all(photos.map(({ avatar }) => removeUnusedPhoto(avatar)));
+    },
+  );
 
-export const duplicateMatchAction = async (id: number): Promise<DuplicateMatchResult> => {
+export const duplicateMatchAction = async (
+  id: number,
+): Promise<DuplicateMatchResult> => {
   let result: DuplicateMatchResult;
   try {
     const { userId } = await auth();
@@ -47,7 +76,10 @@ export const duplicateMatchAction = async (id: number): Promise<DuplicateMatchRe
     }
     result = await duplicateMatch(id, userId);
   } catch (error) {
-    const reference = reportServerError(error, { operation: "match.duplicate", matchId: id });
+    const reference = reportServerError(error, {
+      operation: "match.duplicate",
+      matchId: id,
+    });
     return { ok: false, code: "unexpected", reference };
   }
 
@@ -56,8 +88,10 @@ export const duplicateMatchAction = async (id: number): Promise<DuplicateMatchRe
       revalidatePath("/dashboard");
       revalidatePath("/partidos");
     } catch (error) {
-      // The copy already committed. Don't invite a second copy because refresh failed.
-      reportServerError(error, { operation: "match.duplicate.revalidate", matchId: id });
+      reportServerError(error, {
+        operation: "match.duplicate.revalidate",
+        matchId: id,
+      });
     }
   }
   return result;

@@ -17,7 +17,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { type PlayerSchema } from "@/schemas/player";
 import { createPlayersSchema, type PlayersSchema } from "@/schemas/players";
 import { getLinesFromString } from "@/utils/get-lines-from-string";
-import { getRemainingPlayerSlots, MAX_PLAYERS_BATCH } from "@/utils/player-limits";
+import {
+  getRemainingPlayerSlots,
+  MAX_PLAYERS_BATCH,
+} from "@/utils/player-limits";
 import { getPlayersFromLines } from "@/utils/get-players-from-lines";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type FC, useMemo } from "react";
@@ -36,7 +39,10 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
   currentPlayerCount,
   onSubmit,
 }) => {
-  const schema = useMemo(() => createPlayersSchema(currentPlayerCount), [currentPlayerCount]);
+  const schema = useMemo(
+    () => createPlayersSchema(currentPlayerCount),
+    [currentPlayerCount],
+  );
   const availableSlots = getRemainingPlayerSlots(currentPlayerCount);
   const form = useForm<PlayersSchema>({
     mode: "onChange",
@@ -45,13 +51,11 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
     },
     resolver: zodResolver(schema),
   });
-  /* We listen for changes in the players string */
   const players = useWatch({
     name: "players",
     control: form.control,
   });
 
-  /* We count the valid lines in the form */
   const lines = useMemo(() => {
     return getLinesFromString(players);
   }, [players]);
@@ -79,8 +83,10 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
                 <Textarea rows={10} placeholder={PLACEHOLDER} {...field} />
               </FormControl>
               <FormDescription>
-                Agregá un nombre por línea, hasta {MAX_PLAYERS_BATCH} por carga. Podés agregar hasta {availableSlots}{" "}
-                {availableSlots === 1 ? "jugador más" : "jugadores más"} a este partido.
+                Agregá un nombre por línea, hasta {MAX_PLAYERS_BATCH} por carga.
+                Podés agregar hasta {availableSlots}{" "}
+                {availableSlots === 1 ? "jugador más" : "jugadores más"} a este
+                partido.
               </FormDescription>
               {lines.length > 0 ? (
                 <FormDescription>

@@ -22,7 +22,6 @@ export const ShowOff: FC<ShowOffProps> = ({ popoverSeparation }) => {
           <span className="font-bold">Cristhian Duran</span>
         </Button>
       </PopoverTrigger>
-      {/* Margin here helps to detach the menu from the limit of the screen (specially in mobile) */}
       <PopoverContent className={clsx(popoverSeparation && "mr-4")}>
         <div className="flex gap-4">
           <Avatar>

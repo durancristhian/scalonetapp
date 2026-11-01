@@ -22,6 +22,7 @@ The current system, documented from source. Future UI work shares it; change its
 - Support page widths from 320 CSS pixels upward. Let components fit their available space.
 - Reuse the centered `max-w-7xl` shell and existing spacing scale where applicable.
 - Preserve Tailwind breakpoints; change arrangement when content needs it.
+- Tailwind 4 requires Safari 16.4+, Chrome 111+ or Firefox 128+; older browsers are outside the supported floor. See the [official upgrade guide](https://tailwindcss.com/docs/upgrade-guide#browser-requirements).
 - Reuse [components/ui](components/ui) controls and Lucide icons.
 - Primary buttons use `primary` roles; secondary actions use existing outline/ghost variants.
 - Preserve visible focus, disabled/busy feedback and reachable actions. Standard buttons are 48px high; compact controls retain usable touch targets.

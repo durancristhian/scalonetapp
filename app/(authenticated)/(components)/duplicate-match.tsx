@@ -28,9 +28,14 @@ const duplicateErrors = {
 type DuplicateMatchProps = {
   id: number;
   onClose: () => void;
+  onCloseAutoFocus?: (event: Event) => void;
 };
 
-export const DuplicateMatch: FC<DuplicateMatchProps> = ({ id, onClose }) => {
+export const DuplicateMatch: FC<DuplicateMatchProps> = ({
+  id,
+  onClose,
+  onCloseAutoFocus,
+}) => {
   const [processing, setIsProcessing] = useState(false);
   const pending = useRef(false);
   const { errorAlert, successAlert } = useAlerts();
@@ -43,8 +48,12 @@ export const DuplicateMatch: FC<DuplicateMatchProps> = ({ id, onClose }) => {
       const result = await duplicateMatchAction(id);
       if (!result.ok) {
         errorAlert({
-          title: duplicateErrors[result.code] || ERROR_MESSAGES.match_duplicate_error,
-          description: result.reference ? `Referencia: ${result.reference}` : undefined,
+          title:
+            duplicateErrors[result.code] ||
+            ERROR_MESSAGES.match_duplicate_error,
+          description: result.reference
+            ? `Referencia: ${result.reference}`
+            : undefined,
         });
         return;
       }
@@ -63,10 +72,13 @@ export const DuplicateMatch: FC<DuplicateMatchProps> = ({ id, onClose }) => {
 
   return (
     <AlertDialog open>
-      <AlertDialogContent onEscapeKeyDown={event => {
-        if (pending.current) event.preventDefault();
-        else onClose();
-      }}>
+      <AlertDialogContent
+        onCloseAutoFocus={onCloseAutoFocus}
+        onEscapeKeyDown={(event) => {
+          if (pending.current) event.preventDefault();
+          else onClose();
+        }}
+      >
         <AlertDialogHeader>
           <AlertDialogTitle>¿Duplicar este partido?</AlertDialogTitle>
           <AlertDialogDescription className="max-md:text-balance">
@@ -75,7 +87,9 @@ export const DuplicateMatch: FC<DuplicateMatchProps> = ({ id, onClose }) => {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onClose} disabled={processing}>Cancelar</AlertDialogCancel>
+          <AlertDialogCancel onClick={onClose} disabled={processing}>
+            Cancelar
+          </AlertDialogCancel>
           <Button onClick={onDuplicateMatch} disabled={processing}>
             {processing ? (
               <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />

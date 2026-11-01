@@ -1,5 +1,3 @@
-// Original Coolors colors used by generated avatars. Surface tones can derive
-// from these colors without changing the palette or a player's face seed.
 export const COLOR_PALETTES = [
   {
     id: "synthetic-forest",
@@ -25,7 +23,6 @@ export const COLOR_PALETTES = [
 ] as const;
 
 export type ColorPaletteId = (typeof COLOR_PALETTES)[number]["id"];
-// App avatars always use the synthetic surface's palette.
 export const DEFAULT_COLOR_PALETTE: ColorPaletteId = "synthetic-forest";
 export const ARTWORK_BACKGROUND = "#FFFFFF";
 
@@ -46,7 +43,9 @@ export function getArtworkStyle(id: ColorPaletteId = DEFAULT_COLOR_PALETTE) {
   };
 }
 
-export function parseColorPalette(params: URLSearchParams): ColorPaletteId | null {
+export function parseColorPalette(
+  params: URLSearchParams,
+): ColorPaletteId | null {
   const values = params.getAll("palette");
   if (!values.length) return DEFAULT_COLOR_PALETTE;
   return values.length === 1 && isColorPaletteId(values[0]) ? values[0] : null;

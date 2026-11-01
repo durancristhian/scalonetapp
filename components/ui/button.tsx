@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-base font-medium transition-colors active:opacity-80 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-base font-medium transition-colors active:opacity-80 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
@@ -23,7 +23,6 @@ const buttonVariants = cva(
         default: "h-12 min-h-12 px-4 py-2",
         sm: "h-10 min-h-10 rounded-md px-3",
         lg: "h-14 min-h-14 rounded-md px-8",
-        // Keep the visible control compact while extending its pointer target to 48px.
         icon: "relative size-8 min-h-8 shrink-0 p-0 after:absolute after:inset-[calc(50%_-_theme(spacing.6))] after:content-[''] data-[state=open]:bg-accent [&_svg]:size-4 [&_svg]:shrink-0",
       },
     },
@@ -31,11 +30,12 @@ const buttonVariants = cva(
       variant: "default",
       size: "default",
     },
-  }
+  },
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
@@ -50,7 +50,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       />
     );
-  }
+  },
 );
 Button.displayName = "Button";
 

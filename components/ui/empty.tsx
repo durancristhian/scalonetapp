@@ -1,7 +1,6 @@
 import { cn } from "@/utils/cn";
 import { type ComponentProps } from "react";
 
-// Compact shadcn Empty composition: preserve the existing text-only states.
 function Empty({ className, ...props }: ComponentProps<"div">) {
   return (
     <div

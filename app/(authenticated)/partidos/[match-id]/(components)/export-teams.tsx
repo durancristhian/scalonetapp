@@ -10,7 +10,12 @@ import { loadModule } from "@/utils/load-module";
 import { useState } from "react";
 import { type ImageExportTeamSelections } from "@/utils/image-export-player-roles";
 import { getTeamCountError } from "@/utils/team-count";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const ExportEditor = dynamic(() => loadModule(() => import("./export-editor")));
 
@@ -20,7 +25,10 @@ type ExportTeamsProps = {
   processing: boolean;
   name: string;
   teams: Team[];
-  onExport: (options: ImageExportOptions, selections: ImageExportTeamSelections) => Promise<string | null>;
+  onExport: (
+    options: ImageExportOptions,
+    selections: ImageExportTeamSelections,
+  ) => Promise<string | null>;
 };
 
 export function ExportTeams({
@@ -39,11 +47,19 @@ export function ExportTeams({
       <TooltipProvider delayDuration={200}>
         <Tooltip>
           <TooltipTrigger asChild>
-            <span tabIndex={0} aria-label="Exportación no disponible" className="inline-flex rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
-              <Button disabled variant="outline">Exportar</Button>
+            <span
+              tabIndex={0}
+              aria-label="Exportación no disponible"
+              className="inline-flex rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            >
+              <Button disabled variant="outline">
+                Exportar
+              </Button>
             </span>
           </TooltipTrigger>
-          <TooltipContent className="max-w-[min(18rem,calc(100vw-2rem))]">{teamCountError}</TooltipContent>
+          <TooltipContent className="max-w-[min(18rem,calc(100vw-2rem))]">
+            {teamCountError}
+          </TooltipContent>
         </Tooltip>
       </TooltipProvider>
     );
