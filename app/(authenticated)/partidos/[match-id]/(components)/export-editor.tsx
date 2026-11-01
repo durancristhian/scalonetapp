@@ -330,6 +330,39 @@ export default function ExportEditor({
                 </RadioGroupItem>
               </RadioGroup>
             </div>
+            <div className="grid min-w-0 grid-cols-1 gap-2">
+              <Label asChild>
+                <span id={`${id}-player-order`}>Orden de jugadores</span>
+              </Label>
+              <RadioGroup
+                className="grid grid-cols-2 gap-1 rounded-md bg-muted p-1"
+                aria-labelledby={`${id}-player-order`}
+                value={options.playerOrder}
+                disabled={processing}
+                onValueChange={(value) =>
+                  updateOptions({
+                    ...options,
+                    playerOrder:
+                      value === "position" ? "position" : "alphabetical",
+                  })
+                }
+              >
+                <RadioGroupItem
+                  variant="button"
+                  id={`${id}-player-order-alphabetical`}
+                  value="alphabetical"
+                >
+                  Alfabético
+                </RadioGroupItem>
+                <RadioGroupItem
+                  variant="button"
+                  id={`${id}-player-order-position`}
+                  value="position"
+                >
+                  Por posición
+                </RadioGroupItem>
+              </RadioGroup>
+            </div>
             {teams.map((team) => (
               <fieldset
                 key={team.id}

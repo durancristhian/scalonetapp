@@ -19,6 +19,43 @@ const roster = [
 const lineup = teams([roster[0]], [roster[1]]);
 
 describe("export content", () => {
+  it("orders each team by saved position independently of export goalkeeper badges", () => {
+    const first = [
+      player(1, { name: "Ana", position: "for" }),
+      player(2, { name: "Zoe", position: "goa" }),
+    ];
+    const second = [
+      player(3, { name: "Beto", position: "mid" }),
+      player(4, { name: "Diego", position: "def" }),
+    ];
+    const { container } = render(
+      <TeamExport
+        name="Final"
+        teams={teams(first, second)}
+        options={{
+          ...DEFAULT_IMAGE_EXPORT_OPTIONS,
+          playerOrder: "position",
+          avatarShape: "none",
+        }}
+        playerRoles={{
+          a: {
+            playerIds: [1, 2],
+            assignments: { goalkeeper: 1, captain: null },
+          },
+        }}
+      />,
+    );
+    const names = (team: string) =>
+      Array.from(
+        container.querySelectorAll(
+          `[data-export-team="${team}"] [data-export-player-name]`,
+        ),
+        (node) => node.textContent,
+      );
+    expect(names("a")).toEqual(["Zoe", "Ana"]);
+    expect(names("b")).toEqual(["Diego", "Beto"]);
+    expect(first.map(({ id }) => id)).toEqual([1, 2]);
+  });
   it("should render user text literally and assigned players when teams are provided", () => {
     render(
       <TeamExport
@@ -89,6 +126,55 @@ describe("export content", () => {
 });
 
 describe("export editor", () => {
+  it("updates preview order, persists the choice and passes it to the download", async () => {
+    const onExport = vi.fn().mockResolvedValue(null);
+    const user = userEvent.setup();
+    render(
+      <Dialog open>
+        <ExportEditor
+          matchId={1}
+          name="Final"
+          teams={teams([
+            player(1, { name: "Ana", position: "for" }),
+            player(2, { name: "Zoe", position: "goa" }),
+          ])}
+          disabled={false}
+          processing={false}
+          onExport={onExport}
+        />
+      </Dialog>,
+    );
+    const order = screen.getByRole("radiogroup", {
+      name: "Orden de jugadores",
+    });
+    expect(
+      within(order).getByRole("radio", { name: "Alfabético" }),
+    ).toBeChecked();
+    await user.click(
+      within(order).getByRole("radio", { name: "Por posición" }),
+    );
+    expect(
+      JSON.parse(localStorage.getItem(IMAGE_EXPORT_STORAGE_KEY)!).playerOrder,
+    ).toBe("position");
+    await user.click(screen.getByRole("button", { name: "Ver imagen" }));
+    expect(
+      Array.from(
+        document.querySelectorAll(
+          '[data-export-team="a"] [data-export-player-name]',
+        ),
+        (node) => node.textContent,
+      ),
+    ).toEqual(["Zoe", "Ana"]);
+    await user.click(screen.getByRole("button", { name: "Descargar" }));
+    expect(onExport.mock.calls[0][0].playerOrder).toBe("position");
+    await user.click(screen.getByRole("button", { name: "Ver opciones" }));
+    await user.click(
+      screen.getByRole("button", { name: "Restablecer valores" }),
+    );
+    expect(
+      within(order).getByRole("radio", { name: "Alfabético" }),
+    ).toBeChecked();
+  });
   it("should preserve the editor and allow retry when download fails", async () => {
     const exportTeams = vi
       .fn()
@@ -140,6 +226,8 @@ describe("export editor", () => {
       screen.getByRole("button", { name: "Restablecer valores" }),
     ).toBeDisabled();
     expect(screen.getByRole("button", { name: "Cerrar" })).toBeDisabled();
+    expect(screen.getByRole("radio", { name: "Alfabético" })).toBeDisabled();
+    expect(screen.getByRole("radio", { name: "Por posición" })).toBeDisabled();
   });
   it("should restore defaults and persist changes when reset is clicked", async () => {
     localStorage.setItem(

@@ -1,4 +1,4 @@
-import { byName } from "@/utils/by-name";
+import { sortExportPlayers } from "@/utils/sort-export-players";
 import type { Team } from "@/types/team";
 import type { ImageExportOptions } from "@/utils/image-export-options";
 import { getImageExportBackground } from "@/utils/image-export-background";
@@ -32,15 +32,20 @@ export function ExportPlayerGrid({
           aria-labelledby={`${headingId}-${team.id}`}
           data-export-team={team.id}
         >
-          {[...team.players].sort(byName).map((player) => (
-            <ExportPlayerCell
-              key={player.id}
-              player={player}
-              options={options}
-              palette={palette}
-              roles={getImageExportPlayerRoles(selections[team.id], player.id)}
-            />
-          ))}
+          {sortExportPlayers(team.players, options.playerOrder).map(
+            (player) => (
+              <ExportPlayerCell
+                key={player.id}
+                player={player}
+                options={options}
+                palette={palette}
+                roles={getImageExportPlayerRoles(
+                  selections[team.id],
+                  player.id,
+                )}
+              />
+            ),
+          )}
         </section>
       ))}
     </div>
