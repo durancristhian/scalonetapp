@@ -1,5 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const port = Number(process.env.TEST_BROWSER_PORT || 4317);
+const origin = `http://127.0.0.1:${port}`;
+
 export default defineConfig({
   testDir: "./tests/browser",
   testMatch: "**/*.spec.ts",
@@ -9,12 +12,12 @@ export default defineConfig({
   reporter: process.env.CI ? "github" : "list",
   use: {
     ...devices["Desktop Chrome"],
-    baseURL: "http://127.0.0.1:4317",
+    baseURL: origin,
     trace: "on-first-retry",
   },
   webServer: {
-    command: "npm run test:browser:serve",
-    url: "http://127.0.0.1:4317",
+    command: `npm run test:browser:serve -- --port ${port}`,
+    url: origin,
     reuseExistingServer: false,
   },
 });
