@@ -1,5 +1,6 @@
 import { spawnSync, spawn } from "node:child_process";
 import { prepareDependencies } from "./worktree-dependencies.mjs";
+import { prepareBrowsers } from "./worktree-browsers.mjs";
 import {
   databaseName,
   prepareDatabase,
@@ -237,34 +238,40 @@ try {
       root,
       resolve(git("rev-parse", "--git-common-dir"), "worktree-dependencies-v1"),
     );
-    for (const browser of ["chrome", "chrome-headless-shell"]) {
-      run(
-        process.execPath,
-        [
-          "node_modules/puppeteer/lib/puppeteer/node/cli.js",
-          "browsers",
-          "install",
-          browser,
-        ],
-        {
-          ...process.env,
-          PUPPETEER_CACHE_DIR: resolve(root, ".local/puppeteer"),
-          PUPPETEER_SKIP_DOWNLOAD: "false",
-        },
-      );
-    }
+    prepareBrowsers(
+      root,
+      resolve(git("rev-parse", "--git-common-dir"), "worktree-browsers-v1"),
+      () => {
+        for (const browser of ["chrome", "chrome-headless-shell"]) {
+          run(
+            process.execPath,
+            [
+              "node_modules/puppeteer/lib/puppeteer/node/cli.js",
+              "browsers",
+              "install",
+              browser,
+            ],
+            {
+              ...process.env,
+              PUPPETEER_CACHE_DIR: resolve(root, ".local/puppeteer"),
+              PUPPETEER_SKIP_DOWNLOAD: "false",
+            },
+          );
+        }
+        run(
+          process.execPath,
+          ["node_modules/@playwright/test/cli.js", "install", "chromium"],
+          {
+            ...process.env,
+            PLAYWRIGHT_BROWSERS_PATH: resolve(root, ".local/browsers"),
+          },
+        );
+      },
+    );
     run(process.execPath, ["node_modules/prisma/build/index.js", "generate"], {
       PATH: process.env.PATH,
       HOME: process.env.HOME,
     });
-    run(
-      process.execPath,
-      ["node_modules/@playwright/test/cli.js", "install", "chromium"],
-      {
-        ...process.env,
-        PLAYWRIGHT_BROWSERS_PATH: resolve(root, ".local/browsers"),
-      },
-    );
     const env = await prepareDevelopment();
     run(process.execPath, ["scripts/seed-worktree.mjs"], env);
     console.log("Worktree ready. Run npm run dev or npm run test:frontend.");

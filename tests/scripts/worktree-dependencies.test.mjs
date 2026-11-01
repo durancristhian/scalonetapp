@@ -148,6 +148,7 @@ test("bootstrap replaces remote connections with an owned database and rejects l
   for (const name of [
     "worktree.mjs",
     "worktree-dependencies.mjs",
+    "worktree-browsers.mjs",
     "worktree-database.mjs",
     "worktree-port.mjs",
   ]) {
