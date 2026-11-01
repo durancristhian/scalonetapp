@@ -24,13 +24,9 @@ const Page: FC = () => {
         <Loader />
       </Show>
       <Show when="signed-out">
-        <div className="mb-4">
-          <div>
-            <h1 className="font-bold text-4xl text-balance text-center">
-              ¡Arma equipos como un campeón!
-            </h1>
-          </div>
-        </div>
+        <h1 className="mb-4 font-bold text-4xl text-balance text-center">
+          ¡Arma equipos como un campeón!
+        </h1>
         <div>
           <p className="text-balance text-center">
             Tienes lo necesario para ser el{" "}
@@ -40,19 +36,13 @@ const Page: FC = () => {
             Demostrá tu habilidad para formar equipos ideales.
           </p>
         </div>
-        <div className="min-h-12">
-          <div>
-            <SignInButton mode="modal">
-              <Button onClick={() => trackAnalytics("sign_in_clicked")}>
-                Ingresar con Google
-              </Button>
-            </SignInButton>
-          </div>
-        </div>
-        <footer className="mt-16">
-          <div className="flex flex-wrap items-center justify-center gap-x-2">
-            <ShowOff />
-          </div>
+        <SignInButton mode="modal">
+          <Button onClick={() => trackAnalytics("sign_in_clicked")}>
+            Ingresar con Google
+          </Button>
+        </SignInButton>
+        <footer className="mt-16 flex flex-wrap items-center justify-center gap-x-2">
+          <ShowOff />
         </footer>
       </Show>
     </div>
