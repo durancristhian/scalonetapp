@@ -9,9 +9,16 @@ import {
   symlinkSync,
   chmodSync,
   copyFileSync,
+  existsSync,
+  readdirSync,
 } from "node:fs";
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import {
+  postgresBinaries,
+  stopDatabase,
+} from "../../scripts/worktree-database.mjs";
+import { parseEnv } from "node:util";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
@@ -30,7 +37,13 @@ function fixture(t) {
     npm,
     `#!/usr/bin/env node
 const fs = require('node:fs');
-fs.mkdirSync('node_modules', {recursive:true});
+const path = require('node:path');
+fs.appendFileSync(path.resolve(__dirname, '../npm-calls'), process.cwd() + '\\n');
+if (process.env.NPM_FIXTURE_FAIL) process.exit(1);
+if (process.env.NPM_FIXTURE_DELAY) Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 100);
+fs.mkdirSync('node_modules/.bin', {recursive:true});
+fs.writeFileSync('node_modules/proof', 'original');
+fs.symlinkSync('../proof', 'node_modules/.bin/proof');
 fs.mkdirSync('node_modules/fixture-package', {recursive:true});
 fs.writeFileSync('node_modules/fixture-package/package.json', JSON.stringify({name:'fixture-package',version:'1.0.0'}));
 fs.writeFileSync('node_modules/.package-lock.json', JSON.stringify({lockfileVersion:3,packages:{'node_modules/fixture-package':{version:'1.0.0'}}}));
@@ -55,17 +68,14 @@ fs.writeFileSync('node_modules/.package-lock.json', JSON.stringify({lockfileVers
       '{"name":"setup-fixture","version":"1.0.0","lockfileVersion":3,"packages":{"":{"name":"setup-fixture","version":"1.0.0"}}}',
     );
   }
-  return { main, target };
+  return { main, target, cache: join(directory, "cache"), directory };
 }
 
 test("installs once, copies an independent tree, and reuses it", (t) => {
-  const { main, target } = fixture(t);
-  prepareDependencies(main, main);
+  const { main, target, cache } = fixture(t);
+  prepareDependencies(main, cache);
   assert.equal(reusableInstallation(main, dependencyFingerprint(main)), true);
-  writeFileSync(join(main, "node_modules", "proof"), "original");
-  mkdirSync(join(main, "node_modules", ".bin"));
-  symlinkSync("../proof", join(main, "node_modules", ".bin", "proof"));
-  prepareDependencies(target, main);
+  prepareDependencies(target, cache);
   assert.equal(
     readFileSync(join(target, "node_modules", ".bin", "proof"), "utf8"),
     "original",
@@ -75,7 +85,7 @@ test("installs once, copies an independent tree, and reuses it", (t) => {
     readFileSync(join(main, "node_modules", "proof"), "utf8"),
     "original",
   );
-  prepareDependencies(target, main);
+  prepareDependencies(target, cache);
   assert.equal(
     readFileSync(join(target, "node_modules", "proof"), "utf8"),
     "changed",
@@ -83,8 +93,8 @@ test("installs once, copies an independent tree, and reuses it", (t) => {
 });
 
 test("rejects changed manifests, npm configuration and installed lock", (t) => {
-  const { main } = fixture(t);
-  prepareDependencies(main, main);
+  const { main, cache } = fixture(t);
+  prepareDependencies(main, cache);
   const fingerprint = dependencyFingerprint(main);
   for (const name of ["package.json", "package-lock.json", ".npmrc"]) {
     const path = join(main, name);
@@ -103,9 +113,9 @@ test("rejects changed manifests, npm configuration and installed lock", (t) => {
 });
 
 test("rejects missing, corrupt, foreign-runtime and symlinked installations", (t) => {
-  const { main, target } = fixture(t);
+  const { main, target, cache } = fixture(t);
   assert.equal(reusableInstallation(main, dependencyFingerprint(main)), false);
-  prepareDependencies(main, main);
+  prepareDependencies(main, cache);
   const marker = join(main, "node_modules", ".worktree-install.json");
   const original = readFileSync(marker);
   writeFileSync(marker, "invalid json");
@@ -119,11 +129,24 @@ test("rejects missing, corrupt, foreign-runtime and symlinked installations", (t
   );
 });
 
-test("bootstrap permits tooling work while check and dev block a remote database", (t) => {
-  const { main } = fixture(t);
+test("bootstrap replaces remote connections with an owned database and rejects live Clerk keys", (t) => {
+  try {
+    postgresBinaries();
+  } catch (error) {
+    if (process.env.CI) throw error;
+    t.skip("PostgreSQL tools are unavailable");
+    return;
+  }
+  const { main, cache } = fixture(t);
+  t.after(() => stopDatabase(main));
   const scripts = join(main, "scripts");
   mkdirSync(scripts);
-  for (const name of ["worktree.mjs", "worktree-dependencies.mjs"]) {
+  for (const name of [
+    "worktree.mjs",
+    "worktree-dependencies.mjs",
+    "worktree-database.mjs",
+    "worktree-port.mjs",
+  ]) {
     copyFileSync(
       fileURLToPath(new URL(`../../scripts/${name}`, import.meta.url)),
       join(scripts, name),
@@ -141,7 +164,7 @@ test("bootstrap permits tooling work while check and dev block a remote database
       "POSTGRES_URL_NON_POOLING=postgres://fixture:fixture@remote.invalid/shared",
     ].join("\n"),
   );
-  prepareDependencies(main, main);
+  prepareDependencies(main, cache);
   for (const name of [
     "puppeteer/lib/puppeteer/node/cli.js",
     "prisma/build/index.js",
@@ -159,27 +182,162 @@ test("bootstrap permits tooling work while check and dev block a remote database
     });
   const setup = run("setup");
   assert.equal(setup.status, 0, setup.stderr);
-  assert.match(
-    setup.stderr,
-    /Development startup blocked: Configure POSTGRES_PRISMA_URL/,
+  assert.match(setup.stdout, /Worktree ready/);
+  const prepared = readFileSync(join(main, ".env.local"), "utf8");
+  const env = parseEnv(prepared);
+  assert.equal(new URL(env.POSTGRES_PRISMA_URL).hostname, "127.0.0.1");
+  assert.equal(run("check").status, 0);
+  writeFileSync(
+    join(main, ".env.local"),
+    prepared
+      .replaceAll("sk_test_", "sk_live_")
+      .replaceAll("pk_test_", "pk_live_"),
   );
-  for (const mode of ["check", "dev"]) {
+  for (const mode of ["setup", "check", "dev"]) {
     const result = run(mode);
     assert.equal(result.status, 1);
-    assert.match(result.stderr, /shared and remote databases are blocked/);
+    assert.match(result.stderr, /Clerk Development keys are required/);
     assert.doesNotMatch(result.stdout, /Development and image exports/);
   }
 });
 
 test("repairs a missing package instead of reusing or copying an incomplete tree", (t) => {
-  const { main, target } = fixture(t);
-  prepareDependencies(main, main);
+  const { main, target, cache } = fixture(t);
+  prepareDependencies(main, cache);
   const fingerprint = dependencyFingerprint(main);
   rmSync(join(main, "node_modules/fixture-package"), { recursive: true });
   assert.equal(reusableInstallation(main, fingerprint), false);
-  prepareDependencies(target, main);
+  prepareDependencies(target, cache);
   assert.equal(reusableInstallation(target, fingerprint), true);
   assert.equal(reusableInstallation(main, fingerprint), false);
-  prepareDependencies(main, main);
+  prepareDependencies(main, cache);
   assert.equal(reusableInstallation(main, fingerprint), true);
+});
+
+test("cache survives its source checkout and ignores application-only changes", (t) => {
+  const { main, target, cache, directory } = fixture(t);
+  prepareDependencies(main, cache);
+  const fingerprint = dependencyFingerprint(main);
+  rmSync(main, { recursive: true });
+  writeFileSync(join(target, "app.ts"), "changed application code");
+  assert.equal(dependencyFingerprint(target), fingerprint);
+  prepareDependencies(target, cache);
+  assert.equal(reusableInstallation(target, fingerprint), true);
+  assert.equal(
+    readFileSync(join(directory, "npm-calls"), "utf8").trim().split("\n")
+      .length,
+    1,
+  );
+});
+
+test("changed dependencies create a new cache without invalidating older branches", (t) => {
+  const { main, target, cache, directory } = fixture(t);
+  prepareDependencies(main, cache);
+  const previous = dependencyFingerprint(main);
+  writeFileSync(
+    join(target, "package-lock.json"),
+    '{"lockfileVersion":3,"packages":{},"changed":true}',
+  );
+  const current = dependencyFingerprint(target);
+  prepareDependencies(target, cache);
+  assert.notEqual(previous, current);
+  assert.equal(readdirSync(cache).length, 2);
+  assert.equal(
+    readFileSync(join(directory, "npm-calls"), "utf8").trim().split("\n")
+      .length,
+    2,
+  );
+  assert.equal(reusableInstallation(main, previous), true);
+});
+
+test("corrupt and unpublished cache entries are skipped and rebuilt", (t) => {
+  const { main, target, cache, directory } = fixture(t);
+  prepareDependencies(main, cache);
+  const fingerprint = dependencyFingerprint(main);
+  const bucket = join(cache, fingerprint);
+  const ready = readdirSync(bucket).find((name) => name.startsWith("ready-"));
+  rmSync(join(bucket, ready, "node_modules/fixture-package"), {
+    recursive: true,
+  });
+  mkdirSync(join(bucket, ".pending-interrupted", "node_modules"), {
+    recursive: true,
+  });
+  rmSync(main, { recursive: true });
+  prepareDependencies(target, cache);
+  assert.equal(reusableInstallation(target, fingerprint), true);
+  assert.equal(
+    readFileSync(join(directory, "npm-calls"), "utf8").trim().split("\n")
+      .length,
+    2,
+  );
+  assert.equal(
+    readdirSync(bucket)
+      .filter((name) => name.startsWith("ready-"))
+      .some((name) => reusableInstallation(join(bucket, name), fingerprint)),
+    true,
+  );
+});
+
+test("failed installation publishes no cache and the next attempt recovers", (t) => {
+  const { main, cache } = fixture(t);
+  process.env.NPM_FIXTURE_FAIL = "1";
+  try {
+    assert.throws(() => prepareDependencies(main, cache), /npm ci failed/);
+  } finally {
+    delete process.env.NPM_FIXTURE_FAIL;
+  }
+  assert.equal(existsSync(cache), false);
+  prepareDependencies(main, cache);
+  assert.equal(reusableInstallation(main, dependencyFingerprint(main)), true);
+});
+
+test("concurrent worktrees publish complete snapshots and keep their copies independent", async (t) => {
+  const { main, target, cache, directory } = fixture(t);
+  const moduleUrl = new URL(
+    "../../scripts/worktree-dependencies.mjs",
+    import.meta.url,
+  ).href;
+  const code = `import {prepareDependencies} from ${JSON.stringify(moduleUrl)}; prepareDependencies(process.argv[1], process.argv[2]);`;
+  const run = (root) =>
+    new Promise((resolve, reject) => {
+      const child = spawn(
+        process.execPath,
+        ["--input-type=module", "-e", code, root, cache],
+        { env: { ...process.env, NPM_FIXTURE_DELAY: "1" } },
+      );
+      let stderr = "";
+      child.stderr.on("data", (chunk) => {
+        stderr += chunk;
+      });
+      child.on("error", reject);
+      child.on("close", (status) =>
+        status === 0 ? resolve() : reject(new Error(stderr)),
+      );
+    });
+  await Promise.all([run(main), run(target)]);
+  const fingerprint = dependencyFingerprint(main);
+  assert.equal(reusableInstallation(main, fingerprint), true);
+  assert.equal(reusableInstallation(target, fingerprint), true);
+  const bucket = join(cache, fingerprint);
+  for (const name of readdirSync(bucket)) {
+    assert.match(name, /^ready-/);
+    assert.equal(reusableInstallation(join(bucket, name), fingerprint), true);
+  }
+  writeFileSync(join(main, "node_modules/proof"), "only main");
+  assert.equal(
+    readFileSync(join(target, "node_modules/proof"), "utf8"),
+    "original",
+  );
+  rmSync(join(target, "node_modules"), { recursive: true });
+  process.env.NPM_FIXTURE_FAIL = "1";
+  try {
+    prepareDependencies(target, cache);
+  } finally {
+    delete process.env.NPM_FIXTURE_FAIL;
+  }
+  assert.equal(
+    readFileSync(join(target, "node_modules/proof"), "utf8"),
+    "original",
+  );
+  assert.ok(existsSync(join(directory, "npm-calls")));
 });

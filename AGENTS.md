@@ -10,7 +10,7 @@
 - Update docs only for lasting contract or workflow changes. Keep README for setup and commands; AGENTS for development rules.
 - Make the smallest sufficient doc edit in the existing section. Link to code/config instead of duplicating it; omit implementation walkthroughs, coverage inventories and run logs. Review the doc diff for redundancy before handoff.
 - Keep temporary checks and evidence in ignored scratch space. Add permanent validation tooling only when the task requires it.
-- Before using a new or unprepared worktree, complete the bootstrap in [Run locally](README.md#run-locally). A successful T3 setup action satisfies this step. Run `npm run check:development` and verify database isolation before environment-dependent checks, services or migrations.
+- Before using a new or unprepared worktree, complete the bootstrap in [Run locally](README.md#run-locally). A successful T3 setup action satisfies this step. Setup and `npm run dev` verify the owned local database. Run `npm run check:development` before other environment-dependent checks or manual migrations.
 - Merge and Production actions require explicit authorization.
 
 ## Product contracts

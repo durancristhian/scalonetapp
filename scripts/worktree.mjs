@@ -1,6 +1,13 @@
 import { spawnSync, spawn } from "node:child_process";
 import { prepareDependencies } from "./worktree-dependencies.mjs";
 import {
+  databaseName,
+  prepareDatabase,
+  verifyDatabase,
+  stopDatabase,
+} from "./worktree-database.mjs";
+import { freePort } from "./worktree-port.mjs";
+import {
   constants,
   copyFileSync,
   chmodSync,
@@ -8,11 +15,11 @@ import {
   readFileSync,
   existsSync,
   mkdirSync,
+  renameSync,
+  writeFileSync,
 } from "node:fs";
 import { resolve } from "node:path";
 import { parseEnv } from "node:util";
-import { createServer } from "node:net";
-import { createHash } from "node:crypto";
 
 const root = process.cwd();
 process.umask(0o077);
@@ -65,8 +72,8 @@ function copyEnvironment() {
     privateFile(destination);
   }
 }
-const databaseName = `scalonet_${createHash("sha256").update(root).digest("hex").slice(0, 12)}`;
-function developmentEnvironment() {
+const expectedDatabase = databaseName(root);
+function developmentEnvironment(overrides = {}) {
   const file = resolve(root, ".env.local");
   requireCondition(existsSync(file), "Run npm run setup:worktree first.");
   privateFile(file);
@@ -75,7 +82,12 @@ function developmentEnvironment() {
     ![process.env.NODE_ENV, local.NODE_ENV].includes("production"),
     "Remove NODE_ENV=production before local startup.",
   );
-  const environment = { ...process.env, ...local, NODE_ENV: "development" };
+  const environment = {
+    ...process.env,
+    ...local,
+    ...overrides,
+    NODE_ENV: "development",
+  };
   requireCondition(
     !environment.VERCEL_ENV || environment.VERCEL_ENV === "development",
     "Remove non-Development Vercel configuration before local startup.",
@@ -91,15 +103,15 @@ function developmentEnvironment() {
       url = new URL(environment[key]);
     } catch {
       throw new Error(
-        `Configure ${key} with a local database named ${databaseName}.`,
+        `Configure ${key} with a local database named ${expectedDatabase}.`,
       );
     }
     requireCondition(
       ["postgres:", "postgresql:"].includes(url.protocol) &&
         ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname) &&
-        decodeURIComponent(url.pathname) === `/${databaseName}` &&
+        decodeURIComponent(url.pathname) === `/${expectedDatabase}` &&
         !url.searchParams.has("host"),
-      `Configure ${key} with a local database named ${databaseName}; shared and remote databases are blocked.`,
+      `Configure ${key} with a local database named ${expectedDatabase}; shared and remote databases are blocked.`,
     );
   }
   requireCondition(
@@ -118,17 +130,46 @@ function developmentEnvironment() {
   }
   return environment;
 }
-async function freePort(host = "127.0.0.1") {
-  const server = createServer();
-  await new Promise((resolve, reject) => {
-    server.once("error", reject);
-    server.listen(0, host, resolve);
+async function prepareDevelopment() {
+  const placeholder = `postgresql://127.0.0.1/${expectedDatabase}`;
+  developmentEnvironment({
+    POSTGRES_PRISMA_URL: placeholder,
+    POSTGRES_URL_NON_POOLING: placeholder,
   });
-  const port = server.address().port;
-  await new Promise((resolve, reject) =>
-    server.close((error) => (error ? reject(error) : resolve())),
+  const url = await prepareDatabase(root);
+  const file = resolve(root, ".env.local");
+  const contents = readFileSync(file, "utf8");
+  const local = parseEnv(contents);
+  if (
+    local.POSTGRES_PRISMA_URL !== url ||
+    local.POSTGRES_URL_NON_POOLING !== url
+  ) {
+    const retained = contents
+      .split("\n")
+      .filter(
+        (line) =>
+          !/^\s*(?:export\s+)?(?:POSTGRES_PRISMA_URL|POSTGRES_URL_NON_POOLING)\s*=/.test(
+            line,
+          ),
+      )
+      .join("\n")
+      .trimEnd();
+    const pending = resolve(root, ".local/development-env.pending");
+    writeFileSync(
+      pending,
+      `${retained}\nPOSTGRES_PRISMA_URL=${JSON.stringify(url)}\nPOSTGRES_URL_NON_POOLING=${JSON.stringify(url)}\n`,
+      { mode: 0o600 },
+    );
+    renameSync(pending, file);
+  }
+  const env = developmentEnvironment();
+  verifyDatabase(root, env.POSTGRES_PRISMA_URL);
+  run(
+    process.execPath,
+    ["node_modules/prisma/build/index.js", "migrate", "deploy"],
+    env,
   );
-  return port;
+  return env;
 }
 try {
   requireCondition(
@@ -141,7 +182,7 @@ try {
     chmodSync(".local", 0o700);
     prepareDependencies(
       root,
-      resolve(git("rev-parse", "--git-common-dir"), ".."),
+      resolve(git("rev-parse", "--git-common-dir"), "worktree-dependencies-v1"),
     );
     for (const browser of ["chrome", "chrome-headless-shell"]) {
       run(
@@ -171,19 +212,16 @@ try {
         PLAYWRIGHT_BROWSERS_PATH: resolve(root, ".local/browsers"),
       },
     );
-    console.log("Worktree tools ready. Run npm run test:frontend.");
-    try {
-      developmentEnvironment();
-      console.log("Development configuration valid. Run npm run dev.");
-    } catch (error) {
-      console.warn(`Development startup blocked: ${error.message}`);
-      console.warn(
-        "Configure .env.local, then run npm run check:development before starting services or migrating.",
-      );
-    }
+    await prepareDevelopment();
+    console.log("Worktree ready. Run npm run dev or npm run test:frontend.");
   } else if (mode === "check") {
-    developmentEnvironment();
-    console.log("Development configuration valid.");
+    const env = developmentEnvironment();
+    verifyDatabase(root, env.POSTGRES_PRISMA_URL);
+    verifyDatabase(root, env.POSTGRES_URL_NON_POOLING);
+    console.log("Development configuration and owned database verified.");
+  } else if (mode === "database-stop") {
+    stopDatabase(root);
+    console.log("Owned worktree PostgreSQL stopped; data preserved.");
   } else if (mode === "browser") {
     const port = await freePort();
     run(
@@ -202,7 +240,7 @@ try {
       },
     );
   } else if (mode === "dev") {
-    const env = developmentEnvironment();
+    const env = await prepareDevelopment();
     const port = await freePort("localhost");
     const origin = `http://localhost:${port}`;
     console.log(`Development and image exports: ${origin}`);
@@ -231,7 +269,7 @@ try {
       process.on(signal, () => child.kill(signal));
     child.on("exit", (code) => process.exit(code ?? 1));
   } else {
-    throw new Error("Use setup, check, browser or dev.");
+    throw new Error("Use setup, check, database-stop, browser or dev.");
   }
 } catch (error) {
   console.error(error.message);

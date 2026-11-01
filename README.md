@@ -11,7 +11,7 @@ Development documentation lives here and is updated alongside relevant changes.
 
 ## Run locally
 
-Use Node.js 26, a local PostgreSQL instance you own, and a [Clerk](https://clerk.com) Development application.
+Use Node.js 26, installed PostgreSQL tools (`pg_config`, `initdb`, `pg_ctl`, `psql`, `createdb`), and a [Clerk](https://clerk.com) Development application.
 
 ```bash
 bash scripts/setup-worktree.sh
@@ -19,26 +19,13 @@ bash scripts/setup-worktree.sh
 
 The [bootstrap](scripts/setup-worktree.sh) selects Node 26 through nvm when needed. It copies the main checkout's Git-ignored `.env.local` and `.env.prod` only when absent and sets owner-only permissions. The main checkout must already hold these private files; missing files fail setup. `.env.prod` is copied but never loaded by local startup. Using it requires explicit Production authorization.
 
-Dependencies are reused in place, or copied independently from the main checkout, only when a previous successful bootstrap recorded matching manifests, npm configuration, Node version, platform and architecture. Otherwise setup runs `npm ci`. It always generates Prisma and prepares worktree-local browsers. Unmarked installations require one bootstrap before they can be reused.
+Dependencies are reused in place or copied independently from a repository cache in the shared Git directory. The cache is keyed by manifests, project npm configuration, Node version, platform and architecture, and checked for missing packages before use. A cache miss runs `npm ci` and publishes a complete snapshot atomically. Older combinations remain available for older branches; the main checkout does not need installed dependencies or synchronization. Setup always generates Prisma and prepares worktree-local browsers. Unmarked installations require one bootstrap before reuse.
 
-A successful setup prepares tools for source work and frontend tests. It reports invalid Development configuration without failing the bootstrap. Before starting services or migrating, configure `.env.local` and run the blocking check:
+Setup creates a password-protected PostgreSQL cluster under ignored `.local/postgres`, starts it on a free loopback port, sets both database URLs in `.env.local`, and applies migrations only to that owned database. It preserves existing data on subsequent runs and never connects to the copied remote URLs. `npm run dev` restarts the owned database when needed and reapplies pending migrations before starting the app.
 
-```bash
-npm run check:development
-```
+The copied `.env.local` must contain Clerk Development test keys. Production settings, Blob credentials, Telegram credentials and additional Next.js env files reported by the guard must be removed before setup can complete. These external services are not provisioned by setup; photo uploads require separate test storage.
 
-- Set `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` to Clerk Development test keys.
-- Point `POSTGRES_PRISMA_URL` and `POSTGRES_URL_NON_POOLING` to the same isolated loopback database. The validation error gives the required database name, derived from the worktree path. Create that database on your local instance.
-- Remove Blob and Telegram credentials, additional Next.js env files, and Production configuration reported by the guard. Keep secrets out of logs and Git.
-
-Setup does not create a database or apply migrations. Once the check succeeds, initialize the isolated database and start the app:
-
-```bash
-node --env-file=.env.local node_modules/prisma/build/index.js migrate deploy
-npm run dev
-```
-
-Local Prisma commands need `--env-file=.env.local` for the connection configured in [prisma.config.ts](prisma.config.ts). Client generation does not require a database.
+Check configuration and the live database with `npm run check:development`. Stop only this worktree's PostgreSQL with `npm run stop:database`; its data remains available for the next startup. Manual local Prisma commands must use `node --env-file=.env.local node_modules/prisma/build/index.js ...` for [prisma.config.ts](prisma.config.ts).
 
 `npm run dev` prints an available loopback URL and uses it for internal image exports through `IMAGE_EXPORT_ORIGIN`. Open that URL. If another process takes the selected port before startup, the command fails; rerun it. Vercel Preview and Production export targets remain unchanged.
 
@@ -60,6 +47,8 @@ npm run test:frontend
 ```
 
 `npm run typecheck` generates Next.js route types before checking TypeScript, without starting a server.
+
+`npm run test:setup` checks dependency caching and owned PostgreSQL lifecycle. Database cases require PostgreSQL tools; CI installs them.
 
 `npm test` runs Vitest; `npm run test:watch` enables watch mode.
 `npm run test:browser` runs the isolated Playwright fixture on an available port and refuses to reuse an existing server.
