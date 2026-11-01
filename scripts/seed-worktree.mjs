@@ -1,4 +1,4 @@
-import { randomInt, randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
@@ -7,6 +7,7 @@ import { verifyDatabase } from "./worktree-database.mjs";
 const teams = [
   {
     name: "Argentina Celeste",
+    captain: "Lionel Messi",
     players: [
       ["Emiliano Martínez", "goa"],
       ["Javier Zanetti", "def"],
@@ -22,6 +23,7 @@ const teams = [
   },
   {
     name: "Argentina Blanca",
+    captain: "Diego Maradona",
     players: [
       ["Ubaldo Fillol", "goa"],
       ["Daniel Passarella", "def"],
@@ -82,7 +84,7 @@ export async function seedWorktree(root, env) {
           id: randomUUID(),
           name: team.name,
           players,
-          defaultCaptainId: players[randomInt(players.length)],
+          defaultCaptainId: ids.get(team.captain),
         };
       });
       await transaction.match.update({
