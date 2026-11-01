@@ -17,7 +17,6 @@ import {
   editMatchQuery,
 } from "@/server/queries/match";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
-import prisma from "@/utils/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
 import { runMutation } from "@/server/run-mutation";
@@ -54,12 +53,7 @@ export const deleteMatchAction = async (id: number) =>
     { operation: "match.delete", matchId: id },
     ERROR_MESSAGES.match_delete_error,
     async (userId) => {
-      const matchId = ID_SCHEMA.parse(id);
-      const photos = await prisma.player.findMany({
-        where: { matchId, match: { userId } },
-        select: { avatar: true },
-      });
-      await deleteMatchQuery(matchId, userId);
+      const photos = await deleteMatchQuery(ID_SCHEMA.parse(id), userId);
       await Promise.all(photos.map(({ avatar }) => removeUnusedPhoto(avatar)));
     },
   );
