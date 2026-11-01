@@ -90,8 +90,8 @@ export const TeamCard: FC<TeamCardProps> = ({
           {Boolean(team.players.length) ? (
             <>
               <div className="space-y-2">
-                {[...goa, ...def, ...mid, ...forwards].map((player, idx) => (
-                  <AnimatedListItem key={player.id} listIndex={idx}>
+                {[...goa, ...def, ...mid, ...forwards].map((player) => (
+                  <AnimatedListItem key={player.id}>
                     <PlayerRow player={player}>
                       <TooltipProvider>
                         <Tooltip>

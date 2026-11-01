@@ -24,8 +24,8 @@ export const MatchesList: FC<MatchsListProps> = ({ matches, atMatchLimit }) => {
 
   return (
     <div className="space-y-4">
-      {matches.map((match, idx) => (
-        <AnimatedListItem key={match.id} listIndex={idx}>
+      {matches.map((match) => (
+        <AnimatedListItem key={match.id}>
           <MatchItem match={match} disableDuplication={atMatchLimit} />
         </AnimatedListItem>
       ))}

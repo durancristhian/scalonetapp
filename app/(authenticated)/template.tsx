@@ -1,17 +1,10 @@
-"use client";
-
-import { motion } from "framer-motion";
 import { type FC, type PropsWithChildren } from "react";
 
 const Template: FC<PropsWithChildren> = ({ children }) => {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ ease: "easeInOut", duration: 0.5 }}
-    >
+    <div className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-500 motion-safe:ease-in-out">
       {children}
-    </motion.div>
+    </div>
   );
 };
 

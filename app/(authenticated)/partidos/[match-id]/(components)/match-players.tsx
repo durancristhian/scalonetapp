@@ -71,9 +71,9 @@ export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
                 <div className="me-3 space-y-4">
                   {atPlayerLimit ? <PlayerLimitAlert /> : null}
                   <ul className="space-y-2">
-                    {[...players].sort(byName).map((player, idx) => {
+                    {[...players].sort(byName).map((player) => {
                       return (
-                        <AnimatedListItem key={player.id} listIndex={idx}>
+                        <AnimatedListItem key={player.id}>
                           <MatchPlayer player={player} />
                         </AnimatedListItem>
                       );
