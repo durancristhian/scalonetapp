@@ -19,6 +19,9 @@ for (const [width, height] of [
     }) => {
       await page.setViewportSize({ width, height });
       await page.goto("/?focus");
+      await expect(
+        page.getByRole("link", { name: "Navegación" }),
+      ).toBeVisible();
       if (dark)
         await page.locator("html").evaluate((e) => e.classList.add("dark"));
       const names = [
@@ -71,6 +74,9 @@ test("keeps focus visible in menus, dialogs and forced colors", async ({
 }) => {
   await page.emulateMedia({ forcedColors: "active" });
   await page.goto("/");
+  await expect(
+    page.getByRole("button", { name: "Comprobar clics: 0" }),
+  ).toBeVisible();
   await page.keyboard.press("Tab");
   await expectFocusOutline(
     page.getByRole("button", { name: "Comprobar clics: 0" }),
