@@ -28,15 +28,15 @@ In `.env.local`, set:
 - `POSTGRES_PRISMA_URL` and `POSTGRES_URL_NON_POOLING` to your development database URL.
 - Optionally, `TELEGRAM_BOTID` and `TELEGRAM_CHATID` to enable feedback.
 
-Keep the other template defaults, then initialize the database and start the app:
+Choose unused, separate app, browser-fixture and PostgreSQL ports for this worktree. Record the chosen ports and owned process IDs under ignored `.local/` space so retries can verify and reuse the same services. The following ports are examples, not reservations. Keep the other template defaults, then initialize the database and start the app:
 
 ```bash
 node --env-file=.env.local node_modules/prisma/build/index.js migrate deploy
 node --env-file=.env.local node_modules/prisma/build/index.js generate
-npm run dev
+PORT=3101 npm run dev -- --hostname localhost
 ```
 
-Open [localhost:3000](http://localhost:3000). Keep this port for local image exports.
+Open the selected app URL, for example `http://localhost:3101`. Keep the hostname consistent with the local export origin and set `PORT` in the launch environment so local image exports reach the same app. Next.js reads this variable before loading `.env.local`; do not configure it only in that file. The default remains port 3000. If startup reports a collision or selects another port, stop only the process just started and relaunch with a free explicit `PORT`.
 Environment files are ignored by Git; use development credentials only.
 Prisma CLI reads `POSTGRES_URL_NON_POOLING` through [prisma.config.ts](prisma.config.ts);
 the application uses pooled `POSTGRES_PRISMA_URL`. Keep the explicit `--env-file`
@@ -57,6 +57,8 @@ npm ci
 npx playwright install chromium  # once per machine
 npm run test:frontend
 ```
+
+For parallel worktrees, choose an unused fixture port and run `PLAYWRIGHT_PORT=4418 npm run test:frontend`. This configures both the fixture server and browser base URL; the default remains 4317. The suite refuses to reuse an existing server. Keep browser contexts and test artifacts owned by this worktree, and stop only services it started.
 
 `npm run typecheck` generates Next.js route types before checking TypeScript, without starting a server.
 

@@ -11,6 +11,7 @@
 - Make the smallest sufficient doc edit in the existing section. Link to code/config instead of duplicating it; omit implementation walkthroughs, coverage inventories and run logs. Review the doc diff for redundancy before handoff.
 - Keep temporary checks and evidence in ignored scratch space. Add permanent validation tooling only when the task requires it.
 - Each agent must copy the required environment files into its own worktree before running environment-dependent checks or services. Follow [Run locally](README.md#run-locally) to verify and isolate the configuration.
+- Before starting services or browser tests, reserve separate app, fixture and database ports for this worktree and record their URLs, process ownership and cleanup commands in ignored `.local/` space. Reuse a running service only after verifying its checkout and configuration; on collision, select another port without stopping another agent's process. Follow the port configuration in [README.md](README.md#run-locally), use an owned browser context, and clean up only owned resources. Coordinate CPU- or memory-heavy measurements even when ports are isolated.
 - Merge and Production actions require explicit authorization.
 
 ## Product contracts
