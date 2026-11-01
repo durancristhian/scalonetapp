@@ -4,8 +4,9 @@ export type BaseTeam = {
   id: string;
   name: string;
   players: number[];
+  defaultCaptainId?: number;
 };
 
-export type Team = Pick<BaseTeam, "id" | "name"> & {
+export type Team = Pick<BaseTeam, "id" | "name" | "defaultCaptainId"> & {
   players: Player[];
 };

@@ -112,6 +112,9 @@ export async function duplicateMatch(
     if (teams.length) {
       const mappedTeams = teams.map((team) => ({
         ...team,
+        ...(team.defaultCaptainId !== undefined
+          ? { defaultCaptainId: playerIds.get(team.defaultCaptainId) }
+          : {}),
         players: team.players.map((id) => {
           const newId = playerIds.get(id);
           if (newId === undefined)

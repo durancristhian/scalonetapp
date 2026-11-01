@@ -139,6 +139,10 @@ test("bootstrap replaces remote connections with an owned database and rejects l
   }
   const { main, cache } = fixture(t);
   t.after(() => stopDatabase(main));
+  copyFileSync(
+    fileURLToPath(new URL("../../.env.template", import.meta.url)),
+    join(main, ".env.template"),
+  );
   const scripts = join(main, "scripts");
   mkdirSync(scripts);
   for (const name of [
@@ -158,6 +162,7 @@ test("bootstrap replaces remote connections with an owned database and rejects l
   writeFileSync(
     join(main, ".env.local"),
     [
+      'NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL=""',
       "CLERK_SECRET_KEY=sk_test_fixture",
       "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_fixture",
       "POSTGRES_PRISMA_URL=postgres://fixture:fixture@remote.invalid/shared",
@@ -180,12 +185,15 @@ test("bootstrap replaces remote connections with an owned database and rejects l
       encoding: "utf8",
       env: { PATH: process.env.PATH, HOME: process.env.HOME },
     });
+  writeFileSync(join(scripts, "seed-worktree.mjs"), "");
   const setup = run("setup");
   assert.equal(setup.status, 0, setup.stderr);
   assert.match(setup.stdout, /Worktree ready/);
   const prepared = readFileSync(join(main, ".env.local"), "utf8");
   const env = parseEnv(prepared);
   assert.equal(new URL(env.POSTGRES_PRISMA_URL).hostname, "127.0.0.1");
+  assert.equal(env.NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL, "5");
+  assert.equal(env.NEXT_PUBLIC_MAX_MATCHES_PER_USER, "100");
   assert.equal(run("check").status, 0);
   assert.match(env.DEVELOPMENT_PHOTO_NAMESPACE, /^scalonet_[a-f0-9]{12}$/);
   const blob = `${prepared}\nBLOB_READ_WRITE_TOKEN=fixture-token\nPLAYER_PHOTO_ORIGIN=https://fixture.public.blob.vercel-storage.com\n`;

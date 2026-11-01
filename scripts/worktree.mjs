@@ -73,6 +73,14 @@ function copyEnvironment() {
   }
 }
 const expectedDatabase = databaseName(root);
+const publicDefaults = [
+  "NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL",
+  "NEXT_PUBLIC_MAX_MATCHES_PER_USER",
+  "NEXT_PUBLIC_IMAGE_UPLOAD_SIZE_LIMIT",
+];
+const template = existsSync(resolve(root, ".env.template"))
+  ? parseEnv(readFileSync(resolve(root, ".env.template"), "utf8"))
+  : {};
 function developmentEnvironment(overrides = {}) {
   const file = resolve(root, ".env.local");
   requireCondition(existsSync(file), "Run npm run setup:worktree first.");
@@ -89,6 +97,13 @@ function developmentEnvironment(overrides = {}) {
     NODE_ENV: "development",
     DEVELOPMENT_PHOTO_NAMESPACE: expectedDatabase,
   };
+  for (const key of publicDefaults) environment[key] ||= template[key];
+  requireCondition(
+    Number.isInteger(Number(environment.NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL)) &&
+      Number(environment.NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL) >= 1 &&
+      Number(environment.NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL) <= 10,
+    "Configure a default player level between 1 and 10.",
+  );
   requireCondition(
     !environment.VERCEL_ENV || environment.VERCEL_ENV === "development",
     "Remove non-Development Vercel configuration before local startup.",
@@ -165,7 +180,7 @@ function developmentEnvironment(overrides = {}) {
 }
 async function prepareDevelopment() {
   const placeholder = `postgresql://127.0.0.1/${expectedDatabase}`;
-  developmentEnvironment({
+  const settings = developmentEnvironment({
     POSTGRES_PRISMA_URL: placeholder,
     POSTGRES_URL_NON_POOLING: placeholder,
   });
@@ -173,17 +188,19 @@ async function prepareDevelopment() {
   const file = resolve(root, ".env.local");
   const contents = readFileSync(file, "utf8");
   const local = parseEnv(contents);
-  if (
-    local.POSTGRES_PRISMA_URL !== url ||
-    local.POSTGRES_URL_NON_POOLING !== url ||
-    local.DEVELOPMENT_PHOTO_NAMESPACE !== expectedDatabase
-  ) {
+  const generated = {
+    POSTGRES_PRISMA_URL: url,
+    POSTGRES_URL_NON_POOLING: url,
+    DEVELOPMENT_PHOTO_NAMESPACE: expectedDatabase,
+    ...Object.fromEntries(publicDefaults.map((key) => [key, settings[key]])),
+  };
+  if (Object.entries(generated).some(([key, value]) => local[key] !== value)) {
     const retained = contents
       .split("\n")
       .filter(
         (line) =>
-          !/^\s*(?:export\s+)?(?:POSTGRES_PRISMA_URL|POSTGRES_URL_NON_POOLING|DEVELOPMENT_PHOTO_NAMESPACE)\s*=/.test(
-            line,
+          !Object.keys(generated).some((key) =>
+            new RegExp(`^\\s*(?:export\\s+)?${key}\\s*=`).test(line),
           ),
       )
       .join("\n")
@@ -191,7 +208,9 @@ async function prepareDevelopment() {
     const pending = resolve(root, ".local/development-env.pending");
     writeFileSync(
       pending,
-      `${retained}\nPOSTGRES_PRISMA_URL=${JSON.stringify(url)}\nPOSTGRES_URL_NON_POOLING=${JSON.stringify(url)}\nDEVELOPMENT_PHOTO_NAMESPACE=${JSON.stringify(expectedDatabase)}\n`,
+      `${retained}\n${Object.entries(generated)
+        .map(([key, value]) => `${key}=${JSON.stringify(value)}`)
+        .join("\n")}\n`,
       { mode: 0o600 },
     );
     renameSync(pending, file);
@@ -246,7 +265,8 @@ try {
         PLAYWRIGHT_BROWSERS_PATH: resolve(root, ".local/browsers"),
       },
     );
-    await prepareDevelopment();
+    const env = await prepareDevelopment();
+    run(process.execPath, ["scripts/seed-worktree.mjs"], env);
     console.log("Worktree ready. Run npm run dev or npm run test:frontend.");
   } else if (mode === "check") {
     const env = developmentEnvironment();

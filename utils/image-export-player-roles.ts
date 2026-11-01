@@ -67,6 +67,12 @@ export function reconcileImageExportTeamSelections(
             selected !== null && playerIds.includes(selected) ? selected : null;
         }
       } else if (!previouslyConfigured) {
+        if (
+          team.defaultCaptainId !== undefined &&
+          playerIds.includes(team.defaultCaptainId)
+        ) {
+          assignments.captain = team.defaultCaptainId;
+        }
         const goalkeepers = team.players.filter(
           ({ position }) => position === "goa",
         );
