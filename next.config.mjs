@@ -2,6 +2,7 @@ import { heicLicensePlugin } from "./config/heic-license-plugin.mjs";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  devIndicators: false,
   async headers() {
     return [
       {

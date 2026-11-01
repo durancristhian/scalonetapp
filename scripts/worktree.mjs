@@ -1,4 +1,12 @@
 import { spawnSync, spawn } from "node:child_process";
+import { prepareDependencies } from "./worktree-dependencies.mjs";
+import {
+  databaseName,
+  prepareDatabase,
+  verifyDatabase,
+  stopDatabase,
+} from "./worktree-database.mjs";
+import { freePort } from "./worktree-port.mjs";
 import {
   constants,
   copyFileSync,
@@ -7,11 +15,11 @@ import {
   readFileSync,
   existsSync,
   mkdirSync,
+  renameSync,
+  writeFileSync,
 } from "node:fs";
 import { resolve } from "node:path";
 import { parseEnv } from "node:util";
-import { createServer } from "node:net";
-import { createHash } from "node:crypto";
 
 const root = process.cwd();
 process.umask(0o077);
@@ -64,8 +72,16 @@ function copyEnvironment() {
     privateFile(destination);
   }
 }
-const databaseName = `scalonet_${createHash("sha256").update(root).digest("hex").slice(0, 12)}`;
-function developmentEnvironment() {
+const expectedDatabase = databaseName(root);
+const publicDefaults = [
+  "NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL",
+  "NEXT_PUBLIC_MAX_MATCHES_PER_USER",
+  "NEXT_PUBLIC_IMAGE_UPLOAD_SIZE_LIMIT",
+];
+const template = existsSync(resolve(root, ".env.template"))
+  ? parseEnv(readFileSync(resolve(root, ".env.template"), "utf8"))
+  : {};
+function developmentEnvironment(overrides = {}) {
   const file = resolve(root, ".env.local");
   requireCondition(existsSync(file), "Run npm run setup:worktree first.");
   privateFile(file);
@@ -74,7 +90,20 @@ function developmentEnvironment() {
     ![process.env.NODE_ENV, local.NODE_ENV].includes("production"),
     "Remove NODE_ENV=production before local startup.",
   );
-  const environment = { ...process.env, ...local, NODE_ENV: "development" };
+  const environment = {
+    ...process.env,
+    ...local,
+    ...overrides,
+    NODE_ENV: "development",
+    DEVELOPMENT_PHOTO_NAMESPACE: expectedDatabase,
+  };
+  for (const key of publicDefaults) environment[key] ||= template[key];
+  requireCondition(
+    Number.isInteger(Number(environment.NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL)) &&
+      Number(environment.NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL) >= 1 &&
+      Number(environment.NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL) <= 10,
+    "Configure a default player level between 1 and 10.",
+  );
   requireCondition(
     !environment.VERCEL_ENV || environment.VERCEL_ENV === "development",
     "Remove non-Development Vercel configuration before local startup.",
@@ -90,24 +119,56 @@ function developmentEnvironment() {
       url = new URL(environment[key]);
     } catch {
       throw new Error(
-        `Configure ${key} with a local database named ${databaseName}.`,
+        `Configure ${key} with a local database named ${expectedDatabase}.`,
       );
     }
     requireCondition(
       ["postgres:", "postgresql:"].includes(url.protocol) &&
         ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname) &&
-        decodeURIComponent(url.pathname) === `/${databaseName}` &&
+        decodeURIComponent(url.pathname) === `/${expectedDatabase}` &&
         !url.searchParams.has("host"),
-      `Configure ${key} with a local database named ${databaseName}; shared and remote databases are blocked.`,
+      `Configure ${key} with a local database named ${expectedDatabase}; shared and remote databases are blocked.`,
     );
   }
+  if (
+    environment.BLOB_READ_WRITE_TOKEN ||
+    environment.BLOB_STORE_ID ||
+    environment.PLAYER_PHOTO_ORIGIN
+  ) {
+    requireCondition(
+      environment.BLOB_READ_WRITE_TOKEN &&
+        environment.PLAYER_PHOTO_ORIGIN &&
+        environment.PLAYER_PHOTO_ORIGIN ===
+          environment.DEVELOPMENT_PHOTO_ORIGIN,
+      "Configure the approved Development/Preview Blob token and photo origin together.",
+    );
+    let origin;
+    try {
+      origin = new URL(environment.PLAYER_PHOTO_ORIGIN);
+    } catch {
+      throw new Error("Configure a valid Development photo origin.");
+    }
+    requireCondition(
+      origin.protocol === "https:" &&
+        origin.origin === environment.PLAYER_PHOTO_ORIGIN &&
+        origin.hostname.endsWith(".public.blob.vercel-storage.com"),
+      "Development photos require the approved public Blob origin.",
+    );
+    const productionFile = resolve(root, ".env.prod");
+    if (existsSync(productionFile)) {
+      const production = parseEnv(readFileSync(productionFile, "utf8"));
+      requireCondition(
+        production.PLAYER_PHOTO_ORIGIN !== environment.PLAYER_PHOTO_ORIGIN &&
+          production.BLOB_READ_WRITE_TOKEN !==
+            environment.BLOB_READ_WRITE_TOKEN,
+        "Production Blob storage is blocked in Development.",
+      );
+    }
+  }
   requireCondition(
-    !environment.BLOB_READ_WRITE_TOKEN,
-    "Remove BLOB_READ_WRITE_TOKEN for isolated local development.",
-  );
-  requireCondition(
-    !environment.TELEGRAM_BOTID && !environment.TELEGRAM_CHATID,
-    "Remove Telegram credentials for isolated local development.",
+    Boolean(environment.TELEGRAM_BOTID) ===
+      Boolean(environment.TELEGRAM_CHATID),
+    "Configure TELEGRAM_BOTID and TELEGRAM_CHATID together.",
   );
   for (const name of [".env", ".env.development", ".env.development.local"]) {
     requireCondition(
@@ -117,17 +178,51 @@ function developmentEnvironment() {
   }
   return environment;
 }
-async function freePort(host = "127.0.0.1") {
-  const server = createServer();
-  await new Promise((resolve, reject) => {
-    server.once("error", reject);
-    server.listen(0, host, resolve);
+async function prepareDevelopment() {
+  const placeholder = `postgresql://127.0.0.1/${expectedDatabase}`;
+  const settings = developmentEnvironment({
+    POSTGRES_PRISMA_URL: placeholder,
+    POSTGRES_URL_NON_POOLING: placeholder,
   });
-  const port = server.address().port;
-  await new Promise((resolve, reject) =>
-    server.close((error) => (error ? reject(error) : resolve())),
+  const url = await prepareDatabase(root);
+  const file = resolve(root, ".env.local");
+  const contents = readFileSync(file, "utf8");
+  const local = parseEnv(contents);
+  const generated = {
+    POSTGRES_PRISMA_URL: url,
+    POSTGRES_URL_NON_POOLING: url,
+    DEVELOPMENT_PHOTO_NAMESPACE: expectedDatabase,
+    ...Object.fromEntries(publicDefaults.map((key) => [key, settings[key]])),
+  };
+  if (Object.entries(generated).some(([key, value]) => local[key] !== value)) {
+    const retained = contents
+      .split("\n")
+      .filter(
+        (line) =>
+          !Object.keys(generated).some((key) =>
+            new RegExp(`^\\s*(?:export\\s+)?${key}\\s*=`).test(line),
+          ),
+      )
+      .join("\n")
+      .trimEnd();
+    const pending = resolve(root, ".local/development-env.pending");
+    writeFileSync(
+      pending,
+      `${retained}\n${Object.entries(generated)
+        .map(([key, value]) => `${key}=${JSON.stringify(value)}`)
+        .join("\n")}\n`,
+      { mode: 0o600 },
+    );
+    renameSync(pending, file);
+  }
+  const env = developmentEnvironment();
+  verifyDatabase(root, env.POSTGRES_PRISMA_URL);
+  run(
+    process.execPath,
+    ["node_modules/prisma/build/index.js", "migrate", "deploy"],
+    env,
   );
-  return port;
+  return env;
 }
 try {
   requireCondition(
@@ -138,20 +233,26 @@ try {
     copyEnvironment();
     mkdirSync(".local", { recursive: true, mode: 0o700 });
     chmodSync(".local", 0o700);
-    const install = spawnSync("npm", ["ci"], {
-      cwd: root,
-      stdio: ["ignore", "pipe", "pipe"],
-      maxBuffer: 16 * 1024 * 1024,
-      env: {
-        ...process.env,
-        PUPPETEER_CACHE_DIR: resolve(root, ".local/puppeteer"),
-        PUPPETEER_SKIP_DOWNLOAD: "false",
-      },
-    });
-    requireCondition(
-      install.status === 0,
-      "npm ci failed. Check registry access and package-lock.json; installer output withheld to protect configuration.",
+    prepareDependencies(
+      root,
+      resolve(git("rev-parse", "--git-common-dir"), "worktree-dependencies-v1"),
     );
+    for (const browser of ["chrome", "chrome-headless-shell"]) {
+      run(
+        process.execPath,
+        [
+          "node_modules/puppeteer/lib/puppeteer/node/cli.js",
+          "browsers",
+          "install",
+          browser,
+        ],
+        {
+          ...process.env,
+          PUPPETEER_CACHE_DIR: resolve(root, ".local/puppeteer"),
+          PUPPETEER_SKIP_DOWNLOAD: "false",
+        },
+      );
+    }
     run(process.execPath, ["node_modules/prisma/build/index.js", "generate"], {
       PATH: process.env.PATH,
       HOME: process.env.HOME,
@@ -164,8 +265,17 @@ try {
         PLAYWRIGHT_BROWSERS_PATH: resolve(root, ".local/browsers"),
       },
     );
-    developmentEnvironment();
+    const env = await prepareDevelopment();
+    run(process.execPath, ["scripts/seed-worktree.mjs"], env);
     console.log("Worktree ready. Run npm run dev or npm run test:frontend.");
+  } else if (mode === "check") {
+    const env = developmentEnvironment();
+    verifyDatabase(root, env.POSTGRES_PRISMA_URL);
+    verifyDatabase(root, env.POSTGRES_URL_NON_POOLING);
+    console.log("Development configuration and owned database verified.");
+  } else if (mode === "database-stop") {
+    stopDatabase(root);
+    console.log("Owned worktree PostgreSQL stopped; data preserved.");
   } else if (mode === "browser") {
     const port = await freePort();
     run(
@@ -184,7 +294,7 @@ try {
       },
     );
   } else if (mode === "dev") {
-    const env = developmentEnvironment();
+    const env = await prepareDevelopment();
     const port = await freePort("localhost");
     const origin = `http://localhost:${port}`;
     console.log(`Development and image exports: ${origin}`);
@@ -213,7 +323,7 @@ try {
       process.on(signal, () => child.kill(signal));
     child.on("exit", (code) => process.exit(code ?? 1));
   } else {
-    throw new Error("Use setup or dev.");
+    throw new Error("Use setup, check, database-stop, browser or dev.");
   }
 } catch (error) {
   console.error(error.message);
