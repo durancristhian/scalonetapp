@@ -40,4 +40,4 @@ The current system, documented from source. Future UI work shares it; change its
 - [components/team-export](components/team-export) owns the stadium composition and export-specific styles.
 - [utils/image-export-backgrounds.ts](utils/image-export-backgrounds.ts) owns selectable background palettes.
 - Keep application chrome neutral; stadium colors belong to the exported composition.
-- Preserve preview/PNG agreement and output dimensions under [AGENTS.md](AGENTS.md#product-contracts).
+- Preserve preview/capture agreement and follow the download encoding contract in [AGENTS.md](AGENTS.md#product-contracts).
