@@ -7,18 +7,19 @@
   },
   "scripts": {
     "build": "next build --webpack",
-    "dev": "next dev --turbopack",
+    "dev": "node scripts/worktree.mjs dev",
     "lint": "eslint .",
     "start": "next start",
     "vercel-build": "prisma generate && prisma migrate deploy && next build --webpack",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:browser": "playwright test",
+    "test:browser": "node scripts/worktree.mjs browser",
     "test:browser:serve": "vite --config tests/browser/vite.config.mts",
     "test:frontend": "npm run test && npm run test:browser",
     "typecheck": "next typegen && tsc --noEmit",
     "format": "prettier . --write",
-    "format:check": "prettier . --check"
+    "format:check": "prettier . --check",
+    "setup:worktree": "bash scripts/setup-worktree.sh"
   },
   "dependencies": {
     "@dicebear/core": "10.7.0",

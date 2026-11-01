@@ -20,6 +20,7 @@ export type ImageExportOptions = {
   weather: (typeof IMAGE_EXPORT_WEATHERS)[number]["id"];
   avatarShape: (typeof IMAGE_EXPORT_AVATARS)[number]["id"];
   alignment: "left" | "center";
+  playerOrder: "alphabetical" | "position";
 };
 
 export const DEFAULT_IMAGE_EXPORT_OPTIONS: Readonly<ImageExportOptions> = {
@@ -27,6 +28,7 @@ export const DEFAULT_IMAGE_EXPORT_OPTIONS: Readonly<ImageExportOptions> = {
   weather: "none",
   avatarShape: "square",
   alignment: "left",
+  playerOrder: "alphabetical",
 };
 
 export const IMAGE_EXPORT_WIDTH = 1280;
@@ -41,7 +43,9 @@ export function isImageExportOptions(
     IMAGE_EXPORT_BACKGROUNDS.some(({ id }) => id === options.background) &&
     IMAGE_EXPORT_WEATHERS.some(({ id }) => id === options.weather) &&
     IMAGE_EXPORT_AVATARS.some(({ id }) => id === options.avatarShape) &&
-    (options.alignment === "left" || options.alignment === "center")
+    (options.alignment === "left" || options.alignment === "center") &&
+    (options.playerOrder === "alphabetical" ||
+      options.playerOrder === "position")
   );
 }
 
@@ -68,6 +72,7 @@ export function imageExportSearchParams(
     weather: options.weather,
     avatarShape: options.avatarShape,
     alignment: options.alignment,
+    playerOrder: options.playerOrder,
   });
 }
 
@@ -76,7 +81,10 @@ export function readImageExportOptions(): ImageExportOptions {
     const stored: unknown = JSON.parse(
       localStorage.getItem(IMAGE_EXPORT_STORAGE_KEY) ?? "null",
     );
-    if (isImageExportOptions(stored)) return stored;
+    if (stored && typeof stored === "object") {
+      const options = { playerOrder: "alphabetical", ...stored };
+      if (isImageExportOptions(options)) return options;
+    }
   } catch {}
   return { ...DEFAULT_IMAGE_EXPORT_OPTIONS };
 }

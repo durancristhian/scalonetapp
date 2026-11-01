@@ -292,11 +292,8 @@ export default function ExportEditor({
               </Select>
             </div>
             <div className="grid min-w-0 grid-cols-1 gap-2">
-              <Label
-                id={`${id}-alignment`}
-                htmlFor={`${id}-alignment-${options.alignment}`}
-              >
-                Alineación de jugadores
+              <Label asChild>
+                <span id={`${id}-alignment`}>Alineación de texto e imagen</span>
               </Label>
               <RadioGroup
                 className="grid grid-cols-2 gap-1 rounded-md bg-muted p-1"
@@ -327,6 +324,39 @@ export default function ExportEditor({
                 >
                   <AlignCenter className="size-4 shrink-0" aria-hidden="true" />
                   Centrada
+                </RadioGroupItem>
+              </RadioGroup>
+            </div>
+            <div className="grid min-w-0 grid-cols-1 gap-2">
+              <Label asChild>
+                <span id={`${id}-player-order`}>Ordenar jugadores por</span>
+              </Label>
+              <RadioGroup
+                className="grid grid-cols-2 gap-1 rounded-md bg-muted p-1"
+                aria-labelledby={`${id}-player-order`}
+                value={options.playerOrder}
+                disabled={processing}
+                onValueChange={(value) =>
+                  updateOptions({
+                    ...options,
+                    playerOrder:
+                      value === "position" ? "position" : "alphabetical",
+                  })
+                }
+              >
+                <RadioGroupItem
+                  variant="button"
+                  id={`${id}-player-order-alphabetical`}
+                  value="alphabetical"
+                >
+                  Nombre
+                </RadioGroupItem>
+                <RadioGroupItem
+                  variant="button"
+                  id={`${id}-player-order-position`}
+                  value="position"
+                >
+                  Posición
                 </RadioGroupItem>
               </RadioGroup>
             </div>

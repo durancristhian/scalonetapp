@@ -1,5 +1,6 @@
 type ExportEnvironment = {
   NODE_ENV?: string;
+  IMAGE_EXPORT_ORIGIN?: string;
   VERCEL_ENV?: string;
   VERCEL_URL?: string;
   VERCEL_AUTOMATION_BYPASS_SECRET?: string;
@@ -27,6 +28,22 @@ export function getImageExportTarget(
       origin: `https://${hostname.toLowerCase()}`,
       bypassSecret: environment.VERCEL_AUTOMATION_BYPASS_SECRET,
     };
+  }
+
+  if (
+    environment.NODE_ENV !== "production" &&
+    environment.IMAGE_EXPORT_ORIGIN
+  ) {
+    const origin = environment.IMAGE_EXPORT_ORIGIN;
+    if (
+      !/^http:\/\/(?:127\.0\.0\.1|localhost):[1-9]\d{0,4}$/.test(origin) ||
+      Number(new URL(origin).port) > 65535
+    ) {
+      throw new ImageExportConfigurationError(
+        "Local image exports require a loopback HTTP origin with a valid port.",
+      );
+    }
+    return { origin };
   }
 
   return {
