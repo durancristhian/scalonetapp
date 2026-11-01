@@ -29,6 +29,10 @@ test("returns to the photo chooser after closing nested crop and to Add after cl
       crop.getByRole("button", { name: "Recortar", exact: true }),
     ).toBeEnabled();
     await page.keyboard.press("Tab");
+    const focused = page.locator(":focus");
+    await expect(focused).toHaveCSS("outline-style", "solid");
+    await expect(focused).toHaveCSS("outline-width", "2px");
+    await expect(focused).toHaveCSS("outline-offset", "2px");
     if (close === "Escape") await page.keyboard.press("Escape");
     else await crop.getByRole("button", { name: close, exact: true }).click();
     await expect(crop).toBeHidden();

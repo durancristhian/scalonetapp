@@ -7,6 +7,8 @@ import { MatchItem } from "@/app/(authenticated)/(components)/match-item";
 import { match, player } from "../../fixtures";
 import "@/app/globals.css";
 
+import { FocusFixture } from "./focus";
+
 const roster = [player(1, { name: "Ana" })];
 function Fixture() {
   const [clicks, setClicks] = useState(0);
@@ -25,6 +27,10 @@ function Fixture() {
 }
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Fixture />
+    {new URLSearchParams(location.search).has("focus") ? (
+      <FocusFixture />
+    ) : (
+      <Fixture />
+    )}
   </StrictMode>,
 );

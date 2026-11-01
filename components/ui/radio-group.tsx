@@ -35,7 +35,7 @@ const RadioGroupItem = React.forwardRef<
               buttonVariants({ variant: "ghost" }),
               "min-w-0 px-0 active:bg-accent data-[state=checked]:border data-[state=checked]:border-input data-[state=checked]:bg-background data-[state=checked]:shadow-sm data-[state=checked]:hover:bg-accent",
             )
-          : "aspect-square h-4 w-4 rounded-full border border-primary text-primary shadow focus:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+          : "aspect-square h-4 w-4 rounded-full border border-primary text-primary shadow disabled:cursor-not-allowed disabled:opacity-50",
         className,
       )}
       {...props}

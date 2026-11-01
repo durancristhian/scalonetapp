@@ -26,6 +26,9 @@ The current system, documented from source. Future UI work shares it; change its
 - Reuse [components/ui](components/ui) controls and Lucide icons.
 - Primary buttons use `primary` roles; secondary actions use existing outline/ghost variants.
 - Preserve visible focus, disabled/busy feedback and reachable actions. Standard buttons are 48px high; compact controls retain usable touch targets.
+- Keyboard focus uses the shared `:focus-visible` rule in [app/globals.css](app/globals.css): a 2px solid outline, 2px offset and the theme's `ring` color. Do not add component-specific focus rings, border changes or outline suppression. Native links and controls inherit this rule too. Vendor styles load in the `vendor` layer below the shared `focus` layer.
+- Menu items and select options keep the same outline inset by 2px so scrolling containers cannot clip it. Keep selected/hover backgrounds separate from focus. Forced colors uses `CanvasText`; retain a real outline rather than a box shadow.
+- This treatment follows [WCAG focus visibility](https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html) and [non-text contrast](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html). Check keyboard focus, contrast and clipping in both themes and forced colors when changing controls.
 - Fix overflow at its source. Preserve zoom and content access.
 
 ## Motion
