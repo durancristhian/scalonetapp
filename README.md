@@ -17,10 +17,11 @@ Requires Node.js 26, a PostgreSQL database, and a [Clerk](https://clerk.com) dev
 nvm install
 nvm use
 npm ci
-cp -n .env.template .env.local
 ```
 
-In a new worktree, copy the required ignored environment files from the main checkout into that worktree before starting services or environment-dependent checks. Copy only the variables needed for the task, keep secrets out of logs and Git, and verify Clerk test keys and an owned, isolated PostgreSQL database before any Development mutations. Existing environment files may point to Production; replace those connections rather than using them for local checks.
+The main checkout holds the private, Git-ignored `.env.local` and `.env.prod` files. When creating a worktree, locate the main checkout with `git worktree list --porcelain` and copy both files into the new worktree without overwriting existing files. Keep the copies Git-ignored and readable only by their owner. If either source file is missing, report it rather than replacing credentials with template values. For a first-time setup without an existing configuration, start with `cp -n .env.template .env.local`.
+
+Use `.env.local` for Development. Before starting services or environment-dependent checks, verify Clerk test keys and an owned, isolated PostgreSQL database; replace any Production connections in that file. Keep secrets out of logs and Git. Use `.env.prod` only for explicitly authorized Production work; copying it does not grant that authorization.
 
 In `.env.local`, set:
 

@@ -1,7 +1,6 @@
 "use client";
 
-import { SoccerBall } from "@/components/soccer-ball";
-import { Button } from "@/components/ui/button";
+import { PendingButton } from "@/components/pending-button";
 import { DialogFooter } from "@/components/ui/dialog";
 import {
   Form,
@@ -75,15 +74,14 @@ export const MatchForm: FC<MatchFormProps> = ({ onSubmit, values }) => {
         />
         <FormRootError />
         <DialogFooter>
-          <Button
+          <PendingButton
             type="submit"
-            disabled={!form.formState.isValid || form.formState.isSubmitting}
+            pending={form.formState.isSubmitting}
+            pendingLabel="Guardando..."
+            disabled={!form.formState.isValid}
           >
-            {form.formState.isSubmitting ? (
-              <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
-            ) : null}
-            {form.formState.isSubmitting ? "Guardando..." : "Guardar"}
-          </Button>
+            Guardar
+          </PendingButton>
         </DialogFooter>
       </form>
     </Form>

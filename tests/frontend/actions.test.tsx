@@ -4,13 +4,18 @@ import userEvent from "@testing-library/user-event";
 import { Toaster } from "sonner";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AddMatch } from "@/app/(authenticated)/(components)/add-match";
+import { DuplicateMatch } from "@/app/(authenticated)/(components)/duplicate-match";
 import { DeleteMatch } from "@/app/(authenticated)/(components)/delete-match";
 import { DeletePlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/delete-player";
 import { EditPlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/edit-player";
 import { CopyTeams } from "@/app/(authenticated)/partidos/[match-id]/(components)/copy-teams";
 import { Feedback } from "@/components/feedback";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
-import { addMatchAction, deleteMatchAction } from "@/server/actions/match";
+import {
+  addMatchAction,
+  deleteMatchAction,
+  duplicateMatchAction,
+} from "@/server/actions/match";
 import { editPlayerAction, deletePlayerAction } from "@/server/actions/player";
 import { feedbackAction } from "@/server/actions/feedback";
 import copy from "copy-to-clipboard";
@@ -19,6 +24,7 @@ import { deferred, match, player, teams } from "../fixtures";
 vi.mock("@/server/actions/match", () => ({
   addMatchAction: vi.fn(),
   deleteMatchAction: vi.fn(),
+  duplicateMatchAction: vi.fn(),
 }));
 vi.mock("@/server/actions/player", () => ({
   editPlayerAction: vi.fn(),
@@ -30,6 +36,7 @@ vi.mock("copy-to-clipboard", () => ({ default: vi.fn() }));
 beforeEach(() => {
   vi.mocked(addMatchAction).mockReset();
   vi.mocked(deleteMatchAction).mockReset();
+  vi.mocked(duplicateMatchAction).mockReset();
   vi.mocked(editPlayerAction).mockReset();
   vi.mocked(deletePlayerAction).mockReset();
   vi.mocked(feedbackAction).mockReset();
@@ -314,5 +321,41 @@ describe("feedback", () => {
     expect(screen.getByLabelText("Tu mensaje")).toHaveValue("Hola Cris");
     await user.click(screen.getByRole("button", { name: "Enviar" }));
     expect(await screen.findByText("¡Su feedback fue enviado!")).toBeVisible();
+  });
+});
+
+describe("duplicate match", () => {
+  it("keeps typed errors and their support reference visible and allows retry", async () => {
+    vi.mocked(duplicateMatchAction)
+      .mockResolvedValueOnce({
+        ok: false,
+        code: "unexpected",
+        reference: "synthetic-ref",
+      })
+      .mockResolvedValueOnce({ ok: true });
+    function Confirmation() {
+      const [open, setOpen] = useState(true);
+      return (
+        <>
+          <Toaster />
+          {open ? (
+            <DuplicateMatch id={7} onClose={() => setOpen(false)} />
+          ) : (
+            <p>Duplicado</p>
+          )}
+        </>
+      );
+    }
+    const user = userEvent.setup();
+    render(<Confirmation />);
+    await user.click(screen.getByRole("button", { name: "Sí, duplicar" }));
+    expect(
+      await screen.findByText(ERROR_MESSAGES.match_duplicate_error),
+    ).toBeVisible();
+    expect(screen.getByText("Referencia: synthetic-ref")).toBeVisible();
+    expect(screen.getByRole("alertdialog")).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Sí, duplicar" }));
+    expect(await screen.findByText("Duplicado")).toBeVisible();
+    expect(duplicateMatchAction).toHaveBeenCalledTimes(2);
   });
 });

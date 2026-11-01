@@ -4,6 +4,7 @@ import {
 } from "@/app/(authenticated)/partidos/[match-id]/(components)/add-player";
 import { DeletePlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/delete-player";
 import { EditPlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/edit-player";
+import { useMenuDialog } from "@/app/(authenticated)/(hooks)/use-menu-dialog";
 import { AnimatedListItem } from "@/components/animated-list-item";
 import { useRosterViewport } from "@/app/(authenticated)/partidos/[match-id]/(hooks)/use-roster-viewport";
 import { PlayerRow } from "@/components/player-row";
@@ -27,7 +28,7 @@ import { cn } from "@/utils/cn";
 import { MAX_PLAYERS_PER_MATCH } from "@/utils/player-limits";
 import { type Player } from "@prisma/client";
 import { EllipsisVerticalIcon, PencilIcon, TrashIcon } from "lucide-react";
-import { type FC, useRef, useState } from "react";
+import { type FC } from "react";
 
 type MatchPlayersProps = {
   players: Player[];
@@ -93,10 +94,16 @@ type MatchPlayerProps = {
 };
 
 const MatchPlayer: FC<MatchPlayerProps> = ({ player }) => {
-  const [menuOpened, setMenuOpened] = useState(false);
-  const [dialogId, setDialogId] = useState<"edit" | "delete" | null>(null);
-  const pendingDialog = useRef<typeof dialogId>(null);
-  const menuTrigger = useRef<HTMLButtonElement>(null);
+  const {
+    menuOpened,
+    setMenuOpened,
+    dialogId,
+    menuTrigger,
+    selectDialog,
+    onMenuCloseAutoFocus,
+    closeDialog,
+    restoreFocus,
+  } = useMenuDialog<"edit" | "delete">();
 
   return (
     <Card>
@@ -116,25 +123,13 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player }) => {
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 className="mr-4"
-                onCloseAutoFocus={() => {
-                  const nextDialog = pendingDialog.current;
-                  pendingDialog.current = null;
-                  if (nextDialog) setDialogId(nextDialog);
-                }}
+                onCloseAutoFocus={onMenuCloseAutoFocus}
               >
-                <DropdownMenuItem
-                  onSelect={() => {
-                    pendingDialog.current = "edit";
-                  }}
-                >
+                <DropdownMenuItem onSelect={() => selectDialog("edit")}>
                   <PencilIcon className="h-4 mr-2 text-muted-foreground w-4" />
                   Editar
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  onSelect={() => {
-                    pendingDialog.current = "delete";
-                  }}
-                >
+                <DropdownMenuItem onSelect={() => selectDialog("delete")}>
                   <TrashIcon className="h-4 mr-2 text-destructive w-4" />
                   Eliminar
                 </DropdownMenuItem>
@@ -145,21 +140,15 @@ const MatchPlayer: FC<MatchPlayerProps> = ({ player }) => {
         {dialogId === "edit" ? (
           <EditPlayer
             player={player}
-            onCloseAutoFocus={() => menuTrigger.current?.focus()}
-            onClose={() => {
-              setDialogId(null);
-              setMenuOpened(false);
-            }}
+            onCloseAutoFocus={restoreFocus}
+            onClose={closeDialog}
           />
         ) : null}
         {dialogId === "delete" ? (
           <DeletePlayer
             id={player.id}
-            onCloseAutoFocus={() => menuTrigger.current?.focus()}
-            onClose={() => {
-              setDialogId(null);
-              setMenuOpened(false);
-            }}
+            onCloseAutoFocus={restoreFocus}
+            onClose={closeDialog}
           />
         ) : null}
       </div>
