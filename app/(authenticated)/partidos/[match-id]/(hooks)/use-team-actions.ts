@@ -97,7 +97,10 @@ export const useTeamActions = (
           selections,
           fingerprint,
         );
-        downloadBlob(blob, "equipos.png");
+        downloadBlob(
+          blob,
+          blob.type === "image/jpeg" ? "equipos.jpg" : "equipos.png",
+        );
         trackAnalytics(
           "export_download_started",
           getExportAnalyticsData(options, teams, selections),
