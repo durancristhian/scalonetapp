@@ -25,6 +25,7 @@
 
 - Reproduce a reported bug in the affected flow before choosing a fix.
 - Run checks proportionate to the change using the current `package.json` scripts. Exercise the affected journey with synthetic data in Development or Preview.
+- For authenticated local or Preview checks, use the [Development test account](README.md#development-test-account).
 - For frontend behavior changes, run the affected Vitest tests during development and `npm run test:frontend` before handoff. See [Frontend behavior tests](README.md#frontend-behavior-tests) for setup and scope.
 - Test frontend behavior with real components and minimal external-boundary substitutes. Reserve browser tests for behaviors requiring a real browser; omit visual baselines and exact render counts.
 - For roster or export changes, check save/reload, partial teams, stale tabs and preview/PNG agreement where affected. Use two teams of 16 players for export verification; 100-player exports are stress and size checks.
@@ -36,6 +37,6 @@
 ## PR Preview handoff
 
 - For every PR created or updated, prepare its Preview for the owner's quick test automatically, without waiting for a separate request. If deployment is pending, use the host's PR watch/resume mechanism and finish this handoff when it is ready.
-- Verify that the successful Preview deployment belongs to the PR's latest head commit. Use Chrome for Vercel access and deployment protection; authenticate the application with the designated Clerk agent account for that Development/Preview instance. An existing owner Clerk session does not replace the agent account: preserve it and use a separate browser session for the agent. Retrieve credentials through the configured private credential source; keep them out of repository files, PRs and logs. If credentials or browser access are unavailable, report the blocker instead of substituting the owner's account.
+- Verify that the successful Preview deployment belongs to the PR's latest head commit. Use Chrome for Vercel access and deployment protection; authenticate the application with the [Development test account](README.md#development-test-account). An existing owner Clerk session does not replace the agent account: preserve it and use a separate browser session for the agent. Keep Clerk keys and session tokens out of repository files, PRs and logs. If sign-in or browser access is unavailable, report the blocker instead of substituting the owner's account.
 - Verify the signed-in agent identity and that the affected authenticated page loads. Leave that page open in the shared browser for the owner; include the Preview URL and tested head commit in the handoff. Reuse an existing matching agent session when available.
 - Preview readiness and agent sign-in do not authorize merge or Production actions. Use the agent account only against the verified Development/Preview instance.
