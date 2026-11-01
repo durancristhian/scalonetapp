@@ -19,6 +19,7 @@ import { type Browser } from "puppeteer-core";
 import { getSavedTeamsError } from "@/utils/team-validation";
 import { readSavedTeams } from "@/utils/read-saved-teams";
 import { lineupFingerprint } from "@/utils/lineup-fingerprint";
+import { prepareTeamExport } from "@/server/prepare-team-export";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -201,12 +202,13 @@ export async function GET(request: NextRequest) {
     }
     await browser.close();
 
-    const response = new NextResponse(Buffer.from(screenshot));
-    response.headers.set("content-type", "image/png");
+    const image = await prepareTeamExport(Buffer.from(screenshot));
+    const response = new NextResponse(Buffer.from(image.data));
+    response.headers.set("content-type", image.contentType);
     response.headers.set("Cache-Control", "private, no-store");
     response.headers.set(
       "Content-Disposition",
-      `attachment; filename=equipos.png`,
+      `attachment; filename=${image.filename}`,
     );
 
     return response;
