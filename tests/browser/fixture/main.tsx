@@ -8,6 +8,7 @@ import { match, player } from "../../fixtures";
 import "@/app/globals.css";
 
 import { FocusFixture } from "./focus";
+import { MotionFixture } from "./motion";
 
 const roster = [player(1, { name: "Ana" })];
 function Fixture() {
@@ -27,7 +28,9 @@ function Fixture() {
 }
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    {new URLSearchParams(location.search).has("focus") ? (
+    {new URLSearchParams(location.search).has("motion") ? (
+      <MotionFixture />
+    ) : new URLSearchParams(location.search).has("focus") ? (
       <FocusFixture />
     ) : (
       <Fixture />

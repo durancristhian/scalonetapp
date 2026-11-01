@@ -1,27 +1,9 @@
-"use client";
-
-import { motion } from "framer-motion";
 import { type FC, type PropsWithChildren } from "react";
 
-type AnimatedListItemProps = {
-  listIndex: number;
-};
-
-export const AnimatedListItem: FC<PropsWithChildren<AnimatedListItemProps>> = ({
-  children,
-  listIndex,
-}) => {
+export const AnimatedListItem: FC<PropsWithChildren> = ({ children }) => {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{
-        ease: "easeInOut",
-        duration: 0.1,
-        delay: listIndex * 0.1,
-      }}
-    >
+    <div className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-2 motion-safe:duration-150 motion-safe:ease-out">
       {children}
-    </motion.div>
+    </div>
   );
 };
