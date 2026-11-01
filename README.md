@@ -11,28 +11,32 @@ Development documentation lives here and is updated alongside relevant changes.
 
 ## Run locally
 
-Requires Node.js 26, a PostgreSQL database, and a [Clerk](https://clerk.com) development application.
+Use Node.js 26, a local PostgreSQL instance you own, and a [Clerk](https://clerk.com) Development application.
 
 ```bash
-npm run setup:worktree
-npm run dev
+bash scripts/setup-worktree.sh
 ```
 
-[setup:worktree](scripts/setup-worktree.sh) selects Node.js 26 through nvm when needed, copies the main checkout's Git-ignored `.env.local` and `.env.prod` without overwriting existing files, enforces owner-only permissions, runs `npm ci`, generates Prisma, and installs worktree-local browsers for exports and Playwright. Missing source files or unsafe Development configuration fail setup without printing secrets. Copying `.env.prod` does not authorize loading it.
+The [bootstrap](scripts/setup-worktree.sh) selects Node 26 through nvm when needed. It copies the main checkout's Git-ignored `.env.local` and `.env.prod` only when absent, sets owner-only permissions, installs locked dependencies with `npm ci`, generates Prisma, and installs worktree-local browsers. The main checkout must already hold the private environment files; missing files fail setup. `.env.prod` is copied but never loaded by local startup. Using it requires explicit Production authorization.
 
-In T3, register `bash scripts/setup-worktree.sh` as a project script with **Run automatically on worktree creation** and **Wait for it to finish before the agent starts** enabled. This host setting is not stored in Git and applies only when setup is enabled during worktree creation. The checked-out revision must contain the script. Existing worktrees and threads reusing a checkout run `npm run setup:worktree` explicitly.
+Setup finishes by validating `.env.local`. If validation fails, correct the reported configuration and rerun setup before starting services or migrating the database:
 
-Local startup loads `.env.local` and requires Clerk Development keys plus loopback PostgreSQL URLs in `POSTGRES_PRISMA_URL` and `POSTGRES_URL_NON_POOLING`. The guard prints the required database name, derived from the worktree path. Create that database on a PostgreSQL instance you own, then set both URLs to it. Remote/shared databases, Blob and Telegram credentials, additional Next.js env files, and non-Development Vercel configuration are blocked. No database or paid service is provisioned automatically.
+- Set `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` to Clerk Development test keys.
+- Point `POSTGRES_PRISMA_URL` and `POSTGRES_URL_NON_POOLING` to the same isolated loopback database. The validation error gives the required database name, derived from the worktree path. Create that database on your local instance.
+- Remove Blob and Telegram credentials, additional Next.js env files, and Production configuration reported by the guard. Keep secrets out of logs and Git.
 
-After configuring the isolated database, initialize it explicitly:
+Setup does not create a database or apply migrations. Once validation succeeds, initialize the isolated database and start the app:
 
 ```bash
 node --env-file=.env.local node_modules/prisma/build/index.js migrate deploy
+npm run dev
 ```
 
-`npm run dev` prints an available loopback URL and pins internal image exports to that same port through `IMAGE_EXPORT_ORIGIN`. It never reuses another server. If another process takes the selected port before startup, startup fails; rerun the command. Production and Vercel Preview export targets remain unchanged.
+Local Prisma commands need `--env-file=.env.local` for the connection configured in [prisma.config.ts](prisma.config.ts). Client generation does not require a database.
 
-Prisma CLI reads `POSTGRES_URL_NON_POOLING` through [prisma.config.ts](prisma.config.ts); the application uses `POSTGRES_PRISMA_URL`. Migration commands require the explicit `--env-file=.env.local`; client generation does not require a database.
+`npm run dev` prints an available loopback URL and uses it for internal image exports through `IMAGE_EXPORT_ORIGIN`. Open that URL. If another process takes the selected port before startup, the command fails; rerun it. Vercel Preview and Production export targets remain unchanged.
+
+For automatic T3 setup, save `bash scripts/setup-worktree.sh` as a project action with **Run automatically on worktree creation** and **Wait for it to finish before the agent starts** enabled. This setting lives in T3, outside Git. The checked-out revision must contain the script, and worktree creation must have setup enabled. For existing or unprepared checkouts, run the bootstrap explicitly; with Node 26 active, `npm run setup:worktree` is equivalent.
 
 ## Formatting
 
@@ -41,11 +45,11 @@ Prettier runs independently of ESLint.
 
 ## Frontend behavior tests
 
-Run without an environment file, database or Clerk session:
+After a successful worktree bootstrap, run `npm run test:frontend`. To prepare only the frontend suites without environment files, a database or a Clerk session:
 
 ```bash
 npm ci
-npx playwright install chromium  # once per machine without worktree setup
+npx playwright install chromium
 npm run test:frontend
 ```
 

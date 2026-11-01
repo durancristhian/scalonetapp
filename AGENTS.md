@@ -10,7 +10,7 @@
 - Update docs only for lasting contract or workflow changes. Keep README for setup and commands; AGENTS for development rules.
 - Make the smallest sufficient doc edit in the existing section. Link to code/config instead of duplicating it; omit implementation walkthroughs, coverage inventories and run logs. Review the doc diff for redundancy before handoff.
 - Keep temporary checks and evidence in ignored scratch space. Add permanent validation tooling only when the task requires it.
-- When creating a worktree, each agent must copy the ignored environment files from the main checkout following [Run locally](README.md#run-locally), then verify and isolate the configuration before running environment-dependent checks or services.
+- Before using a new or unprepared worktree, complete the bootstrap and Development configuration checks in [Run locally](README.md#run-locally). A successful T3 setup action satisfies the bootstrap step; verify database isolation before running environment-dependent checks or services.
 - Merge and Production actions require explicit authorization.
 
 ## Product contracts
