@@ -32,3 +32,10 @@
 - For broad responsive changes, add 390x844 and 1440x900; for height-sensitive changes, add 844x390 and keyboard/dialog reachability.
 - Check long content, relevant empty/error/loading states, keyboard access, clipping and unintended horizontal scrolling. Check zoom separately when layout or viewport settings change.
 - Report executed checks, revision, environment, browser/viewports and gaps. Distinguish source inspection, browser emulation and actual-device testing; a build alone does not prove a working flow.
+
+## PR Preview handoff
+
+- For every PR created or updated, prepare its Preview for the owner's quick test automatically, without waiting for a separate request. If deployment is pending, use the host's PR watch/resume mechanism and finish this handoff when it is ready.
+- Verify that the successful Preview deployment belongs to the PR's latest head commit. Open its deployment URL in the shared browser and sign in with the designated Clerk agent account for that Development/Preview instance. Retrieve credentials through the configured private credential source; keep them out of repository files, PRs and logs. If credentials or browser access are unavailable, report the blocker instead of substituting the owner's account.
+- Verify the signed-in agent identity and that the affected authenticated page loads. Leave that page open in the shared browser for the owner; include the Preview URL and tested head commit in the handoff. Reuse an existing matching agent session when available.
+- Preview readiness and agent sign-in do not authorize merge or Production actions. Use the agent account only against the verified Development/Preview instance.
