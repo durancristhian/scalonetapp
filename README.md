@@ -44,6 +44,21 @@ the application uses pooled `POSTGRES_PRISMA_URL`. Keep the explicit `--env-file
 for local Prisma commands. `prisma generate` needs neither URL; migration commands
 require the nonpooling URL. Vercel supplies these variables directly.
 
+### Development test account
+
+Use the existing `scalonetapp-agent+clerk_test@example.com` account (Local Agent)
+for authenticated local checks and PR Preview handoffs, with synthetic data.
+Verify that the app uses Clerk Development before signing in. Open the sign-in
+dialog, choose email, enter that address and use `424242` when asked for the
+verification code. No mailbox, password or password-manager access is needed
+for this email-code flow. Reuse a matching agent session when available.
+
+The address and code are [Clerk test values](https://clerk.com/docs/guides/development/testing/test-emails-and-phones),
+not Production credentials. Use them only in local Development or verified
+Preview environments backed by Clerk Development; never in Production. If the
+account is missing or email-code sign-in is unavailable, report the blocker
+instead of using the owner's account or changing authentication settings.
+
 ## Formatting
 
 Run `npm run format` to format the repository and `npm run format:check` to check it.
