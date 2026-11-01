@@ -28,7 +28,9 @@ In `.env.local`, set:
 - `POSTGRES_PRISMA_URL` and `POSTGRES_URL_NON_POOLING` to your development database URL.
 - Optionally, `TELEGRAM_BOTID` and `TELEGRAM_CHATID` to enable feedback.
 
-Choose unused, separate app, browser-fixture and PostgreSQL ports for this worktree. Bind PostgreSQL to loopback and use a separate database, data directory and socket directory, or disable Unix sockets. Record URLs, process IDs, checkout paths, configuration identity and cleanup commands under ignored `.local/` space. Before retrying, verify that each listener belongs to this checkout and configuration; choose another port when it does not. The following ports are examples, not reservations. Keep the other template defaults, then initialize the database and start the app:
+Choose unused app, fixture and PostgreSQL ports. Give each worktree a loopback database, data directory and socket directory, or disable Unix sockets. Record URLs, PIDs, checkout/configuration identity and cleanup commands in ignored `.local/`. Reuse listeners only after verifying ownership; leave foreign processes running.
+
+Initialize the database and start the app with an unused port:
 
 ```bash
 node --env-file=.env.local node_modules/prisma/build/index.js migrate deploy
@@ -36,8 +38,9 @@ node --env-file=.env.local node_modules/prisma/build/index.js generate
 PORT=3101 npm run dev -- --hostname localhost
 ```
 
-Open the selected app URL, for example `http://localhost:3101`. Keep the hostname consistent with the local export origin and set `PORT` in the launch environment so local image exports reach the same app. Next.js reads this variable before loading `.env.local`; do not configure it only in that file. The default remains port 3000. If startup reports a collision or selects another port, stop only the process just started and relaunch with a free explicit `PORT`.
-Keep `.next`, test artifacts, temporary files and browser contexts owned by this checkout. Stop only verified owned processes and remove copied credentials after testing. Worktrees share CPU, RAM, the OS, package/browser download caches and external-service quotas; coordinate heavy checks. This is logical service isolation, not an OS security sandbox; a shared Clerk identity also shares external account state.
+Open `http://localhost:3101`, or your chosen port. Set `PORT` in the launch environment, not only `.env.local`, so exports reach the same app. The default is 3000. If Next.js selects another port, stop your new process and retry with a free explicit port.
+
+Keep build/test artifacts and browser contexts checkout-local. Clean up only owned resources and copied credentials. CPU, RAM, OS, download caches, external quotas and shared Clerk account state remain shared; coordinate heavy checks.
 
 Environment files are ignored by Git; use development credentials only.
 Prisma CLI reads `POSTGRES_URL_NON_POOLING` through [prisma.config.ts](prisma.config.ts);
@@ -60,7 +63,7 @@ npx playwright install chromium  # once per machine
 npm run test:frontend
 ```
 
-For parallel worktrees, choose an unused fixture port and run `PLAYWRIGHT_PORT=4418 npm run test:frontend`. This configures both the fixture server and browser base URL; the default remains 4317. The suite refuses to reuse an existing server. Keep browser contexts and test artifacts owned by this worktree, and stop only services it started.
+For parallel worktrees, run `PLAYWRIGHT_PORT=4418 npm run test:frontend` with an unused port. It sets the fixture listener and browser URL; the default is 4317. Existing servers are never reused.
 
 `npm run typecheck` generates Next.js route types before checking TypeScript, without starting a server.
 
