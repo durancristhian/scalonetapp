@@ -28,15 +28,20 @@ In `.env.local`, set:
 - `POSTGRES_PRISMA_URL` and `POSTGRES_URL_NON_POOLING` to your development database URL.
 - Optionally, `TELEGRAM_BOTID` and `TELEGRAM_CHATID` to enable feedback.
 
-Keep the other template defaults, then initialize the database and start the app:
+Choose unused app, fixture and PostgreSQL ports. Give each worktree a loopback database, data directory and socket directory, or disable Unix sockets. Record URLs, PIDs, checkout/configuration identity and cleanup commands in ignored `.local/`. Reuse listeners only after verifying ownership; leave foreign processes running.
+
+Initialize the database and start the app with an unused port:
 
 ```bash
 node --env-file=.env.local node_modules/prisma/build/index.js migrate deploy
 node --env-file=.env.local node_modules/prisma/build/index.js generate
-npm run dev
+PORT=3101 npm run dev -- --hostname localhost
 ```
 
-Open [localhost:3000](http://localhost:3000). Keep this port for local image exports.
+Open `http://localhost:3101`, or your chosen port. Set `PORT` in the launch environment, not only `.env.local`, so exports reach the same app. The default is 3000. If Next.js selects another port, stop your new process and retry with a free explicit port.
+
+Keep build/test artifacts and browser contexts checkout-local. Clean up only owned resources and copied credentials. CPU, RAM, OS, download caches, external quotas and shared Clerk account state remain shared; coordinate heavy checks.
+
 Environment files are ignored by Git; use development credentials only.
 Prisma CLI reads `POSTGRES_URL_NON_POOLING` through [prisma.config.ts](prisma.config.ts);
 the application uses pooled `POSTGRES_PRISMA_URL`. Keep the explicit `--env-file`
@@ -57,6 +62,8 @@ npm ci
 npx playwright install chromium  # once per machine
 npm run test:frontend
 ```
+
+For parallel worktrees, run `PLAYWRIGHT_PORT=4418 npm run test:frontend` with an unused port. It sets the fixture listener and browser URL; the default is 4317. Existing servers are never reused.
 
 `npm run typecheck` generates Next.js route types before checking TypeScript, without starting a server.
 

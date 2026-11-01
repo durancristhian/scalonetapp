@@ -3,6 +3,7 @@ type ExportEnvironment = {
   VERCEL_ENV?: string;
   VERCEL_URL?: string;
   VERCEL_AUTOMATION_BYPASS_SECRET?: string;
+  PORT?: string;
 };
 
 type ImageExportTarget = {
@@ -29,12 +30,18 @@ export function getImageExportTarget(
     };
   }
 
-  return {
-    origin:
-      environment.NODE_ENV === "production"
-        ? "https://www.scalonet.app"
-        : "http://localhost:3000",
-  };
+  if (environment.NODE_ENV === "production") {
+    return { origin: "https://www.scalonet.app" };
+  }
+
+  const port = environment.PORT ?? "3000";
+  if (!/^\d+$/.test(port) || Number(port) < 1 || Number(port) > 65535) {
+    throw new ImageExportConfigurationError(
+      "Local image exports require a PORT between 1 and 65535.",
+    );
+  }
+
+  return { origin: `http://localhost:${Number(port)}` };
 }
 
 export function getImageExportRequestHeaders(
