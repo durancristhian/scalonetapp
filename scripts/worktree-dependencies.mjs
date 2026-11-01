@@ -30,15 +30,19 @@ const marker = "node_modules/.worktree-install.json";
 export function reusableInstallation(root, fingerprint) {
   try {
     const stamp = JSON.parse(readFileSync(resolve(root, marker), "utf8"));
+    const installedLock = readFileSync(
+      resolve(root, "node_modules/.package-lock.json"),
+    );
+    const packages = JSON.parse(installedLock).packages;
     return (
+      packages &&
+      Object.keys(packages).every((path) =>
+        existsSync(resolve(root, path, "package.json")),
+      ) &&
       !lstatSync(resolve(root, "node_modules")).isSymbolicLink() &&
       stamp.fingerprint === fingerprint &&
       stamp.installedLock ===
-        createHash("sha256")
-          .update(
-            readFileSync(resolve(root, "node_modules/.package-lock.json")),
-          )
-          .digest("hex")
+        createHash("sha256").update(installedLock).digest("hex")
     );
   } catch {
     return false;

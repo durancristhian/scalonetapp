@@ -31,7 +31,9 @@ function fixture(t) {
     `#!/usr/bin/env node
 const fs = require('node:fs');
 fs.mkdirSync('node_modules', {recursive:true});
-fs.copyFileSync('package-lock.json', 'node_modules/.package-lock.json');
+fs.mkdirSync('node_modules/fixture-package', {recursive:true});
+fs.writeFileSync('node_modules/fixture-package/package.json', JSON.stringify({name:'fixture-package',version:'1.0.0'}));
+fs.writeFileSync('node_modules/.package-lock.json', JSON.stringify({lockfileVersion:3,packages:{'node_modules/fixture-package':{version:'1.0.0'}}}));
 `,
   );
   chmodSync(npm, 0o700);
@@ -167,4 +169,17 @@ test("bootstrap permits tooling work while check and dev block a remote database
     assert.match(result.stderr, /shared and remote databases are blocked/);
     assert.doesNotMatch(result.stdout, /Development and image exports/);
   }
+});
+
+test("repairs a missing package instead of reusing or copying an incomplete tree", (t) => {
+  const { main, target } = fixture(t);
+  prepareDependencies(main, main);
+  const fingerprint = dependencyFingerprint(main);
+  rmSync(join(main, "node_modules/fixture-package"), { recursive: true });
+  assert.equal(reusableInstallation(main, fingerprint), false);
+  prepareDependencies(target, main);
+  assert.equal(reusableInstallation(target, fingerprint), true);
+  assert.equal(reusableInstallation(main, fingerprint), false);
+  prepareDependencies(main, main);
+  assert.equal(reusableInstallation(main, fingerprint), true);
 });
