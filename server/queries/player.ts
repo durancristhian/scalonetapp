@@ -8,6 +8,32 @@ import { ExpectedActionError } from "../expected-action-error.ts";
 
 export class PlayerAdditionError extends ExpectedActionError {}
 
+export async function updatePlayerAvatarQuery(
+  player: Pick<Player, "id" | "matchId" | "avatar">,
+  userId: string,
+  avatar: string,
+): Promise<Prisma.BatchPayload> {
+  return prisma.$transaction(
+    async (transaction) => {
+      const matches = await transaction.$queryRaw<{ id: number }[]>`
+        SELECT "id" FROM "Match"
+        WHERE "id" = ${player.matchId} AND "userId" = ${userId} FOR UPDATE
+      `;
+      if (!matches.length) return { count: 0 };
+      return transaction.player.updateMany({
+        where: {
+          id: player.id,
+          matchId: player.matchId,
+          avatar: player.avatar,
+          match: { userId },
+        },
+        data: { avatar },
+      });
+    },
+    { isolationLevel: "ReadCommitted" },
+  );
+}
+
 async function addPlayersAtomically<T>(
   matchId: number,
   userId: string,
