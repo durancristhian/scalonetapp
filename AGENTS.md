@@ -10,7 +10,7 @@
 - Update docs only for lasting contract or workflow changes. Keep README for setup and commands; AGENTS for development rules.
 - Make the smallest sufficient doc edit in the existing section. Link to code/config instead of duplicating it; omit implementation walkthroughs, coverage inventories and run logs. Review the doc diff for redundancy before handoff.
 - Keep temporary checks and evidence in ignored scratch space. Add permanent validation tooling only when the task requires it.
-- When creating a worktree, each agent must copy the ignored environment files from the main checkout following [Run locally](README.md#run-locally), then verify and isolate the configuration before running environment-dependent checks or services.
+- Before using a new or unprepared worktree, complete the bootstrap and Development configuration checks in [Run locally](README.md#run-locally). A successful T3 setup action satisfies the bootstrap step; verify database isolation before running environment-dependent checks or services.
 - Merge and Production actions require explicit authorization.
 
 ## Product contracts
@@ -37,6 +37,6 @@
 ## PR Preview handoff
 
 - For every PR created or updated, prepare its Preview for the owner's quick test automatically, without waiting for a separate request. If deployment is pending, use the host's PR watch/resume mechanism and finish this handoff when it is ready.
-- Verify that the successful Preview deployment belongs to the PR's latest head commit. Open its deployment URL in the shared browser and sign in with the [Development test account](README.md#development-test-account). Keep Clerk keys and session tokens out of repository files, PRs and logs. If sign-in or browser access is unavailable, report the blocker instead of substituting the owner's account.
+- Verify that the successful Preview deployment belongs to the PR's latest head commit. Use Chrome for Vercel access and deployment protection; authenticate the application with the [Development test account](README.md#development-test-account). An existing owner Clerk session does not replace the agent account: preserve it and use a separate browser session for the agent. Keep Clerk keys and session tokens out of repository files, PRs and logs. If sign-in or browser access is unavailable, report the blocker instead of substituting the owner's account.
 - Verify the signed-in agent identity and that the affected authenticated page loads. Leave that page open in the shared browser for the owner; include the Preview URL and tested head commit in the handoff. Reuse an existing matching agent session when available.
 - Preview readiness and agent sign-in do not authorize merge or Production actions. Use the agent account only against the verified Development/Preview instance.

@@ -4,6 +4,7 @@ import { randomUUID } from "node:crypto";
 import sharp from "sharp";
 import { revalidatePath } from "next/cache";
 import prisma from "@/utils/prisma";
+import { updatePlayerAvatarQuery } from "@/server/queries/player";
 import { isManagedPhoto, removeUnusedPhoto } from "@/server/player-photos";
 import {
   PHOTO_INPUT_BYTES,
@@ -98,14 +99,11 @@ export async function POST(request: Request, context: Context) {
     );
     uploaded = blob.url;
     if (!isManagedPhoto(uploaded)) throw new Error("Photo store mismatch");
-    const updated = await prisma.player.updateMany({
-      where: {
-        id: owned.player.id,
-        avatar: owned.player.avatar,
-        match: { userId: owned.userId },
-      },
-      data: { avatar: uploaded },
-    });
+    const updated = await updatePlayerAvatarQuery(
+      owned.player,
+      owned.userId,
+      uploaded,
+    );
     if (!updated.count) {
       await removeUnusedPhoto(uploaded);
       return response(
@@ -129,14 +127,7 @@ export async function POST(request: Request, context: Context) {
 export async function DELETE(request: Request, context: Context) {
   const owned = await ownedPlayer(request, context);
   if (owned instanceof Response) return owned;
-  const updated = await prisma.player.updateMany({
-    where: {
-      id: owned.player.id,
-      avatar: owned.player.avatar,
-      match: { userId: owned.userId },
-    },
-    data: { avatar: "" },
-  });
+  const updated = await updatePlayerAvatarQuery(owned.player, owned.userId, "");
   if (!updated.count)
     return response("La ficha cambió. Vuelve a abrirla.", 409);
   await removeUnusedPhoto(owned.player.avatar);

@@ -144,11 +144,22 @@ export const editMatchQuery: (
 export const deleteMatchQuery: (
   id: number,
   userId: string,
-) => Promise<Match> = async (id, userId) => {
-  return await prisma.match.delete({
-    where: {
-      id,
-      userId,
+) => Promise<{ avatar: string }[]> = async (id, userId) => {
+  return prisma.$transaction(
+    async (transaction) => {
+      const matches = await transaction.$queryRaw<{ id: number }[]>`
+        SELECT "id" FROM "Match"
+        WHERE "id" = ${id} AND "userId" = ${userId} FOR UPDATE
+      `;
+      if (!matches.length)
+        throw new ExpectedActionError(ERROR_MESSAGES.not_found);
+      const photos = await transaction.player.findMany({
+        where: { matchId: id },
+        select: { avatar: true },
+      });
+      await transaction.match.delete({ where: { id, userId } });
+      return photos;
     },
-  });
+    { isolationLevel: "ReadCommitted" },
+  );
 };
