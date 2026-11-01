@@ -27,14 +27,19 @@ export const fetchTeamExport = async (
     throw new ActionError(ERROR_MESSAGES.match_export_changed);
   }
 
+  const contentType = response.headers
+    .get("content-type")
+    ?.split(";")[0]
+    .trim()
+    .toLowerCase();
   if (
     !response.ok ||
-    response.headers.get("content-type")?.split(";")[0].trim() !== "image/png"
+    !["image/png", "image/jpeg"].includes(contentType ?? "")
   ) {
     throw new Error("Invalid image response");
   }
 
   const blob = await response.blob();
   if (!blob.size) throw new Error("Empty image response");
-  return blob;
+  return blob.slice(0, blob.size, contentType);
 };

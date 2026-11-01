@@ -131,49 +131,100 @@ it("should stop export before fetching an image when the save fails", async () =
   expect(request).not.toHaveBeenCalled();
   expect(screen.getByText("Cambios pendientes")).toBeVisible();
 });
-it("should retry only the image and release the download URL when export initially fails", async () => {
-  vi.mocked(editMatchAction).mockResolvedValue({ ok: true, data: undefined });
-  const request = vi
-    .fn()
-    .mockResolvedValueOnce(new Response("offline", { status: 503 }))
-    .mockResolvedValueOnce(
-      new Response(new Uint8Array([137, 80, 78, 71]), {
-        headers: { "content-type": "image/png" },
+it.each([
+  { contentType: "image/png", filename: "equipos.png" },
+  { contentType: "image/jpeg; charset=binary", filename: "equipos.jpg" },
+])(
+  "should retry only the image and download $filename when export initially fails",
+  async ({ contentType, filename }) => {
+    vi.mocked(editMatchAction).mockResolvedValue({ ok: true, data: undefined });
+    const request = vi
+      .fn()
+      .mockResolvedValueOnce(new Response("offline", { status: 503 }))
+      .mockResolvedValueOnce(
+        new Response(new Uint8Array([137, 80, 78, 71]), {
+          headers: { "content-type": contentType },
+        }),
+      );
+    vi.stubGlobal("fetch", request);
+    const createURL = vi.fn(() => "blob:test");
+    const revokeURL = vi.fn();
+    class DownloadURL extends URL {
+      static override createObjectURL = createURL;
+      static override revokeObjectURL = revokeURL;
+    }
+    vi.stubGlobal("URL", DownloadURL);
+    const download = vi
+      .spyOn(HTMLAnchorElement.prototype, "click")
+      .mockImplementation(function (this: HTMLAnchorElement) {
+        expect(this.download).toBe(filename);
+      });
+    const user = userEvent.setup();
+    render(<Actions />);
+    await user.click(screen.getByRole("button", { name: "Exportar" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Los equipos están guardados",
+    );
+    expect(screen.getByText("Sin cambios")).toBeVisible();
+    expect(download).not.toHaveBeenCalled();
+    await user.click(screen.getByRole("button", { name: "Exportar" }));
+    await waitFor(() => expect(download).toHaveBeenCalledOnce());
+    expect(createURL).toHaveBeenCalledWith(expect.any(Blob));
+    expect(createURL).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: filename.endsWith(".jpg") ? "image/jpeg" : "image/png",
       }),
     );
-  vi.stubGlobal("fetch", request);
-  const createURL = vi.fn(() => "blob:test");
-  const revokeURL = vi.fn();
-  class DownloadURL extends URL {
-    static override createObjectURL = createURL;
-    static override revokeObjectURL = revokeURL;
-  }
-  vi.stubGlobal("URL", DownloadURL);
-  const download = vi
-    .spyOn(HTMLAnchorElement.prototype, "click")
-    .mockImplementation(() => {});
-  const user = userEvent.setup();
-  render(<Actions />);
-  await user.click(screen.getByRole("button", { name: "Exportar" }));
-  expect(await screen.findByRole("alert")).toHaveTextContent(
-    "Los equipos están guardados",
-  );
-  expect(screen.getByText("Sin cambios")).toBeVisible();
-  expect(download).not.toHaveBeenCalled();
-  await user.click(screen.getByRole("button", { name: "Exportar" }));
-  await waitFor(() => expect(download).toHaveBeenCalledOnce());
-  expect(screen.queryByRole("alert")).not.toBeInTheDocument();
-  expect(editMatchAction).toHaveBeenCalledOnce();
-  expect(request).toHaveBeenCalledTimes(2);
-  expect(request.mock.calls[0][0]).toMatch(/^\/download\/1\?/);
-  expect(request.mock.calls[0][1]).toEqual({
-    cache: "no-store",
-    headers: {
-      "X-Lineup-Fingerprint": expect.stringMatching(/^[a-f0-9]{64}$/),
-    },
-  });
-  expect(revokeURL).toHaveBeenCalledWith("blob:test");
-});
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(editMatchAction).toHaveBeenCalledOnce();
+    expect(request).toHaveBeenCalledTimes(2);
+    expect(request.mock.calls[0][0]).toMatch(/^\/download\/1\?/);
+    expect(request.mock.calls[0][1]).toEqual({
+      cache: "no-store",
+      headers: {
+        "X-Lineup-Fingerprint": expect.stringMatching(/^[a-f0-9]{64}$/),
+      },
+    });
+    expect(revokeURL).toHaveBeenCalledWith("blob:test");
+  },
+);
+it.each([
+  {
+    body: "<!doctype html><title>Login</title>",
+    status: 200,
+    contentType: "text/html",
+  },
+  { body: '{"error":"failed"}', status: 200, contentType: "application/json" },
+  { body: "image", status: 200, contentType: "image/webp" },
+  { body: "image", status: 503, contentType: "image/jpeg" },
+  { body: "", status: 200, contentType: "image/jpeg" },
+])(
+  "should reject an invalid image response without undoing the saved lineup %#",
+  async ({ body, status, contentType }) => {
+    vi.mocked(editMatchAction).mockResolvedValue({ ok: true, data: undefined });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(body, {
+          status,
+          headers: { "content-type": contentType },
+        }),
+      ),
+    );
+    const download = vi
+      .spyOn(HTMLAnchorElement.prototype, "click")
+      .mockImplementation(() => {});
+    const user = userEvent.setup();
+    render(<Actions />);
+    await user.click(screen.getByRole("button", { name: "Exportar" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Los equipos están guardados",
+    );
+    expect(screen.getByText("Sin cambios")).toBeVisible();
+    expect(editMatchAction).toHaveBeenCalledOnce();
+    expect(download).not.toHaveBeenCalled();
+  },
+);
 it("should show the refresh message when the export response is stale", async () => {
   vi.stubGlobal(
     "fetch",
