@@ -24,8 +24,9 @@ test("should remain clickable after repeated rapid edits when the player dialog 
     await route.fulfill({ json: { ok: true } });
   });
   await page.goto("/");
+  const trigger = page.getByRole("button", { name: "Acciones de Ana" });
   for (let attempt = 1; attempt <= 5; attempt++) {
-    await page.getByRole("button", { name: "Acciones de Ana" }).click();
+    await trigger.click();
     await page.getByRole("menuitem", { name: "Editar" }).click();
     const dialog = page.getByRole("dialog", {
       name: "Editar ficha del jugador",
@@ -35,6 +36,7 @@ test("should remain clickable after repeated rapid edits when the player dialog 
       .fill(`Ana ${attempt}`);
     await dialog.getByRole("button", { name: "Guardar", exact: true }).click();
     await expect(dialog).toBeHidden();
+    await expect(trigger).toBeFocused();
     await page
       .getByRole("button", { name: `Comprobar clics: ${attempt - 1}` })
       .click();
@@ -90,9 +92,39 @@ test("should keep the page clickable without deleting when confirmation is cance
     .getByRole("button", { name: "Cancelar" })
     .click();
   await expect(page.getByRole("alertdialog")).toBeHidden();
+  const trigger = page.getByRole("button", { name: "Acciones de Ana" });
+  await expect(trigger).toBeFocused();
+  await trigger.click();
+  await expect(page.getByRole("menuitem", { name: "Editar" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(trigger).toBeFocused();
   await page.getByRole("button", { name: "Comprobar clics: 0" }).click();
   await expect(
     page.getByRole("button", { name: "Comprobar clics: 1" }),
   ).toBeVisible();
   expect(requests).toBe(0);
 });
+
+for (const action of ["Editar", "Eliminar"]) {
+  test(`should restore focus after repeatedly escaping player ${action}`, async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const trigger = page.getByRole("button", { name: "Acciones de Ana" });
+    for (let attempt = 0; attempt < 3; attempt++) {
+      await trigger.click();
+      await page.getByRole("menuitem", { name: action, exact: true }).click();
+      const dialog = page.getByRole(
+        action === "Editar" ? "dialog" : "alertdialog",
+      );
+      await expect(dialog).toBeVisible();
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("Escape");
+      await expect(dialog).toBeHidden();
+      await expect(trigger).toBeFocused();
+      await page
+        .getByRole("button", { name: `Comprobar clics: ${attempt}` })
+        .click();
+    }
+  });
+}

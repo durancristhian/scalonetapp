@@ -55,28 +55,24 @@ const EnabledContent: FC = () => {
   const onMatchSubmit: (values: MatchSchema) => Promise<void> = async (
     values,
   ) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        unwrapActionResult(await addMatchAction(values));
-        trackAnalytics("match_created");
+    try {
+      unwrapActionResult(await addMatchAction(values));
+      trackAnalytics("match_created");
 
-        successAlert({
-          title: "¡Partido creado!",
+      successAlert({
+        title: "¡Partido creado!",
+      });
+
+      setDialogOpen(false);
+    } catch (error) {
+      if (error instanceof Error) {
+        errorAlert({
+          title: getActionErrorMessage(error, ERROR_MESSAGES.match_add_error),
         });
-
-        setDialogOpen(false);
-
-        resolve();
-      } catch (error) {
-        if (error instanceof Error) {
-          errorAlert({
-            title: getActionErrorMessage(error, ERROR_MESSAGES.match_add_error),
-          });
-        }
-
-        reject(error);
       }
-    });
+
+      throw error;
+    }
   };
 
   return (

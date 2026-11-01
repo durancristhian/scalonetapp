@@ -1,7 +1,7 @@
 "use client";
 
 import { PlayerAvatar } from "@/components/player-avatar";
-import { SoccerBall } from "@/components/soccer-ball";
+import { PendingButton } from "@/components/pending-button";
 import { Button } from "@/components/ui/button";
 import {
   DialogContent,
@@ -473,21 +473,16 @@ export default function ExportEditor({
           >
             Restablecer valores
           </Button>
-          <Button
+          <PendingButton
             type="button"
             className="flex-1"
-            disabled={disabled || processing}
+            disabled={disabled}
+            pending={processing}
+            pendingLabel="Descargando…"
             onClick={download}
-            aria-busy={processing}
           >
-            {processing ? (
-              <SoccerBall
-                aria-hidden="true"
-                className="motion-safe:animate-spin size-4 me-2"
-              />
-            ) : null}
-            {processing ? "Descargando…" : "Descargar"}
-          </Button>
+            Descargar
+          </PendingButton>
         </DialogFooter>
       </footer>
     </DialogContent>

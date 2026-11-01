@@ -1,7 +1,7 @@
 "use client";
 
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
-import { SoccerBall } from "@/components/soccer-ball";
+import { PendingButton } from "@/components/pending-button";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -114,15 +114,14 @@ const FeedbackForm: FC<FeedbackFormProps> = ({ afterSubmit }) => {
         />
         <FormRootError />
         <DialogFooter>
-          <Button
+          <PendingButton
             type="submit"
-            disabled={!form.formState.isValid || form.formState.isSubmitting}
+            pending={form.formState.isSubmitting}
+            pendingLabel="Enviando..."
+            disabled={!form.formState.isValid}
           >
-            {form.formState.isSubmitting ? (
-              <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
-            ) : null}
-            {form.formState.isSubmitting ? "Enviando..." : "Enviar"}
-          </Button>
+            Enviar
+          </PendingButton>
         </DialogFooter>
       </form>
     </Form>

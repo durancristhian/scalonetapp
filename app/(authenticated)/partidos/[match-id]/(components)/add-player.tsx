@@ -72,59 +72,48 @@ const EnabledContent: FC<{ currentPlayerCount: number }> = ({
   const onPlayerSubmit: (
     values: PlayerSchema,
     photo?: Blob | null,
-  ) => Promise<void> = (values, photo) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const id = unwrapActionResult(await addPlayerAction(matchId, values));
-        trackAnalytics("players_added", { method: "single", count: 1 });
-        const photoError = await savePlayerPhoto(id, photo);
-        if (photoError) errorAlert({ title: photoError });
+  ) => Promise<void> = async (values, photo) => {
+    try {
+      const id = unwrapActionResult(await addPlayerAction(matchId, values));
+      trackAnalytics("players_added", { method: "single", count: 1 });
+      const photoError = await savePlayerPhoto(id, photo);
+      if (photoError) errorAlert({ title: photoError });
 
-        setDialogOpen(false);
-
-        resolve();
-      } catch (error) {
-        if (error instanceof Error) {
-          errorAlert({
-            title: getActionErrorMessage(
-              error,
-              ERROR_MESSAGES.player_add_error,
-            ),
-          });
-        }
-
-        reject(error);
+      setDialogOpen(false);
+    } catch (error) {
+      if (error instanceof Error) {
+        errorAlert({
+          title: getActionErrorMessage(error, ERROR_MESSAGES.player_add_error),
+        });
       }
-    });
+
+      throw error;
+    }
   };
 
-  const onMultiplePlayersSubmit: (values: PlayerSchema[]) => Promise<void> = (
-    values,
-  ) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        unwrapActionResult(await addMultiplePlayersAction(matchId, values));
-        trackAnalytics("players_added", {
-          method: "bulk",
-          count: values.length,
+  const onMultiplePlayersSubmit: (
+    values: PlayerSchema[],
+  ) => Promise<void> = async (values) => {
+    try {
+      unwrapActionResult(await addMultiplePlayersAction(matchId, values));
+      trackAnalytics("players_added", {
+        method: "bulk",
+        count: values.length,
+      });
+
+      setDialogOpen(false);
+    } catch (error) {
+      if (error instanceof Error) {
+        errorAlert({
+          title: getActionErrorMessage(
+            error,
+            ERROR_MESSAGES.player_multiple_add_error,
+          ),
         });
-
-        setDialogOpen(false);
-
-        resolve();
-      } catch (error) {
-        if (error instanceof Error) {
-          errorAlert({
-            title: getActionErrorMessage(
-              error,
-              ERROR_MESSAGES.player_multiple_add_error,
-            ),
-          });
-        }
-
-        reject(error);
       }
-    });
+
+      throw error;
+    }
   };
 
   return (

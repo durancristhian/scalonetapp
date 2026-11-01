@@ -2,20 +2,10 @@
 
 import { trackAnalytics } from "@/utils/analytics";
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
-import { SoccerBall } from "@/components/soccer-ball";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+import { ActionConfirmationDialog } from "@/components/action-confirmation-dialog";
 import { duplicateMatchAction } from "@/server/actions/match";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
-import { type FC, useRef, useState } from "react";
+import { type ComponentProps, type FC } from "react";
 
 const duplicateErrors = {
   unauthorized: ERROR_MESSAGES.unauthorized,
@@ -28,7 +18,9 @@ const duplicateErrors = {
 type DuplicateMatchProps = {
   id: number;
   onClose: () => void;
-  onCloseAutoFocus?: (event: Event) => void;
+  onCloseAutoFocus?: ComponentProps<
+    typeof ActionConfirmationDialog
+  >["onCloseAutoFocus"];
 };
 
 export const DuplicateMatch: FC<DuplicateMatchProps> = ({
@@ -36,14 +28,9 @@ export const DuplicateMatch: FC<DuplicateMatchProps> = ({
   onClose,
   onCloseAutoFocus,
 }) => {
-  const [processing, setIsProcessing] = useState(false);
-  const pending = useRef(false);
   const { errorAlert, successAlert } = useAlerts();
 
   const onDuplicateMatch: () => Promise<void> = async () => {
-    if (pending.current) return;
-    pending.current = true;
-    setIsProcessing(true);
     try {
       const result = await duplicateMatchAction(id);
       if (!result.ok) {
@@ -64,40 +51,18 @@ export const DuplicateMatch: FC<DuplicateMatchProps> = ({
       onClose();
     } catch {
       errorAlert({ title: ERROR_MESSAGES.match_duplicate_error });
-    } finally {
-      pending.current = false;
-      setIsProcessing(false);
     }
   };
 
   return (
-    <AlertDialog open>
-      <AlertDialogContent
-        onCloseAutoFocus={onCloseAutoFocus}
-        onEscapeKeyDown={(event) => {
-          if (pending.current) event.preventDefault();
-          else onClose();
-        }}
-      >
-        <AlertDialogHeader>
-          <AlertDialogTitle>¿Duplicar este partido?</AlertDialogTitle>
-          <AlertDialogDescription className="max-md:text-balance">
-            Se creará un nuevo partido basado en el actual con un nombre
-            modificado.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel onClick={onClose} disabled={processing}>
-            Cancelar
-          </AlertDialogCancel>
-          <Button onClick={onDuplicateMatch} disabled={processing}>
-            {processing ? (
-              <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
-            ) : null}
-            {processing ? "Duplicando..." : "Sí, duplicar"}
-          </Button>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <ActionConfirmationDialog
+      title="¿Duplicar este partido?"
+      description="Se creará un nuevo partido basado en el actual con un nombre modificado."
+      confirmLabel="Sí, duplicar"
+      pendingLabel="Duplicando..."
+      onConfirm={onDuplicateMatch}
+      onClose={onClose}
+      onCloseAutoFocus={onCloseAutoFocus}
+    />
   );
 };

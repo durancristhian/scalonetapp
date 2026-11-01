@@ -1,7 +1,7 @@
 "use client";
 
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
-import { SoccerBall } from "@/components/soccer-ball";
+import { PendingButton } from "@/components/pending-button";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -179,16 +179,15 @@ export function ImageCropper({
               Cancelar
             </Button>
           </DialogClose>
-          <Button
+          <PendingButton
             onClick={onCrop}
-            disabled={uploadingImage || !croppedImageUrl}
+            pending={uploadingImage}
+            pendingLabel="Guardando..."
+            disabled={!croppedImageUrl}
             type="button"
           >
-            {uploadingImage ? (
-              <SoccerBall className="animate-spin h-4 mr-2 opacity-50 w-4" />
-            ) : null}
-            {uploadingImage ? "Guardando..." : "Recortar"}
-          </Button>
+            Recortar
+          </PendingButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -21,7 +21,7 @@ import { type FC } from "react";
 type EditPlayerProps = {
   player: Player;
   onClose: () => void;
-  onCloseAutoFocus: () => void;
+  onCloseAutoFocus: (event: Event) => void;
 };
 
 export const EditPlayer: FC<EditPlayerProps> = ({
@@ -35,29 +35,22 @@ export const EditPlayer: FC<EditPlayerProps> = ({
     values: PlayerSchema,
     photo?: Blob | null,
   ) => Promise<void> = async (values, photo) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        unwrapActionResult(await editPlayerAction(player.id, values));
-        const id = player.id;
-        const photoError = await savePlayerPhoto(id, photo);
-        if (photoError) errorAlert({ title: photoError });
+    try {
+      unwrapActionResult(await editPlayerAction(player.id, values));
+      const id = player.id;
+      const photoError = await savePlayerPhoto(id, photo);
+      if (photoError) errorAlert({ title: photoError });
 
-        onClose();
-
-        resolve();
-      } catch (error) {
-        if (error instanceof Error) {
-          errorAlert({
-            title: getActionErrorMessage(
-              error,
-              ERROR_MESSAGES.player_edit_error,
-            ),
-          });
-        }
-
-        reject(error);
+      onClose();
+    } catch (error) {
+      if (error instanceof Error) {
+        errorAlert({
+          title: getActionErrorMessage(error, ERROR_MESSAGES.player_edit_error),
+        });
       }
-    });
+
+      throw error;
+    }
   };
 
   return (

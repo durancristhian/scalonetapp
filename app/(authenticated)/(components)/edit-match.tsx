@@ -33,29 +33,22 @@ export const EditMatch: FC<EditMatchProps> = ({
 }) => {
   const { errorAlert } = useAlerts();
 
-  const onMatchSubmit: (values: MatchSchema) => Promise<void> = (values) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        unwrapActionResult(
-          await editMatchAction(match.id, values, "/dashboard"),
-        );
+  const onMatchSubmit: (values: MatchSchema) => Promise<void> = async (
+    values,
+  ) => {
+    try {
+      unwrapActionResult(await editMatchAction(match.id, values, "/dashboard"));
 
-        onClose();
-
-        resolve();
-      } catch (error) {
-        if (error instanceof Error) {
-          errorAlert({
-            title: getActionErrorMessage(
-              error,
-              ERROR_MESSAGES.match_edit_error,
-            ),
-          });
-        }
-
-        reject(error);
+      onClose();
+    } catch (error) {
+      if (error instanceof Error) {
+        errorAlert({
+          title: getActionErrorMessage(error, ERROR_MESSAGES.match_edit_error),
+        });
       }
-    });
+
+      throw error;
+    }
   };
 
   return (
