@@ -145,14 +145,17 @@ describe("export editor", () => {
       </Dialog>,
     );
     const order = screen.getByRole("radiogroup", {
-      name: "Orden de jugadores",
+      name: "Ordenar jugadores por",
     });
     expect(
-      within(order).getByRole("radio", { name: "Alfabético" }),
+      within(
+        screen.getByRole("radiogroup", {
+          name: "Alineación de texto e imagen",
+        }),
+      ).getByRole("radio", { name: "Izquierda" }),
     ).toBeChecked();
-    await user.click(
-      within(order).getByRole("radio", { name: "Por posición" }),
-    );
+    expect(within(order).getByRole("radio", { name: "Nombre" })).toBeChecked();
+    await user.click(within(order).getByRole("radio", { name: "Posición" }));
     expect(
       JSON.parse(localStorage.getItem(IMAGE_EXPORT_STORAGE_KEY)!).playerOrder,
     ).toBe("position");
@@ -171,9 +174,7 @@ describe("export editor", () => {
     await user.click(
       screen.getByRole("button", { name: "Restablecer valores" }),
     );
-    expect(
-      within(order).getByRole("radio", { name: "Alfabético" }),
-    ).toBeChecked();
+    expect(within(order).getByRole("radio", { name: "Nombre" })).toBeChecked();
   });
   it("should preserve the editor and allow retry when download fails", async () => {
     const exportTeams = vi
@@ -226,8 +227,8 @@ describe("export editor", () => {
       screen.getByRole("button", { name: "Restablecer valores" }),
     ).toBeDisabled();
     expect(screen.getByRole("button", { name: "Cerrar" })).toBeDisabled();
-    expect(screen.getByRole("radio", { name: "Alfabético" })).toBeDisabled();
-    expect(screen.getByRole("radio", { name: "Por posición" })).toBeDisabled();
+    expect(screen.getByRole("radio", { name: "Nombre" })).toBeDisabled();
+    expect(screen.getByRole("radio", { name: "Posición" })).toBeDisabled();
   });
   it("should restore defaults and persist changes when reset is clicked", async () => {
     localStorage.setItem(
