@@ -20,7 +20,7 @@
 - Support uneven and empty teams. Free players remain in the match and are omitted from exports; saving and exporting partial teams remains valid.
 - Roster writes and saved assignments stay consistent. Stale saves must not overwrite newer lineups; refreshes preserve unrelated drafts.
 - Exports use the previewed snapshot or reject stale data. A failed export must not undo a successful save.
-- Preview and PNG share `components/team-export/team-export.tsx`. Keep the 1280px canvas and server DPR 2 independent of preview scaling.
+- Preview and image capture share `components/team-export/team-export.tsx`. Keep the 1280px canvas and server DPR 2 independent of preview scaling. Download encoding and optional post-capture resizing follow [prepareTeamExport](server/prepare-team-export.ts); keep MIME type and filename aligned with the returned image.
 
 ## Verify changes
 
