@@ -27,6 +27,9 @@ const aspect = 1;
 
 type ImageCropperProps = {
   dialogOpen: boolean;
+  onCloseAutoFocus?: React.ComponentProps<
+    typeof DialogContent
+  >["onCloseAutoFocus"];
   onImageCropped: (croppedImageFile: Blob) => Promise<void>;
   preview: string | null;
   removePreview: () => void;
@@ -35,6 +38,7 @@ type ImageCropperProps = {
 
 export function ImageCropper({
   dialogOpen,
+  onCloseAutoFocus,
   onImageCropped,
   preview,
   removePreview,
@@ -132,7 +136,10 @@ export function ImageCropper({
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent
+        className="sm:max-w-lg"
+        onCloseAutoFocus={onCloseAutoFocus}
+      >
         <DialogHeader>
           <DialogTitle>Recortando la foto</DialogTitle>
           <DialogDescription className="max-md:text-balance">
