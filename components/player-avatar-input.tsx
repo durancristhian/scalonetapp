@@ -26,6 +26,7 @@ export function PlayerAvatarInput({
   onPreparingChange,
 }: Props) {
   const input = useRef<HTMLInputElement>(null);
+  const choosePhoto = useRef<HTMLButtonElement>(null);
   const preparation = useRef<AbortController | null>(null);
   const [preparing, setPreparing] = useState(false);
   const [ImageCropper, setImageCropper] = useState<
@@ -113,6 +114,7 @@ export function PlayerAvatarInput({
           }}
         />
         <Button
+          ref={choosePhoto}
           type="button"
           variant="outline"
           disabled={disabled || preparing}
@@ -152,6 +154,10 @@ export function PlayerAvatarInput({
       {ImageCropper && (
         <ImageCropper
           dialogOpen={open}
+          onCloseAutoFocus={(event) => {
+            event.preventDefault();
+            choosePhoto.current?.focus();
+          }}
           setDialogOpen={(value) => {
             setOpen(value);
             if (value === false) setPreview(null);
