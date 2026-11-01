@@ -28,7 +28,7 @@ In `.env.local`, set:
 - `POSTGRES_PRISMA_URL` and `POSTGRES_URL_NON_POOLING` to your development database URL.
 - Optionally, `TELEGRAM_BOTID` and `TELEGRAM_CHATID` to enable feedback.
 
-Choose unused, separate app, browser-fixture and PostgreSQL ports for this worktree. Record the chosen ports and owned process IDs under ignored `.local/` space so retries can verify and reuse the same services. The following ports are examples, not reservations. Keep the other template defaults, then initialize the database and start the app:
+Choose unused, separate app, browser-fixture and PostgreSQL ports for this worktree. Bind PostgreSQL to loopback and use a separate database, data directory and socket directory, or disable Unix sockets. Record URLs, process IDs, checkout paths, configuration identity and cleanup commands under ignored `.local/` space. Before retrying, verify that each listener belongs to this checkout and configuration; choose another port when it does not. The following ports are examples, not reservations. Keep the other template defaults, then initialize the database and start the app:
 
 ```bash
 node --env-file=.env.local node_modules/prisma/build/index.js migrate deploy
@@ -37,6 +37,8 @@ PORT=3101 npm run dev -- --hostname localhost
 ```
 
 Open the selected app URL, for example `http://localhost:3101`. Keep the hostname consistent with the local export origin and set `PORT` in the launch environment so local image exports reach the same app. Next.js reads this variable before loading `.env.local`; do not configure it only in that file. The default remains port 3000. If startup reports a collision or selects another port, stop only the process just started and relaunch with a free explicit `PORT`.
+Keep `.next`, test artifacts, temporary files and browser contexts owned by this checkout. Stop only verified owned processes and remove copied credentials after testing. Worktrees share CPU, RAM, the OS, package/browser download caches and external-service quotas; coordinate heavy checks. This is logical service isolation, not an OS security sandbox; a shared Clerk identity also shares external account state.
+
 Environment files are ignored by Git; use development credentials only.
 Prisma CLI reads `POSTGRES_URL_NON_POOLING` through [prisma.config.ts](prisma.config.ts);
 the application uses pooled `POSTGRES_PRISMA_URL`. Keep the explicit `--env-file`
