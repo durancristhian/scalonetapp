@@ -5,7 +5,11 @@ import sharp from "sharp";
 import { revalidatePath } from "next/cache";
 import prisma from "@/utils/prisma";
 import { updatePlayerAvatarQuery } from "@/server/queries/player";
-import { isManagedPhoto, removeUnusedPhoto } from "@/server/player-photos";
+import {
+  isManagedPhoto,
+  removeUnusedPhoto,
+  playerPhotoPath,
+} from "@/server/player-photos";
 import {
   PHOTO_INPUT_BYTES,
   PHOTO_OUTPUT_BYTES,
@@ -93,7 +97,7 @@ export async function POST(request: Request, context: Context) {
   let uploaded: string | undefined;
   try {
     const blob = await put(
-      `players/${owned.player.id}/${randomUUID()}.webp`,
+      playerPhotoPath(owned.player.id, randomUUID()),
       output,
       { access: "public", contentType: "image/webp", addRandomSuffix: false },
     );

@@ -187,6 +187,36 @@ test("bootstrap replaces remote connections with an owned database and rejects l
   const env = parseEnv(prepared);
   assert.equal(new URL(env.POSTGRES_PRISMA_URL).hostname, "127.0.0.1");
   assert.equal(run("check").status, 0);
+  assert.match(env.DEVELOPMENT_PHOTO_NAMESPACE, /^scalonet_[a-f0-9]{12}$/);
+  const blob = `${prepared}\nBLOB_READ_WRITE_TOKEN=fixture-token\nPLAYER_PHOTO_ORIGIN=https://fixture.public.blob.vercel-storage.com\n`;
+  writeFileSync(join(main, ".env.local"), blob);
+  assert.match(run("check").stderr, /approved Development\/Preview Blob/);
+  writeFileSync(
+    join(main, ".env.local"),
+    `${blob}DEVELOPMENT_PHOTO_ORIGIN=https://fixture.public.blob.vercel-storage.com\n`,
+  );
+  assert.equal(run("check").status, 0);
+  writeFileSync(
+    join(main, ".env.prod"),
+    "PLAYER_PHOTO_ORIGIN=https://fixture.public.blob.vercel-storage.com\n",
+  );
+  assert.match(run("check").stderr, /Production Blob storage is blocked/);
+  writeFileSync(join(main, ".env.prod"), "");
+  writeFileSync(
+    join(main, ".env.local"),
+    `${prepared}\nTELEGRAM_BOTID=fixture-bot\nTELEGRAM_CHATID=fixture-chat\n`,
+  );
+  assert.equal(run("check").status, 0);
+  writeFileSync(
+    join(main, ".env.local"),
+    `${prepared}\nTELEGRAM_BOTID=fixture-bot\n`,
+  );
+  const incompleteTelegram = run("check");
+  assert.equal(incompleteTelegram.status, 1);
+  assert.match(
+    incompleteTelegram.stderr,
+    /Configure TELEGRAM_BOTID and TELEGRAM_CHATID together/,
+  );
   writeFileSync(
     join(main, ".env.local"),
     prepared

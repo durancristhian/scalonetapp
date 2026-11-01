@@ -87,6 +87,7 @@ function developmentEnvironment(overrides = {}) {
     ...local,
     ...overrides,
     NODE_ENV: "development",
+    DEVELOPMENT_PHOTO_NAMESPACE: expectedDatabase,
   };
   requireCondition(
     !environment.VERCEL_ENV || environment.VERCEL_ENV === "development",
@@ -114,13 +115,45 @@ function developmentEnvironment(overrides = {}) {
       `Configure ${key} with a local database named ${expectedDatabase}; shared and remote databases are blocked.`,
     );
   }
+  if (
+    environment.BLOB_READ_WRITE_TOKEN ||
+    environment.BLOB_STORE_ID ||
+    environment.PLAYER_PHOTO_ORIGIN
+  ) {
+    requireCondition(
+      environment.BLOB_READ_WRITE_TOKEN &&
+        environment.PLAYER_PHOTO_ORIGIN &&
+        environment.PLAYER_PHOTO_ORIGIN ===
+          environment.DEVELOPMENT_PHOTO_ORIGIN,
+      "Configure the approved Development/Preview Blob token and photo origin together.",
+    );
+    let origin;
+    try {
+      origin = new URL(environment.PLAYER_PHOTO_ORIGIN);
+    } catch {
+      throw new Error("Configure a valid Development photo origin.");
+    }
+    requireCondition(
+      origin.protocol === "https:" &&
+        origin.origin === environment.PLAYER_PHOTO_ORIGIN &&
+        origin.hostname.endsWith(".public.blob.vercel-storage.com"),
+      "Development photos require the approved public Blob origin.",
+    );
+    const productionFile = resolve(root, ".env.prod");
+    if (existsSync(productionFile)) {
+      const production = parseEnv(readFileSync(productionFile, "utf8"));
+      requireCondition(
+        production.PLAYER_PHOTO_ORIGIN !== environment.PLAYER_PHOTO_ORIGIN &&
+          production.BLOB_READ_WRITE_TOKEN !==
+            environment.BLOB_READ_WRITE_TOKEN,
+        "Production Blob storage is blocked in Development.",
+      );
+    }
+  }
   requireCondition(
-    !environment.BLOB_READ_WRITE_TOKEN,
-    "Remove BLOB_READ_WRITE_TOKEN for isolated local development.",
-  );
-  requireCondition(
-    !environment.TELEGRAM_BOTID && !environment.TELEGRAM_CHATID,
-    "Remove Telegram credentials for isolated local development.",
+    Boolean(environment.TELEGRAM_BOTID) ===
+      Boolean(environment.TELEGRAM_CHATID),
+    "Configure TELEGRAM_BOTID and TELEGRAM_CHATID together.",
   );
   for (const name of [".env", ".env.development", ".env.development.local"]) {
     requireCondition(
@@ -142,13 +175,14 @@ async function prepareDevelopment() {
   const local = parseEnv(contents);
   if (
     local.POSTGRES_PRISMA_URL !== url ||
-    local.POSTGRES_URL_NON_POOLING !== url
+    local.POSTGRES_URL_NON_POOLING !== url ||
+    local.DEVELOPMENT_PHOTO_NAMESPACE !== expectedDatabase
   ) {
     const retained = contents
       .split("\n")
       .filter(
         (line) =>
-          !/^\s*(?:export\s+)?(?:POSTGRES_PRISMA_URL|POSTGRES_URL_NON_POOLING)\s*=/.test(
+          !/^\s*(?:export\s+)?(?:POSTGRES_PRISMA_URL|POSTGRES_URL_NON_POOLING|DEVELOPMENT_PHOTO_NAMESPACE)\s*=/.test(
             line,
           ),
       )
@@ -157,7 +191,7 @@ async function prepareDevelopment() {
     const pending = resolve(root, ".local/development-env.pending");
     writeFileSync(
       pending,
-      `${retained}\nPOSTGRES_PRISMA_URL=${JSON.stringify(url)}\nPOSTGRES_URL_NON_POOLING=${JSON.stringify(url)}\n`,
+      `${retained}\nPOSTGRES_PRISMA_URL=${JSON.stringify(url)}\nPOSTGRES_URL_NON_POOLING=${JSON.stringify(url)}\nDEVELOPMENT_PHOTO_NAMESPACE=${JSON.stringify(expectedDatabase)}\n`,
       { mode: 0o600 },
     );
     renameSync(pending, file);

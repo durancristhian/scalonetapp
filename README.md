@@ -23,7 +23,9 @@ Dependencies are reused in place or copied independently from a repository cache
 
 Setup creates a password-protected PostgreSQL cluster under ignored `.local/postgres`, starts it on a free loopback port, sets both database URLs in `.env.local`, and applies migrations only to that owned database. It preserves existing data on subsequent runs and never connects to the copied remote URLs. `npm run dev` restarts the owned database when needed and reapplies pending migrations before starting the app.
 
-The copied `.env.local` must contain Clerk Development test keys. Production settings, Blob credentials, Telegram credentials and additional Next.js env files reported by the guard must be removed before setup can complete. These external services are not provisioned by setup; photo uploads require separate test storage.
+The copied `.env.local` must contain Clerk Development test keys. Production settings and additional Next.js env files reported by the guard must be removed before setup can complete. Telegram feedback reuses the main checkout's paired bot/chat credentials. Development photos reuse the approved Preview Blob token and origin, declared by `DEVELOPMENT_PHOTO_ORIGIN`. Setup generates `DEVELOPMENT_PHOTO_NAMESPACE` per worktree; uploads and cleanup are restricted to that path. Production storage remains separate. These integrations are configured once in the private env source and inherited by new worktrees, not provisioned by setup.
+
+New worktree databases start empty. Create synthetic data for the journey under test; bootstrap does not seed test cases.
 
 Check configuration and the live database with `npm run check:development`. Stop only this worktree's PostgreSQL with `npm run stop:database`; its data remains available for the next startup. Manual local Prisma commands must use `node --env-file=.env.local node_modules/prisma/build/index.js ...` for [prisma.config.ts](prisma.config.ts).
 
