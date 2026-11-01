@@ -19,7 +19,9 @@
     "typecheck": "next typegen && tsc --noEmit",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "setup:worktree": "bash scripts/setup-worktree.sh"
+    "setup:worktree": "bash scripts/setup-worktree.sh",
+    "check:development": "node scripts/worktree.mjs check",
+    "test:setup": "node --test tests/scripts/*.test.mjs"
   },
   "dependencies": {
     "@dicebear/core": "10.7.0",

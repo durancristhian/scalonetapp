@@ -1,4 +1,5 @@
 import { spawnSync, spawn } from "node:child_process";
+import { prepareDependencies } from "./worktree-dependencies.mjs";
 import {
   constants,
   copyFileSync,
@@ -138,20 +139,26 @@ try {
     copyEnvironment();
     mkdirSync(".local", { recursive: true, mode: 0o700 });
     chmodSync(".local", 0o700);
-    const install = spawnSync("npm", ["ci"], {
-      cwd: root,
-      stdio: ["ignore", "pipe", "pipe"],
-      maxBuffer: 16 * 1024 * 1024,
-      env: {
-        ...process.env,
-        PUPPETEER_CACHE_DIR: resolve(root, ".local/puppeteer"),
-        PUPPETEER_SKIP_DOWNLOAD: "false",
-      },
-    });
-    requireCondition(
-      install.status === 0,
-      "npm ci failed. Check registry access and package-lock.json; installer output withheld to protect configuration.",
+    prepareDependencies(
+      root,
+      resolve(git("rev-parse", "--git-common-dir"), ".."),
     );
+    for (const browser of ["chrome", "chrome-headless-shell"]) {
+      run(
+        process.execPath,
+        [
+          "node_modules/puppeteer/lib/puppeteer/node/cli.js",
+          "browsers",
+          "install",
+          browser,
+        ],
+        {
+          ...process.env,
+          PUPPETEER_CACHE_DIR: resolve(root, ".local/puppeteer"),
+          PUPPETEER_SKIP_DOWNLOAD: "false",
+        },
+      );
+    }
     run(process.execPath, ["node_modules/prisma/build/index.js", "generate"], {
       PATH: process.env.PATH,
       HOME: process.env.HOME,
@@ -164,8 +171,19 @@ try {
         PLAYWRIGHT_BROWSERS_PATH: resolve(root, ".local/browsers"),
       },
     );
+    console.log("Worktree tools ready. Run npm run test:frontend.");
+    try {
+      developmentEnvironment();
+      console.log("Development configuration valid. Run npm run dev.");
+    } catch (error) {
+      console.warn(`Development startup blocked: ${error.message}`);
+      console.warn(
+        "Configure .env.local, then run npm run check:development before starting services or migrating.",
+      );
+    }
+  } else if (mode === "check") {
     developmentEnvironment();
-    console.log("Worktree ready. Run npm run dev or npm run test:frontend.");
+    console.log("Development configuration valid.");
   } else if (mode === "browser") {
     const port = await freePort();
     run(
@@ -213,7 +231,7 @@ try {
       process.on(signal, () => child.kill(signal));
     child.on("exit", (code) => process.exit(code ?? 1));
   } else {
-    throw new Error("Use setup or dev.");
+    throw new Error("Use setup, check, browser or dev.");
   }
 } catch (error) {
   console.error(error.message);

@@ -17,15 +17,21 @@ Use Node.js 26, a local PostgreSQL instance you own, and a [Clerk](https://clerk
 bash scripts/setup-worktree.sh
 ```
 
-The [bootstrap](scripts/setup-worktree.sh) selects Node 26 through nvm when needed. It copies the main checkout's Git-ignored `.env.local` and `.env.prod` only when absent, sets owner-only permissions, installs locked dependencies with `npm ci`, generates Prisma, and installs worktree-local browsers. The main checkout must already hold the private environment files; missing files fail setup. `.env.prod` is copied but never loaded by local startup. Using it requires explicit Production authorization.
+The [bootstrap](scripts/setup-worktree.sh) selects Node 26 through nvm when needed. It copies the main checkout's Git-ignored `.env.local` and `.env.prod` only when absent and sets owner-only permissions. The main checkout must already hold these private files; missing files fail setup. `.env.prod` is copied but never loaded by local startup. Using it requires explicit Production authorization.
 
-Setup finishes by validating `.env.local`. If validation fails, correct the reported configuration and rerun setup before starting services or migrating the database:
+Dependencies are reused in place, or copied independently from the main checkout, only when a previous successful bootstrap recorded matching manifests, npm configuration, Node version, platform and architecture. Otherwise setup runs `npm ci`. It always generates Prisma and prepares worktree-local browsers. Unmarked installations require one bootstrap before they can be reused.
+
+A successful setup prepares tools for source work and frontend tests. It reports invalid Development configuration without failing the bootstrap. Before starting services or migrating, configure `.env.local` and run the blocking check:
+
+```bash
+npm run check:development
+```
 
 - Set `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` to Clerk Development test keys.
 - Point `POSTGRES_PRISMA_URL` and `POSTGRES_URL_NON_POOLING` to the same isolated loopback database. The validation error gives the required database name, derived from the worktree path. Create that database on your local instance.
 - Remove Blob and Telegram credentials, additional Next.js env files, and Production configuration reported by the guard. Keep secrets out of logs and Git.
 
-Setup does not create a database or apply migrations. Once validation succeeds, initialize the isolated database and start the app:
+Setup does not create a database or apply migrations. Once the check succeeds, initialize the isolated database and start the app:
 
 ```bash
 node --env-file=.env.local node_modules/prisma/build/index.js migrate deploy
