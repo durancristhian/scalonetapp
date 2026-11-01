@@ -20,7 +20,7 @@
 - Bootstrap copies ignored `.env.local` and `.env.prod` from the main checkout only when absent, with owner-only permissions. Use Clerk Development test keys. Copying `.env.prod` does not authorize loading it or connecting to Production.
 - The shared Git dependency cache is keyed by manifests and runtime; each worktree gets an independent copy. Preserve shared cache entries used by other branches. Browsers and build/test artifacts stay worktree-local.
 - PostgreSQL is owned by the worktree under ignored `.local/postgres`. Setup applies migrations only after verifying the live server's data directory. `npm run dev` restarts this cluster when needed. Use `npm run check:development` before other environment-dependent commands; manual Prisma commands need `node --env-file=.env.local node_modules/prisma/build/index.js ...`.
-- Setup seeds only an empty match database, using the verified `CLERK_AGENT_USER_ID` from the private env source. It creates one 10-vs-10 Argentina match with fixed captain defaults. Preserve edits to existing matches; create additional synthetic cases only as needed for a task.
+- Setup seeds only an empty match database, using the verified `CLERK_AGENT_USER_ID` from the private env source. It creates one 10-vs-10 Argentina match. Preserve edits to existing matches; create additional synthetic cases only as needed for a task.
 - Development and Preview share the approved Blob store declared by `DEVELOPMENT_PHOTO_ORIGIN`. Setup derives `DEVELOPMENT_PHOTO_NAMESPACE` per worktree. Upload and cleanup must remain within that namespace; do not remove Preview, Production or other-worktree files.
 - Telegram uses the shared private bot/chat settings. Send feedback only when explicitly authorized by the task; bootstrap and routine checks must not send messages.
 - Use free app/fixture ports and the printed Development URL for internal exports. Stop only owned processes; `npm run stop:database` preserves data. CPU, memory and external account quotas remain shared.
@@ -30,7 +30,6 @@
 - Preserve exactly two teams, up to 100 players per match and 50 players per batch.
 - Support uneven and empty teams. Free players remain in the match and are omitted from exports; saving and exporting partial teams remains valid.
 - Roster writes and saved assignments stay consistent. Stale saves must not overwrite newer lineups; refreshes preserve unrelated drafts.
-- Seed captain IDs are initial export defaults; saved browser choices take precedence, and stale roster assignments must not reappear.
 - Exports use the previewed snapshot or reject stale data. A failed export must not undo a successful save.
 - Preview and image capture share `components/team-export/team-export.tsx`. Keep the 1280px canvas and server DPR 2 independent of preview scaling. Download encoding and optional post-capture resizing follow [prepareTeamExport](server/prepare-team-export.ts); keep MIME type and filename aligned with the returned image.
 

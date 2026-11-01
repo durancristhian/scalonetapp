@@ -11,7 +11,7 @@ bash scripts/setup-worktree.sh
 npm run dev
 ```
 
-Open the URL printed by the server. Setup prepares a local database and an initial Argentina Celeste vs. Argentina Blanca match for the configured agent, with 10 players per side and one fixed captain per team. Repeating setup preserves existing matches. Stop the local database with `npm run stop:database`; its data is retained.
+Open the URL printed by the server. Setup prepares a local database and an initial Argentina Celeste vs. Argentina Blanca match for the configured agent, with 10 players per side. Repeating setup preserves existing matches. Stop the local database with `npm run stop:database`; its data is retained.
 
 ## Checks
 

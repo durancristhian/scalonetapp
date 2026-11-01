@@ -7,7 +7,6 @@ import { verifyDatabase } from "./worktree-database.mjs";
 const teams = [
   {
     name: "Argentina Celeste",
-    captain: "Lionel Messi",
     players: [
       ["Emiliano Martínez", "goa"],
       ["Javier Zanetti", "def"],
@@ -23,7 +22,6 @@ const teams = [
   },
   {
     name: "Argentina Blanca",
-    captain: "Diego Maradona",
     players: [
       ["Ubaldo Fillol", "goa"],
       ["Daniel Passarella", "def"],
@@ -78,15 +76,11 @@ export async function seedWorktree(root, env) {
       const ids = new Map(
         match.players.map((player) => [player.name, player.id]),
       );
-      const saved = teams.map((team) => {
-        const players = team.players.map(([name]) => ids.get(name));
-        return {
-          id: randomUUID(),
-          name: team.name,
-          players,
-          defaultCaptainId: ids.get(team.captain),
-        };
-      });
+      const saved = teams.map((team) => ({
+        id: randomUUID(),
+        name: team.name,
+        players: team.players.map(([name]) => ids.get(name)),
+      }));
       await transaction.match.update({
         where: { id: match.id },
         data: { teams: JSON.stringify(saved) },

@@ -13,7 +13,7 @@ import {
   stopDatabase,
 } from "../../scripts/worktree-database.mjs";
 
-test("seeds one complete match once and preserves user changes and captain choices", async (t) => {
+test("seeds one complete match once and preserves user changes", async (t) => {
   try {
     postgresBinaries();
   } catch (error) {
@@ -55,19 +55,9 @@ test("seeds one complete match once and preserves user changes and captain choic
   const teams = JSON.parse(match.teams);
   assert.equal(teams.length, 2);
   assert.equal(new Set(teams.flatMap((team) => team.players)).size, 20);
-  assert.deepEqual(
-    teams.map((team) => [
-      team.name,
-      match.players.find((player) => player.id === team.defaultCaptainId)?.name,
-    ]),
-    [
-      ["Argentina Celeste", "Lionel Messi"],
-      ["Argentina Blanca", "Diego Maradona"],
-    ],
-  );
   for (const team of teams) {
     assert.equal(team.players.length, 10);
-    assert.ok(team.players.includes(team.defaultCaptainId));
+    assert.deepEqual(Object.keys(team).sort(), ["id", "name", "players"]);
     assert.deepEqual(
       new Set(
         match.players

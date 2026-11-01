@@ -1,4 +1,4 @@
-import { StrictMode, type ComponentProps } from "react";
+import { StrictMode } from "react";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
@@ -257,65 +257,5 @@ describe("export editor", () => {
     expect(JSON.parse(localStorage.getItem(IMAGE_EXPORT_STORAGE_KEY)!)).toEqual(
       DEFAULT_IMAGE_EXPORT_OPTIONS,
     );
-  });
-});
-
-describe("seeded captain defaults", () => {
-  const seeded = teams([player(1), player(2)], [player(3), player(4)]).map(
-    (team) => ({ ...team, defaultCaptainId: team.players[0].id }),
-  );
-
-  it("uses the saved seed captains when opening export for the first time", async () => {
-    const user = userEvent.setup();
-    const onExport = vi
-      .fn<ComponentProps<typeof ExportEditor>["onExport"]>()
-      .mockResolvedValue(null);
-    render(
-      <Dialog open>
-        <ExportEditor
-          matchId={77}
-          name="Argentina Celeste vs. Argentina Blanca"
-          teams={seeded}
-          disabled={false}
-          processing={false}
-          onExport={onExport}
-        />
-      </Dialog>,
-    );
-    await user.click(screen.getByRole("button", { name: "Descargar" }));
-    expect(onExport.mock.calls[0][1].a.assignments.captain).toBe(1);
-    expect(onExport.mock.calls[0][1].b.assignments.captain).toBe(3);
-  });
-
-  it("keeps browser choices ahead of the seed defaults", async () => {
-    localStorage.setItem(
-      "scaloneta:export-player-roles:v1:77",
-      JSON.stringify({
-        a: {
-          playerIds: [1, 2],
-          assignments: { captain: null, goalkeeper: null },
-        },
-        b: { playerIds: [3, 4], assignments: { captain: 4, goalkeeper: null } },
-      }),
-    );
-    const user = userEvent.setup();
-    const onExport = vi
-      .fn<ComponentProps<typeof ExportEditor>["onExport"]>()
-      .mockResolvedValue(null);
-    render(
-      <Dialog open>
-        <ExportEditor
-          matchId={77}
-          name="Seed"
-          teams={seeded}
-          disabled={false}
-          processing={false}
-          onExport={onExport}
-        />
-      </Dialog>,
-    );
-    await user.click(screen.getByRole("button", { name: "Descargar" }));
-    expect(onExport.mock.calls[0][1].a.assignments.captain).toBeNull();
-    expect(onExport.mock.calls[0][1].b.assignments.captain).toBe(4);
   });
 });
