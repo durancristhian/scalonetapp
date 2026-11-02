@@ -30,15 +30,12 @@ let chromiumExecutablePath: Promise<string> | undefined;
 
 const getBrowser: () => Promise<Browser> = async () => {
   if (process.env.NODE_ENV === "production") {
-    const chromium = await import("@sparticuz/chromium-min").then(
-      (mod) => mod.default,
-    );
+    const [chromium, puppeteerCore] = await Promise.all([
+      import("@sparticuz/chromium-min").then((mod) => mod.default),
+      import("puppeteer-core").then((mod) => mod.default),
+    ]);
 
     chromium.setGraphicsMode = false;
-
-    const puppeteerCore = await import("puppeteer-core").then(
-      (mod) => mod.default,
-    );
 
     chromiumExecutablePath ??= chromium
       .executablePath(CHROMIUM_PACK_URL)
@@ -197,12 +194,19 @@ export async function GET(request: NextRequest) {
     if (!canvas) throw new Error("Image export canvas did not render.");
     const screenshot = await canvas.screenshot({ type: "png" });
 
-    for (const page of await browser.pages()) {
-      await page.close();
-    }
-    await browser.close();
+    const [cleanup, prepared] = await Promise.allSettled([
+      (async () => {
+        for (const page of await browser.pages()) {
+          await page.close();
+        }
+        await browser.close();
+      })(),
+      prepareTeamExport(Buffer.from(screenshot)),
+    ]);
+    if (cleanup.status === "rejected") throw cleanup.reason;
+    if (prepared.status === "rejected") throw prepared.reason;
 
-    const image = await prepareTeamExport(Buffer.from(screenshot));
+    const image = prepared.value;
     const response = new NextResponse(Buffer.from(image.data));
     response.headers.set("content-type", image.contentType);
     response.headers.set("Cache-Control", "private, no-store");
