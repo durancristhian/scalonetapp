@@ -42,7 +42,7 @@ describe("Public page", () => {
         page.getByRole("button", { name: "Armar mi partido" }),
       ).toBeVisible();
       expect(
-        page.getByRole("img", { name: /Los once titulares/ }),
+        page.getByRole("group", { name: /Los once titulares/ }),
       ).toBeVisible();
       expect(
         page.getByRole("heading", { name: "Armá los equipos" }),

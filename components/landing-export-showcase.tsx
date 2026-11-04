@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import styles from "./landing-export-showcase.module.css";
 
@@ -45,6 +46,8 @@ const examples = [
   },
 ] as const;
 
+const duration = 5000;
+
 export function LandingExportShowcase() {
   const stage = useRef<HTMLDivElement>(null);
   const descriptionId = useId();
@@ -53,9 +56,8 @@ export function LandingExportShowcase() {
   const [pageVisible, setPageVisible] = useState(true);
   const [inViewport, setInViewport] = useState(true);
   const [paused, setPaused] = useState(false);
-  const [hovering, setHovering] = useState(false);
-  const playing =
-    motionAllowed && pageVisible && inViewport && !paused && !hovering;
+  const countdown = useRef({ active: 0, remaining: duration });
+  const playing = motionAllowed && pageVisible && inViewport && !paused;
 
   useEffect(() => {
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -81,64 +83,155 @@ export function LandingExportShowcase() {
   }, []);
 
   useEffect(() => {
+    if (countdown.current.active !== active) {
+      countdown.current = { active, remaining: duration };
+    }
+    if (!motionAllowed) countdown.current.remaining = duration;
     if (!playing) return;
-    const interval = window.setInterval(() => {
+    const started = Date.now();
+    const timeout = window.setTimeout(() => {
       setActive((current) => (current + 1) % examples.length);
-    }, 5500);
-    return () => window.clearInterval(interval);
-  }, [playing]);
+    }, countdown.current.remaining);
+    return () => {
+      window.clearTimeout(timeout);
+      countdown.current.remaining = Math.max(
+        0,
+        countdown.current.remaining - (Date.now() - started),
+      );
+    };
+  }, [active, playing, motionAllowed]);
 
   return (
     <div
       className={styles.showcase}
-      onPointerEnter={(event) => {
-        if (event.pointerType === "mouse") setHovering(true);
+      role="region"
+      aria-roledescription="carrusel"
+      aria-label="Ejemplos de formaciones"
+      onFocusCapture={(event) => {
+        if (event.target.matches(":focus-visible")) setPaused(true);
       }}
-      onPointerLeave={() => setHovering(false)}
     >
-      <div
-        id={descriptionId}
-        ref={stage}
-        className={styles.stage}
-        role="img"
-        aria-label={`Los once titulares de Argentina y España en la final del Mundial 2026. ${examples[active].label}.`}
-      >
-        {examples.map((example, index) => {
-          const offset = (index - active + examples.length) % examples.length;
-          const position =
-            offset > examples.length / 2 ? offset - examples.length : offset;
-          if (Math.abs(position) > 3) return null;
-          return (
-            <Image
-              key={example.id}
-              src={`/images/landing/${example.id}.webp`}
-              width={1280}
-              height={example.height}
-              alt=""
+      <div className={styles.controls}>
+        {motionAllowed ? (
+          <button
+            type="button"
+            className={styles.toggle}
+            aria-label={paused ? "Reanudar animación" : "Pausar animación"}
+            aria-describedby={descriptionId}
+            onClick={() => setPaused((current) => !current)}
+          >
+            <svg
+              className={styles.timer}
+              viewBox="0 0 40 40"
               aria-hidden="true"
-              data-position={position}
-              className={styles.sheet}
-              sizes="(min-width: 1000px) 40vw, 70vw"
-              preload={index === 0}
-              loading={index === 0 ? undefined : "eager"}
-              draggable={false}
-            />
-          );
-        })}
-      </div>
-      {motionAllowed ? (
+            >
+              <circle className={styles.track} cx="20" cy="20" r="17" />
+              <circle
+                key={active}
+                className={styles.progress}
+                cx="20"
+                cy="20"
+                r="17"
+                pathLength="1"
+                style={{
+                  animationDuration: `${duration}ms`,
+                  animationPlayState: playing ? "running" : "paused",
+                }}
+              />
+            </svg>
+            {paused ? (
+              <Play aria-hidden="true" />
+            ) : (
+              <Pause aria-hidden="true" />
+            )}
+          </button>
+        ) : null}
         <button
           type="button"
           className={styles.toggle}
-          aria-label={paused ? "Reanudar animación" : "Pausar animación"}
-          aria-describedby={descriptionId}
-          aria-pressed={paused}
-          onFocus={(event) => {
-            if (event.currentTarget.matches(":focus-visible")) setPaused(true);
-          }}
-          onClick={() => setPaused((current) => !current)}
-        />
-      ) : null}
+          aria-label="Ver ejemplo anterior"
+          aria-controls={descriptionId}
+          onClick={() =>
+            setActive(
+              (current) => (current - 1 + examples.length) % examples.length,
+            )
+          }
+        >
+          <ChevronLeft aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          className={styles.toggle}
+          aria-label="Ver ejemplo siguiente"
+          aria-controls={descriptionId}
+          onClick={() =>
+            setActive((current) => (current + 1) % examples.length)
+          }
+        >
+          <ChevronRight aria-hidden="true" />
+        </button>
+      </div>
+      <div className={styles.viewport}>
+        <div
+          id={descriptionId}
+          ref={stage}
+          className={styles.stage}
+          role="group"
+          aria-label={`Los once titulares de Argentina y España en la final del Mundial 2026. ${examples[active].label}.`}
+        >
+          {examples.map((example, index) => {
+            const offset = (index - active + examples.length) % examples.length;
+            const position =
+              offset > examples.length / 2 ? offset - examples.length : offset;
+            if (Math.abs(position) > 3) return null;
+            return (
+              <button
+                key={example.id}
+                type="button"
+                className={styles.sheet}
+                data-position={position}
+                style={{ aspectRatio: `1280 / ${example.height}` }}
+                inert={Math.abs(position) > 2}
+                tabIndex={-1}
+                aria-label={
+                  position === 0
+                    ? "Ver siguiente ejemplo"
+                    : `Ver ejemplo: ${example.label}`
+                }
+                aria-current={position === 0 ? "true" : undefined}
+                onClick={() =>
+                  setActive((current) =>
+                    index === current ? (current + 1) % examples.length : index,
+                  )
+                }
+              >
+                <Image
+                  src={`/images/landing/${example.id}.webp`}
+                  width={1280}
+                  height={example.height}
+                  alt=""
+                  sizes="(min-width: 1000px) 40vw, 70vw"
+                  preload={index === 0}
+                  loading={index === 0 ? undefined : "eager"}
+                  draggable={false}
+                />
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      <p
+        className={styles.caption}
+        aria-live={playing ? "off" : "polite"}
+        aria-atomic="true"
+      >
+        <span className="sr-only">
+          Ejemplo {active + 1} de {examples.length}:{" "}
+        </span>
+        <span key={active} className={styles.captionText}>
+          {examples[active].label}
+        </span>
+      </p>
     </div>
   );
 }
