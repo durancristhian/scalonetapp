@@ -1,0 +1,99 @@
+.page {
+  inline-size: min(100% - 2rem, 80rem);
+  margin-inline: auto;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 1.5rem;
+}
+
+.hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(2rem, 4vw, 4rem);
+  padding-block: clamp(2rem, 5vw, 5rem);
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 1.5rem;
+  flex: 1 1 24rem;
+}
+
+.title {
+  max-inline-size: 17ch;
+  font-size: clamp(2.25rem, 1.4rem + 2.5vw, 3.75rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+.description {
+  max-inline-size: 42ch;
+  color: hsl(var(--muted-foreground));
+  font-size: 1.125rem;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+.example {
+  flex: 1.5 1 34rem;
+  min-inline-size: 0;
+}
+
+.howItWorks {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  border-block-start: 1px solid hsl(var(--border));
+  padding-block: clamp(3rem, 6vw, 5rem);
+  scroll-margin-block-start: 1.5rem;
+}
+
+.sectionTitle {
+  font-size: clamp(1.75rem, 1.25rem + 1vw, 2.25rem);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: 2rem;
+  list-style: none;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 0.75rem;
+}
+
+.stepNumber {
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.step p {
+  max-inline-size: 36ch;
+  color: hsl(var(--muted-foreground));
+  text-wrap: pretty;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  padding-block: 2rem;
+}

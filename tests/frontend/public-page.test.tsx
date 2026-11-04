@@ -37,9 +37,15 @@ describe("Public page", () => {
       container.innerHTML = renderToString(<Page />);
       const page = within(container);
       expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-      expect(page.getByText(/Demostrá tu habilidad/)).toBeVisible();
+      expect(page.getByText(/elegí quién juega con quién/)).toBeVisible();
       expect(
-        page.getByRole("button", { name: "Ingresar con Google" }),
+        page.getByRole("button", { name: "Armar mi partido" }),
+      ).toBeVisible();
+      expect(
+        page.getByRole("img", { name: /Los once titulares/ }),
+      ).toBeVisible();
+      expect(
+        page.getByRole("heading", { name: "Armá los equipos" }),
       ).toBeVisible();
       expect(page.getByRole("button", { name: /Hecho por/ })).toBeVisible();
     } finally {
@@ -47,10 +53,10 @@ describe("Public page", () => {
     }
   });
 
-  it("keeps the sign-in action and analytics", async () => {
+  it("keeps sign-in and analytics", async () => {
     render(<Page />);
     await userEvent.click(
-      screen.getByRole("button", { name: "Ingresar con Google" }),
+      screen.getByRole("button", { name: "Armar mi partido" }),
     );
     expect(boundary.signIn).toHaveBeenCalledOnce();
     expect(boundary.track).toHaveBeenCalledWith("sign_in_clicked");
@@ -65,7 +71,7 @@ describe("Public page", () => {
     rerender(<Page />);
     expect(boundary.push).toHaveBeenCalledWith("/dashboard");
     expect(
-      screen.queryByRole("button", { name: "Ingresar con Google" }),
+      screen.queryByRole("button", { name: "Armar mi partido" }),
     ).not.toBeInTheDocument();
   });
 });
