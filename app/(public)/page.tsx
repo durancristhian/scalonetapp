@@ -9,8 +9,6 @@ import { Show, SignInButton, useAuth } from "@clerk/nextjs";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type FC, useEffect } from "react";
-import headerStyles from "@/components/header.module.css";
-import styles from "./page.module.css";
 
 function StartMatch() {
   return (
@@ -43,37 +41,51 @@ const Page: FC = () => {
       </Show>
       <Show when="signed-out">
         <header className="border-b border-transparent">
-          <div className={headerStyles.content}>
-            <span className={headerStyles.brand}>scalonet.app</span>
+          <div className="mx-auto flex h-12 w-full max-w-7xl items-center justify-between gap-4 px-4 md:h-14">
+            <span className="text-base font-bold leading-normal tracking-normal">
+              scalonet.app
+            </span>
           </div>
         </header>
-        <main className={styles.page}>
-          <section className={styles.hero} aria-labelledby="landing-title">
-            <div className={styles.intro}>
-              <h1 id="landing-title" className={styles.title}>
+        <main className="mx-auto w-[min(100%_-_2rem,80rem)]">
+          <section
+            className="flex flex-wrap items-center gap-[clamp(2rem,4vw,4rem)] py-[clamp(2rem,5vw,5rem)]"
+            aria-labelledby="landing-title"
+          >
+            <div className="flex flex-[1_1_24rem] flex-col items-start gap-6">
+              <h1
+                id="landing-title"
+                className="max-w-[17ch] text-[clamp(2.25rem,1.4rem_+_2.5vw,3.75rem)] font-bold leading-[1.12] tracking-[-0.04em] text-balance"
+              >
                 Armá los equipos para tu próximo partido.
               </h1>
-              <p className={styles.description}>
+              <p className="max-w-[42ch] text-lg leading-[1.6] text-muted-foreground text-pretty">
                 Cargá los jugadores, elegí quién juega con quién y compartí las
                 formaciones con tu grupo.
               </p>
               <StartMatch />
             </div>
-            <div className={styles.example}>
+            <div className="min-w-0 flex-[1.5_1_34rem]">
               <LandingExportShowcase />
             </div>
           </section>
           <section
             id="como-funciona"
-            className={styles.howItWorks}
+            className="flex scroll-mbs-6 flex-col gap-10 border-bs border-border py-[clamp(3rem,6vw,5rem)]"
             aria-labelledby="how-it-works-title"
           >
-            <h2 id="how-it-works-title" className={styles.sectionTitle}>
+            <h2
+              id="how-it-works-title"
+              className="text-[clamp(1.75rem,1.25rem_+_1vw,2.25rem)] font-semibold leading-[1.25] tracking-[-0.025em] text-balance"
+            >
               Cómo funciona
             </h2>
-            <ol className={styles.steps}>
-              <li className={styles.step}>
-                <span className={styles.stepNumber} aria-hidden="true">
+            <ol className="grid list-none grid-cols-[repeat(auto-fit,minmax(min(100%,20rem),1fr))] gap-8">
+              <li className="flex flex-col items-start gap-3 [&>p]:max-w-[36ch] [&>p]:text-muted-foreground [&>p]:text-pretty">
+                <span
+                  className="text-sm leading-6 text-muted-foreground"
+                  aria-hidden="true"
+                >
                   01
                 </span>
                 <h3 className="font-semibold text-xl">Cargá los jugadores</h3>
@@ -82,8 +94,11 @@ const Page: FC = () => {
                   tus propias fotos.
                 </p>
               </li>
-              <li className={styles.step}>
-                <span className={styles.stepNumber} aria-hidden="true">
+              <li className="flex flex-col items-start gap-3 [&>p]:max-w-[36ch] [&>p]:text-muted-foreground [&>p]:text-pretty">
+                <span
+                  className="text-sm leading-6 text-muted-foreground"
+                  aria-hidden="true"
+                >
                   02
                 </span>
                 <h3 className="font-semibold text-xl">Armá los equipos</h3>
@@ -92,8 +107,11 @@ const Page: FC = () => {
                   por nivel y posición.
                 </p>
               </li>
-              <li className={styles.step}>
-                <span className={styles.stepNumber} aria-hidden="true">
+              <li className="flex flex-col items-start gap-3 [&>p]:max-w-[36ch] [&>p]:text-muted-foreground [&>p]:text-pretty">
+                <span
+                  className="text-sm leading-6 text-muted-foreground"
+                  aria-hidden="true"
+                >
                   03
                 </span>
                 <h3 className="font-semibold text-xl">
@@ -107,7 +125,7 @@ const Page: FC = () => {
             </ol>
           </section>
         </main>
-        <footer className={styles.footer}>
+        <footer className="flex justify-center py-8">
           <ShowOff />
         </footer>
       </Show>

@@ -20,6 +20,8 @@ for (const viewport of [
     await before.focus();
     await page.keyboard.press("Tab");
     await expect(resume).toBeFocused();
+    const countdown = page.locator("[data-carousel-timer] circle[pathLength]");
+    await expect(countdown).toHaveCSS("animation-play-state", "paused");
     await page.keyboard.press("Tab");
     await expect(previous).toBeFocused();
     await page.keyboard.press("Tab");
@@ -54,6 +56,7 @@ for (const viewport of [
     await expect(
       page.getByRole("button", { name: "Pausar animación" }),
     ).toBeFocused();
+    await expect(countdown).toHaveCSS("animation-play-state", "running");
     await expect(current).not.toHaveAttribute("aria-label", first!, {
       timeout: 6500,
     });

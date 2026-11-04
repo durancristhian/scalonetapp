@@ -6,7 +6,7 @@
 - Write documentation in English. Preserve existing Spanish UI copy.
 - Make the smallest coherent change. Preserve unrelated work.
 - Keep application code free of explanatory comments; express intent and enforceable constraints through code and tests. Apply the same preference to scripts. Retain a comment only when its value cannot be preserved another way, such as required license notices or unavoidable tool directives.
-- For UI work, read [DESIGN.md](DESIGN.md). [README.md](README.md) is the human-facing entry point.
+- For UI work, read [DESIGN.md](DESIGN.md) and follow its Tailwind styling boundary, enforced for CSS Module imports by [ESLint](eslint.config.mjs). [README.md](README.md) is the human-facing entry point.
 - Update docs only for lasting contract or workflow changes. Keep README concise for people; put agent workflows and verification rules here.
 - Make the smallest sufficient doc edit in the existing section. Link to code/config instead of duplicating it; omit implementation walkthroughs, coverage inventories and run logs. Review the doc diff for redundancy before handoff.
 - Keep public documentation free of credentials, account identifiers, personal machine paths and private project URLs. Use generic examples and retrieve access details from the configured private source.

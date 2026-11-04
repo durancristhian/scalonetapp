@@ -14,6 +14,18 @@ const config = {
       "2xl": "1536px",
     },
     extend: {
+      backgroundImage: {
+        pattern:
+          "radial-gradient(oklch(0.923 0.003 48.717) 2px, transparent 2px), radial-gradient(oklch(0.923 0.003 48.717) 2px, transparent 2px)",
+      },
+      keyframes: {
+        "carousel-countdown": { to: { strokeDashoffset: "0" } },
+        "caption-enter": { from: { opacity: "0" }, to: { opacity: "1" } },
+      },
+      animation: {
+        "carousel-countdown": "carousel-countdown 5s linear forwards",
+        "caption-enter": "caption-enter 180ms ease-out",
+      },
       fontFamily: {
         sans: [
           "ui-sans-serif",
