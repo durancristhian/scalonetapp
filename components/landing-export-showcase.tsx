@@ -140,10 +140,8 @@ export function LandingExportShowcase() {
               <circle className="opacity-15" cx="20" cy="20" r="17" />
               <circle
                 key={active}
-                className={cn(
-                  "[stroke-dasharray:1] [stroke-dashoffset:1] motion-safe:animate-carousel-countdown",
-                  !playing && "[animation-play-state:paused]",
-                )}
+                data-playing={playing}
+                className="[stroke-dasharray:1] [stroke-dashoffset:1] motion-safe:animate-carousel-countdown motion-safe:data-[playing=false]:[animation-play-state:paused]"
                 cx="20"
                 cy="20"
                 r="17"
