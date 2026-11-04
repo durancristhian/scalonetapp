@@ -3,7 +3,7 @@ import { type PropsWithChildren } from "react";
 
 const title = "Scalonet.app | Armá equipos de fútbol";
 const description =
-  "Armá equipos de fútbol con tus amigos. Cargá jugadores, distribuí equipos al azar o por posición y nivel, y descargá una imagen para compartir.";
+  "Armá equipos de fútbol con tus amigos. Cargá los jugadores, elegí quién juega con quién y compartí las formaciones como texto o imagen.";
 const url = "https://www.scalonet.app/";
 const image = "https://www.scalonet.app/api/og";
 
