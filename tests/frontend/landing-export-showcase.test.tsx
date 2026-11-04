@@ -32,10 +32,10 @@ afterEach(() => {
 
 const currentExample = () =>
   screen
-    .getByRole("img", { name: /Los once titulares/ })
+    .getByRole("group", { name: /Los once titulares/ })
     .getAttribute("aria-label");
 
-const advance = (time = 5500) => act(() => vi.advanceTimersByTime(time));
+const advance = (time = 5000) => act(() => vi.advanceTimersByTime(time));
 
 describe("landing export showcase", () => {
   it("cycles through ten distinct examples and returns to the first", () => {
@@ -49,6 +49,61 @@ describe("landing export showcase", () => {
     expect(examples.size).toBe(10);
     advance();
     expect(currentExample()).toBe(first);
+  });
+
+  it("centers either side image, including distant ones, and restarts the full countdown", () => {
+    render(<LandingExportShowcase />);
+    for (const label of [
+      "Césped con lluvia",
+      "Potrero con avatares redondos",
+      "Potrero con nieve y avatares cuadrados centrados",
+    ]) {
+      advance(4000);
+      fireEvent.click(
+        screen.getByRole("button", { name: `Ver ejemplo: ${label}` }),
+      );
+      expect(currentExample()).toContain(label);
+      advance(4999);
+      expect(currentExample()).toContain(label);
+      advance(1);
+      expect(currentExample()).not.toContain(`${label}.`);
+    }
+  });
+
+  it("advances when the central image is activated and restarts its countdown", () => {
+    render(<LandingExportShowcase />);
+    advance(4000);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Ver siguiente ejemplo" }),
+    );
+    expect(currentExample()).toContain("Potrero con avatares redondos");
+    advance(4999);
+    expect(currentExample()).toContain("Potrero con avatares redondos");
+    advance(1);
+    expect(currentExample()).toContain("Césped con lluvia");
+  });
+
+  it("keeps autoplay running while a mouse hovers over the carousel", () => {
+    render(<LandingExportShowcase />);
+    const first = currentExample();
+    fireEvent.pointerEnter(screen.getByRole("region"), {
+      pointerType: "mouse",
+    });
+    advance();
+    expect(currentExample()).not.toBe(first);
+  });
+
+  it("resumes with the remaining time after an explicit pause", () => {
+    render(<LandingExportShowcase />);
+    const first = currentExample();
+    advance(3000);
+    fireEvent.click(screen.getByRole("button", { name: "Pausar animación" }));
+    advance(20000);
+    fireEvent.click(screen.getByRole("button", { name: "Reanudar animación" }));
+    advance(1999);
+    expect(currentExample()).toBe(first);
+    advance(1);
+    expect(currentExample()).not.toBe(first);
   });
 
   it("keeps the chosen example paused until the user resumes", () => {
@@ -66,16 +121,27 @@ describe("landing export showcase", () => {
   it("stays static with reduced motion, including preference changes", () => {
     reducedMotion = true;
     render(<LandingExportShowcase />);
-    const first = currentExample();
-    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /animación/ }),
+    ).not.toBeInTheDocument();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Ver ejemplo: Césped con lluvia" }),
+    );
+    expect(currentExample()).toContain("Césped con lluvia");
+    fireEvent.click(
+      screen.getByRole("button", { name: "Ver siguiente ejemplo" }),
+    );
+    expect(currentExample()).toContain("Césped natural con nieve");
     advance(22000);
-    expect(currentExample()).toBe(first);
+    expect(currentExample()).toContain("Césped natural con nieve");
     act(() => {
       reducedMotion = false;
       preference.dispatchEvent(new Event("change"));
     });
     advance();
-    expect(currentExample()).not.toBe(first);
+    expect(currentExample()).toContain(
+      "Césped con avatares cuadrados centrados",
+    );
     act(() => {
       reducedMotion = true;
       preference.dispatchEvent(new Event("change"));
@@ -83,7 +149,9 @@ describe("landing export showcase", () => {
     const selected = currentExample();
     advance(22000);
     expect(currentExample()).toBe(selected);
-    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /animación/ }),
+    ).not.toBeInTheDocument();
   });
 
   it("suspends automatic changes in a hidden tab and cleans up on unmount", () => {
