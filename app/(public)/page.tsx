@@ -9,6 +9,7 @@ import { Show, SignInButton, useAuth } from "@clerk/nextjs";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type FC, useEffect } from "react";
+import headerStyles from "@/components/header.module.css";
 import styles from "./page.module.css";
 
 function StartMatch() {
@@ -36,15 +37,17 @@ const Page: FC = () => {
   }, [isLoaded, router, userId]);
 
   return (
-    <div className={styles.page}>
+    <div>
       <Show when="signed-in">
         <Loader />
       </Show>
       <Show when="signed-out">
-        <header className={styles.header}>
-          <span className="font-bold text-xl tracking-tight">scalonet.app</span>
+        <header className="border-b border-transparent">
+          <div className={headerStyles.content}>
+            <span className={headerStyles.brand}>scalonet.app</span>
+          </div>
         </header>
-        <main>
+        <main className={styles.page}>
           <section className={styles.hero} aria-labelledby="landing-title">
             <div className={styles.intro}>
               <h1 id="landing-title" className={styles.title}>

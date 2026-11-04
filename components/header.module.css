@@ -1,0 +1,24 @@
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  inline-size: 100%;
+  max-inline-size: 80rem;
+  block-size: 3rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
+.brand {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: normal;
+}
+
+@media (min-width: 48rem) {
+  .content {
+    block-size: 3.5rem;
+  }
+}
