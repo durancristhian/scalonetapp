@@ -3,6 +3,7 @@ import { Analytics } from "@/components/analytics";
 import { analyticsWebsiteId } from "@/server/analytics";
 import { Toaster } from "@/components/ui/sonner";
 import { ClerkProvider } from "@clerk/nextjs";
+import { ui } from "@clerk/ui";
 import clsx from "clsx";
 import type { Metadata, Viewport } from "next";
 import { workSans } from "@/utils/fonts";
@@ -31,6 +32,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <ClerkProvider
       dynamic
+      ui={ui}
+      prefetchUI={false}
       appearance={{ cssLayerName: "vendor" }}
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
       signInForceRedirectUrl="/dashboard"

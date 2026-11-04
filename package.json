@@ -37,6 +37,7 @@
   },
   "devDependencies": {
     "@clerk/nextjs": "7.9.23",
+    "@clerk/ui": "1.42.0",
     "@hookform/resolvers": "^7.0.0",
     "@playwright/test": "^1.64.1",
     "@prisma/client": "7.10.1",
