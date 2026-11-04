@@ -94,17 +94,6 @@
   }
 }
 
-.bg-pattern {
-  background-image:
-    radial-gradient(oklch(0.923 0.003 48.717) 2px, transparent 2px),
-    radial-gradient(oklch(0.923 0.003 48.717) 2px, transparent 2px);
-  background-size: 100px 100px;
-  background-position:
-    0 0,
-    50px 50px;
-  background-color: oklch(0.985 0.001 106.423);
-}
-
 @layer focus {
   :focus-visible {
     outline: 2px solid hsl(var(--ring));

@@ -6,7 +6,6 @@ import {
 } from "@/components/team-export/team-export";
 import { IMAGE_EXPORT_WIDTH } from "@/utils/image-export-options";
 import { memo, useEffect, useRef, useState } from "react";
-import styles from "./export-preview.module.css";
 
 const MemoizedTeamExport = memo(TeamExport);
 
@@ -38,9 +37,12 @@ export function ExportPreview(props: TeamExportProps) {
       )
     : 0;
   return (
-    <div ref={viewport} className={styles.viewport}>
+    <div
+      ref={viewport}
+      className="grid min-h-0 min-w-0 flex-1 place-items-center overflow-clip"
+    >
       <div
-        className={styles.frame}
+        className="relative overflow-clip rounded-[4px] bg-white shadow-[0_8px_28px_oklch(18%_0.015_155_/_0.16)]"
         style={{
           width: IMAGE_EXPORT_WIDTH * scale,
           height: size.contentHeight * scale,
@@ -48,7 +50,7 @@ export function ExportPreview(props: TeamExportProps) {
       >
         <div
           ref={canvas}
-          className={styles.canvas}
+          className="absolute inset-bs-0 start-0 origin-top-left"
           style={{
             inlineSize: IMAGE_EXPORT_WIDTH,
             transform: `scale(${scale})`,

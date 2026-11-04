@@ -17,6 +17,13 @@ The current system, documented from source. Future UI work shares it; change its
 - Keep the white/stone shell, restrained borders, dark primary actions and clear destructive states.
 - Shared radius starts at 0.5rem; use the existing `lg`, `md` and `sm` mappings.
 
+## Styling
+
+- Author application UI with Tailwind utilities, including responsive states, motion and decorative backgrounds. Define reusable utilities and keyframes through the Tailwind configuration.
+- Reserve CSS Modules for the shared preview/image composition inside [components/team-export](components/team-export). Application chrome, preview containers and galleries of generated images use Tailwind; they must not import those modules.
+- Keep [app/globals.css](app/globals.css) limited to Tailwind integration, theme tokens, necessary base rules, shared accessible focus and specific vendor overrides. Component styling belongs in Tailwind.
+- Use inline styles only when runtime values or renderer constraints require them, such as measured preview dimensions/scale, configurable export colors or `ImageResponse`. Keep static UI styles in Tailwind and justify each exception through its runtime or renderer requirement.
+
 ## Layout and controls
 
 - Support page widths from 320 CSS pixels upward. Let components fit their available space.
