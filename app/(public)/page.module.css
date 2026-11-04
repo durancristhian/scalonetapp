@@ -3,15 +3,6 @@
   margin-inline: auto;
 }
 
-.header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-block: 1.5rem;
-}
-
 .hero {
   display: flex;
   flex-wrap: wrap;
