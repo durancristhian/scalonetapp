@@ -1,12 +1,18 @@
 .showcase {
   position: relative;
   min-inline-size: 0;
+  display: grid;
+}
+
+.controls {
+  grid-row: 2;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
 }
 
 .viewport {
+  grid-row: 1;
   inline-size: 100%;
   overflow: clip;
   padding-block: 2rem;

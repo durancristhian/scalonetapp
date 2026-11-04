@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Pause, Play } from "lucide-react";
+import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import styles from "./landing-export-showcase.module.css";
 
@@ -111,6 +111,66 @@ export function LandingExportShowcase() {
         if (event.target.matches(":focus-visible")) setPaused(true);
       }}
     >
+      <div className={styles.controls}>
+        {motionAllowed ? (
+          <button
+            type="button"
+            className={styles.toggle}
+            aria-label={paused ? "Reanudar animación" : "Pausar animación"}
+            aria-describedby={descriptionId}
+            onClick={() => setPaused((current) => !current)}
+          >
+            <svg
+              className={styles.timer}
+              viewBox="0 0 40 40"
+              aria-hidden="true"
+            >
+              <circle className={styles.track} cx="20" cy="20" r="17" />
+              <circle
+                key={active}
+                className={styles.progress}
+                cx="20"
+                cy="20"
+                r="17"
+                pathLength="1"
+                style={{
+                  animationDuration: `${duration}ms`,
+                  animationPlayState: playing ? "running" : "paused",
+                }}
+              />
+            </svg>
+            {paused ? (
+              <Play aria-hidden="true" />
+            ) : (
+              <Pause aria-hidden="true" />
+            )}
+          </button>
+        ) : null}
+        <button
+          type="button"
+          className={styles.toggle}
+          aria-label="Ver ejemplo anterior"
+          aria-controls={descriptionId}
+          onClick={() =>
+            setActive(
+              (current) => (current - 1 + examples.length) % examples.length,
+            )
+          }
+        >
+          <ChevronLeft aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          className={styles.toggle}
+          aria-label="Ver ejemplo siguiente"
+          aria-controls={descriptionId}
+          onClick={() =>
+            setActive((current) => (current + 1) % examples.length)
+          }
+        >
+          <ChevronRight aria-hidden="true" />
+        </button>
+      </div>
       <div className={styles.viewport}>
         <div
           id={descriptionId}
@@ -132,6 +192,7 @@ export function LandingExportShowcase() {
                 data-position={position}
                 style={{ aspectRatio: `1280 / ${example.height}` }}
                 inert={Math.abs(position) > 2}
+                tabIndex={-1}
                 aria-label={
                   position === 0
                     ? "Ver siguiente ejemplo"
@@ -159,33 +220,13 @@ export function LandingExportShowcase() {
           })}
         </div>
       </div>
-      {motionAllowed ? (
-        <button
-          type="button"
-          className={styles.toggle}
-          aria-label={paused ? "Reanudar animación" : "Pausar animación"}
-          aria-describedby={descriptionId}
-          aria-pressed={paused}
-          onClick={() => setPaused((current) => !current)}
-        >
-          <svg className={styles.timer} viewBox="0 0 40 40" aria-hidden="true">
-            <circle className={styles.track} cx="20" cy="20" r="17" />
-            <circle
-              key={active}
-              className={styles.progress}
-              cx="20"
-              cy="20"
-              r="17"
-              pathLength="1"
-              style={{
-                animationDuration: `${duration}ms`,
-                animationPlayState: playing ? "running" : "paused",
-              }}
-            />
-          </svg>
-          {paused ? <Play aria-hidden="true" /> : <Pause aria-hidden="true" />}
-        </button>
-      ) : null}
+      <p
+        className="sr-only"
+        aria-live={playing ? "off" : "polite"}
+        aria-atomic="true"
+      >
+        Ejemplo {active + 1} de {examples.length}: {examples[active].label}.
+      </p>
     </div>
   );
 }

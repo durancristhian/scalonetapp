@@ -9,6 +9,7 @@ import "@/app/globals.css";
 
 import { FocusFixture } from "./focus";
 import { MotionFixture } from "./motion";
+import { CarouselFixture } from "./carousel";
 
 const roster = [player(1, { name: "Ana" })];
 function Fixture() {
@@ -28,7 +29,9 @@ function Fixture() {
 }
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    {new URLSearchParams(location.search).has("motion") ? (
+    {new URLSearchParams(location.search).has("carousel") ? (
+      <CarouselFixture />
+    ) : new URLSearchParams(location.search).has("motion") ? (
       <MotionFixture />
     ) : new URLSearchParams(location.search).has("focus") ? (
       <FocusFixture />
