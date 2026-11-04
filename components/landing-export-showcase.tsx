@@ -221,11 +221,16 @@ export function LandingExportShowcase() {
         </div>
       </div>
       <p
-        className="sr-only"
+        className={styles.caption}
         aria-live={playing ? "off" : "polite"}
         aria-atomic="true"
       >
-        Ejemplo {active + 1} de {examples.length}: {examples[active].label}.
+        <span className="sr-only">
+          Ejemplo {active + 1} de {examples.length}:{" "}
+        </span>
+        <span key={active} className={styles.captionText}>
+          {examples[active].label}
+        </span>
       </p>
     </div>
   );

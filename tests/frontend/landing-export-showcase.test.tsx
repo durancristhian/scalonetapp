@@ -38,6 +38,22 @@ const currentExample = () =>
 const advance = (time = 5000) => act(() => vi.advanceTimersByTime(time));
 
 describe("landing export showcase", () => {
+  it("shows the current example description for autoplay and manual navigation", () => {
+    render(<LandingExportShowcase />);
+    expect(screen.getByText("Césped sin avatares")).toBeVisible();
+    advance();
+    expect(screen.getByText("Potrero con avatares redondos")).toBeVisible();
+    expect(screen.queryByText("Césped sin avatares")).not.toBeInTheDocument();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Ver ejemplo: Césped con lluvia" }),
+    );
+    expect(screen.getByText("Césped con lluvia")).toBeVisible();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Ver ejemplo anterior" }),
+    );
+    expect(screen.getByText("Potrero con avatares redondos")).toBeVisible();
+  });
+
   it("cycles through ten distinct examples and returns to the first", () => {
     render(<LandingExportShowcase />);
     const first = currentExample();

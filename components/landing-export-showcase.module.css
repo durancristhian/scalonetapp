@@ -5,10 +5,25 @@
 }
 
 .controls {
-  grid-row: 2;
+  grid-row: 3;
   display: flex;
   justify-content: center;
   gap: 0.25rem;
+}
+
+.caption {
+  grid-row: 2;
+  display: grid;
+  place-items: center;
+  inline-size: min(calc(100% - 2.5rem), 40ch);
+  min-block-size: 3em;
+  margin-inline: auto;
+  margin-block-end: 0.5rem;
+  color: hsl(var(--muted-foreground));
+  font-size: 0.875rem;
+  line-height: 1.5;
+  text-align: center;
+  text-wrap: balance;
 }
 
 .viewport {
@@ -154,7 +169,20 @@
   }
 }
 
+@keyframes caption-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
+  .captionText {
+    animation: caption-enter 180ms ease-out;
+  }
+
   .progress {
     animation: countdown linear forwards;
   }
