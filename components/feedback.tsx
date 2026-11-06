@@ -1,11 +1,15 @@
 "use client";
 
+import {
+  useDialogSubmission,
+  FormDialog as Dialog,
+  FormDialogContent as DialogContent,
+} from "@/components/form-dialog";
+
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { PendingButton } from "@/components/pending-button";
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -68,6 +72,7 @@ type FeedbackFormProps = {
 
 const FeedbackForm: FC<FeedbackFormProps> = ({ afterSubmit }) => {
   const { successAlert, errorAlert } = useAlerts();
+  const submit = useDialogSubmission();
   const form = useForm<FeedbackSchema>({
     defaultValues: {
       message: "",
@@ -77,12 +82,10 @@ const FeedbackForm: FC<FeedbackFormProps> = ({ afterSubmit }) => {
 
   const onSubmitHandler: (values: FeedbackSchema) => void = async (values) => {
     try {
-      await feedbackAction(values);
-
-      afterSubmit();
-
-      successAlert({
-        title: "¡Su feedback fue enviado!",
+      await submit(async () => {
+        await feedbackAction(values);
+        afterSubmit();
+        successAlert({ title: "¡Su feedback fue enviado!" });
       });
     } catch (error) {
       if (error instanceof Error) {

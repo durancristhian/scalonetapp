@@ -1,6 +1,11 @@
 "use client";
 
 import {
+  FormDialog as Dialog,
+  FormDialogContent as DialogContent,
+} from "@/components/form-dialog";
+
+import {
   unwrapActionResult,
   getActionErrorMessage,
 } from "@/utils/action-result";
@@ -11,8 +16,6 @@ import { MatchForm } from "@/app/(authenticated)/(components)/match-form";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,

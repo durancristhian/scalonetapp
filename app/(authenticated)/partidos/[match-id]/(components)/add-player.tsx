@@ -1,6 +1,11 @@
 "use client";
 
 import {
+  FormDialog as Dialog,
+  FormDialogContent as DialogContent,
+} from "@/components/form-dialog";
+
+import {
   unwrapActionResult,
   getActionErrorMessage,
 } from "@/utils/action-result";
@@ -14,8 +19,6 @@ import { PlayerForm } from "@/app/(authenticated)/partidos/[match-id]/(component
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,

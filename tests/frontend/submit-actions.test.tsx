@@ -3,10 +3,13 @@ import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Toaster } from "sonner";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { AddMatch } from "@/app/(authenticated)/(components)/add-match";
+import { Feedback } from "@/components/feedback";
+import { feedbackAction } from "@/server/actions/feedback";
 import { EditMatch } from "@/app/(authenticated)/(components)/edit-match";
 import { AddPlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/add-player";
 import { EditPlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/edit-player";
-import { editMatchAction } from "@/server/actions/match";
+import { addMatchAction, editMatchAction } from "@/server/actions/match";
 import {
   addMultiplePlayersAction,
   addPlayerAction,
@@ -17,7 +20,11 @@ import { trackAnalytics } from "@/utils/analytics";
 import { deferred, match, player } from "../fixtures";
 
 vi.mock("next/navigation", () => ({ useParams: () => ({ "match-id": "1" }) }));
-vi.mock("@/server/actions/match", () => ({ editMatchAction: vi.fn() }));
+vi.mock("@/server/actions/match", () => ({
+  addMatchAction: vi.fn(),
+  editMatchAction: vi.fn(),
+}));
+vi.mock("@/server/actions/feedback", () => ({ feedbackAction: vi.fn() }));
 vi.mock("@/server/actions/player", () => ({
   addPlayerAction: vi.fn(),
   addMultiplePlayersAction: vi.fn(),
@@ -26,6 +33,8 @@ vi.mock("@/server/actions/player", () => ({
 vi.mock("@/utils/analytics", () => ({ trackAnalytics: vi.fn() }));
 
 beforeEach(() => {
+  vi.mocked(addMatchAction).mockReset();
+  vi.mocked(feedbackAction).mockReset();
   vi.mocked(editMatchAction).mockReset();
   vi.mocked(addPlayerAction).mockReset();
   vi.mocked(addMultiplePlayersAction).mockReset();
@@ -229,3 +238,108 @@ it("waits for the roster write before updating a photo and keeps that save succe
     position: "mid",
   });
 });
+
+it.each(["single", "bulk"])(
+  "keeps the %s player draft locked and open until submission finishes",
+  async (method) => {
+    const single = deferred<Awaited<ReturnType<typeof addPlayerAction>>>();
+    const bulk =
+      deferred<Awaited<ReturnType<typeof addMultiplePlayersAction>>>();
+    vi.mocked(addPlayerAction).mockReturnValue(single.promise);
+    vi.mocked(addMultiplePlayersAction).mockReturnValue(bulk.promise);
+    const user = userEvent.setup();
+    render(<AddPlayer currentPlayerCount={0} />);
+    await user.click(screen.getByRole("button", { name: "Agregar" }));
+    if (method === "bulk")
+      await user.click(screen.getByRole("tab", { name: "Agregar muchos" }));
+    const field = screen.getByLabelText(
+      method === "single" ? "Nombre" : "Jugadores",
+      { exact: true },
+    );
+    await user.type(field, "Ana");
+    await user.click(save());
+    await user.keyboard("{Escape}");
+    expect(screen.getByRole("dialog")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Cerrar" })).toBeDisabled();
+    expect(field).toBeDisabled();
+    expect(screen.getByRole("tab", { name: "Agregar uno" })).toBeDisabled();
+    expect(screen.getByRole("tab", { name: "Agregar muchos" })).toBeDisabled();
+    await user.type(field, " nueva");
+    expect(field).toHaveValue("Ana");
+    expect(addPlayerAction).toHaveBeenCalledTimes(method === "single" ? 1 : 0);
+    expect(addMultiplePlayersAction).toHaveBeenCalledTimes(
+      method === "bulk" ? 1 : 0,
+    );
+    await act(async () => {
+      single.resolve({ ok: true, data: 7 });
+      bulk.resolve({ ok: true, data: undefined });
+    });
+    await waitFor(() =>
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
+    );
+    await user.click(screen.getByRole("button", { name: "Agregar" }));
+    await user.type(screen.getByLabelText("Nombre", { exact: true }), "Beto");
+    expect(screen.getByLabelText("Nombre", { exact: true })).toHaveValue(
+      "Beto",
+    );
+  },
+);
+
+it.each(["add match", "edit match", "edit player", "feedback"])(
+  "locks the draft and dismissal during %s submission and unlocks on failure",
+  async (flow) => {
+    const pending = deferred<void>();
+    const failure = async () => {
+      await pending.promise;
+      throw new Error("Request failed");
+    };
+    vi.mocked(addMatchAction).mockImplementation(failure);
+    vi.mocked(editMatchAction).mockImplementation(failure);
+    vi.mocked(editPlayerAction).mockImplementation(failure);
+    vi.mocked(feedbackAction).mockImplementation(failure);
+    const user = userEvent.setup();
+    render(
+      flow === "add match" ? (
+        <AddMatch />
+      ) : flow === "edit match" ? (
+        <MatchEditor />
+      ) : flow === "edit player" ? (
+        <PlayerEditor />
+      ) : (
+        <Feedback />
+      ),
+    );
+    if (flow === "add match" || flow === "feedback")
+      await user.click(
+        screen.getByRole("button", {
+          name: flow === "feedback" ? "Feedback" : "Agregar",
+        }),
+      );
+    const field = screen.getByLabelText(
+      flow === "feedback"
+        ? "Tu mensaje"
+        : flow === "edit player"
+          ? "Nombre"
+          : "Nombre del partido",
+      { exact: true },
+    );
+    await user.clear(field);
+    await user.type(field, "Nuevo contenido");
+    await user.click(
+      screen.getByRole("button", {
+        name: flow === "feedback" ? "Enviar" : "Guardar",
+      }),
+    );
+    await user.keyboard("{Escape}");
+    expect(screen.getByRole("dialog")).toBeVisible();
+    expect(field).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Cerrar" })).toBeDisabled();
+    await act(async () => pending.resolve());
+    await waitFor(() => expect(field).toBeEnabled());
+    expect(field).toHaveValue("Nuevo contenido");
+    await user.keyboard("{Escape}");
+    await waitFor(() =>
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
+    );
+  },
+);

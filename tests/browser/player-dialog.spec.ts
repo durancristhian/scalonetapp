@@ -128,3 +128,59 @@ for (const action of ["Editar", "Eliminar"]) {
     }
   });
 }
+
+for (const viewport of [
+  { width: 320, height: 568 },
+  { width: 768, height: 1024 },
+  { width: 1024, height: 768 },
+  { width: 1280, height: 800 },
+]) {
+  test(`should keep player creation locked until the request settles at ${viewport.width}x${viewport.height}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport);
+    let release!: () => void;
+    const responseReady = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    await page.route("**/test-actions/player", async (route) => {
+      await responseReady;
+      await route.fulfill({ json: { ok: false, error: "No autorizado." } });
+    });
+    await page.goto("/");
+    await page.getByRole("button", { name: "Agregar", exact: true }).click();
+    const dialog = page.getByRole("dialog");
+    const name = dialog.getByRole("textbox", { name: "Nombre", exact: true });
+    await name.fill("Beto");
+    await dialog.getByRole("button", { name: "Guardar", exact: true }).click();
+    await expect(
+      dialog.getByRole("button", { name: "Guardando..." }),
+    ).toBeDisabled();
+    await expect(name).toBeDisabled();
+    await expect(
+      dialog.getByRole("tab", { name: "Agregar muchos" }),
+    ).toBeDisabled();
+    await expect(dialog.getByRole("button", { name: "Cerrar" })).toBeDisabled();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeVisible();
+    await page.mouse.click(0, 0);
+    await expect(dialog).toBeVisible();
+    release();
+    await expect(
+      page.getByText("No autorizado.", { exact: true }),
+    ).toBeVisible();
+    await expect(name).toBeEnabled();
+    await expect(name).toHaveValue("Beto");
+    const save = dialog.getByRole("button", { name: "Guardar", exact: true });
+    await save.focus();
+    await expect(save).toBeFocused();
+    await expect(save).toBeInViewport();
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+    ).toBe(true);
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+  });
+}

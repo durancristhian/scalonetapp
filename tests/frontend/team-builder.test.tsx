@@ -167,3 +167,24 @@ describe("team builder", () => {
     },
   );
 });
+
+it.each(["balanceTeams", "randomizeTeams"] as const)(
+  "clears free-player selections when %s assigns the roster",
+  (action) => {
+    const value = match([player(1), player(2), player(3), player(4)]);
+    const { result } = renderHook(() => useTeamsBuilderState(value));
+    act(() => result.current.togglePlayer(1));
+    act(() => result.current[action]());
+    expect(result.current.selectedIds).toEqual([]);
+    const assigned = result.current.teams;
+    const source = assigned.find((team) =>
+      team.players.some((p) => p.id === 2),
+    )!;
+    act(() => result.current.removePlayerFromTeam(2, source.id));
+    const beforeAssignment = result.current.teams;
+    const target = assigned.find((team) => team.id !== source.id)!;
+    act(() => result.current.assignSelectionToTeam(target.id));
+    expect(result.current.teams).toEqual(beforeAssignment);
+    expect(result.current.unselectedPlayers.map((p) => p.id)).toEqual([2]);
+  },
+);
