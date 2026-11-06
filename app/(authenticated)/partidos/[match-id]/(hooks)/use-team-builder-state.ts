@@ -222,6 +222,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
     )
       return;
     const balancedTeams = createBalancedTeams([...match.players], teams.length);
+    setSelectedIds([]);
 
     setTeams((currTeams) => {
       return currTeams.map((currTeam, idx) => ({
@@ -289,6 +290,7 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
     const shuffledPlayers = shuffle([...match.players]);
 
     updateTeamsWithPlayerChunks(shuffledPlayers);
+    setSelectedIds([]);
   };
 
   const removePlayerFromTeam: UseTeamsBuilderStateResult["removePlayerFromTeam"] =

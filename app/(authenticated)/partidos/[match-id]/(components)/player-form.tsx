@@ -1,6 +1,7 @@
 "use client";
 
 import { PlayerAvatarInput } from "@/components/player-avatar-input";
+import { useDialogSubmission } from "@/components/form-dialog";
 import { PendingButton } from "@/components/pending-button";
 import { DialogFooter } from "@/components/ui/dialog";
 import {
@@ -52,6 +53,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({
   const id = useId();
   const [photoPreparing, setPhotoPreparing] = useState(false);
   const [photo, setPhoto] = useState<Blob | null | undefined>();
+  const submit = useDialogSubmission();
   const form = useForm<PlayerSchema>({
     defaultValues: values || {
       name: "",
@@ -66,7 +68,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({
   ) => {
     if (photoPreparing) return;
     try {
-      await onSubmit(values, photo);
+      await submit(() => onSubmit(values, photo));
 
       form.reset();
     } catch (error) {}

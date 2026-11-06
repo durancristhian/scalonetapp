@@ -1,5 +1,6 @@
 "use client";
 
+import { useDialogSubmission } from "@/components/form-dialog";
 import { PendingButton } from "@/components/pending-button";
 import { DialogFooter } from "@/components/ui/dialog";
 import {
@@ -33,6 +34,7 @@ type MatchFormProps = {
 };
 
 export const MatchForm: FC<MatchFormProps> = ({ onSubmit, values }) => {
+  const submit = useDialogSubmission();
   const form = useForm<MatchSchema>({
     defaultValues: values || {
       name: "",
@@ -45,7 +47,7 @@ export const MatchForm: FC<MatchFormProps> = ({ onSubmit, values }) => {
     values,
   ) => {
     try {
-      await onSubmit(values);
+      await submit(() => onSubmit(values));
 
       form.reset();
     } catch (error) {}

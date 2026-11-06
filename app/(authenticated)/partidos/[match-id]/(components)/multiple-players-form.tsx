@@ -1,5 +1,6 @@
 "use client";
 
+import { useDialogSubmission } from "@/components/form-dialog";
 import { PendingButton } from "@/components/pending-button";
 import { DialogFooter } from "@/components/ui/dialog";
 import {
@@ -43,6 +44,7 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
     [currentPlayerCount],
   );
   const availableSlots = getRemainingPlayerSlots(currentPlayerCount);
+  const submit = useDialogSubmission();
   const form = useForm<PlayersSchema>({
     mode: "onChange",
     defaultValues: {
@@ -63,7 +65,7 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
     try {
       const nextPlayers = getPlayersFromLines(lines);
 
-      await onSubmit(nextPlayers);
+      await submit(() => onSubmit(nextPlayers));
 
       form.reset();
     } catch (error) {}

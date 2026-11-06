@@ -1,3 +1,9 @@
+"use client";
+
+import {
+  FormDialog as Dialog,
+  FormDialogContent as DialogContent,
+} from "@/components/form-dialog";
 import {
   unwrapActionResult,
   getActionErrorMessage,
@@ -6,8 +12,6 @@ import { savePlayerPhoto } from "@/utils/save-player-photo";
 import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
 import { PlayerForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/player-form";
 import {
-  Dialog,
-  DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
