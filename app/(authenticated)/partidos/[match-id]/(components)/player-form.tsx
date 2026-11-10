@@ -17,12 +17,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { PLAYER_SCHEMA, type PlayerSchema } from "@/schemas/player";
-import { PLAYER_POSITIONS } from "@/utils/player-positions";
+import { PLAYER_POSITIONS, PLAYER_LEVELS } from "@/utils/player-options";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useId, useState, type FC } from "react";
 import { useForm } from "react-hook-form";
-
-const PLAYER_LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 const LEVEL_MESSAGES: Record<number, string> = {
   1: "Un tronco realmente.",

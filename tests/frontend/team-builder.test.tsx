@@ -97,6 +97,26 @@ describe("team builder", () => {
       expect(value.players).toEqual(roster);
     },
   );
+  it("balances positions in roster order, preferring team size before combined level", () => {
+    const players = [
+      player(1, { position: "mid", level: 2 }),
+      player(2, { position: "goa", level: 5 }),
+      player(3, { position: "mid", level: 9 }),
+      player(4, { position: "def", level: 4 }),
+      player(5, { position: "goa", level: 1 }),
+      player(6, { position: "for", level: 7 }),
+      player(7, { position: "mid", level: 5 }),
+    ];
+    const value = match(players, saved);
+    const { result } = renderHook(() => useTeamsBuilderState(value));
+    act(() => result.current.balanceTeams());
+    expect(
+      result.current.teams.map((team) => team.players.map(({ id }) => id)),
+    ).toEqual([
+      [3, 2, 4],
+      [7, 1, 5, 6],
+    ]);
+  });
   it("should update player details and remove deleted selections when the roster refreshes", () => {
     const value = match(roster, saved);
     const { result, rerender } = renderHook(

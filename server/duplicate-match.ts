@@ -1,3 +1,4 @@
+import { getMaxMatchesPerUser } from "@/utils/match-limits";
 import type { DuplicateMatchResult } from "@/types/duplicate-match";
 import type { BaseTeam } from "@/types/team";
 import { getDuplicatedMatchName } from "@/utils/match-name";
@@ -54,10 +55,7 @@ export async function duplicateMatch(
       where: { userId },
       select: { name: true },
     });
-    if (
-      matches.length >=
-      Number(process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER ?? 100)
-    ) {
+    if (matches.length >= getMaxMatchesPerUser()) {
       return { ok: false, code: "match_limit" };
     }
     const names = new Set(matches.map((match) => match.name));

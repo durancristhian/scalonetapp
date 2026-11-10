@@ -1,3 +1,4 @@
+import { ID_SCHEMA } from "@/schemas/id";
 import { auth } from "@clerk/nextjs/server";
 import { put } from "@vercel/blob";
 import { randomUUID } from "node:crypto";
@@ -28,12 +29,7 @@ async function ownedPlayer(request: Request, context: Context) {
   if (!userId) return response("Inicia sesión para cambiar la foto.", 401);
   const { playerId } = await context.params;
   const id = Number(playerId);
-  if (
-    !/^\d+$/.test(playerId) ||
-    !Number.isSafeInteger(id) ||
-    id < 1 ||
-    id > 2147483647
-  )
+  if (!/^\d+$/.test(playerId) || !ID_SCHEMA.safeParse(id).success)
     return response("Jugador no encontrado.", 404);
   const player = await prisma.player.findFirst({
     where: { id, match: { userId } },

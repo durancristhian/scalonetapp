@@ -77,11 +77,10 @@ it("should acknowledge the saved draft without another request when saving twice
     screen.getByRole("button", { name: "Guardar equipos" }),
   ).toBeDisabled();
   await user.click(screen.getByRole("button", { name: "Guardar equipos" }));
-  expect(editMatchAction).toHaveBeenCalledExactlyOnceWith(
-    1,
-    { teams: saved, expectedTeams: "[]" },
-    "/partidos/[match-id]",
-  );
+  expect(editMatchAction).toHaveBeenCalledExactlyOnceWith(1, {
+    teams: saved,
+    expectedTeams: "[]",
+  });
 });
 it("should block both actions when the draft is invalid", () => {
   render(<Actions valid={false} />);

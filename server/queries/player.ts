@@ -6,8 +6,6 @@ import { removePlayerFromSavedTeams } from "../../utils/remove-player-from-saved
 import type { Player, Prisma } from "@prisma/client";
 import { ExpectedActionError } from "../expected-action-error.ts";
 
-export class PlayerAdditionError extends ExpectedActionError {}
-
 export async function updatePlayerAvatarQuery(
   player: Pick<Player, "id" | "matchId" | "avatar">,
   userId: string,
@@ -50,7 +48,7 @@ async function addPlayersAtomically<T>(
 
       const count = await transaction.player.count({ where: { matchId } });
       const limitError = getPlayerAdditionError(count, players.length);
-      if (limitError) throw new PlayerAdditionError(limitError);
+      if (limitError) throw new ExpectedActionError(limitError);
 
       const names = players.map((player) => player.name);
       const existing = await transaction.player.findFirst({
@@ -58,7 +56,7 @@ async function addPlayersAtomically<T>(
         select: { id: true },
       });
       if (new Set(names).size !== names.length || existing) {
-        throw new PlayerAdditionError(ERROR_MESSAGES.match_players_repeated);
+        throw new ExpectedActionError(ERROR_MESSAGES.match_players_repeated);
       }
       return insert(transaction);
     },

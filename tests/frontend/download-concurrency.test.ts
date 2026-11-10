@@ -70,7 +70,7 @@ function browserFixture() {
   };
   boundary.launch.mockResolvedValue(browser);
   boundary.prepare.mockReturnValue(encoding.promise);
-  return { closing, encoding, browser };
+  return { closing, encoding, browser, page };
 }
 
 const image = {
@@ -124,5 +124,26 @@ describe("download post-capture work", () => {
     closing.reject(new Error("cleanup failed"));
     encoding.resolve(image);
     expect((await response).status).toBe(404);
+  });
+  it("releases the browser after capture fails", async () => {
+    const { closing, browser, page } = browserFixture();
+    page.waitForSelector.mockRejectedValue(new Error("capture failed"));
+    const response = GET(request());
+    await vi.waitFor(() => expect(browser.close).toHaveBeenCalled());
+    closing.resolve();
+    expect((await response).status).toBe(404);
+    expect(browser.close).toHaveBeenCalledTimes(1);
+    expect(boundary.prepare).not.toHaveBeenCalled();
+  });
+
+  it("releases the browser even when page cleanup fails", async () => {
+    const { closing, encoding, browser, page } = browserFixture();
+    page.close.mockRejectedValue(new Error("page cleanup failed"));
+    const response = GET(request());
+    await vi.waitFor(() => expect(browser.close).toHaveBeenCalled());
+    closing.resolve();
+    encoding.resolve(image);
+    expect((await response).status).toBe(404);
+    expect(browser.close).toHaveBeenCalledTimes(1);
   });
 });

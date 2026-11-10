@@ -4,7 +4,7 @@ import {
   unwrapActionResult,
   getActionErrorMessage,
 } from "@/utils/action-result";
-import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
+import { useAlerts } from "@/components/use-alerts";
 import { ActionConfirmationDialog } from "@/components/action-confirmation-dialog";
 import { deleteMatchAction } from "@/server/actions/match";
 import { ERROR_MESSAGES } from "@/utils/error-messages";

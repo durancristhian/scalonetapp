@@ -1,5 +1,15 @@
+import { IMAGE_EXPORT_BACKGROUNDS } from "../utils/image-export-backgrounds.ts";
+import {
+  IMAGE_EXPORT_AVATARS,
+  IMAGE_EXPORT_ALIGNMENTS,
+  IMAGE_EXPORT_WEATHERS,
+} from "../utils/image-export-options.ts";
 import { z } from "zod";
-import { ANALYTICS_EVENTS } from "../utils/analytics-events.ts";
+import {
+  ANALYTICS_EVENTS,
+  ANALYTICS_PAGES,
+  type AnalyticsPage,
+} from "../utils/analytics-events.ts";
 import { MAX_PLAYERS_BATCH } from "../utils/player-limits.ts";
 
 export function analyticsWebsiteId(): string | null {
@@ -13,10 +23,10 @@ export function analyticsWebsiteId(): string | null {
 
 const exportData = z
   .object({
-    surface: z.enum(["pasto", "natural", "potrero"]),
-    weather: z.enum(["none", "rain", "snow"]),
-    image_shape: z.enum(["square", "circle", "none"]),
-    alignment: z.enum(["left", "center"]),
+    surface: z.enum(IMAGE_EXPORT_BACKGROUNDS.map(({ id }) => id)),
+    weather: z.enum(IMAGE_EXPORT_WEATHERS.map(({ id }) => id)),
+    image_shape: z.enum(IMAGE_EXPORT_AVATARS.map(({ id }) => id)),
+    alignment: z.enum(IMAGE_EXPORT_ALIGNMENTS.map(({ id }) => id)),
     has_captain: z.boolean(),
     has_goalkeeper: z.boolean(),
   })
@@ -36,8 +46,8 @@ export const analyticsRequestSchema = z
       .object({
         website: z.guid(),
         hostname: z.enum(["www.scalonet.app", "scalonet.app"]),
-        url: z.enum(["/", "/dashboard", "/partidos", "/partidos/:match"]),
-        title: z.enum(["Home", "Dashboard", "Matches", "Team builder"]),
+        url: z.enum(Object.keys(ANALYTICS_PAGES) as AnalyticsPage[]),
+        title: z.enum(Object.values(ANALYTICS_PAGES)),
         referrer: z
           .string()
           .max(253)

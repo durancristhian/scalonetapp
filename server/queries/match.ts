@@ -1,3 +1,4 @@
+import { getMaxMatchesPerUser } from "@/utils/match-limits";
 import {
   MATCH_SCHEMA,
   MATCH_UPDATE_SCHEMA,
@@ -81,7 +82,7 @@ export const addMatchQuery: (
   return prisma.$transaction(async (transaction) => {
     await lockMatchOwner(transaction, userId);
     const count = await transaction.match.count({ where: { userId } });
-    if (count >= Number(process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER ?? 100))
+    if (count >= getMaxMatchesPerUser())
       throw new ExpectedActionError(ERROR_MESSAGES.match_limit_reached);
     const repeated = await transaction.match.findFirst({
       where: { userId, name: matchData.name },
