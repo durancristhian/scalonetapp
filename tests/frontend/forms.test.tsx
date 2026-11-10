@@ -89,6 +89,38 @@ describe("match form", () => {
 });
 
 describe("bulk player form", () => {
+  it.each([
+    ["", ""],
+    ["Ana", "Se ha detectado 1 nombre."],
+    ["Ana\nBeto", "Se han detectado 2 nombres."],
+  ])(
+    "should associate one complete description when names are %j",
+    async (names, count) => {
+      const user = userEvent.setup();
+      render(
+        <MultiplePlayersForm currentPlayerCount={98} onSubmit={vi.fn()} />,
+      );
+      const input = screen.getByLabelText("Jugadores");
+      if (names) {
+        await user.click(input);
+        await user.paste(names);
+      }
+      const descriptionIds = input
+        .getAttribute("aria-describedby")!
+        .split(/\s+/);
+      for (const id of descriptionIds) {
+        expect.soft(document.querySelectorAll(`[id="${id}"]`)).toHaveLength(1);
+      }
+      expect(input).toHaveAccessibleDescription(
+        [
+          "Agregá un nombre por línea, hasta 50 por carga. Podés agregar hasta 2 jugadores más a este partido.",
+          count,
+        ]
+          .filter(Boolean)
+          .join(" "),
+      );
+    },
+  );
   it("should count and submit only trimmed nonempty names when pasted text contains blank lines", async () => {
     const submit = vi.fn().mockResolvedValue(undefined);
     const user = userEvent.setup();
