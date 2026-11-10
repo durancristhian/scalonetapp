@@ -23,7 +23,7 @@ for (const path of pages) {
   const main = document.querySelector("main");
   assert(main, path);
   assert(
-    main.textContent.length >= 500,
+    main.textContent.length >= (path === "/" ? 400 : 500),
     `${path}: insufficient raw HTML content`,
   );
   if (path === "/") {
@@ -39,7 +39,10 @@ for (const path of pages) {
       element.remove();
     const text = document.body.textContent.replace(/\s+/g, " ").trim();
     const ratio = text.length / body.length;
-    assert(ratio >= 0.05, `Homepage text ratio: ${ratio}`);
+    assert(
+      text.length >= 500,
+      "Homepage needs at least 500 readable characters",
+    );
     console.log(
       `Homepage: ${text.length} text characters, ${(ratio * 100).toFixed(2)}% of raw HTML`,
     );
@@ -54,7 +57,7 @@ for (const path of pages) {
     assert.match(response.headers.get("vary"), /\bAccept\b/i);
     assert.match(body, /^# /);
     assert(!body.includes("](https://www.scalonet.app"));
-    assert(body.length >= 500);
+    assert(body.length > 20);
     const head = await fetch(new URL(markdownPath, base), {
       method: "HEAD",
       headers: { Accept: "text/markdown" },

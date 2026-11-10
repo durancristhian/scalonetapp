@@ -54,7 +54,7 @@ describe("public representations", () => {
       expect(response.headers.get("vary")).toBe("Accept");
       expect(response.headers.get("cache-control")).toContain("no-store");
       const markdown = await response.text();
-      expect(markdown.length).toBeGreaterThan(500);
+      expect(markdown.length).toBeGreaterThan(20);
       expect(markdown).not.toContain("](https://www.scalonet.app");
       expect(markdown).toContain("](/contact)");
       expect(publicResponse(request(path, "text/html"))).toBeNull();

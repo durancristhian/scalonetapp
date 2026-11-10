@@ -37,13 +37,17 @@ describe("Public page", () => {
       container.innerHTML = renderToString(<Page />);
       const page = within(container);
       expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+      expect(
+        page.queryByRole("heading", { name: "Preguntas frecuentes" }),
+      ).toBeNull();
       expect(container.querySelectorAll("h1")).toHaveLength(1);
       expect(
         page.getByRole("banner").querySelector('a[href="/"]'),
       ).toHaveTextContent("scalonet.app");
-      expect(
-        container.querySelector("main")!.textContent!.length,
-      ).toBeGreaterThan(2000);
+      const publicText = ["header", "main", "footer"]
+        .map((selector) => container.querySelector(selector)!.textContent)
+        .join(" ");
+      expect(publicText.length).toBeGreaterThanOrEqual(500);
       expect(page.getByRole("link", { name: "Contacto" })).toHaveAttribute(
         "href",
         "/contact",

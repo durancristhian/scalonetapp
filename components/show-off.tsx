@@ -30,29 +30,27 @@ export const ShowOff: FC<ShowOffProps> = ({ popoverSeparation, className }) => {
           popoverSeparation && "me-4",
         )}
       >
-        <div className="flex gap-4">
-          <Avatar>
-            <AvatarImage
-              src="/me.jpg"
-              alt="Descansando en Merlo, San Luis, Argentina"
-            />
-            <AvatarFallback>CD</AvatarFallback>
-          </Avatar>
-          <div className="min-w-0 grow">
-            <div className="space-y-4">
-              <div>
-                <h4 className="font-bold">Cristhian Duran</h4>
-                <p className="text-base">
-                  Programador front-end de Buenos Aires, Argentina.
-                </p>
-              </div>
-              <div className="flex gap-2 items-center">
-                <MailIcon className="size-4 shrink-0 text-muted-foreground" />
-                <span className="min-w-0 break-words text-muted-foreground text-sm">
-                  {publicContact.email}
-                </span>
-              </div>
+        <div className="flex flex-col gap-4">
+          <div className="flex gap-4">
+            <Avatar>
+              <AvatarImage
+                src="/me.jpg"
+                alt="Descansando en Merlo, San Luis, Argentina"
+              />
+              <AvatarFallback>CD</AvatarFallback>
+            </Avatar>
+            <div className="min-w-0 grow">
+              <h4 className="font-bold">Cristhian Duran</h4>
+              <p className="text-base">
+                Programador front-end de Buenos Aires, Argentina.
+              </p>
             </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <MailIcon className="size-4 shrink-0 text-muted-foreground" />
+            <span className="min-w-0 break-words text-muted-foreground text-sm">
+              {publicContact.email}
+            </span>
           </div>
         </div>
       </PopoverContent>

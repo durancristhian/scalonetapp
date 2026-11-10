@@ -59,6 +59,7 @@ for (const [width, height] of [
         right: rect.right,
       }));
     });
+    expect(emailLines).toHaveLength(1);
     for (const line of emailLines) {
       expect(line.left).toBeGreaterThanOrEqual(panel.x);
       expect(line.right).toBeLessThanOrEqual(panel.x + panel.width);

@@ -1,6 +1,6 @@
 "use client";
 
-import { homeDetails, softwareSchema } from "@/utils/public-content";
+import { softwareSchema } from "@/utils/public-content";
 import { trackAnalytics } from "@/utils/analytics";
 import { Loader } from "@/components/loader";
 import { LandingExportShowcase } from "@/components/landing-export-showcase";
@@ -125,24 +125,6 @@ const Page: FC = () => {
                 </p>
               </li>
             </ol>
-          </section>
-          <section
-            className="flex flex-col gap-8 border-bs border-border py-[clamp(3rem,6vw,5rem)]"
-            aria-labelledby="questions-title"
-          >
-            <h2 id="questions-title" className="text-2xl font-semibold">
-              Preguntas frecuentes
-            </h2>
-            <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,24rem),1fr))] gap-8">
-              {homeDetails.map((section) => (
-                <section key={section.title} className="flex flex-col gap-3">
-                  <h3 className="text-xl font-semibold">{section.title}</h3>
-                  <p className="text-muted-foreground text-pretty">
-                    {section.text}
-                  </p>
-                </section>
-              ))}
-            </div>
           </section>
         </main>
         <PublicFooter />

@@ -52,31 +52,12 @@ export const publicPages = {
 
 export type PublicPath = keyof typeof publicPages;
 
-export const homeDetails = [
-  {
-    title: "¿Para qué partidos sirve?",
-    text: "Usá Scalonet.app para preparar el fútbol de la semana, organizar un amistoso o repartir un grupo de amigos en dos equipos. El organizador puede decidir cada asignación o probar una distribución al azar, por nivel y posición. Después puede ajustar los equipos antes de guardar. No hace falta que todos los jugadores tengan una cuenta: una persona carga la lista y comparte el resultado con el grupo.",
-  },
-  {
-    title: "¿Cuántos jugadores puedo cargar?",
-    text: "Cada partido admite hasta 100 jugadores. Podés agregarlos de a uno o pegar hasta 50 nombres por vez. Siempre hay dos equipos, pero pueden tener distinta cantidad de jugadores o estar incompletos. Si alguien todavía no tiene equipo, puede quedar libre dentro del partido. Esos jugadores siguen en la lista para que puedas asignarlos más adelante y no aparecen en la formación que compartís.",
-  },
-  {
-    title: "¿Cómo guardo y comparto los equipos?",
-    text: "Ingresá con tu cuenta para crear un partido y volver a encontrarlo después. Cargá los jugadores, armá las formaciones y guardá los cambios. Para pasarlas a tu grupo, copiá los equipos como texto o descargá una imagen. La vista previa permite revisar nombres, fotos, avatares y el fondo antes de descargar. También podés guardar o exportar equipos parciales mientras terminás de confirmar quiénes juegan.",
-  },
-  {
-    title: "¿Qué necesito para empezar?",
-    text: "Abrí Scalonet.app en el navegador y elegí Armar mi partido para ingresar. Tené a mano los nombres de quienes van a jugar; las fotos son opcionales. Podés editar la lista y cambiar las asignaciones mientras preparás el encuentro. Si necesitás ayuda con la cuenta, querés enviar una sugerencia o tenés una consulta sobre tus datos, encontrás los canales disponibles en Contacto y el detalle del tratamiento de datos en Privacidad.",
-  },
-];
-
 export function pageMarkdown(path: PublicPath) {
   const page = publicPages[path];
   return `# ${page.title}\n\n${page.sections.map((section) => `## ${section.title}\n\n${section.text}`).join("\n\n")}\n\n${path === "/contact" ? "Correo: [${publicContact.email}](mailto:${publicContact.email})\n\n" : ""}[Inicio](/) · [Contacto](/contact) · [Privacidad](/privacy)\n`;
 }
 
-export const homeMarkdown = `# Scalonet.app — Armá equipos de fútbol\n\nCargá los jugadores, elegí quién juega con quién y compartí las formaciones con tu grupo.\n\n## Cómo funciona\n\n1. Agregá jugadores uno por uno o pegá una lista de nombres. Las fotos son opcionales.\n2. Armá dos equipos manualmente, al azar o por nivel y posición.\n3. Guardá las formaciones y compartilas como texto o imagen.\n\n${homeDetails.map((section) => `## ${section.title}\n\n${section.text}`).join("\n\n")}\n\n[Armar mi partido](/) · [Acerca de](/about) · [Contacto](/contact) · [Privacidad](/privacy)\n`;
+export const homeMarkdown = `# Scalonet.app — Armá equipos de fútbol\n\nCargá los jugadores, elegí quién juega con quién y compartí las formaciones con tu grupo.\n\n## Cómo funciona\n\n1. Agregá jugadores uno por uno o pegá una lista de nombres. Las fotos son opcionales.\n2. Armá dos equipos manualmente, al azar o por nivel y posición.\n3. Guardá las formaciones y compartilas como texto o imagen.\n\n[Armar mi partido](/) · [Acerca de](/about) · [Contacto](/contact) · [Privacidad](/privacy)\n`;
 
 export const softwareSchema = {
   "@context": "https://schema.org",
