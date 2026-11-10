@@ -38,7 +38,7 @@
 - Reproduce a reported bug in the affected flow before choosing a fix.
 - Run checks proportionate to the change using the current `package.json` scripts. Exercise the affected journey with synthetic data in Development or Preview.
 - For frontend behavior changes, run the affected Vitest tests during development and `npm run test:frontend` before handoff. Frontend-only preparation is `npm ci` followed by `npx playwright install chromium`; no env file, database or Clerk session is needed.
-- `npm run test:setup` covers cache and owned PostgreSQL lifecycle, including seeding; CI installs PostgreSQL. `npm run typecheck` generates route types without a server. [CI](.github/workflows/frontend-tests.yml) runs the repository checks; authentication, real uploads and backend journeys need separate verification.
+- `npm run test:setup` covers cache and owned PostgreSQL lifecycle, including seeding. `npm run test:database` exercises server queries against isolated PostgreSQL fixtures; CI installs PostgreSQL. `npm run typecheck` generates route types without a server. [CI](.github/workflows/frontend-tests.yml) runs the repository checks; authentication, real uploads and backend journeys need separate verification.
 - Test frontend behavior with real components and minimal external-boundary substitutes. Reserve browser tests for behaviors requiring a real browser; omit visual baselines and exact render counts.
 - For roster or export changes, check save/reload, partial teams, stale tabs and preview/PNG agreement where affected. Use two teams of 16 players for export verification; 100-player exports are stress and size checks.
 - For UI changes, check 320x568, 768x1024, 1024x768 and 1280x800 CSS-pixel viewports. Check immediately around relevant breakpoints.

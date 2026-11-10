@@ -17,6 +17,7 @@
     "test:browser": "node scripts/worktree.mjs browser",
     "test:browser:serve": "vite --config tests/browser/vite.config.mts",
     "test:frontend": "npm run test && npm run test:browser",
+    "test:database": "vitest run --config vitest.database.config.mts",
     "typecheck": "next typegen && tsc --noEmit",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
