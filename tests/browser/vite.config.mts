@@ -6,7 +6,7 @@ const root = fileURLToPath(new URL("../..", import.meta.url));
 export default defineConfig({
   root: fileURLToPath(new URL("./fixture", import.meta.url)),
   plugins: [react()],
-  optimizeDeps: { include: ["next/image"] },
+  optimizeDeps: { include: ["next/image", "next/link"] },
   resolve: {
     alias: {
       "@/server/actions/match": fileURLToPath(
