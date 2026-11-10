@@ -83,19 +83,21 @@ export const MultiplePlayersForm: FC<MultiplePlayersFormProps> = ({
               <FormControl>
                 <Textarea rows={10} placeholder={PLACEHOLDER} {...field} />
               </FormControl>
-              <FormDescription>
-                Agregá un nombre por línea, hasta {MAX_PLAYERS_BATCH} por carga.
-                Podés agregar hasta {availableSlots}{" "}
-                {availableSlots === 1 ? "jugador más" : "jugadores más"} a este
-                partido.
+              <FormDescription className="flex flex-col gap-2">
+                <span>
+                  Agregá un nombre por línea, hasta {MAX_PLAYERS_BATCH} por
+                  carga. Podés agregar hasta {availableSlots}{" "}
+                  {availableSlots === 1 ? "jugador más" : "jugadores más"} a
+                  este partido.
+                </span>{" "}
+                {lines.length > 0 ? (
+                  <span>
+                    {lines.length === 1
+                      ? "Se ha detectado 1 nombre."
+                      : `Se han detectado ${lines.length} nombres.`}
+                  </span>
+                ) : null}
               </FormDescription>
-              {lines.length > 0 ? (
-                <FormDescription>
-                  {lines.length === 1
-                    ? "Se ha detectado 1 nombre."
-                    : `Se han detectado ${lines.length} nombres.`}
-                </FormDescription>
-              ) : null}
               <FormMessage />
             </FormItem>
           )}
