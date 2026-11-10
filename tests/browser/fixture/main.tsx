@@ -9,6 +9,7 @@ import { MatchItem } from "@/app/(authenticated)/(components)/match-item";
 import { match, player } from "../../fixtures";
 import "@/app/globals.css";
 
+import { FloatingMotionFixture } from "./floating-motion";
 import { FocusFixture } from "./focus";
 import { MotionFixture } from "./motion";
 import { CarouselFixture } from "./carousel";
@@ -38,6 +39,8 @@ createRoot(document.getElementById("root")!).render(
       </>
     ) : new URLSearchParams(location.search).has("carousel") ? (
       <CarouselFixture />
+    ) : new URLSearchParams(location.search).has("floating-motion") ? (
+      <FloatingMotionFixture />
     ) : new URLSearchParams(location.search).has("motion") ? (
       <MotionFixture />
     ) : new URLSearchParams(location.search).has("focus") ? (
