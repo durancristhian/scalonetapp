@@ -50,6 +50,9 @@ for (const [width, height] of [
     await author.click();
     const email = page.getByText("durancristhiandev@gmail.com");
     await expect(email).toBeVisible();
+    await expect(page.getByRole("dialog")).toHaveAccessibleName(
+      "Cristhian Duran",
+    );
     const panel = (await page.getByRole("dialog").boundingBox())!;
     const emailLines = await email.evaluate((element) => {
       const range = document.createRange();

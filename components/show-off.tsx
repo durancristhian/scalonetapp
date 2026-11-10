@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/popover";
 import clsx from "clsx";
 import { MailIcon } from "lucide-react";
-import { type FC } from "react";
+import { type FC, useId } from "react";
 
 type ShowOffProps = {
   popoverSeparation?: boolean;
@@ -16,6 +16,8 @@ type ShowOffProps = {
 };
 
 export const ShowOff: FC<ShowOffProps> = ({ popoverSeparation, className }) => {
+  const headingId = useId();
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -25,6 +27,7 @@ export const ShowOff: FC<ShowOffProps> = ({ popoverSeparation, className }) => {
         </Button>
       </PopoverTrigger>
       <PopoverContent
+        aria-labelledby={headingId}
         className={clsx(
           "max-w-[calc(100vw-2rem)]",
           popoverSeparation && "me-4",
@@ -40,7 +43,9 @@ export const ShowOff: FC<ShowOffProps> = ({ popoverSeparation, className }) => {
               <AvatarFallback>CD</AvatarFallback>
             </Avatar>
             <div className="min-w-0 grow">
-              <h4 className="font-bold">Cristhian Duran</h4>
+              <h4 id={headingId} className="font-bold">
+                Cristhian Duran
+              </h4>
               <p className="text-base">
                 Programador front-end de Buenos Aires, Argentina.
               </p>
