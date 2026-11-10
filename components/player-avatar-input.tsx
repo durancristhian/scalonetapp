@@ -1,5 +1,5 @@
 "use client";
-import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
+import { useAlerts } from "@/components/use-alerts";
 import { type ImageCropper as ImageCropperComponent } from "@/components/image-cropper";
 import { PlayerAvatar } from "@/components/player-avatar";
 import { Button } from "@/components/ui/button";

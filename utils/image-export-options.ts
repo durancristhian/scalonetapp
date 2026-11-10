@@ -15,12 +15,22 @@ export const IMAGE_EXPORT_WEATHERS = [
   { id: "snow", label: "Nieve" },
 ] as const;
 
+export const IMAGE_EXPORT_ALIGNMENTS = [
+  { id: "left", label: "Izquierda" },
+  { id: "center", label: "Centrada" },
+] as const;
+
+export const IMAGE_EXPORT_PLAYER_ORDERS = [
+  { id: "alphabetical", label: "Nombre" },
+  { id: "position", label: "Posición" },
+] as const;
+
 export type ImageExportOptions = {
   background: ImageExportBackgroundId;
   weather: (typeof IMAGE_EXPORT_WEATHERS)[number]["id"];
   avatarShape: (typeof IMAGE_EXPORT_AVATARS)[number]["id"];
-  alignment: "left" | "center";
-  playerOrder: "alphabetical" | "position";
+  alignment: (typeof IMAGE_EXPORT_ALIGNMENTS)[number]["id"];
+  playerOrder: (typeof IMAGE_EXPORT_PLAYER_ORDERS)[number]["id"];
 };
 
 export const DEFAULT_IMAGE_EXPORT_OPTIONS: Readonly<ImageExportOptions> = {
@@ -43,9 +53,8 @@ export function isImageExportOptions(
     IMAGE_EXPORT_BACKGROUNDS.some(({ id }) => id === options.background) &&
     IMAGE_EXPORT_WEATHERS.some(({ id }) => id === options.weather) &&
     IMAGE_EXPORT_AVATARS.some(({ id }) => id === options.avatarShape) &&
-    (options.alignment === "left" || options.alignment === "center") &&
-    (options.playerOrder === "alphabetical" ||
-      options.playerOrder === "position")
+    IMAGE_EXPORT_ALIGNMENTS.some(({ id }) => id === options.alignment) &&
+    IMAGE_EXPORT_PLAYER_ORDERS.some(({ id }) => id === options.playerOrder)
   );
 }
 

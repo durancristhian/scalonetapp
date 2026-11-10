@@ -1,6 +1,6 @@
 import { PlayerAvatar } from "@/components/player-avatar";
 import { Badge } from "@/components/ui/badge";
-import { PLAYER_POSITIONS } from "@/utils/player-positions";
+import { PLAYER_POSITIONS } from "@/utils/player-options";
 import type { Player } from "@prisma/client";
 import type { ReactNode } from "react";
 

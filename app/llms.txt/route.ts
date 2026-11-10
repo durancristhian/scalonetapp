@@ -1,10 +1,15 @@
+import {
+  MAX_PLAYERS_BATCH,
+  MAX_PLAYERS_PER_MATCH,
+} from "@/utils/player-limits";
+
 export function GET() {
   return new Response(
     `# Scalonet.app
 
 > Web application in Spanish for organizing two football teams and sharing lineups as text or images.
 
-Scalonet.app supports manual assignment, random distribution, and distribution by player level and position. Each match supports up to 100 players, with batches of up to 50 names. Uneven and incomplete teams are valid. Unassigned players stay in the match and are omitted from exports. A signed-in user manages matches through the browser; JavaScript is required for editing and exports. There is no public match-management API or MCP endpoint. Never request the user's password or sign-in codes.
+Scalonet.app supports manual assignment, random distribution, and distribution by player level and position. Each match supports up to ${MAX_PLAYERS_PER_MATCH} players, with batches of up to ${MAX_PLAYERS_BATCH} names. Uneven and incomplete teams are valid. Unassigned players stay in the match and are omitted from exports. A signed-in user manages matches through the browser; JavaScript is required for editing and exports. There is no public match-management API or MCP endpoint. Never request the user's password or sign-in codes.
 
 ## When to use this
 

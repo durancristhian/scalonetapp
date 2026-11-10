@@ -1,11 +1,12 @@
+import { siteUrl } from "@/utils/public-content";
 import type { Metadata } from "next";
 import { type PropsWithChildren } from "react";
 
 const title = "Scalonet.app | Armá equipos de fútbol";
 const description =
   "Armá equipos de fútbol con tus amigos. Cargá los jugadores, elegí quién juega con quién y compartí las formaciones como texto o imagen.";
-const url = "https://www.scalonet.app/";
-const image = "https://www.scalonet.app/api/og";
+const url = `${siteUrl}/`;
+const image = `${siteUrl}/api/og`;
 
 export const metadata: Metadata = {
   title: { absolute: title },

@@ -2,7 +2,7 @@
 
 import { trackAnalytics } from "@/utils/analytics";
 import { getExportAnalyticsData } from "@/utils/export-analytics";
-import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
+import { useAlerts } from "@/components/use-alerts";
 import { editMatchAction } from "@/server/actions/match";
 import { type MatchWithPlayers } from "@/types/match";
 import { type Team } from "@/types/team";
@@ -73,11 +73,10 @@ export const useTeamActions = (
     try {
       if (payload !== savedTeams) {
         unwrapActionResult(
-          await editMatchAction(
-            match.id,
-            { teams: payload, expectedTeams: savedTeams },
-            "/partidos/[match-id]",
-          ),
+          await editMatchAction(match.id, {
+            teams: payload,
+            expectedTeams: savedTeams,
+          }),
         );
         setSavedSnapshot({
           matchId: match.id,

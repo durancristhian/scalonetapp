@@ -6,7 +6,7 @@ import {
   FormDialogContent as DialogContent,
 } from "@/components/form-dialog";
 
-import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
+import { useAlerts } from "@/components/use-alerts";
 import { PendingButton } from "@/components/pending-button";
 import { Button } from "@/components/ui/button";
 import {

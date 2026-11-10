@@ -10,7 +10,7 @@ import {
   getActionErrorMessage,
 } from "@/utils/action-result";
 
-import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
+import { useAlerts } from "@/components/use-alerts";
 import { MatchForm } from "@/app/(authenticated)/(components)/match-form";
 import {
   DialogDescription,
@@ -40,7 +40,7 @@ export const EditMatch: FC<EditMatchProps> = ({
     values,
   ) => {
     try {
-      unwrapActionResult(await editMatchAction(match.id, values, "/dashboard"));
+      unwrapActionResult(await editMatchAction(match.id, values));
 
       onClose();
     } catch (error) {

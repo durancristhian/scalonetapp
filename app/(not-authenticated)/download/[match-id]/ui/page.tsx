@@ -3,13 +3,15 @@
 import { TeamExport } from "@/components/team-export/team-export";
 import { type ImageExportWindow } from "@/types/image-export";
 import { type MatchWithPlayers } from "@/types/match";
-import { type BaseTeam, type Team } from "@/types/team";
+import { type BaseTeam } from "@/types/team";
 import {
   DEFAULT_IMAGE_EXPORT_OPTIONS,
   type ImageExportOptions,
 } from "@/utils/image-export-options";
 import { useEffect, useState } from "react";
 import { type ImageExportTeamSelections } from "@/utils/image-export-player-roles";
+
+import { hydrateTeams } from "@/utils/hydrate-teams";
 
 export default function Page() {
   const [data, setData] = useState<{
@@ -31,17 +33,8 @@ export default function Page() {
   }, []);
 
   if (!data) return null;
-  const playersById = new Map(
-    data.match.players.map((player) => [player.id, player]),
-  );
   const savedTeams: BaseTeam[] = JSON.parse(data.match.teams);
-  const teams: Team[] = savedTeams.map((team) => ({
-    ...team,
-    players: team.players.flatMap((id) => {
-      const player = playersById.get(id);
-      return player ? [player] : [];
-    }),
-  }));
+  const teams = hydrateTeams(savedTeams, data.match.players);
 
   return (
     <TeamExport

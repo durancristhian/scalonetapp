@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { sortExportPlayers } from "@/utils/sort-export-players";
-import { byName } from "@/utils/by-name";
 import { player } from "../fixtures";
 
 const roster = [
@@ -15,15 +14,26 @@ const roster = [
 ];
 
 describe("export player order", () => {
-  it("preserves the existing alphabetical comparison regardless of position", () => {
+  it("sorts names alphabetically regardless of position, including accents and case", () => {
     const players = [
       ...roster,
       player(9, { name: "Álvaro" }),
       player(10, { name: "ana" }),
     ];
-    expect(sortExportPlayers(players, "alphabetical")).toEqual(
-      [...players].sort(byName),
-    );
+    expect(
+      sortExportPlayers(players, "alphabetical").map(({ name }) => name),
+    ).toEqual([
+      "Álvaro",
+      "ana",
+      "Ana",
+      "Beto",
+      "Caro",
+      "Diego",
+      "Eva",
+      "Fede",
+      "Gabi",
+      "Zoe",
+    ]);
   });
 
   it("orders goalkeeper, defender, midfielder and forward alphabetically within each position", () => {

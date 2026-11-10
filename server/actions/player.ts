@@ -1,5 +1,7 @@
 "use server";
 
+import { ID_SCHEMA } from "@/schemas/id";
+
 import { PLAYER_SCHEMA, type PlayerSchema } from "@/schemas/player";
 import { z } from "zod";
 import { removeUnusedPhoto } from "@/server/player-photos";
@@ -12,8 +14,6 @@ import {
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { MAX_PLAYERS_BATCH } from "@/utils/player-limits";
 import { runMutation } from "@/server/run-mutation";
-
-const ID_SCHEMA = z.number().int().positive().max(2147483647);
 
 export const addPlayerAction = async (matchId: number, data: PlayerSchema) =>
   runMutation(

@@ -9,7 +9,7 @@ import {
   getActionErrorMessage,
 } from "@/utils/action-result";
 import { savePlayerPhoto } from "@/utils/save-player-photo";
-import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
+import { useAlerts } from "@/components/use-alerts";
 import { PlayerForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/player-form";
 import {
   DialogDescription,

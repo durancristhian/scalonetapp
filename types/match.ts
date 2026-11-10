@@ -1,6 +1,5 @@
-import type { getMatchByIdQuery } from "@/server/queries/match";
-import { type Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 
-export type MatchWithPlayers = NonNullable<
-  Prisma.PromiseReturnType<typeof getMatchByIdQuery>
->;
+export type MatchWithPlayers = Prisma.MatchGetPayload<{
+  include: { players: true };
+}>;
