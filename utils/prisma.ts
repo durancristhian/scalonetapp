@@ -1,8 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
+const connectionTimeoutMillis = 5000;
+
 const prismaClientSingleton = () => {
   return new PrismaClient({
+    transactionOptions: { maxWait: connectionTimeoutMillis },
     adapter: {
       provider: "postgres",
       adapterName: "@prisma/adapter-pg",
@@ -12,7 +15,7 @@ const prismaClientSingleton = () => {
           throw new Error("POSTGRES_PRISMA_URL is required");
         return new PrismaPg({
           connectionString,
-          connectionTimeoutMillis: 5000,
+          connectionTimeoutMillis,
         }).connect();
       },
     },
