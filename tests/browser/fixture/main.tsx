@@ -1,3 +1,4 @@
+import { PublicHeader } from "@/components/public-header";
 import { PublicFooter } from "@/components/public-footer";
 import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
@@ -31,7 +32,10 @@ function Fixture() {
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     {new URLSearchParams(location.search).has("public-footer") ? (
-      <PublicFooter />
+      <>
+        <PublicHeader />
+        <PublicFooter />
+      </>
     ) : new URLSearchParams(location.search).has("carousel") ? (
       <CarouselFixture />
     ) : new URLSearchParams(location.search).has("motion") ? (

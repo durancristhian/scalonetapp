@@ -24,7 +24,12 @@ export const ShowOff: FC<ShowOffProps> = ({ popoverSeparation, className }) => {
           <span className="font-bold">Cristhian Duran</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className={clsx(popoverSeparation && "mr-4")}>
+      <PopoverContent
+        className={clsx(
+          "max-w-[calc(100vw-2rem)]",
+          popoverSeparation && "me-4",
+        )}
+      >
         <div className="flex gap-4">
           <Avatar>
             <AvatarImage
@@ -33,7 +38,7 @@ export const ShowOff: FC<ShowOffProps> = ({ popoverSeparation, className }) => {
             />
             <AvatarFallback>CD</AvatarFallback>
           </Avatar>
-          <div className="grow">
+          <div className="min-w-0 grow">
             <div className="space-y-4">
               <div>
                 <h4 className="font-bold">Cristhian Duran</h4>
@@ -42,8 +47,8 @@ export const ShowOff: FC<ShowOffProps> = ({ popoverSeparation, className }) => {
                 </p>
               </div>
               <div className="flex gap-2 items-center">
-                <MailIcon className="h-4 text-muted-foreground w-4" />
-                <span className="text-muted-foreground text-sm">
+                <MailIcon className="size-4 shrink-0 text-muted-foreground" />
+                <span className="min-w-0 break-words text-muted-foreground text-sm">
                   {publicContact.email}
                 </span>
               </div>

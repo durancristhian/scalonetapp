@@ -11,6 +11,12 @@ for (const [width, height] of [
   }) => {
     await page.setViewportSize({ width, height });
     await page.goto("/?public-footer");
+    const header = page.getByRole("banner");
+    await expect(
+      header.getByRole("link", { name: "scalonet.app", exact: true }),
+    ).toHaveAttribute("href", "/");
+    const headerBox = (await header.boundingBox())!;
+    expect(headerBox.height).toBe(width < 768 ? 49 : 57);
     const footer = page.getByRole("contentinfo");
     const navigation = footer.getByRole("navigation", { name: "Información" });
     for (const [name, href] of [
@@ -42,7 +48,21 @@ for (const [width, height] of [
       navigation.getByRole("link", { name: "Acerca de", exact: true }),
     ).toBeFocused();
     await author.click();
-    await expect(page.getByText("durancristhiandev@gmail.com")).toBeVisible();
+    const email = page.getByText("durancristhiandev@gmail.com");
+    await expect(email).toBeVisible();
+    const panel = (await page.getByRole("dialog").boundingBox())!;
+    const emailLines = await email.evaluate((element) => {
+      const range = document.createRange();
+      range.selectNodeContents(element);
+      return [...range.getClientRects()].map((rect) => ({
+        left: rect.left,
+        right: rect.right,
+      }));
+    });
+    for (const line of emailLines) {
+      expect(line.left).toBeGreaterThanOrEqual(panel.x);
+      expect(line.right).toBeLessThanOrEqual(panel.x + panel.width);
+    }
     await page.keyboard.press("Escape");
     await expect(author).toBeFocused();
   });

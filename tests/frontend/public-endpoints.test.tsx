@@ -126,6 +126,12 @@ describe("public representations", () => {
       const container = document.createElement("div");
       container.innerHTML = html;
       expect(container.querySelectorAll("h1")).toHaveLength(1);
+      const header = container.querySelector("header");
+      expect(header).not.toBeNull();
+      expect(header!.querySelector('a[href="/"]')).toHaveTextContent(
+        "scalonet.app",
+      );
+      expect(header!.closest("main")).toBeNull();
       expect(container.textContent!.length).toBeGreaterThan(500);
       expect(
         informationMetadata(path as PublicPath).alternates?.canonical,

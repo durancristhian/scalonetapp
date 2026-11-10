@@ -39,6 +39,9 @@ describe("Public page", () => {
       expect(page.getByRole("heading", { level: 1 })).toBeVisible();
       expect(container.querySelectorAll("h1")).toHaveLength(1);
       expect(
+        page.getByRole("banner").querySelector('a[href="/"]'),
+      ).toHaveTextContent("scalonet.app");
+      expect(
         container.querySelector("main")!.textContent!.length,
       ).toBeGreaterThan(2000);
       expect(page.getByRole("link", { name: "Contacto" })).toHaveAttribute(

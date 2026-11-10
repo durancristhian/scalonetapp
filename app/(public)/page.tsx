@@ -4,6 +4,7 @@ import { homeDetails, softwareSchema } from "@/utils/public-content";
 import { trackAnalytics } from "@/utils/analytics";
 import { Loader } from "@/components/loader";
 import { LandingExportShowcase } from "@/components/landing-export-showcase";
+import { PublicHeader } from "@/components/public-header";
 import { PublicFooter } from "@/components/public-footer";
 import { Button } from "@/components/ui/button";
 import { Show, SignInButton, useAuth } from "@clerk/nextjs";
@@ -47,13 +48,7 @@ const Page: FC = () => {
         <Loader />
       </Show>
       <Show when="signed-out">
-        <header className="border-b border-transparent">
-          <div className="mx-auto flex h-12 w-full max-w-7xl items-center justify-between gap-4 px-4 md:h-14">
-            <span className="text-base font-bold leading-normal tracking-normal">
-              scalonet.app
-            </span>
-          </div>
-        </header>
+        <PublicHeader />
         <main className="mx-auto w-[min(100%_-_2rem,80rem)]">
           <section
             className="flex flex-wrap items-center gap-[clamp(2rem,4vw,4rem)] py-[clamp(2rem,5vw,5rem)]"

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { PublicHeader } from "@/components/public-header";
 import { PublicFooter } from "@/components/public-footer";
 import {
   publicPages,
@@ -26,10 +26,8 @@ export function PublicInformation({ path }: { path: PublicPath }) {
   const page = publicPages[path];
   return (
     <>
+      <PublicHeader />
       <main className="mx-auto flex w-[min(100%_-_2rem,48rem)] flex-col gap-8 py-12">
-        <Link href="/" className="self-start underline underline-offset-4">
-          scalonet.app
-        </Link>
         <h1 className="text-3xl font-bold text-balance">{page.title}</h1>
         {page.sections.map((section) => (
           <section key={section.title} className="flex flex-col gap-3">
