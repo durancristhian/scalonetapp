@@ -23,7 +23,7 @@ npm run typecheck
 npm run format:check
 ```
 
-Use `npm run format` to apply formatting. Setup tests need PostgreSQL tools; frontend tests run without a database or sign-in.
+Use `npm run format` to apply formatting. Setup tests need PostgreSQL tools; frontend tests run without a database or sign-in. With the app running, use `npm run test:public -- http://localhost:<port>` to verify public HTML, Markdown negotiation, discovery files and 404 responses.
 
 ## Project guidance
 

@@ -1,5 +1,11 @@
 "use client";
 
+import Link from "next/link";
+import {
+  homeDetails,
+  softwareSchema,
+  publicPages,
+} from "@/utils/public-content";
 import { trackAnalytics } from "@/utils/analytics";
 import { Loader } from "@/components/loader";
 import { LandingExportShowcase } from "@/components/landing-export-showcase";
@@ -36,6 +42,12 @@ const Page: FC = () => {
 
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(softwareSchema).replace(/</g, "\\u003c"),
+        }}
+      />
       <Show when="signed-in">
         <Loader />
       </Show>
@@ -124,8 +136,40 @@ const Page: FC = () => {
               </li>
             </ol>
           </section>
+          <section
+            className="flex flex-col gap-8 border-bs border-border py-[clamp(3rem,6vw,5rem)]"
+            aria-labelledby="questions-title"
+          >
+            <h2 id="questions-title" className="text-2xl font-semibold">
+              Preguntas frecuentes
+            </h2>
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,24rem),1fr))] gap-8">
+              {homeDetails.map((section) => (
+                <section key={section.title} className="flex flex-col gap-3">
+                  <h3 className="text-xl font-semibold">{section.title}</h3>
+                  <p className="text-muted-foreground text-pretty">
+                    {section.text}
+                  </p>
+                </section>
+              ))}
+            </div>
+          </section>
         </main>
-        <footer className="flex justify-center py-8">
+        <footer className="flex flex-col items-center gap-4 py-8">
+          <nav
+            aria-label="Información"
+            className="flex flex-wrap justify-center gap-6 px-4"
+          >
+            {Object.entries(publicPages).map(([href, page]) => (
+              <Link
+                key={href}
+                href={href}
+                className="text-sm underline underline-offset-4"
+              >
+                {page.title}
+              </Link>
+            ))}
+          </nav>
           <ShowOff />
         </footer>
       </Show>

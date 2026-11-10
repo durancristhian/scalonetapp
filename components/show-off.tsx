@@ -1,3 +1,4 @@
+import { publicContact } from "@/utils/public-content";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -42,7 +43,7 @@ export const ShowOff: FC<ShowOffProps> = ({ popoverSeparation }) => {
               <div className="flex gap-2 items-center">
                 <MailIcon className="h-4 text-muted-foreground w-4" />
                 <span className="text-muted-foreground text-sm">
-                  durancristhian@gmail.com
+                  {publicContact.email}
                 </span>
               </div>
             </div>
