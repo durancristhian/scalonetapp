@@ -1,3 +1,4 @@
+import { getMaxMatchesPerUser } from "@/utils/match-limits";
 import {
   AddMatch,
   MatchLimitAlert,
@@ -16,8 +17,7 @@ export const metadata: Metadata = { title: "Dashboard" };
 const Page: FC = async () => {
   const [matches, totalCount] = await getMatchesQuery({ take: TAKE_LIMIT });
 
-  const atMatchLimit =
-    totalCount >= Number(process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER ?? 100);
+  const atMatchLimit = totalCount >= getMaxMatchesPerUser();
 
   return (
     <div className="py-4 md:py-8">

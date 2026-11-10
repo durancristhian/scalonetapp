@@ -28,6 +28,8 @@ import {
 import {
   DEFAULT_IMAGE_EXPORT_OPTIONS,
   IMAGE_EXPORT_AVATARS,
+  IMAGE_EXPORT_ALIGNMENTS,
+  IMAGE_EXPORT_PLAYER_ORDERS,
   IMAGE_EXPORT_WEATHERS,
   readImageExportOptions,
   storeImageExportOptions,
@@ -47,6 +49,8 @@ import { byName } from "@/utils/by-name";
 import { ExportPreview } from "./export-preview";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/utils/cn";
+
+const alignmentIcons = { left: AlignLeft, center: AlignCenter };
 
 type ExportEditorProps = {
   matchId: number;
@@ -303,28 +307,27 @@ export default function ExportEditor({
                 onValueChange={(value) =>
                   updateOptions({
                     ...options,
-                    alignment: value === "center" ? "center" : "left",
+                    alignment:
+                      IMAGE_EXPORT_ALIGNMENTS.find(({ id }) => id === value)
+                        ?.id ?? DEFAULT_IMAGE_EXPORT_OPTIONS.alignment,
                   })
                 }
               >
-                <RadioGroupItem
-                  variant="button"
-                  className="gap-2"
-                  id={`${id}-alignment-left`}
-                  value="left"
-                >
-                  <AlignLeft className="size-4 shrink-0" aria-hidden="true" />
-                  Izquierda
-                </RadioGroupItem>
-                <RadioGroupItem
-                  variant="button"
-                  className="gap-2"
-                  id={`${id}-alignment-center`}
-                  value="center"
-                >
-                  <AlignCenter className="size-4 shrink-0" aria-hidden="true" />
-                  Centrada
-                </RadioGroupItem>
+                {IMAGE_EXPORT_ALIGNMENTS.map(({ id: alignment, label }) => {
+                  const Icon = alignmentIcons[alignment];
+                  return (
+                    <RadioGroupItem
+                      key={alignment}
+                      variant="button"
+                      className="gap-2"
+                      id={`${id}-alignment-${alignment}`}
+                      value={alignment}
+                    >
+                      <Icon className="size-4 shrink-0" aria-hidden="true" />
+                      {label}
+                    </RadioGroupItem>
+                  );
+                })}
               </RadioGroup>
             </div>
             <div className="grid min-w-0 grid-cols-1 gap-2">
@@ -340,24 +343,21 @@ export default function ExportEditor({
                   updateOptions({
                     ...options,
                     playerOrder:
-                      value === "position" ? "position" : "alphabetical",
+                      IMAGE_EXPORT_PLAYER_ORDERS.find(({ id }) => id === value)
+                        ?.id ?? DEFAULT_IMAGE_EXPORT_OPTIONS.playerOrder,
                   })
                 }
               >
-                <RadioGroupItem
-                  variant="button"
-                  id={`${id}-player-order-alphabetical`}
-                  value="alphabetical"
-                >
-                  Nombre
-                </RadioGroupItem>
-                <RadioGroupItem
-                  variant="button"
-                  id={`${id}-player-order-position`}
-                  value="position"
-                >
-                  Posición
-                </RadioGroupItem>
+                {IMAGE_EXPORT_PLAYER_ORDERS.map(({ id: order, label }) => (
+                  <RadioGroupItem
+                    key={order}
+                    variant="button"
+                    id={`${id}-player-order-${order}`}
+                    value={order}
+                  >
+                    {label}
+                  </RadioGroupItem>
+                ))}
               </RadioGroup>
             </div>
             {teams.map((team) => (

@@ -11,7 +11,7 @@ import {
 } from "@/utils/action-result";
 
 import { trackAnalytics } from "@/utils/analytics";
-import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
+import { useAlerts } from "@/components/use-alerts";
 import { MatchForm } from "@/app/(authenticated)/(components)/match-form";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";

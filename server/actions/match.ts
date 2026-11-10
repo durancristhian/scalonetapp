@@ -1,5 +1,7 @@
 "use server";
 
+import { ID_SCHEMA } from "@/schemas/id";
+
 import { duplicateMatch } from "@/server/duplicate-match";
 import { reportServerError } from "@/server/report-error";
 import type { DuplicateMatchResult } from "@/types/duplicate-match";
@@ -18,11 +20,8 @@ import {
 } from "@/server/queries/match";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { auth } from "@clerk/nextjs/server";
-import { z } from "zod";
 import { runMutation } from "@/server/run-mutation";
 import { revalidatePath } from "next/cache";
-
-const ID_SCHEMA = z.number().int().positive().max(2147483647);
 
 export const addMatchAction = async (data: MatchSchema) =>
   runMutation(
@@ -31,11 +30,7 @@ export const addMatchAction = async (data: MatchSchema) =>
     (userId) => addMatchQuery(MATCH_SCHEMA.parse(data), userId),
   );
 
-export const editMatchAction = async (
-  id: number,
-  data: MatchUpdateSchema,
-  _pathToRevalidate?: string,
-) =>
+export const editMatchAction = async (id: number, data: MatchUpdateSchema) =>
   runMutation(
     { operation: "match.edit", matchId: id },
     ERROR_MESSAGES.match_edit_error,
@@ -65,7 +60,7 @@ export const duplicateMatchAction = async (
   try {
     const { userId } = await auth();
     if (!userId) return { ok: false, code: "unauthorized" };
-    if (!Number.isSafeInteger(id) || id <= 0 || id > 2147483647) {
+    if (!ID_SCHEMA.safeParse(id).success) {
       return { ok: false, code: "not_found" };
     }
     result = await duplicateMatch(id, userId);

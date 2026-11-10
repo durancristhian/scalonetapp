@@ -13,7 +13,7 @@ import {
 import { savePlayerPhoto } from "@/utils/save-player-photo";
 import { trackAnalytics } from "@/utils/analytics";
 
-import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
+import { useAlerts } from "@/components/use-alerts";
 import { MultiplePlayersForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/multiple-players-form";
 import { PlayerForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/player-form";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";

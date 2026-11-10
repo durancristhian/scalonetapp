@@ -104,11 +104,7 @@ describe("match edit submission", () => {
         expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
       );
       expect(action).toHaveBeenCalledTimes(2);
-      expect(action).toHaveBeenLastCalledWith(
-        1,
-        { name: "Final nueva" },
-        "/dashboard",
-      );
+      expect(action).toHaveBeenLastCalledWith(1, { name: "Final nueva" });
     },
   );
 });

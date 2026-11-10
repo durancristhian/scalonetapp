@@ -1,6 +1,6 @@
 "use client";
 
-import { useAlerts } from "@/app/(authenticated)/(hooks)/use-alerts";
+import { useAlerts } from "@/components/use-alerts";
 import { Button } from "@/components/ui/button";
 import { type Team } from "@/types/team";
 import { byName } from "@/utils/by-name";
