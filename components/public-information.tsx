@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PublicFooter } from "@/components/public-footer";
 import {
   publicPages,
   publicContact,
@@ -24,32 +25,28 @@ export function informationMetadata(path: PublicPath): Metadata {
 export function PublicInformation({ path }: { path: PublicPath }) {
   const page = publicPages[path];
   return (
-    <main className="mx-auto flex w-[min(100%_-_2rem,48rem)] flex-col gap-8 py-12">
-      <Link href="/" className="self-start underline underline-offset-4">
-        scalonet.app
-      </Link>
-      <h1 className="text-3xl font-bold text-balance">{page.title}</h1>
-      {page.sections.map((section) => (
-        <section key={section.title} className="flex flex-col gap-3">
-          <h2 className="text-xl font-semibold">{section.title}</h2>
-          <p className="text-muted-foreground text-pretty">{section.text}</p>
-        </section>
-      ))}
-      {path === "/contact" && (
-        <a
-          className="break-words underline underline-offset-4"
-          href={`mailto:${publicContact.email}`}
-        >
-          {publicContact.email}
-        </a>
-      )}
-      <nav aria-label="Información" className="flex flex-wrap gap-6">
-        {Object.entries(publicPages).map(([href, item]) => (
-          <Link key={href} href={href} className="underline underline-offset-4">
-            {item.title}
-          </Link>
+    <>
+      <main className="mx-auto flex w-[min(100%_-_2rem,48rem)] flex-col gap-8 py-12">
+        <Link href="/" className="self-start underline underline-offset-4">
+          scalonet.app
+        </Link>
+        <h1 className="text-3xl font-bold text-balance">{page.title}</h1>
+        {page.sections.map((section) => (
+          <section key={section.title} className="flex flex-col gap-3">
+            <h2 className="text-xl font-semibold">{section.title}</h2>
+            <p className="text-muted-foreground text-pretty">{section.text}</p>
+          </section>
         ))}
-      </nav>
-    </main>
+        {path === "/contact" && (
+          <a
+            className="break-words underline underline-offset-4"
+            href={`mailto:${publicContact.email}`}
+          >
+            {publicContact.email}
+          </a>
+        )}
+      </main>
+      <PublicFooter />
+    </>
   );
 }

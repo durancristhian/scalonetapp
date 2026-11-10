@@ -1,15 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import {
-  homeDetails,
-  softwareSchema,
-  publicPages,
-} from "@/utils/public-content";
+import { homeDetails, softwareSchema } from "@/utils/public-content";
 import { trackAnalytics } from "@/utils/analytics";
 import { Loader } from "@/components/loader";
 import { LandingExportShowcase } from "@/components/landing-export-showcase";
-import { ShowOff } from "@/components/show-off";
+import { PublicFooter } from "@/components/public-footer";
 import { Button } from "@/components/ui/button";
 import { Show, SignInButton, useAuth } from "@clerk/nextjs";
 import { ArrowRight } from "lucide-react";
@@ -155,23 +150,7 @@ const Page: FC = () => {
             </div>
           </section>
         </main>
-        <footer className="flex flex-col items-center gap-4 py-8">
-          <nav
-            aria-label="Información"
-            className="flex flex-wrap justify-center gap-6 px-4"
-          >
-            {Object.entries(publicPages).map(([href, page]) => (
-              <Link
-                key={href}
-                href={href}
-                className="text-sm underline underline-offset-4"
-              >
-                {page.title}
-              </Link>
-            ))}
-          </nav>
-          <ShowOff />
-        </footer>
+        <PublicFooter />
       </Show>
     </div>
   );

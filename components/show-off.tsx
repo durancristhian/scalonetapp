@@ -12,13 +12,14 @@ import { type FC } from "react";
 
 type ShowOffProps = {
   popoverSeparation?: boolean;
+  className?: string;
 };
 
-export const ShowOff: FC<ShowOffProps> = ({ popoverSeparation }) => {
+export const ShowOff: FC<ShowOffProps> = ({ popoverSeparation, className }) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="link">
+        <Button variant="link" className={className}>
           Hecho por&nbsp;
           <span className="font-bold">Cristhian Duran</span>
         </Button>
