@@ -19,7 +19,11 @@ import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { trackAnalytics } from "@/utils/analytics";
 import { deferred, match, player } from "../fixtures";
 
-vi.mock("next/navigation", () => ({ useParams: () => ({ "match-id": "1" }) }));
+const refresh = vi.hoisted(() => vi.fn());
+vi.mock("next/navigation", () => ({
+  useParams: () => ({ "match-id": "1" }),
+  useRouter: () => ({ refresh }),
+}));
 vi.mock("@/server/actions/match", () => ({
   addMatchAction: vi.fn(),
   editMatchAction: vi.fn(),
@@ -33,6 +37,7 @@ vi.mock("@/server/actions/player", () => ({
 vi.mock("@/utils/analytics", () => ({ trackAnalytics: vi.fn() }));
 
 beforeEach(() => {
+  refresh.mockReset();
   vi.mocked(addMatchAction).mockReset();
   vi.mocked(feedbackAction).mockReset();
   vi.mocked(editMatchAction).mockReset();
@@ -214,6 +219,7 @@ it("waits for the roster write before updating a photo and keeps that save succe
     ),
   );
   expect(screen.getByRole("dialog")).toBeVisible();
+  expect(refresh).not.toHaveBeenCalled();
   await act(async () =>
     photo.resolve(
       new Response(
@@ -228,12 +234,41 @@ it("waits for the roster write before updating a photo and keeps that save succe
   await waitFor(() =>
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
   );
+  expect(refresh).toHaveBeenCalledOnce();
   expect(editPlayerAction).toHaveBeenCalledExactlyOnceWith(7, {
     name: "Ana",
     level: 5,
     position: "mid",
   });
 });
+
+it.each([
+  ["removes", true],
+  ["keeps", false],
+] as const)(
+  "refreshes the roster only after a photo request when the edit %s the photo",
+  async (_, removePhoto) => {
+    vi.mocked(editPlayerAction).mockResolvedValue({
+      ok: true,
+      data: undefined,
+    });
+    const fetchPhoto = vi.fn(async () => {
+      expect(refresh).not.toHaveBeenCalled();
+      return Response.json({ url: "" });
+    });
+    vi.stubGlobal("fetch", fetchPhoto);
+    const user = userEvent.setup();
+    render(<PlayerEditor />);
+    if (removePhoto)
+      await user.click(screen.getByRole("button", { name: "Quitar foto" }));
+    await user.click(save());
+    await waitFor(() =>
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
+    );
+    expect(fetchPhoto).toHaveBeenCalledTimes(removePhoto ? 1 : 0);
+    expect(refresh).toHaveBeenCalledTimes(removePhoto ? 1 : 0);
+  },
+);
 
 it.each(["single", "bulk"])(
   "keeps the %s player draft locked and open until submission finishes",
@@ -273,6 +308,7 @@ it.each(["single", "bulk"])(
     await waitFor(() =>
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
     );
+    expect(refresh).not.toHaveBeenCalled();
     await user.click(screen.getByRole("button", { name: "Agregar" }));
     await user.type(screen.getByLabelText("Nombre", { exact: true }), "Beto");
     expect(screen.getByLabelText("Nombre", { exact: true })).toHaveValue(

@@ -20,6 +20,7 @@ import { type PlayerSchema } from "@/schemas/player";
 import { editPlayerAction } from "@/server/actions/player";
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { type Player } from "@prisma/client";
+import { useRouter } from "next/navigation";
 import { type FC } from "react";
 
 type EditPlayerProps = {
@@ -34,6 +35,7 @@ export const EditPlayer: FC<EditPlayerProps> = ({
   onCloseAutoFocus,
 }) => {
   const { errorAlert } = useAlerts();
+  const router = useRouter();
 
   const onSubmit: (
     values: PlayerSchema,
@@ -43,6 +45,7 @@ export const EditPlayer: FC<EditPlayerProps> = ({
       unwrapActionResult(await editPlayerAction(player.id, values));
       const id = player.id;
       const photoError = await savePlayerPhoto(id, photo);
+      if (photo !== undefined) router.refresh();
       if (photoError) errorAlert({ title: photoError });
 
       onClose();
