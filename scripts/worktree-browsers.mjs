@@ -70,3 +70,13 @@ export function prepareBrowsers(root, cacheRoot, install) {
     rmSync(pending, { recursive: true, force: true });
   }
 }
+
+export function exportBrowserEnvironment(
+  environment,
+  platform = process.platform,
+  exists = existsSync,
+) {
+  if (environment.PUPPETEER_EXECUTABLE_PATH || platform !== "linux") return {};
+  const executable = ["/opt/google/chrome/chrome"].find((path) => exists(path));
+  return executable ? { PUPPETEER_EXECUTABLE_PATH: executable } : {};
+}
