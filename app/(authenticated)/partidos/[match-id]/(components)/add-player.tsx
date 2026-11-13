@@ -33,7 +33,7 @@ import {
 import { ERROR_MESSAGES } from "@/utils/error-messages";
 import { MAX_PLAYERS_PER_MATCH } from "@/utils/player-limits";
 import { InfoIcon } from "lucide-react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { type FC, useState } from "react";
 
 type AddPlayerProps = {
@@ -69,6 +69,7 @@ const EnabledContent: FC<{ currentPlayerCount: number }> = ({
 }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const params = useParams();
+  const router = useRouter();
   const matchId = Number(params["match-id"]);
   const { errorAlert } = useAlerts();
 
@@ -80,6 +81,7 @@ const EnabledContent: FC<{ currentPlayerCount: number }> = ({
       const id = unwrapActionResult(await addPlayerAction(matchId, values));
       trackAnalytics("players_added", { method: "single", count: 1 });
       const photoError = await savePlayerPhoto(id, photo);
+      if (photo !== undefined) router.refresh();
       if (photoError) errorAlert({ title: photoError });
 
       setDialogOpen(false);
