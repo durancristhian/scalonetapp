@@ -258,4 +258,57 @@ describe("export editor", () => {
       DEFAULT_IMAGE_EXPORT_OPTIONS,
     );
   });
+  it("should restore suggested player roles when reset is clicked and keep them after reopening", async () => {
+    const onExport = vi.fn().mockResolvedValue(null);
+    const user = userEvent.setup();
+    const editor = (
+      <Dialog open>
+        <ExportEditor
+          matchId={1}
+          name="Final"
+          teams={lineup}
+          disabled={false}
+          processing={false}
+          onExport={onExport}
+        />
+      </Dialog>
+    );
+    const role = (name: string) =>
+      screen.getByRole("combobox", {
+        name: new RegExp(`^${name.replace(" ", "\\s?")}$`),
+      });
+    const { unmount } = render(editor);
+    expect(within(role("Arquero de Azules")).getByText("Ana")).toBeVisible();
+    await user.click(role("Capitán de Rojos"));
+    await user.click(await screen.findByRole("option", { name: "Beto" }));
+    await user.click(role("Arquero de Azules"));
+    await user.click(
+      await screen.findByRole("option", { name: "No indicado" }),
+    );
+    expect(within(role("Capitán de Rojos")).getByText("Beto")).toBeVisible();
+    expect(
+      within(role("Arquero de Azules")).getByText("No indicado"),
+    ).toBeVisible();
+    await user.click(
+      screen.getByRole("button", { name: "Restablecer valores" }),
+    );
+    const expectSuggestedRoles = () => {
+      expect(within(role("Arquero de Azules")).getByText("Ana")).toBeVisible();
+      for (const name of [
+        "Capitán de Azules",
+        "Capitán de Rojos",
+        "Arquero de Rojos",
+      ])
+        expect(within(role(name)).getByText("No indicado")).toBeVisible();
+    };
+    expectSuggestedRoles();
+    await user.click(screen.getByRole("button", { name: "Descargar" }));
+    expect(onExport).toHaveBeenLastCalledWith(DEFAULT_IMAGE_EXPORT_OPTIONS, {
+      a: { playerIds: [1], assignments: { captain: null, goalkeeper: 1 } },
+      b: { playerIds: [2], assignments: { captain: null, goalkeeper: null } },
+    });
+    unmount();
+    render(editor);
+    expectSuggestedRoles();
+  });
 });
