@@ -133,7 +133,7 @@ export default function ExportEditor({
       }}
     >
       <DialogHeader className="border-b p-4 sm:p-6 text-start">
-        <div className="flex min-w-0 items-center justify-between gap-3 pe-12">
+        <div className="flex min-w-0 flex-wrap items-center justify-between gap-x-3 gap-y-2 pe-12">
           <DialogTitle className="min-w-0 pe-0">Exportar</DialogTitle>
           <Button
             type="button"
