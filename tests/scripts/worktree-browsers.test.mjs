@@ -14,7 +14,10 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { prepareBrowsers } from "../../scripts/worktree-browsers.mjs";
+import {
+  exportBrowserEnvironment,
+  prepareBrowsers,
+} from "../../scripts/worktree-browsers.mjs";
 
 function fixture(t) {
   const directory = mkdtempSync(join(tmpdir(), "scalonet-browsers-"));
@@ -205,4 +208,25 @@ test("concurrent worktrees publish complete snapshots without sharing mutable fi
     readFileSync(join(third, ".local/browsers/executable"), "utf8"),
     "binary",
   );
+});
+
+test("Linux exports use installed Google Chrome unless an executable is configured", () => {
+  const chrome = "/opt/google/chrome/chrome";
+  const installed = (path) => path === chrome;
+  assert.deepEqual(exportBrowserEnvironment({}, "linux", installed), {
+    PUPPETEER_EXECUTABLE_PATH: chrome,
+  });
+  assert.deepEqual(
+    exportBrowserEnvironment(
+      { PUPPETEER_EXECUTABLE_PATH: "/custom/chrome" },
+      "linux",
+      installed,
+    ),
+    {},
+  );
+  assert.deepEqual(
+    exportBrowserEnvironment({}, "linux", () => false),
+    {},
+  );
+  assert.deepEqual(exportBrowserEnvironment({}, "darwin", installed), {});
 });
