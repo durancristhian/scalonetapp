@@ -1,6 +1,9 @@
 import { spawnSync, spawn } from "node:child_process";
 import { prepareDependencies } from "./worktree-dependencies.mjs";
-import { prepareBrowsers } from "./worktree-browsers.mjs";
+import {
+  exportBrowserEnvironment,
+  prepareBrowsers,
+} from "./worktree-browsers.mjs";
 import {
   databaseName,
   prepareDatabase,
@@ -323,6 +326,7 @@ try {
           PORT: String(port),
           IMAGE_EXPORT_ORIGIN: origin,
           PUPPETEER_CACHE_DIR: resolve(root, ".local/puppeteer"),
+          ...exportBrowserEnvironment(env),
         },
       },
     );
