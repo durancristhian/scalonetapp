@@ -35,7 +35,13 @@ import {
   storeImageExportOptions,
   type ImageExportOptions,
 } from "@/utils/image-export-options";
-import { useEffect, useId, useMemo, useState } from "react";
+import {
+  type ComponentPropsWithoutRef,
+  useEffect,
+  useId,
+  useMemo,
+  useState,
+} from "react";
 import { AlignCenter, AlignLeft, ImageOff, Minus } from "lucide-react";
 import { WeatherIllustration } from "@/components/team-export/weather-illustration";
 import {
@@ -48,9 +54,41 @@ import {
 import { byName } from "@/utils/by-name";
 import { ExportPreview } from "./export-preview";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/utils/cn";
 
 const alignmentIcons = { left: AlignLeft, center: AlignCenter };
+
+type ExportPanelProps = ComponentPropsWithoutRef<typeof TabsContent> & {
+  tabbed: boolean;
+  label: string;
+};
+
+function ExportPanel({
+  tabbed,
+  label,
+  className,
+  forceMount,
+  ...props
+}: ExportPanelProps) {
+  return tabbed ? (
+    <TabsContent
+      {...props}
+      forceMount={forceMount}
+      className={cn("mt-0 data-[state=inactive]:hidden", className)}
+    />
+  ) : (
+    <TabsContent
+      {...props}
+      forceMount
+      role="region"
+      aria-label={label}
+      aria-labelledby={undefined}
+      tabIndex={undefined}
+      className={cn("mt-0", className)}
+    />
+  );
+}
 
 type ExportEditorProps = {
   matchId: number;
@@ -80,7 +118,8 @@ export default function ExportEditor({
     () => reconcileImageExportTeamSelections(teams, savedSelections),
     [teams, savedSelections],
   );
-  const [showPreview, setShowPreview] = useState(false);
+  const [wide, setWide] = useState(false);
+  const [view, setView] = useState<"options" | "preview">("options");
   const [error, setError] = useState<string | null>(null);
   const [downloaded, setDownloaded] = useState(false);
   const id = useId();
@@ -98,7 +137,7 @@ export default function ExportEditor({
 
   useEffect(() => {
     const media = window.matchMedia("(min-width: 1024px)");
-    const update = () => setShowPreview(media.matches);
+    const update = () => setWide(media.matches);
     update();
     media.addEventListener("change", update);
     return () => media.removeEventListener("change", update);
@@ -132,333 +171,343 @@ export default function ExportEditor({
         if (processing) event.preventDefault();
       }}
     >
-      <DialogHeader className="border-b p-4 sm:p-6 text-start">
-        <div className="flex min-w-0 items-center justify-between gap-3 pe-12">
-          <DialogTitle className="min-w-0 pe-0">Exportar</DialogTitle>
-          <Button
-            type="button"
-            variant="outline"
-            className="shrink-0 lg:hidden"
-            disabled={processing}
-            aria-label={showPreview ? "Ver opciones" : "Ver imagen"}
-            aria-expanded={showPreview}
-            onClick={() => setShowPreview((value) => !value)}
+      <Tabs
+        className="contents"
+        value={view}
+        onValueChange={(value) =>
+          setView(value === "preview" ? "preview" : "options")
+        }
+      >
+        <DialogHeader className="border-b p-4 sm:p-6 text-start">
+          <DialogTitle className="pe-12">Exportar</DialogTitle>
+          <DialogDescription>
+            Personalizá la imagen de tus equipos.
+          </DialogDescription>
+          <TabsList
+            className="mt-2 grid w-full grid-cols-2 lg:hidden"
+            hidden={wide}
           >
-            {showPreview ? "Opciones" : "Ver imagen"}
-          </Button>
-        </div>
-        <DialogDescription>
-          Personalizá la imagen de tus equipos.
-        </DialogDescription>
-      </DialogHeader>
-      <div className="grid min-h-0 min-w-0 grid-cols-1 lg:grid-cols-[theme(spacing.80)_minmax(0,1fr)]">
-        <div
-          className={cn(
-            "min-h-0 min-w-0 overflow-auto overscroll-contain p-4 sm:p-6",
-            showPreview && "hidden lg:block",
-          )}
-        >
-          <fieldset
-            disabled={processing}
-            className="grid min-w-0 gap-6 disabled:opacity-60"
+            <TabsTrigger value="options" disabled={processing}>
+              Opciones
+            </TabsTrigger>
+            <TabsTrigger value="preview" disabled={processing}>
+              Vista previa
+            </TabsTrigger>
+          </TabsList>
+        </DialogHeader>
+        <div className="grid min-h-0 min-w-0 grid-cols-1 lg:grid-cols-[theme(spacing.80)_minmax(0,1fr)]">
+          <ExportPanel
+            tabbed={!wide}
+            value="options"
+            label="Opciones"
+            forceMount
+            className="min-h-0 min-w-0 overflow-auto overscroll-contain p-4 sm:p-6"
           >
-            <legend className="sr-only">Opciones de la imagen</legend>
-            <div className="grid min-w-0 grid-cols-1 gap-2">
-              <Label
-                id={`${id}-background`}
-                htmlFor={`${id}-background-control`}
-              >
-                Tipo de cancha
-              </Label>
-              <Select
-                value={options.background}
-                disabled={processing}
-                onValueChange={(background: ImageExportOptions["background"]) =>
-                  updateOptions({ ...options, background })
-                }
-              >
-                <SelectTrigger
-                  id={`${id}-background-control`}
-                  aria-labelledby={`${id}-background`}
+            <fieldset
+              disabled={processing}
+              className="grid min-w-0 gap-6 disabled:opacity-60"
+            >
+              <legend className="sr-only">Opciones de la imagen</legend>
+              <div className="grid min-w-0 grid-cols-1 gap-2">
+                <Label
+                  id={`${id}-background`}
+                  htmlFor={`${id}-background-control`}
                 >
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="w-[var(--radix-select-trigger-width)]">
-                  {IMAGE_EXPORT_BACKGROUNDS.map((background) => (
-                    <SelectItem
-                      key={background.id}
-                      value={background.id}
-                      textValue={background.label}
-                    >
-                      <span className="flex min-w-0 items-center gap-3 whitespace-nowrap text-start">
-                        <span
-                          aria-hidden="true"
-                          className="grid size-8 shrink-0 place-items-center"
-                        >
+                  Tipo de cancha
+                </Label>
+                <Select
+                  value={options.background}
+                  disabled={processing}
+                  onValueChange={(
+                    background: ImageExportOptions["background"],
+                  ) => updateOptions({ ...options, background })}
+                >
+                  <SelectTrigger
+                    id={`${id}-background-control`}
+                    aria-labelledby={`${id}-background`}
+                  >
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="w-[var(--radix-select-trigger-width)]">
+                    {IMAGE_EXPORT_BACKGROUNDS.map((background) => (
+                      <SelectItem
+                        key={background.id}
+                        value={background.id}
+                        textValue={background.label}
+                      >
+                        <span className="flex min-w-0 items-center gap-3 whitespace-nowrap text-start">
                           <span
-                            className="size-6 rounded-sm bg-[var(--export-surface-color)] bg-cover"
-                            style={{
-                              ...getImageExportBackgroundStyle(background.id),
-                              backgroundImage: `url("${getImageExportBackgroundUrl(background.id)}")`,
-                            }}
-                          />
-                        </span>
-                        <span className="min-w-0 truncate">
-                          {background.label}
-                        </span>
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid min-w-0 grid-cols-1 gap-2">
-              <Label id={`${id}-weather`} htmlFor={`${id}-weather-control`}>
-                Clima
-              </Label>
-              <Select
-                value={options.weather}
-                disabled={processing}
-                onValueChange={(weather: ImageExportOptions["weather"]) =>
-                  updateOptions({ ...options, weather })
-                }
-              >
-                <SelectTrigger
-                  id={`${id}-weather-control`}
-                  aria-labelledby={`${id}-weather`}
-                >
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="w-[var(--radix-select-trigger-width)]">
-                  {IMAGE_EXPORT_WEATHERS.map((weather) => (
-                    <SelectItem
-                      key={weather.id}
-                      value={weather.id}
-                      textValue={weather.label}
-                    >
-                      <span className="flex min-w-0 items-center gap-3 whitespace-nowrap text-start">
-                        <span
-                          className="grid size-8 shrink-0 place-items-center"
-                          aria-hidden="true"
-                        >
-                          <WeatherIllustration weather={weather.id} />
-                        </span>
-                        <span className="min-w-0 truncate">
-                          {weather.label}
-                        </span>
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid min-w-0 grid-cols-1 gap-2">
-              <Label id={`${id}-avatar`} htmlFor={`${id}-avatar-control`}>
-                Imágenes de jugadores
-              </Label>
-              <Select
-                value={options.avatarShape}
-                disabled={processing}
-                onValueChange={(
-                  avatarShape: ImageExportOptions["avatarShape"],
-                ) => updateOptions({ ...options, avatarShape })}
-              >
-                <SelectTrigger
-                  id={`${id}-avatar-control`}
-                  aria-labelledby={`${id}-avatar`}
-                >
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="w-[var(--radix-select-trigger-width)]">
-                  {IMAGE_EXPORT_AVATARS.map(({ id: shape, label }) => (
-                    <SelectItem key={shape} value={shape} textValue={label}>
-                      <span className="flex min-w-0 items-center gap-3 whitespace-nowrap text-start">
-                        <span
-                          aria-hidden="true"
-                          className="grid size-8 shrink-0 place-items-center"
-                        >
-                          {shape === "none" ? (
-                            <ImageOff className="size-6 text-muted-foreground" />
-                          ) : (
-                            <PlayerAvatar
-                              name="Alex"
-                              size="sm"
-                              shape={shape}
-                              palette={palette}
+                            aria-hidden="true"
+                            className="grid size-8 shrink-0 place-items-center"
+                          >
+                            <span
+                              className="size-6 rounded-sm bg-[var(--export-surface-color)] bg-cover"
+                              style={{
+                                ...getImageExportBackgroundStyle(background.id),
+                                backgroundImage: `url("${getImageExportBackgroundUrl(background.id)}")`,
+                              }}
                             />
-                          )}
+                          </span>
+                          <span className="min-w-0 truncate">
+                            {background.label}
+                          </span>
                         </span>
-                        <span className="min-w-0 truncate">{label}</span>
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid min-w-0 grid-cols-1 gap-2">
-              <Label asChild>
-                <span id={`${id}-alignment`}>Alineación de texto e imagen</span>
-              </Label>
-              <RadioGroup
-                className="grid grid-cols-2 gap-1 rounded-md bg-muted p-1"
-                aria-labelledby={`${id}-alignment`}
-                value={options.alignment}
-                disabled={processing}
-                onValueChange={(value) =>
-                  updateOptions({
-                    ...options,
-                    alignment:
-                      IMAGE_EXPORT_ALIGNMENTS.find(({ id }) => id === value)
-                        ?.id ?? DEFAULT_IMAGE_EXPORT_OPTIONS.alignment,
-                  })
-                }
-              >
-                {IMAGE_EXPORT_ALIGNMENTS.map(({ id: alignment, label }) => {
-                  const Icon = alignmentIcons[alignment];
-                  return (
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid min-w-0 grid-cols-1 gap-2">
+                <Label id={`${id}-weather`} htmlFor={`${id}-weather-control`}>
+                  Clima
+                </Label>
+                <Select
+                  value={options.weather}
+                  disabled={processing}
+                  onValueChange={(weather: ImageExportOptions["weather"]) =>
+                    updateOptions({ ...options, weather })
+                  }
+                >
+                  <SelectTrigger
+                    id={`${id}-weather-control`}
+                    aria-labelledby={`${id}-weather`}
+                  >
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="w-[var(--radix-select-trigger-width)]">
+                    {IMAGE_EXPORT_WEATHERS.map((weather) => (
+                      <SelectItem
+                        key={weather.id}
+                        value={weather.id}
+                        textValue={weather.label}
+                      >
+                        <span className="flex min-w-0 items-center gap-3 whitespace-nowrap text-start">
+                          <span
+                            className="grid size-8 shrink-0 place-items-center"
+                            aria-hidden="true"
+                          >
+                            <WeatherIllustration weather={weather.id} />
+                          </span>
+                          <span className="min-w-0 truncate">
+                            {weather.label}
+                          </span>
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid min-w-0 grid-cols-1 gap-2">
+                <Label id={`${id}-avatar`} htmlFor={`${id}-avatar-control`}>
+                  Imágenes de jugadores
+                </Label>
+                <Select
+                  value={options.avatarShape}
+                  disabled={processing}
+                  onValueChange={(
+                    avatarShape: ImageExportOptions["avatarShape"],
+                  ) => updateOptions({ ...options, avatarShape })}
+                >
+                  <SelectTrigger
+                    id={`${id}-avatar-control`}
+                    aria-labelledby={`${id}-avatar`}
+                  >
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="w-[var(--radix-select-trigger-width)]">
+                    {IMAGE_EXPORT_AVATARS.map(({ id: shape, label }) => (
+                      <SelectItem key={shape} value={shape} textValue={label}>
+                        <span className="flex min-w-0 items-center gap-3 whitespace-nowrap text-start">
+                          <span
+                            aria-hidden="true"
+                            className="grid size-8 shrink-0 place-items-center"
+                          >
+                            {shape === "none" ? (
+                              <ImageOff className="size-6 text-muted-foreground" />
+                            ) : (
+                              <PlayerAvatar
+                                name="Alex"
+                                size="sm"
+                                shape={shape}
+                                palette={palette}
+                              />
+                            )}
+                          </span>
+                          <span className="min-w-0 truncate">{label}</span>
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid min-w-0 grid-cols-1 gap-2">
+                <Label asChild>
+                  <span id={`${id}-alignment`}>
+                    Alineación de texto e imagen
+                  </span>
+                </Label>
+                <RadioGroup
+                  className="grid grid-cols-2 gap-1 rounded-md bg-muted p-1"
+                  aria-labelledby={`${id}-alignment`}
+                  value={options.alignment}
+                  disabled={processing}
+                  onValueChange={(value) =>
+                    updateOptions({
+                      ...options,
+                      alignment:
+                        IMAGE_EXPORT_ALIGNMENTS.find(({ id }) => id === value)
+                          ?.id ?? DEFAULT_IMAGE_EXPORT_OPTIONS.alignment,
+                    })
+                  }
+                >
+                  {IMAGE_EXPORT_ALIGNMENTS.map(({ id: alignment, label }) => {
+                    const Icon = alignmentIcons[alignment];
+                    return (
+                      <RadioGroupItem
+                        key={alignment}
+                        variant="button"
+                        className="gap-2"
+                        id={`${id}-alignment-${alignment}`}
+                        value={alignment}
+                      >
+                        <Icon className="size-4 shrink-0" aria-hidden="true" />
+                        {label}
+                      </RadioGroupItem>
+                    );
+                  })}
+                </RadioGroup>
+              </div>
+              <div className="grid min-w-0 grid-cols-1 gap-2">
+                <Label asChild>
+                  <span id={`${id}-player-order`}>Ordenar jugadores por</span>
+                </Label>
+                <RadioGroup
+                  className="grid grid-cols-2 gap-1 rounded-md bg-muted p-1"
+                  aria-labelledby={`${id}-player-order`}
+                  value={options.playerOrder}
+                  disabled={processing}
+                  onValueChange={(value) =>
+                    updateOptions({
+                      ...options,
+                      playerOrder:
+                        IMAGE_EXPORT_PLAYER_ORDERS.find(
+                          ({ id }) => id === value,
+                        )?.id ?? DEFAULT_IMAGE_EXPORT_OPTIONS.playerOrder,
+                    })
+                  }
+                >
+                  {IMAGE_EXPORT_PLAYER_ORDERS.map(({ id: order, label }) => (
                     <RadioGroupItem
-                      key={alignment}
+                      key={order}
                       variant="button"
-                      className="gap-2"
-                      id={`${id}-alignment-${alignment}`}
-                      value={alignment}
+                      id={`${id}-player-order-${order}`}
+                      value={order}
                     >
-                      <Icon className="size-4 shrink-0" aria-hidden="true" />
                       {label}
                     </RadioGroupItem>
-                  );
-                })}
-              </RadioGroup>
-            </div>
-            <div className="grid min-w-0 grid-cols-1 gap-2">
-              <Label asChild>
-                <span id={`${id}-player-order`}>Ordenar jugadores por</span>
-              </Label>
-              <RadioGroup
-                className="grid grid-cols-2 gap-1 rounded-md bg-muted p-1"
-                aria-labelledby={`${id}-player-order`}
-                value={options.playerOrder}
-                disabled={processing}
-                onValueChange={(value) =>
-                  updateOptions({
-                    ...options,
-                    playerOrder:
-                      IMAGE_EXPORT_PLAYER_ORDERS.find(({ id }) => id === value)
-                        ?.id ?? DEFAULT_IMAGE_EXPORT_OPTIONS.playerOrder,
-                  })
-                }
-              >
-                {IMAGE_EXPORT_PLAYER_ORDERS.map(({ id: order, label }) => (
-                  <RadioGroupItem
-                    key={order}
-                    variant="button"
-                    id={`${id}-player-order-${order}`}
-                    value={order}
-                  >
-                    {label}
-                  </RadioGroupItem>
-                ))}
-              </RadioGroup>
-            </div>
-            {teams.map((team) => (
-              <fieldset
-                key={team.id}
-                disabled={processing || !team.players.length}
-                className="grid min-w-0 gap-4 [padding-block-start:theme(spacing.4)]"
-              >
-                <legend className="max-w-full text-base font-medium [overflow-wrap:anywhere]">
-                  {team.name.trim()}
-                </legend>
-                {IMAGE_EXPORT_PLAYER_ROLES.map(({ id: role, label }) => (
-                  <div key={role} className="grid min-w-0 grid-cols-1 gap-2">
-                    <Label
-                      id={`${id}-${role}-${team.id}`}
-                      htmlFor={`${id}-${role}-${team.id}-control`}
-                    >
-                      {label}
-                      <span className="sr-only"> de {team.name.trim()}</span>
-                    </Label>
-                    <Select
-                      value={String(
-                        selections[team.id].assignments[role] ?? "none",
-                      )}
-                      disabled={processing || !team.players.length}
-                      onValueChange={(value) => {
-                        setSavedSelections({
-                          ...selections,
-                          [team.id]: {
-                            ...selections[team.id],
-                            assignments: {
-                              ...selections[team.id].assignments,
-                              [role]: value === "none" ? null : Number(value),
-                            },
-                          },
-                        });
-                        setError(null);
-                        setDownloaded(false);
-                      }}
-                    >
-                      <SelectTrigger
-                        id={`${id}-${role}-${team.id}-control`}
-                        aria-labelledby={`${id}-${role}-${team.id}`}
-                        data-player-role-control={role}
-                        data-role-team={team.id}
+                  ))}
+                </RadioGroup>
+              </div>
+              {teams.map((team) => (
+                <fieldset
+                  key={team.id}
+                  disabled={processing || !team.players.length}
+                  className="grid min-w-0 gap-4 [padding-block-start:theme(spacing.4)]"
+                >
+                  <legend className="max-w-full text-base font-medium [overflow-wrap:anywhere]">
+                    {team.name.trim()}
+                  </legend>
+                  {IMAGE_EXPORT_PLAYER_ROLES.map(({ id: role, label }) => (
+                    <div key={role} className="grid min-w-0 grid-cols-1 gap-2">
+                      <Label
+                        id={`${id}-${role}-${team.id}`}
+                        htmlFor={`${id}-${role}-${team.id}-control`}
                       >
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="w-[var(--radix-select-trigger-width)]">
-                        <SelectItem value="none" textValue="No indicado">
-                          <span className="flex min-w-0 items-center gap-3 whitespace-nowrap text-start">
-                            <span
-                              className="grid size-8 shrink-0 place-items-center"
-                              aria-hidden="true"
-                            >
-                              <Minus className="size-6 text-muted-foreground" />
-                            </span>
-                            <span className="min-w-0 truncate">
-                              No indicado
-                            </span>
-                          </span>
-                        </SelectItem>
-                        {[...team.players].sort(byName).map((player) => (
-                          <SelectItem
-                            key={player.id}
-                            value={String(player.id)}
-                            textValue={player.name}
-                          >
+                        {label}
+                        <span className="sr-only"> de {team.name.trim()}</span>
+                      </Label>
+                      <Select
+                        value={String(
+                          selections[team.id].assignments[role] ?? "none",
+                        )}
+                        disabled={processing || !team.players.length}
+                        onValueChange={(value) => {
+                          setSavedSelections({
+                            ...selections,
+                            [team.id]: {
+                              ...selections[team.id],
+                              assignments: {
+                                ...selections[team.id].assignments,
+                                [role]: value === "none" ? null : Number(value),
+                              },
+                            },
+                          });
+                          setError(null);
+                          setDownloaded(false);
+                        }}
+                      >
+                        <SelectTrigger
+                          id={`${id}-${role}-${team.id}-control`}
+                          aria-labelledby={`${id}-${role}-${team.id}`}
+                          data-player-role-control={role}
+                          data-role-team={team.id}
+                        >
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="w-[var(--radix-select-trigger-width)]">
+                          <SelectItem value="none" textValue="No indicado">
                             <span className="flex min-w-0 items-center gap-3 whitespace-nowrap text-start">
                               <span
                                 className="grid size-8 shrink-0 place-items-center"
                                 aria-hidden="true"
                               >
-                                <PlayerAvatar
-                                  name={player.name}
-                                  src={player.avatar}
-                                  size="sm"
-                                  palette={palette}
-                                />
+                                <Minus className="size-6 text-muted-foreground" />
                               </span>
-                              <span
-                                className="min-w-0 truncate"
-                                title={player.name}
-                              >
-                                {player.name}
+                              <span className="min-w-0 truncate">
+                                No indicado
                               </span>
                             </span>
                           </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                ))}
-              </fieldset>
-            ))}
-          </fieldset>
-        </div>
-        {showPreview ? (
-          <section
+                          {[...team.players].sort(byName).map((player) => (
+                            <SelectItem
+                              key={player.id}
+                              value={String(player.id)}
+                              textValue={player.name}
+                            >
+                              <span className="flex min-w-0 items-center gap-3 whitespace-nowrap text-start">
+                                <span
+                                  className="grid size-8 shrink-0 place-items-center"
+                                  aria-hidden="true"
+                                >
+                                  <PlayerAvatar
+                                    name={player.name}
+                                    src={player.avatar}
+                                    size="sm"
+                                    palette={palette}
+                                  />
+                                </span>
+                                <span
+                                  className="min-w-0 truncate"
+                                  title={player.name}
+                                >
+                                  {player.name}
+                                </span>
+                              </span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  ))}
+                </fieldset>
+              ))}
+            </fieldset>
+          </ExportPanel>
+          <ExportPanel
+            tabbed={!wide}
+            value="preview"
+            label="Vista previa"
             className="grid min-h-0 min-w-0 grid-rows-[minmax(0,1fr)] bg-muted lg:border-s"
-            aria-label="Vista previa"
           >
             <div
               className="flex min-h-0 min-w-0 flex-col overflow-clip p-4 sm:p-6"
@@ -472,9 +521,9 @@ export default function ExportEditor({
                 playerRoles={selections}
               />
             </div>
-          </section>
-        ) : null}
-      </div>
+          </ExportPanel>
+        </div>
+      </Tabs>
       <footer className="flex flex-wrap items-center gap-3 border-t p-4 sm:px-6">
         <div
           className="min-w-0 basis-full text-base"
