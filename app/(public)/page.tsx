@@ -49,7 +49,7 @@ const Page: FC = () => {
       </Show>
       <Show when="signed-out">
         <PublicHeader />
-        <main className="mx-auto w-[min(100%_-_2rem,80rem)]">
+        <main className="mx-auto w-full max-w-7xl px-4">
           <section
             className="flex flex-wrap items-center gap-[clamp(2rem,4vw,4rem)] py-[clamp(2rem,5vw,5rem)]"
             aria-labelledby="landing-title"
