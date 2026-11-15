@@ -5,6 +5,7 @@ for (const [width, height] of [
   [768, 1024],
   [1024, 768],
   [1280, 800],
+  [1920, 1080],
 ]) {
   test(`public footer keeps navigation and author usable at ${width}x${height}`, async ({
     page,
@@ -30,6 +31,10 @@ for (const [width, height] of [
     }
     const author = footer.getByRole("button", { name: /Hecho por/ });
     const navigationBox = (await navigation.boundingBox())!;
+    const logoBox = (await header
+      .getByRole("link", { name: "scalonet.app", exact: true })
+      .boundingBox())!;
+    expect(Math.abs(logoBox.x - navigationBox.x)).toBeLessThan(1);
     const authorBox = (await author.boundingBox())!;
     if (width === 320)
       expect(authorBox.y).toBeGreaterThanOrEqual(
