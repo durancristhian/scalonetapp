@@ -150,6 +150,11 @@ export default function ExportEditor({
     setDownloaded(false);
   };
 
+  const reset = () => {
+    updateOptions({ ...DEFAULT_IMAGE_EXPORT_OPTIONS });
+    setSavedSelections(reconcileImageExportTeamSelections(teams, {}));
+  };
+
   const download = async () => {
     if (disabled || processing) return;
     setError(null);
@@ -548,7 +553,7 @@ export default function ExportEditor({
             className="flex-1"
             variant="outline"
             disabled={processing}
-            onClick={() => updateOptions({ ...DEFAULT_IMAGE_EXPORT_OPTIONS })}
+            onClick={reset}
           >
             Restablecer valores
           </Button>
