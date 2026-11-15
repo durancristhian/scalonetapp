@@ -84,14 +84,13 @@ export const LargeScreenNavigation = () => {
       <NavigationMenuList>
         {NAVIGATION_ITEMS.map((navItem) => (
           <NavigationMenuItem key={navItem.path}>
-            <Link href={navItem.path} legacyBehavior passHref>
-              <NavigationMenuLink
-                className={navigationMenuTriggerStyle()}
-                active={isRouteActive(pathname, navItem.path)}
-              >
-                {navItem.label}
-              </NavigationMenuLink>
-            </Link>
+            <NavigationMenuLink
+              asChild
+              className={navigationMenuTriggerStyle()}
+              active={isRouteActive(pathname, navItem.path)}
+            >
+              <Link href={navItem.path}>{navItem.label}</Link>
+            </NavigationMenuLink>
           </NavigationMenuItem>
         ))}
       </NavigationMenuList>
