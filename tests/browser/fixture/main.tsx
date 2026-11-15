@@ -3,6 +3,7 @@ import { PublicFooter } from "@/components/public-footer";
 import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { PathParamsContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
+import { AppRouterContext } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { Toaster } from "sonner";
 import { MatchPlayers } from "@/app/(authenticated)/partidos/[match-id]/(components)/match-players";
 import { MatchItem } from "@/app/(authenticated)/(components)/match-item";
@@ -15,6 +16,15 @@ import { MotionFixture } from "./motion";
 import { CarouselFixture } from "./carousel";
 
 const roster = [player(1, { name: "Ana" })];
+const router = {
+  back() {},
+  forward() {},
+  refresh() {},
+  push() {},
+  replace() {},
+  prefetch() {},
+  bfcacheId: "fixture",
+};
 function Fixture() {
   const [clicks, setClicks] = useState(0);
   return (
@@ -23,9 +33,11 @@ function Fixture() {
         Comprobar clics: {clicks}
       </button>
       <MatchItem match={match()} disableDuplication={false} />
-      <PathParamsContext.Provider value={{ "match-id": "1" }}>
-        <MatchPlayers players={roster} />
-      </PathParamsContext.Provider>
+      <AppRouterContext.Provider value={router}>
+        <PathParamsContext.Provider value={{ "match-id": "1" }}>
+          <MatchPlayers players={roster} />
+        </PathParamsContext.Provider>
+      </AppRouterContext.Provider>
       <Toaster />
     </>
   );

@@ -21,6 +21,7 @@ import { feedbackAction } from "@/server/actions/feedback";
 import copy from "copy-to-clipboard";
 import { deferred, match, player, teams } from "../fixtures";
 
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 vi.mock("@/server/actions/match", () => ({
   addMatchAction: vi.fn(),
   deleteMatchAction: vi.fn(),
