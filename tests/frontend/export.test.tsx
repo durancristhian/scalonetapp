@@ -1,5 +1,5 @@
 import { StrictMode } from "react";
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { act, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { Dialog } from "@/components/ui/dialog";
@@ -159,7 +159,7 @@ describe("export editor", () => {
     expect(
       JSON.parse(localStorage.getItem(IMAGE_EXPORT_STORAGE_KEY)!).playerOrder,
     ).toBe("position");
-    await user.click(screen.getByRole("button", { name: "Ver imagen" }));
+    await user.click(screen.getByRole("tab", { name: "Vista previa" }));
     expect(
       Array.from(
         document.querySelectorAll(
@@ -170,7 +170,7 @@ describe("export editor", () => {
     ).toEqual(["Zoe", "Ana"]);
     await user.click(screen.getByRole("button", { name: "Descargar" }));
     expect(onExport.mock.calls[0][0].playerOrder).toBe("position");
-    await user.click(screen.getByRole("button", { name: "Ver opciones" }));
+    await user.click(screen.getByRole("tab", { name: "Opciones" }));
     await user.click(
       screen.getByRole("button", { name: "Restablecer valores" }),
     );
@@ -229,6 +229,92 @@ describe("export editor", () => {
     expect(screen.getByRole("button", { name: "Cerrar" })).toBeDisabled();
     expect(screen.getByRole("radio", { name: "Nombre" })).toBeDisabled();
     expect(screen.getByRole("radio", { name: "Posición" })).toBeDisabled();
+    expect(screen.getByRole("tab", { name: "Opciones" })).toBeDisabled();
+    expect(screen.getByRole("tab", { name: "Vista previa" })).toBeDisabled();
+  });
+  it("switches between options and preview tabs on narrow screens", async () => {
+    const user = userEvent.setup();
+    render(
+      <Dialog open>
+        <ExportEditor
+          matchId={1}
+          name="Final"
+          teams={lineup}
+          disabled={false}
+          processing={false}
+          onExport={vi.fn()}
+        />
+      </Dialog>,
+    );
+    const options = screen.getByRole("tabpanel", { name: "Opciones" });
+    expect(screen.getByRole("tab", { name: "Opciones" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    expect(
+      screen.queryByRole("region", { name: "Imagen de los equipos" }),
+    ).not.toBeInTheDocument();
+    await user.click(screen.getByRole("tab", { name: "Vista previa" }));
+    expect(
+      screen.getByRole("tabpanel", { name: "Vista previa" }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole("region", { name: "Imagen de los equipos" }),
+    ).toBeVisible();
+    expect(options).toHaveAttribute("data-state", "inactive");
+  });
+  it("keeps the options panel when crossing the wide breakpoint", async () => {
+    let wide = false;
+    const media = new EventTarget();
+    vi.spyOn(window, "matchMedia").mockImplementation((query) => ({
+      get matches() {
+        return wide;
+      },
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: media.addEventListener.bind(media),
+      removeEventListener: media.removeEventListener.bind(media),
+      dispatchEvent: media.dispatchEvent.bind(media),
+    }));
+    const user = userEvent.setup();
+    render(
+      <Dialog open>
+        <ExportEditor
+          matchId={1}
+          name="Final"
+          teams={lineup}
+          disabled={false}
+          processing={false}
+          onExport={vi.fn()}
+        />
+      </Dialog>,
+    );
+    const weather = screen.getByRole("combobox", { name: "Clima" });
+    await user.click(screen.getByRole("tab", { name: "Vista previa" }));
+    await user.click(screen.getByRole("tab", { name: "Opciones" }));
+    weather.focus();
+    wide = true;
+    act(() => {
+      media.dispatchEvent(new Event("change"));
+    });
+    expect(screen.queryByRole("tablist")).not.toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Opciones" })).toBeVisible();
+    expect(
+      screen.getByRole("region", { name: "Imagen de los equipos" }),
+    ).toBeVisible();
+    expect(screen.getByRole("combobox", { name: "Clima" })).toBe(weather);
+    expect(weather).toHaveFocus();
+    wide = false;
+    act(() => {
+      media.dispatchEvent(new Event("change"));
+    });
+    expect(screen.getByRole("tab", { name: "Opciones" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    expect(screen.getByRole("combobox", { name: "Clima" })).toBe(weather);
   });
   it("should restore defaults and persist changes when reset is clicked", async () => {
     localStorage.setItem(
