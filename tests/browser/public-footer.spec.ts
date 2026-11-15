@@ -71,3 +71,33 @@ for (const [width, height] of [
     await expect(author).toBeFocused();
   });
 }
+
+for (const width of [320, 1280, 1311, 1313, 1920]) {
+  test(`public header and footer share the page shell at ${width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto("/?public-footer");
+    const logo = (await page
+      .getByRole("banner")
+      .getByRole("link", { name: "scalonet.app", exact: true })
+      .boundingBox())!;
+    const footer = page.getByRole("contentinfo");
+    const navigation = (await footer
+      .getByRole("navigation", { name: "Información" })
+      .boundingBox())!;
+    const author = (await footer
+      .getByRole("button", { name: /Hecho por/ })
+      .boundingBox())!;
+    const pageWidth = await page.evaluate(
+      () => document.body.getBoundingClientRect().width,
+    );
+    const shellLeft = Math.max(16, (pageWidth - 1280) / 2 + 16);
+    expect(Math.abs(logo.x - shellLeft)).toBeLessThan(1);
+    expect(Math.abs(navigation.x - shellLeft)).toBeLessThan(1);
+    if (width > 320)
+      expect(
+        Math.abs(author.x + author.width - (pageWidth - shellLeft)),
+      ).toBeLessThan(1);
+  });
+}

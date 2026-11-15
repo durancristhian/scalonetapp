@@ -10,7 +10,7 @@ const links = [
 export function PublicFooter() {
   return (
     <footer className="border-bs border-border">
-      <div className="mx-auto flex w-[min(100%_-_2rem,80rem)] flex-wrap items-center justify-between gap-x-8 gap-y-4 py-8">
+      <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-x-8 gap-y-4 px-4 py-8">
         <nav aria-label="Información" className="flex flex-wrap gap-x-6">
           {links.map(({ href, label }) => (
             <Link
