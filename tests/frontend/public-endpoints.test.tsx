@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
+import { type PropsWithChildren } from "react";
 import { renderToString } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { acceptRepresentation } from "@/utils/accept-representation";
 import { publicResponse } from "@/server/public-response";
 import { GET as llms } from "@/app/llms.txt/route";
@@ -14,6 +15,13 @@ import {
   softwareSchema,
   type PublicPath,
 } from "@/utils/public-content";
+
+vi.mock("next/navigation", () => ({ usePathname: () => "/" }));
+vi.mock("@/server/actions/feedback", () => ({ feedbackAction: vi.fn() }));
+vi.mock("@clerk/nextjs", () => ({
+  Show: ({ when, children }: PropsWithChildren<{ when: string }>) =>
+    when === "signed-out" ? children : null,
+}));
 
 const request = (path: string, accept = "text/markdown", method = "GET") =>
   new Request(`https://www.scalonet.app${path}`, {

@@ -13,6 +13,7 @@ const boundary = vi.hoisted(() => ({
 }));
 
 vi.mock("next/navigation", () => ({
+  usePathname: () => "/",
   useRouter: () => ({ push: boundary.push }),
 }));
 vi.mock("@/utils/analytics", () => ({ trackAnalytics: boundary.track }));
