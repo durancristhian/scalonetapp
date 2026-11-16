@@ -1,3 +1,4 @@
+import { Feedback } from "@/components/feedback";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { type FC, type PropsWithChildren } from "react";
@@ -8,7 +9,9 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
       <div className="flex flex-col h-full min-h-[inherit]">
         <Header />
         <div className="grow">{children}</div>
-        <Footer />
+        <Footer>
+          <Feedback />
+        </Footer>
       </div>
     </>
   );

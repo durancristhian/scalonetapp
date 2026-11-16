@@ -5,7 +5,7 @@ import { trackAnalytics } from "@/utils/analytics";
 import { Loader } from "@/components/loader";
 import { LandingExportShowcase } from "@/components/landing-export-showcase";
 import { PublicHeader } from "@/components/public-header";
-import { PublicFooter } from "@/components/public-footer";
+import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Show, SignInButton, useAuth } from "@clerk/nextjs";
 import { ArrowRight } from "lucide-react";
@@ -127,7 +127,7 @@ const Page: FC = () => {
             </ol>
           </section>
         </main>
-        <PublicFooter />
+        <Footer />
       </Show>
     </div>
   );

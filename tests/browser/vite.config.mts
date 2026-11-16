@@ -15,6 +15,9 @@ export default defineConfig({
       "@/server/actions/player": fileURLToPath(
         new URL("./fixture/player-actions.ts", import.meta.url),
       ),
+      "@/server/actions/feedback": fileURLToPath(
+        new URL("./fixture/feedback-actions.ts", import.meta.url),
+      ),
       "@": root,
     },
   },
