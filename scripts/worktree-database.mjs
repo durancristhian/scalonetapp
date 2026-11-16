@@ -249,6 +249,39 @@ export function verifyDatabase(root, url) {
   query(state, "SELECT 1", databaseName(root));
 }
 
+function tableExists(state, database, table) {
+  return (
+    query(
+      state,
+      `SELECT to_regclass('public."${table}"') IS NOT NULL`,
+      database,
+    ) === "t"
+  );
+}
+
+export function databaseContents(root) {
+  const state = stateFor(root);
+  verifyServer(root, state);
+  const name = databaseName(root);
+  const migrations = tableExists(state, name, "_prisma_migrations")
+    ? query(
+        state,
+        "SELECT migration_name || ' ' || coalesce(checksum, '-') || ' ' || (finished_at IS NOT NULL) FROM _prisma_migrations WHERE rolled_back_at IS NULL ORDER BY migration_name",
+        name,
+      )
+        .split("\n")
+        .filter(Boolean)
+        .map((line) => {
+          const [migration, checksum, finished] = line.split(" ");
+          return { name: migration, checksum, finished: finished === "true" };
+        })
+    : [];
+  const matches = tableExists(state, name, "Match")
+    ? Number(query(state, 'SELECT count(*) FROM "Match"', name))
+    : 0;
+  return { migrations, matches };
+}
+
 export function stopDatabase(root) {
   if (!existsSync(stateFile(root))) return;
   const state = stateFor(root);
