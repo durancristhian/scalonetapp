@@ -140,7 +140,6 @@ export function prepareDependencies(root, cacheRoot) {
         cwd: root,
         stdio: ["ignore", "pipe", "pipe"],
         maxBuffer: 16 * 1024 * 1024,
-        env: { ...process.env, PUPPETEER_SKIP_DOWNLOAD: "true" },
       },
     );
     if (install.status !== 0) {

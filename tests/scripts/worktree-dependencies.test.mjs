@@ -171,11 +171,7 @@ test("bootstrap replaces remote connections with an owned database and rejects l
     ].join("\n"),
   );
   prepareDependencies(main, cache);
-  for (const name of [
-    "puppeteer/lib/puppeteer/node/cli.js",
-    "prisma/build/index.js",
-    "@playwright/test/cli.js",
-  ]) {
+  for (const name of ["prisma/build/index.js", "@playwright/test/cli.js"]) {
     const path = join(main, "node_modules", name);
     mkdirSync(join(path, ".."), { recursive: true });
     writeFileSync(path, "");
