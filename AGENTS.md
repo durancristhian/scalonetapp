@@ -52,3 +52,13 @@
 - Verify that the successful Preview deployment belongs to the PR's latest head commit. Use Chrome for Vercel access and deployment protection; authenticate the application with the designated Clerk agent account for that Development/Preview instance. An existing owner Clerk session does not replace the agent account: preserve it and use a separate browser session for the agent. Retrieve credentials through the configured private credential source; keep them out of repository files, PRs and logs. If credentials or browser access are unavailable, report the blocker instead of substituting the owner's account.
 - Verify the signed-in agent identity and that the affected authenticated page loads. Leave that page open in the shared browser for the owner; include the Preview URL and tested head commit in the handoff. Reuse an existing matching agent session when available.
 - Preview readiness and agent sign-in do not authorize merge or Production actions. Use the agent account only against the verified Development/Preview instance.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
