@@ -1,7 +1,6 @@
 import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
 import {
-  constants,
   cpSync,
   existsSync,
   lstatSync,
@@ -10,6 +9,7 @@ import {
   readdirSync,
   readFileSync,
   renameSync,
+  rmdirSync,
   rmSync,
   writeFileSync,
 } from "node:fs";
@@ -66,20 +66,16 @@ function stampInstallation(root, fingerprint) {
 }
 
 function copyInstallation(source, destination, fingerprint) {
-  rmSync(resolve(destination, "node_modules"), {
-    recursive: true,
-    force: true,
-  });
-  cpSync(
-    resolve(source, "node_modules"),
-    resolve(destination, "node_modules"),
-    {
+  const modules = resolve(destination, "node_modules");
+  rmSync(modules, { recursive: true, force: true });
+  mkdirSync(modules);
+  for (const name of readdirSync(resolve(source, "node_modules"))) {
+    if (name === basename(marker)) continue;
+    cpSync(resolve(source, "node_modules", name), resolve(modules, name), {
       recursive: true,
-      filter: (path) => path !== resolve(source, marker),
       verbatimSymlinks: true,
-      mode: constants.COPYFILE_FICLONE,
-    },
-  );
+    });
+  }
   stampInstallation(destination, fingerprint);
 }
 
@@ -149,5 +145,57 @@ export function prepareDependencies(root, cacheRoot) {
     }
     stampInstallation(root, fingerprint);
     cacheInstallation(root, bucket, fingerprint);
+  }
+}
+
+function installedFingerprint(root) {
+  try {
+    return JSON.parse(readFileSync(resolve(root, marker), "utf8")).fingerprint;
+  } catch {
+    return undefined;
+  }
+}
+
+const abandonedPendingAge = 24 * 60 * 60 * 1000;
+
+export function pruneDependencyCache(cacheRoot, worktrees, now = Date.now()) {
+  if (!existsSync(cacheRoot)) return;
+  const used = new Set(
+    worktrees
+      .filter((root) => existsSync(root))
+      .flatMap((root) => [
+        dependencyFingerprint(root),
+        installedFingerprint(root),
+      ]),
+  );
+  let removed = 0;
+  for (const fingerprint of readdirSync(cacheRoot)) {
+    const bucket = resolve(cacheRoot, fingerprint);
+    if (
+      !/^[0-9a-f]{64}$/.test(fingerprint) ||
+      used.has(fingerprint) ||
+      !lstatSync(bucket).isDirectory()
+    ) {
+      continue;
+    }
+    for (const name of readdirSync(bucket)) {
+      const entry = resolve(bucket, name);
+      if (
+        name.startsWith("ready-") ||
+        (name.startsWith(".pending-") &&
+          now - lstatSync(entry).mtimeMs > abandonedPendingAge)
+      ) {
+        rmSync(entry, { recursive: true, force: true });
+        removed += 1;
+      }
+    }
+    try {
+      rmdirSync(bucket);
+    } catch (error) {
+      if (!["ENOTEMPTY", "EEXIST"].includes(error.code)) throw error;
+    }
+  }
+  if (removed > 0) {
+    console.log(`Removed ${removed} unused dependency cache entries.`);
   }
 }

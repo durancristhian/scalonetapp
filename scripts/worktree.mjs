@@ -1,5 +1,8 @@
 import { spawnSync, spawn } from "node:child_process";
-import { prepareDependencies } from "./worktree-dependencies.mjs";
+import {
+  prepareDependencies,
+  pruneDependencyCache,
+} from "./worktree-dependencies.mjs";
 import {
   exportBrowserEnvironment,
   prepareBrowsers,
@@ -237,10 +240,18 @@ try {
     copyEnvironment();
     mkdirSync(".local", { recursive: true, mode: 0o700 });
     chmodSync(".local", 0o700);
-    prepareDependencies(
-      root,
-      resolve(git("rev-parse", "--git-common-dir"), "worktree-dependencies-v1"),
+    const dependencyCache = resolve(
+      git("rev-parse", "--git-common-dir"),
+      "worktree-dependencies-v1",
     );
+    prepareDependencies(root, dependencyCache);
+    pruneDependencyCache(dependencyCache, [
+      root,
+      ...git("worktree", "list", "--porcelain", "-z")
+        .split("\0")
+        .filter((line) => line.startsWith("worktree "))
+        .map((line) => line.slice("worktree ".length)),
+    ]);
     prepareBrowsers(root, () =>
       run(process.execPath, [
         "node_modules/@playwright/test/cli.js",
