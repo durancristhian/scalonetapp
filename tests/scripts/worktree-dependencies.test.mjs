@@ -11,6 +11,7 @@ import {
   copyFileSync,
   existsSync,
   readdirSync,
+  statSync,
   utimesSync,
 } from "node:fs";
 import { spawn, spawnSync } from "node:child_process";
@@ -131,9 +132,10 @@ test("rejects missing, corrupt, foreign-runtime and symlinked installations", (t
   );
 });
 
-test("bootstrap replaces remote connections with an owned database and rejects live Clerk keys", (t) => {
+function bootstrapFixture(t) {
+  let bin;
   try {
-    postgresBinaries();
+    bin = postgresBinaries();
   } catch (error) {
     if (process.env.CI) throw error;
     t.skip("PostgreSQL tools are unavailable");
@@ -175,18 +177,59 @@ test("bootstrap replaces remote connections with an owned database and rejects l
     ].join("\n"),
   );
   prepareDependencies(main, cache);
-  for (const name of ["prisma/build/index.js", "@playwright/test/cli.js"]) {
+  const psql = JSON.stringify(join(bin, "psql"));
+  const stubs = {
+    "prisma/build/index.js": `const { spawnSync } = require("node:child_process");
+const { createHash } = require("node:crypto");
+const fs = require("node:fs");
+if (process.argv[2] !== "migrate") process.exit(0);
+const folder = "prisma/migrations";
+const rows = (fs.existsSync(folder) ? fs.readdirSync(folder) : []).map((name) => {
+  const sql = fs.readFileSync(folder + "/" + name + "/migration.sql");
+  return "('" + name + "', '" + createHash("sha256").update(sql).digest("hex") + "', now())";
+});
+const sql = "CREATE TABLE IF NOT EXISTS _prisma_migrations (migration_name text PRIMARY KEY, checksum text, finished_at timestamptz, rolled_back_at timestamptz);" +
+  (rows.length ? "INSERT INTO _prisma_migrations VALUES " + rows.join(", ") + " ON CONFLICT DO NOTHING;" : "");
+const result = spawnSync(${psql}, ["-X", "-q", "-v", "ON_ERROR_STOP=1", "-c", sql, process.env.POSTGRES_URL_NON_POOLING], { stdio: "inherit" });
+process.exit(result.status);
+`,
+    "@playwright/test/cli.js": "",
+  };
+  for (const [name, contents] of Object.entries(stubs)) {
     const path = join(main, "node_modules", name);
     mkdirSync(join(path, ".."), { recursive: true });
-    writeFileSync(path, "");
+    writeFileSync(path, contents);
   }
-  const run = (mode) =>
+  writeFileSync(
+    join(scripts, "seed-worktree.mjs"),
+    `import { spawnSync } from "node:child_process";
+if (process.env.SEED_FIXTURE_FAIL) process.exit(1);
+const sql = 'CREATE TABLE IF NOT EXISTS "Match" (id serial); INSERT INTO "Match" SELECT FROM (SELECT 1) AS one WHERE NOT EXISTS (SELECT FROM "Match");';
+const result = spawnSync(${psql}, ["-X", "-q", "-v", "ON_ERROR_STOP=1", "-c", sql, process.env.POSTGRES_PRISMA_URL], { stdio: "inherit" });
+process.exit(result.status);
+`,
+  );
+  mkdirSync(join(main, "prisma/migrations/20240101000000_init"), {
+    recursive: true,
+  });
+  writeFileSync(join(main, "prisma/schema.prisma"), "// fixture\n");
+  writeFileSync(
+    join(main, "prisma/migrations/20240101000000_init/migration.sql"),
+    "SELECT 1;\n",
+  );
+  const run = (mode, extra = {}) =>
     spawnSync(process.execPath, ["scripts/worktree.mjs", mode], {
       cwd: main,
       encoding: "utf8",
-      env: { PATH: process.env.PATH, HOME: process.env.HOME },
+      env: { PATH: process.env.PATH, HOME: process.env.HOME, ...extra },
     });
-  writeFileSync(join(scripts, "seed-worktree.mjs"), "");
+  return { main, scripts, run };
+}
+
+test("bootstrap replaces remote connections with an owned database and rejects live Clerk keys", (t) => {
+  const bootstrap = bootstrapFixture(t);
+  if (!bootstrap) return;
+  const { main, run } = bootstrap;
   const setup = run("setup");
   assert.equal(setup.status, 0, setup.stderr);
   assert.match(setup.stdout, /Worktree ready/);
@@ -238,6 +281,71 @@ test("bootstrap replaces remote connections with an owned database and rejects l
     assert.match(result.stderr, /Clerk Development keys are required/);
     assert.doesNotMatch(result.stdout, /Development and image exports/);
   }
+});
+
+test("setup records completion and check confirms dependencies, schema, migrations and seed", (t) => {
+  const bootstrap = bootstrapFixture(t);
+  if (!bootstrap) return;
+  const { main, run } = bootstrap;
+  const record = join(main, ".local/worktree-setup.json");
+  const failed = (pattern) => {
+    const result = run("check");
+    assert.equal(result.status, 1, result.stdout);
+    assert.match(result.stderr, pattern);
+  };
+  failed(/Setup has not completed/);
+  const automatic = run("setup", { T3CODE_WORKTREE_PATH: main });
+  assert.equal(automatic.status, 0, automatic.stderr);
+  assert.equal(statSync(record).mode & 0o777, 0o600);
+  assert.equal(JSON.parse(readFileSync(record, "utf8")).launchedBy, "T3");
+  const check = run("check");
+  assert.equal(check.status, 0, check.stderr);
+  assert.match(check.stdout, /by T3 in the worktree terminal/);
+  assert.match(check.stdout, /all 1 migrations applied, 1 match\./);
+  assert.equal(run("setup", { T3CODE_WORKTREE_PATH: "" }).status, 0);
+  assert.match(run("check").stdout, /by a manual run/);
+  const migration = join(main, "prisma/migrations/20240201000000_next");
+  mkdirSync(migration);
+  writeFileSync(join(migration, "migration.sql"), "SELECT 2;\n");
+  failed(/Pending migrations: 20240201000000_next\. Rerun/);
+  assert.equal(run("setup").status, 0);
+  assert.match(run("check").stdout, /all 2 migrations applied/);
+  writeFileSync(join(migration, "migration.sql"), "SELECT 3;\n");
+  failed(/Applied migrations differ from this revision: 20240201000000_next/);
+  rmSync(migration, { recursive: true });
+  failed(/migrations missing from this revision: 20240201000000_next/);
+  mkdirSync(migration);
+  writeFileSync(join(migration, "migration.sql"), "SELECT 2;\n");
+  assert.equal(run("check").status, 0);
+  writeFileSync(join(main, "prisma/schema.prisma"), "// changed\n");
+  failed(/schema\.prisma changed since setup/);
+  writeFileSync(join(main, "prisma/schema.prisma"), "// fixture\n");
+  const state = JSON.parse(
+    readFileSync(join(main, ".local/postgres/state.json"), "utf8"),
+  );
+  const env = parseEnv(readFileSync(join(main, ".env.local"), "utf8"));
+  const emptied = spawnSync(
+    join(state.bin, "psql"),
+    ["-X", "-q", "-c", 'DELETE FROM "Match"', env.POSTGRES_PRISMA_URL],
+    { encoding: "utf8" },
+  );
+  assert.equal(emptied.status, 0, emptied.stderr);
+  failed(/no matches\. Rerun/);
+  assert.equal(run("setup").status, 0);
+  assert.equal(run("check").status, 0);
+  stopDatabase(main);
+  failed(/Cannot verify the owned local PostgreSQL server.*Rerun/);
+  assert.equal(run("setup").status, 0);
+  const lock = join(main, "package-lock.json");
+  const locked = readFileSync(lock, "utf8");
+  writeFileSync(lock, locked.replace('"1.0.0"', '"1.0.1"'));
+  failed(/Dependencies do not match package-lock\.json/);
+  writeFileSync(lock, locked);
+  assert.equal(run("check").status, 0);
+  const broken = run("setup", { SEED_FIXTURE_FAIL: "1" });
+  assert.equal(broken.status, 1);
+  assert.equal(existsSync(record), false);
+  failed(/Setup has not completed/);
 });
 
 test("repairs a missing package instead of reusing or copying an incomplete tree", (t) => {

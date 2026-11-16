@@ -1,13 +1,17 @@
 import { spawnSync, spawn } from "node:child_process";
+import { createHash } from "node:crypto";
 import {
+  dependencyFingerprint,
   prepareDependencies,
   pruneDependencyCache,
+  reusableInstallation,
 } from "./worktree-dependencies.mjs";
 import {
   exportBrowserEnvironment,
   prepareBrowsers,
 } from "./worktree-browsers.mjs";
 import {
+  databaseContents,
   databaseName,
   prepareDatabase,
   verifyDatabase,
@@ -22,7 +26,10 @@ import {
   readFileSync,
   existsSync,
   mkdirSync,
+  readdirSync,
+  realpathSync,
   renameSync,
+  rmSync,
   writeFileSync,
 } from "node:fs";
 import { resolve } from "node:path";
@@ -78,6 +85,110 @@ function copyEnvironment() {
     }
     privateFile(destination);
   }
+}
+const setupRecord = resolve(root, ".local/worktree-setup.json");
+const rerun = "Rerun bash scripts/setup-worktree.sh.";
+const sha256 = (path) =>
+  createHash("sha256").update(readFileSync(path)).digest("hex");
+const short = (revision) => revision?.slice(0, 7) ?? "no commit";
+function revision(ref) {
+  const result = spawnSync(
+    "git",
+    ["rev-parse", "--verify", "--quiet", `${ref}^{commit}`],
+    { encoding: "utf8", cwd: root },
+  );
+  return result.status === 0 ? result.stdout.trim() : null;
+}
+function launchedByT3() {
+  const path = process.env.T3CODE_WORKTREE_PATH;
+  try {
+    return Boolean(path) && realpathSync(path) === realpathSync(root);
+  } catch {
+    return false;
+  }
+}
+function localMigrations() {
+  const folder = resolve(root, "prisma/migrations");
+  if (!existsSync(folder)) return [];
+  return readdirSync(folder, { withFileTypes: true })
+    .filter(
+      (entry) =>
+        entry.isDirectory() &&
+        existsSync(resolve(folder, entry.name, "migration.sql")),
+    )
+    .map((entry) => ({
+      name: entry.name,
+      checksum: sha256(resolve(folder, entry.name, "migration.sql")),
+    }));
+}
+function verifyMigrations(applied) {
+  const local = localMigrations();
+  const names = (migrations) => migrations.map(({ name }) => name).join(", ");
+  const failed = applied.filter(({ finished }) => !finished);
+  requireCondition(
+    failed.length === 0,
+    `Failed migrations are recorded: ${names(failed)}. Inspect the owned database before rerunning setup.`,
+  );
+  const recorded = new Map(
+    applied.map(({ name, checksum }) => [name, checksum]),
+  );
+  const known = new Set(local.map(({ name }) => name));
+  const pending = local.filter(({ name }) => !recorded.has(name));
+  requireCondition(
+    pending.length === 0,
+    `Pending migrations: ${names(pending)}. ${rerun}`,
+  );
+  const unknown = applied.filter(({ name }) => !known.has(name));
+  requireCondition(
+    unknown.length === 0,
+    `The database has migrations missing from this revision: ${names(unknown)}.`,
+  );
+  const changed = local.filter(
+    ({ name, checksum }) => recorded.get(name) !== checksum,
+  );
+  requireCondition(
+    changed.length === 0,
+    `Applied migrations differ from this revision: ${names(changed)}.`,
+  );
+  return local.length;
+}
+function verifyContents() {
+  const { migrations, matches } = databaseContents(root);
+  const count = verifyMigrations(migrations);
+  requireCondition(
+    matches > 0,
+    `The worktree database has no matches. ${rerun}`,
+  );
+  return { migrations: count, matches };
+}
+function writeSetupRecord(record) {
+  const pending = `${setupRecord}.pending`;
+  writeFileSync(pending, `${JSON.stringify(record, null, 2)}\n`, {
+    mode: 0o600,
+  });
+  renameSync(pending, setupRecord);
+}
+function readSetupRecord() {
+  try {
+    return JSON.parse(readFileSync(setupRecord, "utf8"));
+  } catch {
+    return null;
+  }
+}
+function baseSummary({ head, originMain }) {
+  if (!originMain)
+    return `Setup ran at ${short(head)}; origin/main was unavailable.`;
+  if (head === originMain)
+    return `Setup ran at ${short(head)}, the fetched origin/main.`;
+  const behind = spawnSync(
+    "git",
+    ["rev-list", "--count", `${head}..${originMain}`],
+    { encoding: "utf8", cwd: root },
+  );
+  const count = behind.status === 0 ? Number(behind.stdout.trim()) : NaN;
+  if (count === 0)
+    return `Setup ran at ${short(head)}, which includes the fetched origin/main ${short(originMain)}.`;
+  return `Setup ran at ${short(head)}, ${Number.isNaN(count) ? "an unknown number of" : count} commits behind the fetched origin/main ${short(originMain)}.`;
 }
 const expectedDatabase = databaseName(root);
 const publicDefaults = [
@@ -227,7 +338,7 @@ async function prepareDevelopment() {
   run(
     process.execPath,
     ["node_modules/prisma/build/index.js", "migrate", "deploy"],
-    env,
+    { ...env, PRISMA_HIDE_UPDATE_MESSAGE: "1" },
   );
   return env;
 }
@@ -238,6 +349,8 @@ try {
     `Node.js ${requiredNode} is required (.nvmrc).`,
   );
   if (mode === "setup") {
+    const started = Date.now();
+    rmSync(setupRecord, { force: true });
     copyEnvironment();
     mkdirSync(".local", { recursive: true, mode: 0o700 });
     chmodSync(".local", 0o700);
@@ -260,18 +373,72 @@ try {
         "chromium",
       ]),
     );
-    run(process.execPath, ["node_modules/prisma/build/index.js", "generate"], {
-      PATH: process.env.PATH,
-      HOME: process.env.HOME,
-    });
+    run(
+      process.execPath,
+      ["node_modules/prisma/build/index.js", "generate", "--no-hints"],
+      {
+        PATH: process.env.PATH,
+        HOME: process.env.HOME,
+        PRISMA_HIDE_UPDATE_MESSAGE: "1",
+      },
+    );
     const env = await prepareDevelopment();
     run(process.execPath, ["scripts/seed-worktree.mjs"], env);
+    const contents = verifyContents();
+    writeSetupRecord({
+      completedAt: new Date().toISOString(),
+      seconds: Number(((Date.now() - started) / 1000).toFixed(1)),
+      launchedBy: launchedByT3() ? "T3" : "manual",
+      head: revision("HEAD"),
+      originMain: revision("refs/remotes/origin/main"),
+      node: process.version,
+      dependencies: dependencyFingerprint(root),
+      schema: sha256(resolve(root, "prisma/schema.prisma")),
+      ...contents,
+    });
     console.log("Worktree ready. Run npm run dev or npm run test:frontend.");
   } else if (mode === "check") {
-    const env = developmentEnvironment();
-    verifyDatabase(root, env.POSTGRES_PRISMA_URL);
-    verifyDatabase(root, env.POSTGRES_URL_NON_POOLING);
-    console.log("Development configuration and owned database verified.");
+    const record = readSetupRecord();
+    const incomplete = "Setup has not completed in this worktree.";
+    let env;
+    try {
+      env = developmentEnvironment();
+    } catch (error) {
+      throw new Error(
+        record ? error.message : `${incomplete} ${error.message} ${rerun}`,
+      );
+    }
+    requireCondition(record, `${incomplete} ${rerun}`);
+    requireCondition(
+      reusableInstallation(root, dependencyFingerprint(root)),
+      `Dependencies do not match package-lock.json and Node ${process.version}. ${rerun}`,
+    );
+    requireCondition(
+      record.schema === sha256(resolve(root, "prisma/schema.prisma")),
+      `prisma/schema.prisma changed since setup. ${rerun}`,
+    );
+    try {
+      verifyDatabase(root, env.POSTGRES_PRISMA_URL);
+      verifyDatabase(root, env.POSTGRES_URL_NON_POOLING);
+    } catch (error) {
+      throw new Error(
+        `${error.message} ${rerun} It restarts the owned PostgreSQL and preserves its data.`,
+      );
+    }
+    const { migrations, matches } = verifyContents();
+    const head = revision("HEAD");
+    console.log(
+      [
+        `Setup completed ${record.completedAt} by ${record.launchedBy === "T3" ? "T3 in the worktree terminal" : "a manual run"} in ${record.seconds}s.`,
+        baseSummary(record),
+        ...(head === record.head
+          ? []
+          : [`HEAD is now ${short(head)}; setup inputs still match.`]),
+        `Node ${process.version}; dependencies match package-lock.json.`,
+        `Owned PostgreSQL verified: all ${migrations} migrations applied, ${matches} ${matches === 1 ? "match" : "matches"}.`,
+        "Development configuration and owned database verified.",
+      ].join("\n"),
+    );
   } else if (mode === "database-stop") {
     stopDatabase(root);
     console.log("Owned worktree PostgreSQL stopped; data preserved.");
