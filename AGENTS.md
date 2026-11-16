@@ -18,7 +18,7 @@
 - Before using an unprepared worktree, run `bash scripts/setup-worktree.sh`; with Node 26 active, `npm run setup:worktree` is equivalent. A successful automatic T3 setup satisfies this step. Verify whether it actually ran; an explicit retry does not prove automatic preparation.
 - T3's project action must run the bootstrap automatically on worktree creation and wait before starting the agent. These host settings are outside Git; the selected revision must contain the scripts.
 - Bootstrap copies ignored `.env.local` and `.env.prod` from the main checkout only when absent, with owner-only permissions. Use Clerk Development test keys. Copying `.env.prod` does not authorize loading it or connecting to Production.
-- Shared Git caches for dependencies and browser downloads are keyed by manifests and runtime; each worktree gets an independent copy. Browser installers verify the copied downloads. Preserve shared cache entries used by other branches. Build/test artifacts stay worktree-local.
+- The shared Git cache for dependencies is keyed by manifests and runtime; each worktree gets an independent copy. Browsers live in Playwright's standard per-user cache, shared across worktrees; setup reruns its installer to register the worktree. Puppeteer downloads no browsers. Setup removes dependency cache entries that no existing worktree uses; preserve shared cache entries used by other worktrees. Build/test artifacts stay worktree-local.
 - PostgreSQL is owned by the worktree under ignored `.local/postgres`. Setup applies migrations only after verifying the live server's data directory. `npm run dev` restarts this cluster when needed. Use `npm run check:development` before other environment-dependent commands; manual Prisma commands need `node --env-file=.env.local node_modules/prisma/build/index.js ...`.
 - Setup seeds only an empty match database, using the verified `CLERK_AGENT_USER_ID` from the private env source. It creates one 10-vs-10 Argentina match. Preserve edits to existing matches; create additional synthetic cases only as needed for a task.
 - Development and Preview share the approved Blob store declared by `DEVELOPMENT_PHOTO_ORIGIN`. Setup derives `DEVELOPMENT_PHOTO_NAMESPACE` per worktree. Upload and cleanup must remain within that namespace; do not remove Preview, Production or other-worktree files.
@@ -52,3 +52,13 @@
 - Verify that the successful Preview deployment belongs to the PR's latest head commit. Use Chrome for Vercel access and deployment protection; authenticate the application with the designated Clerk agent account for that Development/Preview instance. An existing owner Clerk session does not replace the agent account: preserve it and use a separate browser session for the agent. Retrieve credentials through the configured private credential source; keep them out of repository files, PRs and logs. If credentials or browser access are unavailable, report the blocker instead of substituting the owner's account.
 - Verify the signed-in agent identity and that the affected authenticated page loads. Leave that page open in the shared browser for the owner; include the Preview URL and tested head commit in the handoff. Reuse an existing matching agent session when available.
 - Preview readiness and agent sign-in do not authorize merge or Production actions. Use the agent account only against the verified Development/Preview instance.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

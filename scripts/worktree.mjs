@@ -1,5 +1,8 @@
 import { spawnSync, spawn } from "node:child_process";
-import { prepareDependencies } from "./worktree-dependencies.mjs";
+import {
+  prepareDependencies,
+  pruneDependencyCache,
+} from "./worktree-dependencies.mjs";
 import {
   exportBrowserEnvironment,
   prepareBrowsers,
@@ -237,39 +240,24 @@ try {
     copyEnvironment();
     mkdirSync(".local", { recursive: true, mode: 0o700 });
     chmodSync(".local", 0o700);
-    prepareDependencies(
-      root,
-      resolve(git("rev-parse", "--git-common-dir"), "worktree-dependencies-v1"),
+    const dependencyCache = resolve(
+      git("rev-parse", "--git-common-dir"),
+      "worktree-dependencies-v1",
     );
-    prepareBrowsers(
+    prepareDependencies(root, dependencyCache);
+    pruneDependencyCache(dependencyCache, [
       root,
-      resolve(git("rev-parse", "--git-common-dir"), "worktree-browsers-v1"),
-      () => {
-        for (const browser of ["chrome", "chrome-headless-shell"]) {
-          run(
-            process.execPath,
-            [
-              "node_modules/puppeteer/lib/puppeteer/node/cli.js",
-              "browsers",
-              "install",
-              browser,
-            ],
-            {
-              ...process.env,
-              PUPPETEER_CACHE_DIR: resolve(root, ".local/puppeteer"),
-              PUPPETEER_SKIP_DOWNLOAD: "false",
-            },
-          );
-        }
-        run(
-          process.execPath,
-          ["node_modules/@playwright/test/cli.js", "install", "chromium"],
-          {
-            ...process.env,
-            PLAYWRIGHT_BROWSERS_PATH: resolve(root, ".local/browsers"),
-          },
-        );
-      },
+      ...git("worktree", "list", "--porcelain", "-z")
+        .split("\0")
+        .filter((line) => line.startsWith("worktree "))
+        .map((line) => line.slice("worktree ".length)),
+    ]);
+    prepareBrowsers(root, () =>
+      run(process.execPath, [
+        "node_modules/@playwright/test/cli.js",
+        "install",
+        "chromium",
+      ]),
     );
     run(process.execPath, ["node_modules/prisma/build/index.js", "generate"], {
       PATH: process.env.PATH,
@@ -298,9 +286,6 @@ try {
       {
         ...process.env,
         TEST_BROWSER_PORT: String(port),
-        ...(existsSync(".local/browsers")
-          ? { PLAYWRIGHT_BROWSERS_PATH: resolve(root, ".local/browsers") }
-          : {}),
       },
     );
   } else if (mode === "dev") {
@@ -325,7 +310,6 @@ try {
           ...env,
           PORT: String(port),
           IMAGE_EXPORT_ORIGIN: origin,
-          PUPPETEER_CACHE_DIR: resolve(root, ".local/puppeteer"),
           ...exportBrowserEnvironment(env),
         },
       },

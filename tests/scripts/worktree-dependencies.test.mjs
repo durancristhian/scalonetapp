@@ -11,6 +11,7 @@ import {
   copyFileSync,
   existsSync,
   readdirSync,
+  utimesSync,
 } from "node:fs";
 import { spawn, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
@@ -23,6 +24,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
   prepareDependencies,
+  pruneDependencyCache,
   dependencyFingerprint,
   reusableInstallation,
 } from "../../scripts/worktree-dependencies.mjs";
@@ -171,11 +173,7 @@ test("bootstrap replaces remote connections with an owned database and rejects l
     ].join("\n"),
   );
   prepareDependencies(main, cache);
-  for (const name of [
-    "puppeteer/lib/puppeteer/node/cli.js",
-    "prisma/build/index.js",
-    "@playwright/test/cli.js",
-  ]) {
+  for (const name of ["prisma/build/index.js", "@playwright/test/cli.js"]) {
     const path = join(main, "node_modules", name);
     mkdirSync(join(path, ".."), { recursive: true });
     writeFileSync(path, "");
@@ -287,6 +285,44 @@ test("changed dependencies create a new cache without invalidating older branche
     2,
   );
   assert.equal(reusableInstallation(main, previous), true);
+});
+
+test("pruning keeps cache entries of existing worktrees and removes the rest", (t) => {
+  const { main, target, cache, directory } = fixture(t);
+  prepareDependencies(main, cache);
+  const current = dependencyFingerprint(main);
+  writeFileSync(join(target, "package-lock.json"), '{"changed":1}');
+  prepareDependencies(target, cache);
+  const installed = dependencyFingerprint(target);
+  writeFileSync(join(target, "package-lock.json"), '{"changed":2}');
+  const unused = join(cache, "a".repeat(64));
+  mkdirSync(join(unused, "ready-old", "node_modules"), { recursive: true });
+  mkdirSync(join(unused, ".pending-active"));
+  const abandoned = join(cache, "b".repeat(64), ".pending-abandoned");
+  mkdirSync(abandoned, { recursive: true });
+  const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+  utimesSync(abandoned, twoDaysAgo, twoDaysAgo);
+  writeFileSync(join(cache, "unrelated"), "");
+  pruneDependencyCache(cache, [main, target, join(directory, "missing")]);
+  assert.deepEqual(
+    readdirSync(cache).sort(),
+    [current, installed, "a".repeat(64), "unrelated"].sort(),
+  );
+  assert.deepEqual(readdirSync(unused), [".pending-active"]);
+  rmSync(target, { recursive: true });
+  pruneDependencyCache(cache, [main, target]);
+  assert.deepEqual(
+    readdirSync(cache).sort(),
+    [current, "a".repeat(64), "unrelated"].sort(),
+  );
+  rmSync(join(main, "node_modules"), { recursive: true });
+  prepareDependencies(main, cache);
+  assert.equal(reusableInstallation(main, current), true);
+  assert.equal(
+    readFileSync(join(directory, "npm-calls"), "utf8").trim().split("\n")
+      .length,
+    2,
+  );
 });
 
 test("corrupt and unpublished cache entries are skipped and rebuilt", (t) => {
