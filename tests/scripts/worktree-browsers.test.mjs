@@ -53,7 +53,13 @@ test("exports prefer a configured browser, then Linux Google Chrome, then Playwr
     {},
   );
   assert.deepEqual(
-    exportBrowserEnvironment({}, "linux", () => false, playwright),
+    exportBrowserEnvironment(
+      {},
+      "linux",
+      () => false,
+      playwright,
+      () => undefined,
+    ),
     { PUPPETEER_EXECUTABLE_PATH: chromium },
   );
   assert.deepEqual(
@@ -70,4 +76,64 @@ test("the default Chromium is Playwright's full browser, not the headless shell"
   );
   assert.match(PUPPETEER_EXECUTABLE_PATH, /chromium-\d+/);
   assert.doesNotMatch(PUPPETEER_EXECUTABLE_PATH, /headless/);
+});
+
+test("Linux runs Playwright Chromium unsandboxed only when user namespaces are restricted", () => {
+  const chromium = "/cache/ms-playwright/chromium/chrome";
+  const playwright = () => chromium;
+  const missing = () => false;
+  const settings = (values) => (path) => values[path.split("/").pop()];
+  const restricted = settings({ apparmor_restrict_unprivileged_userns: "1" });
+  for (const kernel of [
+    restricted,
+    settings({ unprivileged_userns_clone: "0" }),
+  ]) {
+    assert.deepEqual(
+      exportBrowserEnvironment({}, "linux", missing, playwright, kernel),
+      {
+        PUPPETEER_EXECUTABLE_PATH: chromium,
+        PUPPETEER_DANGEROUS_NO_SANDBOX: "true",
+      },
+    );
+  }
+  assert.deepEqual(
+    exportBrowserEnvironment(
+      {},
+      "linux",
+      missing,
+      playwright,
+      settings({
+        apparmor_restrict_unprivileged_userns: "0",
+        unprivileged_userns_clone: "1",
+      }),
+    ),
+    { PUPPETEER_EXECUTABLE_PATH: chromium },
+  );
+  assert.deepEqual(
+    exportBrowserEnvironment(
+      {},
+      "linux",
+      (path) => path === "/opt/google/chrome/chrome",
+      playwright,
+      restricted,
+    ),
+    { PUPPETEER_EXECUTABLE_PATH: "/opt/google/chrome/chrome" },
+  );
+  for (const environment of [
+    { PUPPETEER_EXECUTABLE_PATH: "/custom/chrome" },
+    { PUPPETEER_DANGEROUS_NO_SANDBOX: "false" },
+  ]) {
+    const { PUPPETEER_DANGEROUS_NO_SANDBOX } = exportBrowserEnvironment(
+      environment,
+      "linux",
+      missing,
+      playwright,
+      restricted,
+    );
+    assert.equal(PUPPETEER_DANGEROUS_NO_SANDBOX, undefined);
+  }
+  assert.deepEqual(
+    exportBrowserEnvironment({}, "darwin", missing, playwright, restricted),
+    { PUPPETEER_EXECUTABLE_PATH: chromium },
+  );
 });
