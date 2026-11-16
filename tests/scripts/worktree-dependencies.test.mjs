@@ -141,10 +141,12 @@ test("bootstrap replaces remote connections with an owned database and rejects l
   }
   const { main, cache } = fixture(t);
   t.after(() => stopDatabase(main));
-  copyFileSync(
-    fileURLToPath(new URL("../../.env.template", import.meta.url)),
-    join(main, ".env.template"),
-  );
+  for (const name of [".env.template", ".nvmrc"]) {
+    copyFileSync(
+      fileURLToPath(new URL(`../../${name}`, import.meta.url)),
+      join(main, name),
+    );
+  }
   const scripts = join(main, "scripts");
   mkdirSync(scripts);
   for (const name of [

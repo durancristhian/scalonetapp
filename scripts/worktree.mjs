@@ -232,9 +232,10 @@ async function prepareDevelopment() {
   return env;
 }
 try {
+  const requiredNode = readFileSync(".nvmrc", "utf8").trim();
   requireCondition(
-    process.versions.node.split(".")[0] === "26",
-    "Node.js 26 is required.",
+    `${process.versions.node}.`.startsWith(`${requiredNode}.`),
+    `Node.js ${requiredNode} is required (.nvmrc).`,
   );
   if (mode === "setup") {
     copyEnvironment();
