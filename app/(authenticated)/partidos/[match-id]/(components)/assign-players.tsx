@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import type { Team } from "@/types/team";
+import { byName } from "@/utils/by-name";
 import type { Player } from "@prisma/client";
 import { type FC, useState } from "react";
 
@@ -65,7 +66,7 @@ export const AssignPlayers: FC<AssignPlayersProps> = ({
               }
             }}
           >
-            {players.map((player) => (
+            {[...players].sort(byName).map((player) => (
               <ToggleGroupItem
                 key={player.id}
                 value={String(player.id)}
