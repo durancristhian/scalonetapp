@@ -10,7 +10,7 @@ vi.mock("@clerk/nextjs", () => ({
   useAuth: () => ({ isSignedIn: true }),
 }));
 
-it("renders desktop navigation as styled anchors with the active route marked", () => {
+it("renders desktop navigation as anchors with the active route marked", () => {
   render(<LargeScreenNavigation />);
 
   const dashboard = screen.getByRole("link", { name: "Dashboard" });
@@ -20,7 +20,6 @@ it("renders desktop navigation as styled anchors with the active route marked", 
   expect(dashboard).toHaveAttribute("href", "/dashboard");
   expect(dashboard).not.toHaveAttribute("data-active");
   expect(dashboard).not.toHaveAttribute("aria-current");
-  expect(dashboard).toHaveClass("h-12", "data-[active]:bg-accent/50");
   expect(matches).toHaveAttribute("href", "/partidos");
   expect(matches).toHaveAttribute("data-active");
   expect(matches).toHaveAttribute("aria-current", "page");

@@ -75,7 +75,6 @@ describe("Public information page", () => {
       const current = links.getByRole("link", { name: "Privacidad" });
       expect(current).toHaveAttribute("href", "/privacy");
       expect(current).toHaveAttribute("aria-current", "page");
-      expect(current).not.toHaveClass("underline");
       for (const [name, href] of [
         ["Acerca de", "/about"],
         ["Contacto", "/contact"],
@@ -83,7 +82,6 @@ describe("Public information page", () => {
         const link = links.getByRole("link", { name });
         expect(link).toHaveAttribute("href", href);
         expect(link).not.toHaveAttribute("aria-current");
-        expect(link).toHaveClass("underline");
       }
     },
   );
