@@ -48,34 +48,6 @@ test("should remain clickable after repeated rapid edits when the player dialog 
   expect(errors).toEqual([]);
 });
 
-test("should preserve the draft and recover when a player edit fails", async ({
-  page,
-}) => {
-  let attempts = 0;
-  await page.route("**/test-actions/player", (route) => {
-    attempts++;
-    return route.fulfill({
-      json:
-        attempts === 1 ? { ok: false, error: "No autorizado." } : { ok: true },
-    });
-  });
-  await page.goto("/");
-  await page.getByRole("button", { name: "Acciones de Ana" }).click();
-  await page.getByRole("menuitem", { name: "Editar" }).click();
-  const dialog = page.getByRole("dialog");
-  await dialog
-    .getByRole("textbox", { name: "Nombre", exact: true })
-    .fill("Ana nueva");
-  await dialog.getByRole("button", { name: "Guardar", exact: true }).click();
-  await expect(page.getByText("No autorizado.", { exact: true })).toBeVisible();
-  await expect(
-    dialog.getByRole("textbox", { name: "Nombre", exact: true }),
-  ).toHaveValue("Ana nueva");
-  await dialog.getByRole("button", { name: "Guardar", exact: true }).click();
-  await expect(dialog).toBeHidden();
-  expect(attempts).toBe(2);
-});
-
 test("should keep the page clickable without deleting when confirmation is cancelled", async ({
   page,
 }) => {

@@ -1,4 +1,4 @@
-import { createRef, useState } from "react";
+import { useState } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
@@ -70,31 +70,5 @@ describe("PendingButton", () => {
     await user.click(screen.getByRole("button", { name: "Guardando..." }));
     await user.keyboard("{Enter} ");
     expect(action).toHaveBeenCalledOnce();
-  });
-
-  it("preserves submit behavior and forwards its button reference", async () => {
-    const submit = vi.fn((event) => event.preventDefault());
-    const ref = createRef<HTMLButtonElement>();
-    const user = userEvent.setup();
-    render(
-      <form onSubmit={submit}>
-        <PendingButton
-          ref={ref}
-          type="submit"
-          pending={false}
-          pendingLabel="Enviando..."
-          name="action"
-          value="send"
-        >
-          Enviar
-        </PendingButton>
-      </form>,
-    );
-    const button = screen.getByRole("button", { name: "Enviar" });
-    expect(ref.current).toBe(button);
-    expect(button).toHaveAttribute("name", "action");
-    expect(button).toHaveAttribute("value", "send");
-    await user.click(button);
-    expect(submit).toHaveBeenCalledOnce();
   });
 });

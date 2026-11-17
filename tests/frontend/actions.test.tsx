@@ -178,11 +178,13 @@ for (const kind of ["match", "player"] as const) {
 }
 
 describe("edit player", () => {
-  it("should preserve the edited name and show the server error when the update is rejected", async () => {
-    vi.mocked(editPlayerAction).mockResolvedValue({
-      ok: false,
-      error: ERROR_MESSAGES.match_player_repeated,
-    });
+  it("should preserve the edited name, show the server error and allow retry when the update is rejected", async () => {
+    vi.mocked(editPlayerAction)
+      .mockResolvedValueOnce({
+        ok: false,
+        error: ERROR_MESSAGES.match_player_repeated,
+      })
+      .mockResolvedValue({ ok: true, data: undefined });
     const close = vi.fn();
     const user = userEvent.setup();
     render(
@@ -208,6 +210,8 @@ describe("edit player", () => {
       level: 5,
       position: "mid",
     });
+    await user.click(screen.getByRole("button", { name: "Guardar" }));
+    await waitFor(() => expect(close).toHaveBeenCalledOnce());
   });
 });
 

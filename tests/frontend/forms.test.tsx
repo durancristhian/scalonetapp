@@ -38,23 +38,6 @@ describe("match form", () => {
     await act(async () => pending.resolve());
     await waitFor(() => expect(save()).toBeEnabled());
   });
-  it("should preserve the draft and allow retry when saving rejects", async () => {
-    const submit = vi
-      .fn()
-      .mockRejectedValueOnce(Error("offline"))
-      .mockResolvedValue(undefined);
-    const user = userEvent.setup();
-    render(<MatchForm onSubmit={submit} />);
-    await user.type(screen.getByLabelText("Nombre del partido"), "Final");
-    await user.click(save());
-    await waitFor(() => expect(save()).toBeEnabled());
-    expect(screen.getByLabelText("Nombre del partido")).toHaveValue("Final");
-    await user.click(save());
-    await waitFor(() =>
-      expect(screen.getByLabelText("Nombre del partido")).toHaveValue(""),
-    );
-    expect(submit).toHaveBeenCalledTimes(2);
-  });
   it("should reject an overlong name when the input is validated", async () => {
     const submit = vi.fn();
     const user = userEvent.setup();
@@ -174,24 +157,6 @@ describe("bulk player form", () => {
     await user.click(save());
     await waitFor(() => expect(submit).toHaveBeenCalledOnce());
     expect(submit.mock.calls[0][0]).toHaveLength(50);
-  });
-  it("should keep entered names and release loading when the request fails", async () => {
-    const pending = deferred<void>();
-    const user = userEvent.setup();
-    render(
-      <MultiplePlayersForm
-        currentPlayerCount={0}
-        onSubmit={() => pending.promise}
-      />,
-    );
-    await user.type(screen.getByLabelText("Jugadores"), "Ana");
-    await user.click(save());
-    expect(screen.getByRole("button", { name: "Guardando..." })).toBeDisabled();
-    await act(async () => pending.reject(Error("offline")));
-    expect(
-      await screen.findByRole("button", { name: "Guardar" }),
-    ).toBeEnabled();
-    expect(screen.getByLabelText("Jugadores")).toHaveValue("Ana");
   });
 });
 

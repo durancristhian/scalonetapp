@@ -2,21 +2,21 @@
 
 import { SoccerBall } from "@/components/soccer-ball";
 import { Button, type ButtonProps } from "@/components/ui/button";
-import { forwardRef } from "react";
 
 type PendingButtonProps = Omit<ButtonProps, "asChild"> & {
   pending: boolean;
   pendingLabel: string;
 };
 
-export const PendingButton = forwardRef<HTMLButtonElement, PendingButtonProps>(
-  ({ pending, pendingLabel, disabled, children, ...props }, ref) => (
-    <Button
-      {...props}
-      ref={ref}
-      disabled={disabled || pending}
-      aria-busy={pending}
-    >
+export function PendingButton({
+  pending,
+  pendingLabel,
+  disabled,
+  children,
+  ...props
+}: PendingButtonProps) {
+  return (
+    <Button {...props} disabled={disabled || pending} aria-busy={pending}>
       {pending ? (
         <SoccerBall
           aria-hidden="true"
@@ -25,6 +25,5 @@ export const PendingButton = forwardRef<HTMLButtonElement, PendingButtonProps>(
       ) : null}
       {pending ? pendingLabel : children}
     </Button>
-  ),
-);
-PendingButton.displayName = "PendingButton";
+  );
+}
