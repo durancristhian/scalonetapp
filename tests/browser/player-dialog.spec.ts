@@ -101,22 +101,23 @@ for (const action of ["Editar", "Eliminar"]) {
   });
 }
 
-test("should focus the name when a player dialog opens", async ({ page }) => {
+test("should focus the name on open and keep arrow keys in the tabs", async ({
+  page,
+}) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Agregar", exact: true }).click();
+  const dialog = page.getByRole("dialog");
+  const name = dialog.getByRole("textbox", { name: "Nombre", exact: true });
+  const single = dialog.getByRole("tab", { name: "Agregar uno" });
+  await expect(name).toBeFocused();
+  await single.focus();
+  await page.keyboard.press("ArrowRight");
   await expect(
-    page
-      .getByRole("dialog")
-      .getByRole("textbox", { name: "Nombre", exact: true }),
-  ).toBeFocused();
-  await page.keyboard.press("Escape");
-  await page.getByRole("button", { name: "Acciones de Ana" }).click();
-  await page.getByRole("menuitem", { name: "Editar" }).click();
-  await expect(
-    page
-      .getByRole("dialog", { name: "Editar ficha del jugador" })
-      .getByRole("textbox", { name: "Nombre", exact: true }),
-  ).toBeFocused();
+    dialog.getByRole("textbox", { name: "Jugadores" }),
+  ).toBeVisible();
+  await page.keyboard.press("ArrowLeft");
+  await expect(name).toBeVisible();
+  await expect(single).toBeFocused();
 });
 
 for (const viewport of [

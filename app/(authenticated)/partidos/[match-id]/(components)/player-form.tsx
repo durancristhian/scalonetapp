@@ -22,6 +22,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useId, useState, type FC } from "react";
 import { useForm } from "react-hook-form";
 
+export const focusPlayerName = (event: Event) => {
+  const name = (event.currentTarget as HTMLElement).querySelector<HTMLElement>(
+    'input[name="name"]',
+  );
+  if (!name) return;
+  event.preventDefault();
+  name.focus();
+};
+
 const LEVEL_MESSAGES: Record<number, string> = {
   1: "Un tronco realmente.",
   2: "Se defiende, pero podría jugar al pelota paleta mejor.",
@@ -82,7 +91,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({
             <FormItem>
               <FormLabel>Nombre</FormLabel>
               <FormControl>
-                <Input autoFocus placeholder={INPUT_PLACEHOLDER} {...field} />
+                <Input placeholder={INPUT_PLACEHOLDER} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
