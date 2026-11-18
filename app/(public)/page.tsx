@@ -7,10 +7,9 @@ import { LandingExportShowcase } from "@/components/landing-export-showcase";
 import { PublicHeader } from "@/components/public-header";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
-import { Show, SignInButton, useAuth } from "@clerk/nextjs";
+import { Show, SignInButton } from "@clerk/nextjs";
 import { ArrowRight } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { type FC, useEffect } from "react";
+import { type FC } from "react";
 
 function StartMatch() {
   return (
@@ -27,15 +26,6 @@ function StartMatch() {
 }
 
 const Page: FC = () => {
-  const { isLoaded, userId } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (isLoaded && userId) {
-      router.push("/dashboard");
-    }
-  }, [isLoaded, router, userId]);
-
   return (
     <div>
       <script

@@ -5,19 +5,17 @@ import {
   type TeamExportProps,
 } from "@/components/team-export/team-export";
 import { IMAGE_EXPORT_WIDTH } from "@/utils/image-export-options";
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useState } from "react";
 
 const MemoizedTeamExport = memo(TeamExport);
 
 export function ExportPreview(props: TeamExportProps) {
-  const viewport = useRef<HTMLDivElement>(null);
-  const canvas = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ width: 0, height: 0, contentHeight: 0 });
 
-  useEffect(() => {
-    const container = viewport.current;
-    const content = canvas.current;
-    if (!container || !content) return;
+  const viewport = useCallback((container: HTMLDivElement) => {
+    const content = container.querySelector<HTMLElement>(
+      "[data-export-canvas]",
+    )!;
     const observer = new ResizeObserver(() => {
       setSize({
         width: container.clientWidth,
@@ -49,7 +47,7 @@ export function ExportPreview(props: TeamExportProps) {
         }}
       >
         <div
-          ref={canvas}
+          data-export-canvas
           className="absolute inset-bs-0 start-0 origin-top-left"
           style={{
             inlineSize: IMAGE_EXPORT_WIDTH,

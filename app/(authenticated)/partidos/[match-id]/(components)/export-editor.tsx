@@ -35,13 +35,7 @@ import {
   storeImageExportOptions,
   type ImageExportOptions,
 } from "@/utils/image-export-options";
-import {
-  type ComponentPropsWithoutRef,
-  useEffect,
-  useId,
-  useMemo,
-  useState,
-} from "react";
+import { type ComponentPropsWithoutRef, useId, useMemo, useState } from "react";
 import { AlignCenter, AlignLeft, ImageOff, Minus } from "lucide-react";
 import { WeatherIllustration } from "@/components/team-export/weather-illustration";
 import {
@@ -53,6 +47,7 @@ import {
 } from "@/utils/image-export-player-roles";
 import { byName } from "@/utils/by-name";
 import { ExportPreview } from "./export-preview";
+import { useMediaQuery } from "@/components/use-media-query";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/utils/cn";
@@ -118,30 +113,12 @@ export default function ExportEditor({
     () => reconcileImageExportTeamSelections(teams, savedSelections),
     [teams, savedSelections],
   );
-  const [wide, setWide] = useState(false);
+  const wide = useMediaQuery("(min-width: 1024px)");
   const [view, setView] = useState<"options" | "preview">("options");
   const [error, setError] = useState<string | null>(null);
   const [downloaded, setDownloaded] = useState(false);
   const id = useId();
   const palette = getImageExportBackground(options.background)!.palette;
-
-  useEffect(() => {
-    setSavedSelections((saved) =>
-      reconcileImageExportTeamSelections(teams, saved),
-    );
-  }, [teams]);
-
-  useEffect(() => {
-    storeImageExportTeamSelections(matchId, selections);
-  }, [matchId, selections]);
-
-  useEffect(() => {
-    const media = window.matchMedia("(min-width: 1024px)");
-    const update = () => setWide(media.matches);
-    update();
-    media.addEventListener("change", update);
-    return () => media.removeEventListener("change", update);
-  }, []);
 
   const updateOptions = (next: ImageExportOptions) => {
     setOptions(next);
@@ -150,9 +127,14 @@ export default function ExportEditor({
     setDownloaded(false);
   };
 
+  const updateSelections = (next: ImageExportTeamSelections) => {
+    setSavedSelections(next);
+    storeImageExportTeamSelections(matchId, next);
+  };
+
   const reset = () => {
     updateOptions({ ...DEFAULT_IMAGE_EXPORT_OPTIONS });
-    setSavedSelections(reconcileImageExportTeamSelections(teams, {}));
+    updateSelections(reconcileImageExportTeamSelections(teams, {}));
   };
 
   const download = async () => {
@@ -437,7 +419,7 @@ export default function ExportEditor({
                         )}
                         disabled={processing || !team.players.length}
                         onValueChange={(value) => {
-                          setSavedSelections({
+                          updateSelections({
                             ...selections,
                             [team.id]: {
                               ...selections[team.id],

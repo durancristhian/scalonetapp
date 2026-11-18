@@ -44,21 +44,21 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
       teams: typeof next === "function" ? next(current.teams) : next,
     }));
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [reconciledMatch, setReconciledMatch] = useState(match);
 
-  useEffect(() => {
-    invalidateImageExportTeamSelections(match.id, teams);
-  }, [match.id, teams]);
-
-  useEffect(() => {
+  if (reconciledMatch !== match) {
     const playerIds = new Set(match.players.map((player) => player.id));
-
+    setReconciledMatch(match);
     setSelectedIds((ids) => {
       const remaining = ids.filter((id) => playerIds.has(id));
       return remaining.length === ids.length ? ids : remaining;
     });
-
     setBuilder((current) => reconcileBuilderState(current, match));
-  }, [match]);
+  }
+
+  useEffect(() => {
+    invalidateImageExportTeamSelections(match.id, teams);
+  }, [match.id, teams]);
 
   const assignSelectionToTeam: UseTeamsBuilderStateResult["assignSelectionToTeam"] =
     (teamId) => {

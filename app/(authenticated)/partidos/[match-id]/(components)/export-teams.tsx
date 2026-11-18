@@ -8,7 +8,11 @@ import { type ImageExportOptions } from "@/utils/image-export-options";
 import dynamic from "next/dynamic";
 import { loadModule } from "@/utils/load-module";
 import { useState } from "react";
-import { type ImageExportTeamSelections } from "@/utils/image-export-player-roles";
+import {
+  readImageExportTeamSelections,
+  storeImageExportTeamSelections,
+  type ImageExportTeamSelections,
+} from "@/utils/image-export-player-roles";
 import { getTeamCountError } from "@/utils/team-count";
 import {
   Tooltip,
@@ -71,7 +75,13 @@ export function ExportTeams({
       onOpenChange={(nextOpen) => {
         if (!processing) {
           setOpen(nextOpen);
-          if (nextOpen) trackAnalytics("export_opened");
+          if (nextOpen) {
+            storeImageExportTeamSelections(
+              matchId,
+              readImageExportTeamSelections(matchId, teams),
+            );
+            trackAnalytics("export_opened");
+          }
         }
       }}
     >

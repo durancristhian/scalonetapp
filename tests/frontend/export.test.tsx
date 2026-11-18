@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { Dialog } from "@/components/ui/dialog";
 import ExportEditor from "@/app/(authenticated)/partidos/[match-id]/(components)/export-editor";
+import { ExportTeams } from "@/app/(authenticated)/partidos/[match-id]/(components)/export-teams";
 import { TeamExport } from "@/components/team-export/team-export";
 import {
   DEFAULT_IMAGE_EXPORT_OPTIONS,
@@ -396,5 +397,34 @@ describe("export editor", () => {
     unmount();
     render(editor);
     expectSuggestedRoles();
+  });
+});
+
+describe("export dialog", () => {
+  it("stops suggesting a goalkeeper for a changed roster once the export was opened", async () => {
+    const user = userEvent.setup();
+    const dialog = (value: typeof lineup) => (
+      <ExportTeams
+        matchId={1}
+        name="Final"
+        teams={value}
+        disabled={false}
+        processing={false}
+        onExport={vi.fn()}
+      />
+    );
+    const goalkeeper = () =>
+      screen.findByRole("combobox", { name: /^Arquero\s?de Azules$/ });
+    const view = render(dialog(lineup));
+    await user.click(screen.getByRole("button", { name: "Exportar" }));
+    expect(within(await goalkeeper()).getByText("Ana")).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Cerrar" }));
+    view.rerender(
+      dialog(
+        teams([player(3, { name: "Caro", position: "goa" })], [roster[1]]),
+      ),
+    );
+    await user.click(screen.getByRole("button", { name: "Exportar" }));
+    expect(within(await goalkeeper()).getByText("No indicado")).toBeVisible();
   });
 });

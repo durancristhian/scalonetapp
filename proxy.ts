@@ -12,6 +12,9 @@ const authenticatedMiddleware = clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) {
     await auth.protect();
   }
+  if (req.nextUrl.pathname === "/" && (await auth()).userId) {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
+  }
   const headers = new Headers(req.headers);
   headers.delete("x-scalonet-markdown");
   if (
