@@ -1,4 +1,7 @@
-import { LargeScreenNavigation } from "@/components/navigation";
+import {
+  LargeScreenNavigation,
+  SmallScreenNavigation,
+} from "@/components/navigation";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, it, vi } from "vitest";
@@ -37,4 +40,19 @@ it("moves focus between desktop navigation links with arrow keys", async () => {
   expect(screen.getByRole("link", { name: "Partidos" })).toHaveFocus();
   await user.keyboard("{ArrowLeft}");
   expect(screen.getByRole("link", { name: "Dashboard" })).toHaveFocus();
+});
+
+it("marks the active route in the small screen navigation", async () => {
+  const user = userEvent.setup();
+
+  render(<SmallScreenNavigation />);
+  await user.click(screen.getByRole("button", { name: "Abrir navegación" }));
+
+  expect(screen.getByRole("link", { name: "Partidos" })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+  expect(screen.getByRole("link", { name: "Dashboard" })).not.toHaveAttribute(
+    "aria-current",
+  );
 });

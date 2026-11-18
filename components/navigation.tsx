@@ -17,7 +17,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useAuth } from "@clerk/nextjs";
-import clsx from "clsx";
 import { MenuIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -57,9 +56,10 @@ export const SmallScreenNavigation = () => {
             <SheetClose asChild key={navItem.path}>
               <Link
                 href={navItem.path}
-                className={clsx(
-                  isRouteActive(pathname, navItem.path) && "underline",
-                )}
+                aria-current={
+                  isRouteActive(pathname, navItem.path) ? "page" : undefined
+                }
+                className="aria-[current=page]:underline aria-[current=page]:decoration-2 aria-[current=page]:underline-offset-8"
               >
                 {navItem.label}
               </Link>
