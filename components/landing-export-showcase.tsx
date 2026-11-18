@@ -229,8 +229,8 @@ export function LandingExportShowcase() {
                   height={example.height}
                   alt=""
                   sizes="(min-width: 1000px) 40vw, 70vw"
-                  preload={index === 0}
-                  loading={index === 0 ? undefined : "eager"}
+                  loading="eager"
+                  fetchPriority={position === 0 ? "high" : "low"}
                   draggable={false}
                 />
               </button>
