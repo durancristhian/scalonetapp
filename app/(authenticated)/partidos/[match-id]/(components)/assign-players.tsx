@@ -66,7 +66,7 @@ export const AssignPlayers: FC<AssignPlayersProps> = ({
               }
             }}
           >
-            {[...players].sort(byName).map((player) => (
+            {players.toSorted(byName).map((player) => (
               <ToggleGroupItem
                 key={player.id}
                 value={String(player.id)}

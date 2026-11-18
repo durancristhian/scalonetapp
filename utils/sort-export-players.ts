@@ -7,7 +7,7 @@ export function sortExportPlayers(
   players: readonly Player[],
   order: ImageExportOptions["playerOrder"],
 ): Player[] {
-  return [...players].sort((a, b) => {
+  return players.toSorted((a, b) => {
     if (order === "position") {
       const position =
         getPlayerPositionOrder(a.position) - getPlayerPositionOrder(b.position);
