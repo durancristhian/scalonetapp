@@ -17,8 +17,8 @@ export const CopyTeams: FC<CopyTeamsProps> = ({ teams }) => {
   const copyTeams = async () => {
     const text = `${teams
       .map((team) => {
-        const players = [...team.players]
-          .sort(byName)
+        const players = team.players
+          .toSorted(byName)
           .map((player) => `- ${player.name}`)
           .join("\n");
 

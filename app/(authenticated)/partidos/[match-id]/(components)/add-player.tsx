@@ -15,7 +15,10 @@ import { trackAnalytics } from "@/utils/analytics";
 
 import { useAlerts } from "@/components/use-alerts";
 import { MultiplePlayersForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/multiple-players-form";
-import { PlayerForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/player-form";
+import {
+  focusPlayerName,
+  PlayerForm,
+} from "@/app/(authenticated)/partidos/[match-id]/(components)/player-form";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -126,7 +129,7 @@ const EnabledContent: FC<{ currentPlayerCount: number }> = ({
       <DialogTrigger asChild>
         <Button>Agregar</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent onOpenAutoFocus={focusPlayerName}>
         <DialogHeader>
           <DialogTitle>Convocando a los galácticos</DialogTitle>
           <DialogDescription className="max-md:text-balance">

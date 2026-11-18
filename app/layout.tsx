@@ -10,6 +10,7 @@ import { workSans } from "@/utils/fonts";
 import { type FC, type PropsWithChildren } from "react";
 
 export const viewport: Viewport = {
+  colorScheme: "light",
   initialScale: 1,
   width: "device-width",
 };

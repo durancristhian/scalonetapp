@@ -17,7 +17,7 @@ const comparisonKey = (serialized: string): string | null => {
       teams.push({
         id: team.id,
         name: team.name.trim(),
-        players: [...team.players].sort((a, b) => a - b),
+        players: team.players.toSorted((a: number, b: number) => a - b),
       });
     }
     return JSON.stringify(teams);

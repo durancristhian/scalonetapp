@@ -188,4 +188,19 @@ describe("landing export showcase", () => {
     unmount();
     expect(vi.getTimerCount()).toBe(0);
   });
+
+  it("requests only the shown example at high priority", () => {
+    const { container } = render(<LandingExportShowcase />);
+    const highPriority = () =>
+      [...container.querySelectorAll('img[fetchpriority="high"]')].map(
+        (image) => image.getAttribute("src"),
+      );
+    expect(highPriority()).toEqual([
+      expect.stringContaining("landing%2Fclasico.webp"),
+    ]);
+    advance();
+    expect(highPriority()).toEqual([
+      expect.stringContaining("landing%2Fpotrero.webp"),
+    ]);
+  });
 });

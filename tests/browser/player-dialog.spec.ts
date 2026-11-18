@@ -101,6 +101,25 @@ for (const action of ["Editar", "Eliminar"]) {
   });
 }
 
+test("should focus the name on open and keep arrow keys in the tabs", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Agregar", exact: true }).click();
+  const dialog = page.getByRole("dialog");
+  const name = dialog.getByRole("textbox", { name: "Nombre", exact: true });
+  const single = dialog.getByRole("tab", { name: "Agregar uno" });
+  await expect(name).toBeFocused();
+  await single.focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(
+    dialog.getByRole("textbox", { name: "Jugadores" }),
+  ).toBeVisible();
+  await page.keyboard.press("ArrowLeft");
+  await expect(name).toBeVisible();
+  await expect(single).toBeFocused();
+});
+
 for (const viewport of [
   { width: 320, height: 568 },
   { width: 768, height: 1024 },

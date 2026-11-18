@@ -455,7 +455,7 @@ export default function ExportEditor({
                               </span>
                             </span>
                           </SelectItem>
-                          {[...team.players].sort(byName).map((player) => (
+                          {team.players.toSorted(byName).map((player) => (
                             <SelectItem
                               key={player.id}
                               value={String(player.id)}

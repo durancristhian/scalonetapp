@@ -10,7 +10,10 @@ import {
 } from "@/utils/action-result";
 import { savePlayerPhoto } from "@/utils/save-player-photo";
 import { useAlerts } from "@/components/use-alerts";
-import { PlayerForm } from "@/app/(authenticated)/partidos/[match-id]/(components)/player-form";
+import {
+  focusPlayerName,
+  PlayerForm,
+} from "@/app/(authenticated)/partidos/[match-id]/(components)/player-form";
 import {
   DialogDescription,
   DialogHeader,
@@ -63,6 +66,7 @@ export const EditPlayer: FC<EditPlayerProps> = ({
   return (
     <Dialog open onOpenChange={onClose}>
       <DialogContent
+        onOpenAutoFocus={focusPlayerName}
         onCloseAutoFocus={onCloseAutoFocus}
         className="sm:max-w-lg"
       >
