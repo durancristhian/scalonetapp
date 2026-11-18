@@ -3,7 +3,7 @@
 import { useAuth } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import Script from "next/script";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { analyticsPage } from "@/utils/analytics-events";
 import {
   analyticsExcluded,
@@ -12,16 +12,23 @@ import {
   trackAnalytics,
 } from "@/utils/analytics";
 
+const subscribe = () => () => {};
+
 export function Analytics({ websiteId }: { websiteId: string | null }) {
   const pathname = usePathname();
   const { isLoaded, isSignedIn } = useAuth();
-  const [enabled, setEnabled] = useState(false);
+  const excluded = useSyncExternalStore(
+    subscribe,
+    analyticsExcluded,
+    () => true,
+  );
   const lastPage = useRef<string | null>(null);
-  const eligible =
+  const active =
     !!websiteId &&
     isLoaded &&
     !!analyticsPage(pathname) &&
-    !(pathname === "/" && isSignedIn);
+    !(pathname === "/" && isSignedIn) &&
+    !excluded;
 
   useEffect(
     () => () => {
@@ -32,17 +39,15 @@ export function Analytics({ websiteId }: { websiteId: string | null }) {
   );
 
   useEffect(() => {
-    const active = eligible && !analyticsExcluded();
     configureAnalytics(active ? websiteId : null);
-    setEnabled(active);
     if (active && lastPage.current !== pathname) {
       lastPage.current = pathname;
       trackAnalytics();
     }
     if (!active) lastPage.current = null;
-  }, [eligible, pathname, websiteId]);
+  }, [active, pathname, websiteId]);
 
-  if (!enabled || !eligible) return null;
+  if (!active) return null;
 
   return (
     <Script

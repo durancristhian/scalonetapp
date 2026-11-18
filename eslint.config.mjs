@@ -5,7 +5,6 @@ export default defineConfig([
   ...nextVitals,
   {
     rules: {
-      "react-hooks/set-state-in-effect": "off",
       "react-hooks/incompatible-library": "off",
     },
   },

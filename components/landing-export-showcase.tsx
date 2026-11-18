@@ -2,8 +2,16 @@
 
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
-import { useEffect, useId, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { cn } from "@/utils/cn";
+import { useMediaQuery } from "@/components/use-media-query";
 
 const examples = [
   { id: "clasico", label: "Césped sin avatares", height: 842 },
@@ -59,37 +67,34 @@ const sheetPositions: Record<number, string> = {
   3: "z-2 opacity-0 [transform:translateY(-50%)_translateX(90%)_translateZ(-250px)_rotateY(-75deg)_scale(0.6)]",
 };
 
+function subscribeToVisibility(onChange: () => void) {
+  document.addEventListener("visibilitychange", onChange);
+  return () => document.removeEventListener("visibilitychange", onChange);
+}
+
 export function LandingExportShowcase() {
-  const stage = useRef<HTMLDivElement>(null);
   const descriptionId = useId();
   const [active, setActive] = useState(0);
-  const [motionAllowed, setMotionAllowed] = useState(false);
-  const [pageVisible, setPageVisible] = useState(true);
+  const motionAllowed = !useMediaQuery(
+    "(prefers-reduced-motion: reduce)",
+    true,
+  );
+  const pageVisible = useSyncExternalStore(
+    subscribeToVisibility,
+    () => !document.hidden,
+    () => true,
+  );
   const [inViewport, setInViewport] = useState(true);
   const [paused, setPaused] = useState(false);
   const countdown = useRef({ active: 0, remaining: duration });
   const playing = motionAllowed && pageVisible && inViewport && !paused;
 
-  useEffect(() => {
-    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const updateMotion = () => setMotionAllowed(!preference.matches);
-    const updateVisibility = () => setPageVisible(!document.hidden);
-    updateMotion();
-    updateVisibility();
-    preference.addEventListener("change", updateMotion);
-    document.addEventListener("visibilitychange", updateVisibility);
-    return () => {
-      preference.removeEventListener("change", updateMotion);
-      document.removeEventListener("visibilitychange", updateVisibility);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!stage.current || !window.IntersectionObserver) return;
+  const stage = useCallback((element: HTMLDivElement) => {
+    if (!window.IntersectionObserver) return () => {};
     const observer = new IntersectionObserver(([entry]) => {
       setInViewport(entry.isIntersecting);
     });
-    observer.observe(stage.current);
+    observer.observe(element);
     return () => observer.disconnect();
   }, []);
 

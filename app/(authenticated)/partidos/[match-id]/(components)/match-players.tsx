@@ -6,7 +6,7 @@ import { DeletePlayer } from "@/app/(authenticated)/partidos/[match-id]/(compone
 import { EditPlayer } from "@/app/(authenticated)/partidos/[match-id]/(components)/edit-player";
 import { useMenuDialog } from "@/app/(authenticated)/(hooks)/use-menu-dialog";
 import { AnimatedListItem } from "@/components/animated-list-item";
-import { useRosterViewport } from "@/app/(authenticated)/partidos/[match-id]/(hooks)/use-roster-viewport";
+import { trackRosterViewport } from "@/app/(authenticated)/partidos/[match-id]/(hooks)/roster-viewport";
 import { PlayerRow } from "@/components/player-row";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,13 +35,12 @@ type MatchPlayersProps = {
 };
 
 export const MatchPlayers: FC<MatchPlayersProps> = ({ players }) => {
-  const columnRef = useRosterViewport();
   const atPlayerLimit = players.length >= MAX_PLAYERS_PER_MATCH;
   const canListPlayers = Array.isArray(players) && players.length;
 
   return (
     <div
-      ref={columnRef}
+      ref={trackRosterViewport}
       className="min-w-0 lg:[min-block-size:var(--roster-min-height,calc(100dvh-15rem-2px))]"
     >
       <div className="lg:sticky lg:[inset-block-start:var(--roster-inset,73px)] lg:[block-size:0]">
