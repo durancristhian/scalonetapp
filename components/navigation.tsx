@@ -80,7 +80,7 @@ export const LargeScreenNavigation = () => {
   }
 
   return (
-    <NavigationMenu className="ml-6">
+    <NavigationMenu className="ml-6" aria-label="Principal">
       <NavigationMenuList>
         {NAVIGATION_ITEMS.map((navItem) => (
           <NavigationMenuItem key={navItem.path}>

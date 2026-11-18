@@ -16,6 +16,9 @@ vi.mock("@clerk/nextjs", () => ({
 it("renders desktop navigation as anchors with the active route marked", () => {
   render(<LargeScreenNavigation />);
 
+  expect(
+    screen.getByRole("navigation", { name: "Principal" }),
+  ).toBeInTheDocument();
   const dashboard = screen.getByRole("link", { name: "Dashboard" });
   const matches = screen.getByRole("link", { name: "Partidos" });
 

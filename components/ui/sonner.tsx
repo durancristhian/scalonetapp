@@ -9,6 +9,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
     <Sonner
       theme="light"
       className="toaster group"
+      containerAriaLabel="Notificaciones"
       mobileOffset={{ top: 20, bottom: 20 }}
       toastOptions={{
         classNames: {
