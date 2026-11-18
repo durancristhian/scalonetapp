@@ -8,7 +8,7 @@ export const Loader = () => {
     >
       <SoccerBall
         aria-hidden="true"
-        className="animate-spin h-10 opacity-50 w-10"
+        className="animate-spin motion-reduce:[animation-duration:6s] h-10 opacity-50 w-10"
       />
       <p className="text-sm text-muted-foreground">Cargando…</p>
     </div>

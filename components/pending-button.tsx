@@ -20,7 +20,7 @@ export function PendingButton({
       {pending ? (
         <SoccerBall
           aria-hidden="true"
-          className="motion-safe:animate-spin size-4 me-2 shrink-0 opacity-50"
+          className="animate-spin motion-reduce:[animation-duration:6s] size-4 me-2 shrink-0 opacity-50"
         />
       ) : null}
       {pending ? pendingLabel : children}
