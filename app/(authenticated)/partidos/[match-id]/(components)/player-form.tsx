@@ -82,7 +82,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({
             <FormItem>
               <FormLabel>Nombre</FormLabel>
               <FormControl>
-                <Input placeholder={INPUT_PLACEHOLDER} {...field} />
+                <Input autoFocus placeholder={INPUT_PLACEHOLDER} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

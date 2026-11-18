@@ -101,6 +101,24 @@ for (const action of ["Editar", "Eliminar"]) {
   });
 }
 
+test("should focus the name when a player dialog opens", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Agregar", exact: true }).click();
+  await expect(
+    page
+      .getByRole("dialog")
+      .getByRole("textbox", { name: "Nombre", exact: true }),
+  ).toBeFocused();
+  await page.keyboard.press("Escape");
+  await page.getByRole("button", { name: "Acciones de Ana" }).click();
+  await page.getByRole("menuitem", { name: "Editar" }).click();
+  await expect(
+    page
+      .getByRole("dialog", { name: "Editar ficha del jugador" })
+      .getByRole("textbox", { name: "Nombre", exact: true }),
+  ).toBeFocused();
+});
+
 for (const viewport of [
   { width: 320, height: 568 },
   { width: 768, height: 1024 },
