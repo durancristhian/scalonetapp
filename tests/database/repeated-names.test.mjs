@@ -63,7 +63,7 @@ test("player names are unique within a match regardless of case", async () => {
     await import("../../server/queries/player.ts");
   await expect(
     addPlayerQuery(match.id, { ...player, name: "arquero foto" }, userId),
-  ).rejects.toThrow(ERROR_MESSAGES.match_players_repeated);
+  ).rejects.toThrow(ERROR_MESSAGES.match_player_repeated);
   await expect(
     addMultiplePlayersQuery(
       match.id,

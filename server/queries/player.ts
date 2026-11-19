@@ -40,6 +40,7 @@ async function addPlayersAtomically<T>(
   matchId: number,
   userId: string,
   players: PlayerSchema[],
+  repeatedError: (names: string[]) => string,
   insert: (transaction: Prisma.TransactionClient) => Promise<T>,
 ): Promise<T> {
   return prisma.$transaction(
@@ -64,9 +65,8 @@ async function addPlayersAtomically<T>(
         players.map((player) => player.name),
         existing.map((player) => player.name),
       );
-      if (repeated.length) {
-        throw new ExpectedActionError(ERROR_MESSAGES.match_players_repeated);
-      }
+      if (repeated.length)
+        throw new ExpectedActionError(repeatedError(repeated));
       return insert(transaction);
     },
     { isolationLevel: "ReadCommitted" },
@@ -78,13 +78,18 @@ export const addPlayerQuery: (
   data: PlayerSchema,
   userId: string,
 ) => Promise<Player> = async (matchId, data, userId) => {
-  return addPlayersAtomically(matchId, userId, [data], (transaction) =>
-    transaction.player.create({
-      data: {
-        ...data,
-        matchId,
-      },
-    }),
+  return addPlayersAtomically(
+    matchId,
+    userId,
+    [data],
+    () => ERROR_MESSAGES.match_player_repeated,
+    (transaction) =>
+      transaction.player.create({
+        data: {
+          ...data,
+          matchId,
+        },
+      }),
   );
 };
 
@@ -98,10 +103,15 @@ export const addMultiplePlayersQuery: (
     matchId,
   }));
 
-  return addPlayersAtomically(matchId, userId, data, (transaction) =>
-    transaction.player.createMany({
-      data: nextPlayers,
-    }),
+  return addPlayersAtomically(
+    matchId,
+    userId,
+    data,
+    () => ERROR_MESSAGES.match_players_repeated,
+    (transaction) =>
+      transaction.player.createMany({
+        data: nextPlayers,
+      }),
   );
 };
 
