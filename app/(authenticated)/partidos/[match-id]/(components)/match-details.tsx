@@ -11,6 +11,7 @@ import {
   TeamsValidationAlert,
 } from "@/app/(authenticated)/partidos/[match-id]/(components)/save-teams";
 import { TeamCard } from "@/app/(authenticated)/partidos/[match-id]/(components)/team-card";
+import { UnsavedChangesGuard } from "@/app/(authenticated)/partidos/[match-id]/(components)/unsaved-changes-guard";
 import { useTeamActions } from "@/app/(authenticated)/partidos/[match-id]/(hooks)/use-team-actions";
 import { useTeamsBuilderState } from "@/app/(authenticated)/partidos/[match-id]/(hooks)/use-team-builder-state";
 import { Button } from "@/components/ui/button";
@@ -69,6 +70,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
       aria-label="Preparación del partido"
       className="[min-inline-size:0] grid grid-cols-1 lg:grid-cols-[minmax(20rem,1fr)_minmax(0,2fr)] gap-6 lg:gap-8"
     >
+      <UnsavedChangesGuard key={match.id} active={hasUnsavedChanges} />
       <MatchPlayers players={match.players} />
       <div className="min-w-0">
         <div className="space-y-8">
