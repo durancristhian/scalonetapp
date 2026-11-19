@@ -26,7 +26,7 @@ async function ownedPlayer(request: Request, context: Context) {
   if (request.headers.get("origin") !== new URL(request.url).origin)
     return response("Solicitud no permitida.", 403);
   const { userId } = await auth();
-  if (!userId) return response("Inicia sesión para cambiar la foto.", 401);
+  if (!userId) return response("Iniciá sesión para cambiar la foto.", 401);
   const { playerId } = await context.params;
   const id = Number(playerId);
   if (!/^\d+$/.test(playerId) || !ID_SCHEMA.safeParse(id).success)
@@ -51,7 +51,7 @@ export async function POST(request: Request, context: Context) {
       request.headers.get("content-type") || "",
     )
   )
-    return response("Selecciona una foto JPG, PNG o WebP.", 415);
+    return response("Seleccioná una foto JPG, PNG o WebP.", 415);
   const reader = request.body.getReader();
   const chunks: Uint8Array[] = [];
   let bytes = 0;
@@ -76,7 +76,7 @@ export async function POST(request: Request, context: Context) {
       !["jpeg", "png", "webp"].includes(metadata.format || "") ||
       (metadata.pages || 1) !== 1
     )
-      return response("Selecciona una foto estática JPG, PNG o WebP.", 415);
+      return response("Seleccioná una foto estática JPG, PNG o WebP.", 415);
     for (const quality of [80, 65, 50]) {
       output = await sharp(input, { limitInputPixels: 4_000_000 })
         .rotate()
@@ -86,9 +86,9 @@ export async function POST(request: Request, context: Context) {
       if (output && output.length <= PHOTO_OUTPUT_BYTES) break;
     }
     if (!output || output.length > PHOTO_OUTPUT_BYTES)
-      return response("No pudimos reducir esta foto. Prueba con otra.", 422);
+      return response("No pudimos reducir esta foto. Probá con otra.", 422);
   } catch {
-    return response("No pudimos leer esta foto. Prueba con otra.", 422);
+    return response("No pudimos leer esta foto. Probá con otra.", 422);
   }
   let uploaded: string | undefined;
   try {
@@ -107,7 +107,7 @@ export async function POST(request: Request, context: Context) {
     if (!updated.count) {
       await removeUnusedPhoto(uploaded);
       return response(
-        "La ficha cambió. Vuelve a abrirla para cambiar la foto.",
+        "La ficha cambió. Volvé a abrirla para cambiar la foto.",
         409,
       );
     }
@@ -128,8 +128,7 @@ export async function DELETE(request: Request, context: Context) {
   const owned = await ownedPlayer(request, context);
   if (owned instanceof Response) return owned;
   const updated = await updatePlayerAvatarQuery(owned.player, owned.userId, "");
-  if (!updated.count)
-    return response("La ficha cambió. Vuelve a abrirla.", 409);
+  if (!updated.count) return response("La ficha cambió. Volvé a abrirla.", 409);
   await removeUnusedPhoto(owned.player.avatar);
   revalidatePath("/partidos/[match-id]", "page");
   return Response.json({ url: "" });

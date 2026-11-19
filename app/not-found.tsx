@@ -15,7 +15,7 @@ const NotFound: FC = () => {
           <h1 className="font-bold text-2xl">¡Offside de búsqueda!</h1>
           <p className="text-balance text-center text-muted-foreground">
             Parece que lo que estabas buscando se ha adelantado y está en una
-            posición prohibida. No te preocupes, puedes volver al campo para
+            posición prohibida. No te preocupes, podés volver al campo para
             intentar otra jugada.
           </p>
           <Button asChild>

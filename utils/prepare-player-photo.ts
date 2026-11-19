@@ -10,8 +10,8 @@ const RASTER_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 export const PLAYER_PHOTO_ACCEPT =
   "image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif";
 export const PLAYER_PHOTO_SELECTION_ERROR =
-  "Selecciona una foto JPG, PNG, WebP o HEIC de hasta 50 MB.";
-const CONVERSION_ERROR = "No pudimos preparar esta foto HEIC. Prueba con otra.";
+  "Seleccioná una foto JPG, PNG, WebP o HEIC de hasta 50 MB.";
+const CONVERSION_ERROR = "No pudimos preparar esta foto HEIC. Probá con otra.";
 
 async function isHeic(file: File): Promise<boolean> {
   if (HEIC_TYPES.has(file.type) || /\.heic$|\.heif$/i.test(file.name))
@@ -65,7 +65,7 @@ export async function preparePlayerPhoto(
     const timer = setTimeout(
       () =>
         finish(
-          new Error("La foto tarda demasiado en prepararse. Prueba con otra."),
+          new Error("La foto tarda demasiado en prepararse. Probá con otra."),
         ),
       45_000,
     );

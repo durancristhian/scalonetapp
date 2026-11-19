@@ -45,7 +45,7 @@ export const DeleteMatch: FC<DeleteMatchProps> = ({
   return (
     <ActionConfirmationDialog
       title="¿Eliminar este partido?"
-      description="Ten en cuenta que se eliminará toda su información asociada. Esta acción no tiene vuelta atrás."
+      description="Tené en cuenta que se eliminará toda su información asociada. Esta acción no tiene vuelta atrás."
       confirmLabel="Sí, eliminar"
       pendingLabel="Eliminando..."
       onConfirm={onDeleteMatch}

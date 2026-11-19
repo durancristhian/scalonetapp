@@ -147,7 +147,7 @@ export function ImageCropper({
 
       setDialogOpen(false);
     } catch {
-      errorAlert({ title: "No pudimos preparar esta foto. Prueba con otra." });
+      errorAlert({ title: "No pudimos preparar esta foto. Probá con otra." });
     }
 
     setUploadingImage(false);
@@ -162,7 +162,7 @@ export function ImageCropper({
         <DialogHeader>
           <DialogTitle>Recortando la foto</DialogTitle>
           <DialogDescription className="max-md:text-balance">
-            Selecciona la parte que más te guste para usar de avatar. Te
+            Seleccioná la parte que más te guste para usar de avatar. Te
             recomendamos hacer foco en el rostro de la persona.
           </DialogDescription>
         </DialogHeader>

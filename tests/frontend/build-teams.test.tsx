@@ -70,7 +70,7 @@ it("should ask before replacing a saved lineup whose players were removed withou
   await buildBalancedTeams(user);
   expect(
     screen.getByRole("alertdialog", {
-      name: "¿Confirmas el cambio de alineaciones?",
+      name: "¿Confirmás el cambio de alineaciones?",
     }),
   ).toBeVisible();
   expect(editMatchAction).not.toHaveBeenCalled();

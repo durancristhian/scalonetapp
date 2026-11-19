@@ -85,7 +85,7 @@ const FeedbackForm: FC<FeedbackFormProps> = ({ afterSubmit }) => {
       await submit(async () => {
         await feedbackAction(values);
         afterSubmit();
-        successAlert({ title: "¡Su feedback fue enviado!" });
+        successAlert({ title: "¡Tu feedback fue enviado!" });
       });
     } catch (error) {
       if (error instanceof Error) {

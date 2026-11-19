@@ -17,7 +17,7 @@ export async function GET() {
       }}
     >
       <div style={{ fontSize: 64, marginBottom: 24 }}>
-        ¡Arma equipos como un campeón!
+        ¡Armá equipos como un campeón!
       </div>
       <div
         style={{
@@ -25,7 +25,7 @@ export async function GET() {
           fontSize: 36,
         }}
       >
-        Tienes lo necesario para ser el Lionel Scaloni entre tus amigos?
+        Tenés lo necesario para ser el Lionel Scaloni entre tus amigos?
       </div>
       <div
         style={{

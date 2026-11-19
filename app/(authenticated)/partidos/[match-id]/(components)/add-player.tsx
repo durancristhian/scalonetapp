@@ -60,9 +60,9 @@ export const PlayerLimitAlert = () => (
     <InfoIcon aria-hidden="true" />
     <AlertTitle>¡No hay más espacio en el banco!</AlertTitle>
     <AlertDescription>
-      ¡Has alcanzado el máximo de {MAX_PLAYERS_PER_MATCH} jugadores! Si
-      necesitas añadir más estrellas, considera liberar espacio eliminando un
-      jugador existente.
+      ¡Alcanzaste el máximo de {MAX_PLAYERS_PER_MATCH} jugadores! Si necesitás
+      añadir más estrellas, considerá liberar espacio eliminando un jugador
+      existente.
     </AlertDescription>
   </Alert>
 );
