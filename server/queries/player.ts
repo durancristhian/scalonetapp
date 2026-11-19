@@ -1,6 +1,9 @@
 import type { PlayerSchema } from "@/schemas/player";
 import prisma from "../../utils/prisma.ts";
-import { ERROR_MESSAGES } from "../../utils/error-messages.ts";
+import {
+  ERROR_MESSAGES,
+  getRepeatedPlayersMessage,
+} from "../../utils/error-messages.ts";
 import { getPlayerAdditionError } from "../../utils/player-limits.ts";
 import {
   findRepeatedNames,
@@ -107,7 +110,7 @@ export const addMultiplePlayersQuery: (
     matchId,
     userId,
     data,
-    () => ERROR_MESSAGES.match_players_repeated,
+    getRepeatedPlayersMessage,
     (transaction) =>
       transaction.player.createMany({
         data: nextPlayers,

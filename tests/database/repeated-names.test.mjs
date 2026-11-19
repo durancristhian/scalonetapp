@@ -69,11 +69,14 @@ test("player names are unique within a match regardless of case", async () => {
       match.id,
       [
         { ...player, name: "Nuevo" },
+        { ...player, name: "ARQUERO foto" },
         { ...player, name: "NUEVO" },
       ],
       userId,
     ),
-  ).rejects.toThrow(ERROR_MESSAGES.match_players_repeated);
+  ).rejects.toThrow(
+    'Estos nombres ya existen en este partido o se repiten en la lista: "ARQUERO foto", "NUEVO".',
+  );
   const created = await addPlayerQuery(
     match.id,
     { ...player, name: "Defensor" },

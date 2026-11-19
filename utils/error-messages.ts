@@ -28,8 +28,6 @@ export const ERROR_MESSAGES = {
     "Se alcanzó el límite máximo de partidos que podés crear. Eliminá alguno para continuar.",
   match_name_repeated: "Ya existe un partido con ese nombre.",
   match_player_repeated: "Ya existe un jugador con ese nombre en este partido.",
-  match_players_repeated:
-    "Ya existe un jugador con alguno de estos nombres en este partido.",
 
   player_add_error:
     "Ocurrió un error al crear el jugador. Por favor, intentá nuevamente.",
@@ -43,3 +41,16 @@ export const ERROR_MESSAGES = {
 
 export const getTooLargeMessage = (max: number): string =>
   `${max} caracteres máximo.`;
+
+const LISTED_REPEATED_NAMES = 5;
+
+export function getRepeatedPlayersMessage(names: readonly string[]): string {
+  if (names.length === 1)
+    return `El nombre "${names[0]}" ya existe en este partido o se repite en la lista.`;
+  const listed = names
+    .slice(0, LISTED_REPEATED_NAMES)
+    .map((name) => `"${name}"`)
+    .join(", ");
+  const rest = names.length - LISTED_REPEATED_NAMES;
+  return `Estos nombres ya existen en este partido o se repiten en la lista: ${listed}${rest > 0 ? ` y ${rest} más` : ""}.`;
+}
