@@ -21,6 +21,10 @@ import {
   getActionErrorMessage,
 } from "@/utils/action-result";
 import { lineupFingerprint } from "@/utils/lineup-fingerprint";
+import { getSavedTeamsError } from "@/utils/team-validation";
+
+const serializeTeams = (teams: Team[]): string =>
+  getTeamsToSave(teams.map((team) => ({ ...team, name: team.name.trim() })));
 
 export const useTeamActions = (
   match: MatchWithPlayers,
@@ -52,37 +56,53 @@ export const useTeamActions = (
       comparisonTeams,
     });
   }
-  const payload = getTeamsToSave(
-    teams.map((team) => ({ ...team, name: team.name.trim() })),
-  );
+  const payload = serializeTeams(teams);
   const hasUnsavedChanges = haveTeamsChanged(payload, savedComparison);
 
   const run = async (
     action: "save" | "export",
     options: ImageExportOptions = DEFAULT_IMAGE_EXPORT_OPTIONS,
     selections: ImageExportTeamSelections = {},
+    draft?: Team[],
   ): Promise<string | null> => {
-    if (operationLock.current || !valid)
+    const draftPayload = draft ? serializeTeams(draft) : payload;
+    const draftError = draft
+      ? getSavedTeamsError(
+          draft.map((team) => ({
+            ...team,
+            players: team.players.map((player) => player.id),
+          })),
+          match.players.map((player) => player.id),
+        )
+      : null;
+    if (draftError) {
+      errorAlert({ title: draftError });
+      return draftError;
+    }
+    if (operationLock.current || (!draft && !valid))
       return "No se pudo iniciar la operación. Intentá de nuevo.";
-    if (action === "save" && !hasUnsavedChanges) return null;
+    if (action === "save" && !haveTeamsChanged(draftPayload, savedComparison)) {
+      if (draft) successAlert({ title: "¡Equipos guardados con éxito!" });
+      return null;
+    }
     operationLock.current = true;
     setOperation(action);
     if (action === "export") trackAnalytics("export_requested");
 
     let stage: "save" | "image" = "save";
     try {
-      if (payload !== savedTeams) {
+      if (draftPayload !== savedTeams) {
         unwrapActionResult(
           await editMatchAction(match.id, {
-            teams: payload,
+            teams: draftPayload,
             expectedTeams: savedTeams,
           }),
         );
         setSavedSnapshot({
           matchId: match.id,
           baseTeams,
-          teams: payload,
-          comparisonTeams: payload,
+          teams: draftPayload,
+          comparisonTeams: draftPayload,
         });
         trackAnalytics("teams_saved");
       }
@@ -132,7 +152,7 @@ export const useTeamActions = (
   return {
     hasUnsavedChanges,
     operation,
-    save: () => run("save"),
+    save: (draft?: Team[]) => run("save", undefined, undefined, draft),
     exportTeams: (
       options: ImageExportOptions,
       selections: ImageExportTeamSelections,
