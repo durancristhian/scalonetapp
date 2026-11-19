@@ -17,9 +17,9 @@ import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 
 type UseTeamsBuilderStateResult = {
   assignSelectionToTeam: (teamId: string) => void;
-  balanceTeams: () => void;
+  balanceTeams: () => Team[] | null;
   createNewTeam: () => void;
-  randomizeTeams: () => void;
+  randomizeTeams: () => Team[] | null;
   removePlayerFromTeam: (playerId: number, teamId: string) => void;
   removeTeam: (teamId: string) => void;
   selectedIds: number[];
@@ -102,16 +102,15 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
       teams.length !== TEAMS_PER_MATCH ||
       match.players.length > MAX_PLAYERS_PER_MATCH
     )
-      return;
+      return null;
     const balancedTeams = createBalancedTeams([...match.players], teams.length);
+    const nextTeams = teams.map((team, idx) => ({
+      ...team,
+      players: balancedTeams[idx],
+    }));
     setSelectedIds([]);
-
-    setTeams((currTeams) => {
-      return currTeams.map((currTeam, idx) => ({
-        ...currTeam,
-        players: balancedTeams[idx],
-      }));
-    });
+    setTeams(nextTeams);
+    return nextTeams;
   };
 
   const createNewTeam: UseTeamsBuilderStateResult["createNewTeam"] = () => {
@@ -135,11 +134,14 @@ export const useTeamsBuilderState: UseTeamsBuilderState = (match) => {
       teams.length !== TEAMS_PER_MATCH ||
       match.players.length > MAX_PLAYERS_PER_MATCH
     )
-      return;
-    const shuffledPlayers = shuffle([...match.players]);
-
-    setTeams((current) => distributePlayerChunks(current, shuffledPlayers));
+      return null;
+    const nextTeams = distributePlayerChunks(
+      teams,
+      shuffle([...match.players]),
+    );
+    setTeams(nextTeams);
     setSelectedIds([]);
+    return nextTeams;
   };
 
   const removePlayerFromTeam: UseTeamsBuilderStateResult["removePlayerFromTeam"] =

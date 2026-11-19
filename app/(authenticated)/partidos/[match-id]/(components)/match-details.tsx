@@ -93,22 +93,17 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                     match.players.length > MAX_PLAYERS_PER_MATCH
                   }
                   onSave={(preset) => {
-                    switch (preset) {
-                      case "random": {
-                        randomizeTeams();
-                        trackAnalytics("teams_randomize_clicked");
-
-                        break;
-                      }
-                      case "balanced": {
-                        balanceTeams();
-                        trackAnalytics("teams_balance_clicked");
-
-                        break;
-                      }
-                    }
+                    const builtTeams =
+                      preset === "random" ? randomizeTeams() : balanceTeams();
+                    trackAnalytics(
+                      preset === "random"
+                        ? "teams_randomize_clicked"
+                        : "teams_balance_clicked",
+                    );
+                    if (builtTeams) void save(builtTeams);
                   }}
                   showConfirmation={
+                    hasUnsavedChanges ||
                     unselectedPlayers.length < match.players.length
                   }
                 />
@@ -138,7 +133,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
                 <SaveTeams
                   disabled={busy || !areTeamsValid || !hasUnsavedChanges}
                   processing={operation === "save"}
-                  onSave={save}
+                  onSave={() => void save()}
                 />
                 <ExportTeams
                   matchId={match.id}
