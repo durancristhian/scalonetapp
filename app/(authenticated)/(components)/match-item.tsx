@@ -61,6 +61,7 @@ export const MatchItem: FC<MatchItemProps> = ({
         <CardDescription className="[margin-block-start:theme(spacing.1)]">
           Última actualización:{" "}
           {formatDistanceToNowStrict(match.updatedAt, {
+            addSuffix: true,
             locale: es,
           })}
         </CardDescription>
