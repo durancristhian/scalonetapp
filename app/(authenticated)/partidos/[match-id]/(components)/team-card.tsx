@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/tooltip";
 import { type TeamSchema } from "@/schemas/team";
 import { type Team } from "@/types/team";
-import { PLAYER_POSITION_IDS } from "@/utils/player-options";
+import { sortExportPlayers } from "@/utils/sort-export-players";
 import { TrashIcon, XIcon } from "lucide-react";
 import { type FC } from "react";
 
@@ -75,9 +75,7 @@ export const TeamCard: FC<TeamCardProps> = ({
           {Boolean(team.players.length) ? (
             <>
               <div className="space-y-2">
-                {PLAYER_POSITION_IDS.flatMap((position) =>
-                  team.players.filter((player) => player.position === position),
-                ).map((player) => (
+                {sortExportPlayers(team.players, "position").map((player) => (
                   <AnimatedListItem key={player.id}>
                     <PlayerRow player={player}>
                       <TooltipProvider>
