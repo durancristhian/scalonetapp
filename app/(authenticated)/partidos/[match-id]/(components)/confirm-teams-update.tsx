@@ -45,7 +45,7 @@ export const ConfirmTeamsUpdate: FC<ConfirmTeamsUpdateProps> = ({
           </AlertDialogTitle>
           <AlertDialogDescription>
             Si confirmás, el estado actual de tus equipos se perderá como un
-            penal pateado por el puma Gigliotti. Asegurate de estar listo para
+            penal pateado por el Puma Gigliotti. Asegurate de estar listo para
             esta jugada antes de proceder.
           </AlertDialogDescription>
         </AlertDialogHeader>

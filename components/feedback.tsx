@@ -50,10 +50,10 @@ export const Feedback = () => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>¿Que te gustaría decirme?</DialogTitle>
+          <DialogTitle>¿Qué te gustaría decirme?</DialogTitle>
           <DialogDescription className="text-balance">
             Todo feedback es bienvenido. No te garantizo que este mensaje sea
-            contestado pero si te aseguro que lo voy a leer.
+            contestado, pero sí te aseguro que lo voy a leer.
           </DialogDescription>
         </DialogHeader>
         <FeedbackForm

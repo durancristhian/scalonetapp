@@ -25,7 +25,7 @@ export async function GET() {
           fontSize: 36,
         }}
       >
-        Tenés lo necesario para ser el Lionel Scaloni entre tus amigos?
+        ¿Tenés lo necesario para ser el Lionel Scaloni entre tus amigos?
       </div>
       <div
         style={{

@@ -45,7 +45,7 @@ export const MatchLimitAlert = () => (
     <AlertTitle>¡Alto ahí, entrenador! ¡Llegaste al límite!</AlertTitle>
     <AlertDescription>
       Ya tenés {process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER} partidos creados.
-      Te sugerimos eliminar alguno para darle lugar a nuevas glorias
+      ¡Te sugerimos eliminar alguno para darle lugar a nuevas glorias
       futbolísticas!
     </AlertDescription>
   </Alert>

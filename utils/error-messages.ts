@@ -2,7 +2,7 @@ export const ERROR_MESSAGES = {
   feedback_submit_error:
     "Ocurrió un error al enviar tu feedback. Por favor, intentá nuevamente.",
 
-  export_failed: "Ocurrió un error al exportar la imágen.",
+  export_failed: "Ocurrió un error al exportar la imagen.",
   not_found: "No encontrado.",
   required: "Campo requerido.",
   server_error: "Ocurrió un error.",
