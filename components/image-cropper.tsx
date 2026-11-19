@@ -24,6 +24,24 @@ import ReactCrop, {
 
 const aspect = 1;
 
+const cornerLabel = (corner: string) =>
+  `Usá las flechas para mover la esquina ${corner} y cambiar el área de recorte`;
+
+const edgeLabel = (keys: string, edge: string) =>
+  `Usá las flechas ${keys} para mover el borde ${edge} y cambiar el área de recorte`;
+
+const cropAriaLabels = {
+  cropArea: "Usá las flechas para mover el área de recorte",
+  nwDragHandle: cornerLabel("superior izquierda"),
+  nDragHandle: edgeLabel("hacia arriba y abajo", "superior"),
+  neDragHandle: cornerLabel("superior derecha"),
+  eDragHandle: edgeLabel("hacia la izquierda y la derecha", "derecho"),
+  seDragHandle: cornerLabel("inferior derecha"),
+  sDragHandle: edgeLabel("hacia arriba y abajo", "inferior"),
+  swDragHandle: cornerLabel("inferior izquierda"),
+  wDragHandle: edgeLabel("hacia la izquierda y la derecha", "izquierdo"),
+};
+
 type ImageCropperProps = {
   dialogOpen: boolean;
   onCloseAutoFocus?: React.ComponentProps<
@@ -149,6 +167,7 @@ export function ImageCropper({
           </DialogDescription>
         </DialogHeader>
         <ReactCrop
+          ariaLabels={cropAriaLabels}
           aspect={aspect}
           crop={crop}
           disabled={uploadingImage}
