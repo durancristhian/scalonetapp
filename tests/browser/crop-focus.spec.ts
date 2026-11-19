@@ -45,3 +45,34 @@ test("returns to the photo chooser after closing nested crop and to Add after cl
   await add.click();
   await expect(chooser).toBeVisible();
 });
+
+test("explains an unreadable photo instead of opening an empty crop", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Agregar", exact: true }).click();
+  const chooser = page.getByRole("button", {
+    name: "Elegir foto",
+    exact: true,
+  });
+  const crop = page.getByRole("dialog", { name: "Recortando la foto" });
+  let selection = page.waitForEvent("filechooser");
+  await chooser.click();
+  await (
+    await selection
+  ).setFiles({
+    name: "foto.jpg",
+    mimeType: "image/jpeg",
+    buffer: Buffer.from("not an image"),
+  });
+  await expect(
+    page.getByText(
+      "No pudimos leer este archivo como imagen. Seleccioná una foto JPG, PNG, WebP o HEIC válida.",
+    ),
+  ).toBeVisible();
+  await expect(crop).toBeHidden();
+  selection = page.waitForEvent("filechooser");
+  await chooser.click();
+  await (await selection).setFiles(photo);
+  await expect(crop).toBeVisible();
+});
