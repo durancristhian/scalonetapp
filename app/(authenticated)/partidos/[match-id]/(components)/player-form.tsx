@@ -33,18 +33,18 @@ export const focusPlayerName = (event: Event) => {
 
 const LEVEL_MESSAGES: Record<number, string> = {
   1: "Un tronco realmente.",
-  2: "Se defiende, pero podría jugar al pelota paleta mejor.",
+  2: "Se defiende, pero podría jugar a la pelota paleta mejor.",
   3: "Definitivamente hay peores.",
   4: "Ni bueno ni malo.",
   5: "Es un jugador regular. Cumple.",
-  6: "Tiene sus días pero en general anda bien.",
+  6: "Tiene sus días, pero en general anda bien.",
   7: "Está por encima de la media.",
   8: "Che, a este hay que sumarlo al grupo.",
-  9: "Andá a saber por que no llegó a primera.",
+  9: "Andá a saber por qué no llegó a primera.",
   10: "La verdadera máquina.",
 };
 
-const INPUT_PLACEHOLDER = "Juan Roman Riquelme";
+const INPUT_PLACEHOLDER = "Juan Román Riquelme";
 
 type PlayerFormProps = {
   onSubmit: (values: PlayerSchema, photo?: Blob | null) => Promise<void>;

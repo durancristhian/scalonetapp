@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { expect, it, vi } from "vitest";
+import { expect, it, onTestFinished, vi } from "vitest";
 import { MatchesList } from "@/app/(authenticated)/(components)/matches-list";
 import { match } from "../fixtures";
 
@@ -42,3 +42,11 @@ it.each([true, false])(
     else expect(duplicate).not.toHaveAttribute("aria-disabled", "true");
   },
 );
+it("should describe the last update as time elapsed", () => {
+  vi.useFakeTimers({ toFake: ["Date"], now: new Date("2026-01-09") });
+  onTestFinished(() => {
+    vi.useRealTimers();
+  });
+  render(<MatchesList matches={[match()]} atMatchLimit={false} />);
+  expect(screen.getByText("Última actualización: hace 8 días")).toBeVisible();
+});

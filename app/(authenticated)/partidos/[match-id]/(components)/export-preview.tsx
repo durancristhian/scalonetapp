@@ -54,7 +54,7 @@ export function ExportPreview(props: TeamExportProps) {
             transform: `scale(${scale})`,
           }}
         >
-          <MemoizedTeamExport {...props} />
+          <MemoizedTeamExport {...props} headingLevel={3} />
         </div>
       </div>
     </div>

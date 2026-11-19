@@ -63,7 +63,7 @@ export const EditMatch: FC<EditMatchProps> = ({
         <DialogHeader>
           <DialogTitle>¿Listo para un cambio?</DialogTitle>
           <DialogDescription className="max-md:text-balance">
-            Tómate un momento para hacer este ajuste y optimizar tu gestión. ¡A
+            Tomate un momento para hacer este ajuste y optimizar tu gestión. ¡A
             Lionel no se le escapa una!
           </DialogDescription>
         </DialogHeader>

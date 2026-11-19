@@ -87,7 +87,7 @@ export function PlayerAvatarInput({
                   controller.signal,
                 ).catch(() => {
                   throw new Error(
-                    "No pudimos abrir el editor de fotos. Intenta nuevamente. Si el problema continúa, recarga la página.",
+                    "No pudimos abrir el editor de fotos. Intentá nuevamente. Si el problema continúa, recargá la página.",
                   );
                 }),
               ]);
@@ -101,7 +101,7 @@ export function PlayerAvatarInput({
                   title:
                     error instanceof Error
                       ? error.message
-                      : "No pudimos preparar esta foto. Prueba con otra.",
+                      : "No pudimos preparar esta foto. Probá con otra.",
                 });
               controller.abort();
             } finally {

@@ -44,8 +44,8 @@ export const MatchLimitAlert = () => (
     <InfoIcon aria-hidden="true" />
     <AlertTitle>¡Alto ahí, entrenador! ¡Llegaste al límite!</AlertTitle>
     <AlertDescription>
-      Ya tienes {process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER} partidos creados.
-      Te sugerimos eliminar alguno para darle lugar a nuevas glorias
+      Ya tenés {process.env.NEXT_PUBLIC_MAX_MATCHES_PER_USER} partidos creados.
+      ¡Te sugerimos eliminar alguno para darle lugar a nuevas glorias
       futbolísticas!
     </AlertDescription>
   </Alert>
@@ -93,7 +93,7 @@ const EnabledContent: FC = () => {
         <DialogHeader>
           <DialogTitle>El primer paso hacia la gloria</DialogTitle>
           <DialogDescription className="max-md:text-balance">
-            Todo DT necesita de un partido para demostrar su habilidad. Empieza
+            Todo DT necesita de un partido para demostrar su habilidad. Empezá
             por crear uno.
           </DialogDescription>
         </DialogHeader>

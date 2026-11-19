@@ -17,9 +17,9 @@ export const Header = () => {
             <SmallScreenNavigation />
           </div>
           <Link href="/dashboard">
-            <h1 className="text-base font-bold leading-normal tracking-normal">
+            <span className="text-base font-bold leading-normal tracking-normal">
               scalonet.app
-            </h1>
+            </span>
           </Link>
           <div className="hidden md:block">
             <LargeScreenNavigation />

@@ -145,7 +145,7 @@ for (const [width, height] of [
     await expect(feedback).toBeFocused();
     await page.keyboard.press("Enter");
     await expect(page.getByRole("dialog")).toHaveAccessibleName(
-      "¿Que te gustaría decirme?",
+      "¿Qué te gustaría decirme?",
     );
     await page.keyboard.press("Escape");
     await expect(feedback).toBeFocused();

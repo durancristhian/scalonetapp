@@ -45,7 +45,7 @@ export const DeletePlayer: FC<DeletePlayerProps> = ({
   return (
     <ActionConfirmationDialog
       title="¿Eliminar este jugador?"
-      description="Ten en cuenta que se eliminará toda su información asociada. Esta acción no tiene vuelta atrás."
+      description="Tené en cuenta que se eliminará toda su información asociada. Esta acción no tiene vuelta atrás."
       confirmLabel="Sí, eliminar"
       pendingLabel="Eliminando..."
       onConfirm={onDeletePlayer}

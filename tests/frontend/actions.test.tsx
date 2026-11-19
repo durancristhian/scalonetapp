@@ -297,7 +297,7 @@ describe("feedback", () => {
       "Me gustaría guardar mis equipos",
     );
     await user.click(screen.getByRole("button", { name: "Enviar" }));
-    expect(await screen.findByText("¡Su feedback fue enviado!")).toBeVisible();
+    expect(await screen.findByText("¡Tu feedback fue enviado!")).toBeVisible();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(feedbackAction).toHaveBeenCalledExactlyOnceWith({
       message: "Me gustaría guardar mis equipos",
@@ -325,7 +325,7 @@ describe("feedback", () => {
     ).toBeVisible();
     expect(screen.getByLabelText("Tu mensaje")).toHaveValue("Hola Cris");
     await user.click(screen.getByRole("button", { name: "Enviar" }));
-    expect(await screen.findByText("¡Su feedback fue enviado!")).toBeVisible();
+    expect(await screen.findByText("¡Tu feedback fue enviado!")).toBeVisible();
   });
 });
 

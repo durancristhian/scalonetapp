@@ -59,6 +59,7 @@ describe("Public information page", () => {
       screen.getByRole("button", { name: "Abrir navegación" }),
     ).toBeVisible();
     expect(screen.getByRole("button", { name: "Cuenta" })).toBeVisible();
+    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
     expect(
       within(screen.getByRole("contentinfo")).getByRole("button", {
         name: "Feedback",
