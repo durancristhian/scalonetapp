@@ -21,6 +21,7 @@ export type TeamExportProps = {
   teams: Team[];
   options: ImageExportOptions;
   playerRoles?: ImageExportTeamSelections;
+  headingLevel?: 1 | 3;
 };
 
 export function TeamExport({
@@ -28,6 +29,7 @@ export function TeamExport({
   teams,
   options,
   playerRoles = {},
+  headingLevel = 1,
 }: TeamExportProps) {
   const headingId = useId();
   const layout = getExportLayout(teams, options);
@@ -53,7 +55,12 @@ export function TeamExport({
       className={cn(styles.canvas, workSans.className)}
       style={style}
     >
-      <ExportHeading name={name} teams={teams} headingId={headingId} />
+      <ExportHeading
+        name={name}
+        teams={teams}
+        headingId={headingId}
+        headingLevel={headingLevel}
+      />
       <PitchScene options={options} layout={layout}>
         <ExportPlayerGrid
           teams={teams}

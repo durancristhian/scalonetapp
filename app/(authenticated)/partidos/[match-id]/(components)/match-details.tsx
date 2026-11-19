@@ -84,7 +84,7 @@ export const MatchDetails: FC<MatchDetailsProps> = ({ match }) => {
           ) : null}
           <div className="space-y-4">
             <div className="flex flex-wrap gap-3 items-center justify-between">
-              <h1 className="font-bold text-xl">Equipos</h1>
+              <h2 className="font-bold text-xl">Equipos</h2>
               <div className="flex flex-wrap gap-2">
                 <BuildTeams
                   disabled={
