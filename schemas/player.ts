@@ -1,4 +1,4 @@
-import { ERROR_MESSAGES } from "@/utils/error-messages";
+import { ERROR_MESSAGES, getTooLargeMessage } from "@/utils/error-messages";
 import { z } from "zod";
 import {
   PLAYER_POSITION_IDS,
@@ -6,12 +6,16 @@ import {
   MAX_PLAYER_LEVEL,
 } from "@/utils/player-options";
 
+export const MAX_PLAYER_NAME_LENGTH = 40;
+
 export const PLAYER_SCHEMA = z.object({
   name: z
     .string()
     .trim()
     .min(1, { message: ERROR_MESSAGES.required })
-    .max(40, { message: ERROR_MESSAGES.too_large }),
+    .max(MAX_PLAYER_NAME_LENGTH, {
+      message: getTooLargeMessage(MAX_PLAYER_NAME_LENGTH),
+    }),
   level: z.number().int().gte(MIN_PLAYER_LEVEL).lte(MAX_PLAYER_LEVEL),
   position: z.enum(PLAYER_POSITION_IDS),
 });

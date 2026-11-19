@@ -327,6 +327,16 @@ describe("feedback", () => {
     await user.click(screen.getByRole("button", { name: "Enviar" }));
     expect(await screen.findByText("¡Tu feedback fue enviado!")).toBeVisible();
   });
+  it("states the feedback length limit when the message is too long", async () => {
+    const user = userEvent.setup();
+    render(<Feedback />);
+    await user.click(screen.getByRole("button", { name: "Feedback" }));
+    const message = screen.getByLabelText("Tu mensaje");
+    await user.click(message);
+    await user.paste("x".repeat(1025));
+    expect(message).toHaveAccessibleDescription("1024 caracteres máximo.");
+    expect(screen.getByRole("button", { name: "Enviar" })).toBeDisabled();
+  });
 });
 
 describe("duplicate match", () => {

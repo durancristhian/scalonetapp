@@ -12,6 +12,18 @@ export const PLAYER_PHOTO_ACCEPT =
 export const PLAYER_PHOTO_SELECTION_ERROR =
   "Seleccioná una foto JPG, PNG, WebP o HEIC de hasta 50 MB.";
 const CONVERSION_ERROR = "No pudimos preparar esta foto HEIC. Probá con otra.";
+const UNREADABLE_ERROR =
+  "No pudimos leer este archivo como imagen. Seleccioná una foto JPG, PNG, WebP o HEIC válida.";
+
+async function assertReadableImage(file: Blob): Promise<void> {
+  let bitmap: ImageBitmap;
+  try {
+    bitmap = await createImageBitmap(file);
+  } catch {
+    throw new Error(UNREADABLE_ERROR);
+  }
+  bitmap.close();
+}
 
 async function isHeic(file: File): Promise<boolean> {
   if (HEIC_TYPES.has(file.type) || /\.heic$|\.heif$/i.test(file.name))
@@ -39,6 +51,8 @@ export async function preparePlayerPhoto(
   if (!heic) {
     if (!RASTER_TYPES.has(file.type))
       throw new Error(PLAYER_PHOTO_SELECTION_ERROR);
+    await assertReadableImage(file);
+    signal.throwIfAborted();
     return file;
   }
 

@@ -12,6 +12,7 @@ import { type Match } from "@prisma/client";
 import { getSavedTeamsError } from "@/utils/team-validation";
 import { ExpectedActionError } from "@/server/expected-action-error";
 import { lockMatchOwner } from "@/server/lock-match-owner";
+import { isRepeatedName } from "@/utils/repeated-names";
 
 export const getMatchesQuery: (options?: {
   take: number;
@@ -81,13 +82,18 @@ export const addMatchQuery: (
   const matchData = MATCH_SCHEMA.parse(data);
   return prisma.$transaction(async (transaction) => {
     await lockMatchOwner(transaction, userId);
-    const count = await transaction.match.count({ where: { userId } });
-    if (count >= getMaxMatchesPerUser())
-      throw new ExpectedActionError(ERROR_MESSAGES.match_limit_reached);
-    const repeated = await transaction.match.findFirst({
-      where: { userId, name: matchData.name },
+    const matches = await transaction.match.findMany({
+      where: { userId },
+      select: { name: true },
     });
-    if (repeated)
+    if (matches.length >= getMaxMatchesPerUser())
+      throw new ExpectedActionError(ERROR_MESSAGES.match_limit_reached);
+    if (
+      isRepeatedName(
+        matchData.name,
+        matches.map((match) => match.name),
+      )
+    )
       throw new ExpectedActionError(ERROR_MESSAGES.match_name_repeated);
     return transaction.match.create({ data: { ...matchData, userId } });
   });
@@ -106,11 +112,20 @@ export const editMatchQuery: (
       SELECT * FROM "Match" WHERE "id" = ${id} AND "userId" = ${userId} FOR UPDATE
     `;
     if (!match) throw new ExpectedActionError(ERROR_MESSAGES.not_found);
-    if (matchData.name !== undefined) {
-      const repeated = await transaction.match.findFirst({
-        where: { userId, name: matchData.name, id: { not: id } },
+    if (
+      matchData.name !== undefined &&
+      !isRepeatedName(matchData.name, [match.name])
+    ) {
+      const others = await transaction.match.findMany({
+        where: { userId, id: { not: id } },
+        select: { name: true },
       });
-      if (repeated)
+      if (
+        isRepeatedName(
+          matchData.name,
+          others.map((other) => other.name),
+        )
+      )
         throw new ExpectedActionError(ERROR_MESSAGES.match_name_repeated);
     }
     if (serializedTeams !== undefined) {

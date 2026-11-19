@@ -62,6 +62,7 @@ export const PlayerForm: FC<PlayerFormProps> = ({
   const [photo, setPhoto] = useState<Blob | null | undefined>();
   const submit = useDialogSubmission();
   const form = useForm<PlayerSchema>({
+    mode: "onChange",
     defaultValues: values || {
       name: "",
       level: Number(process.env.NEXT_PUBLIC_DEFAULT_PLAYER_LEVEL),

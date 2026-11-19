@@ -36,6 +36,7 @@ type MatchFormProps = {
 export const MatchForm: FC<MatchFormProps> = ({ onSubmit, values }) => {
   const submit = useDialogSubmission();
   const form = useForm<MatchSchema>({
+    mode: "onChange",
     defaultValues: values || {
       name: "",
     },

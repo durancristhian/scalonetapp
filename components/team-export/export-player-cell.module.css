@@ -35,6 +35,20 @@
   line-height: 28px;
   font-weight: 700;
 }
+.label[data-size="20"] {
+  font-size: 20px;
+  line-height: 24px;
+}
+.label[data-size="16"],
+.label[data-size="14"] {
+  padding-block: 4px;
+  font-size: 16px;
+  line-height: 20px;
+}
+.label[data-size="14"] {
+  font-size: 14px;
+  line-height: 18px;
+}
 .name {
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -43,4 +57,7 @@
   overflow-wrap: anywhere;
   min-inline-size: 0;
   margin: 0;
+}
+.label:is([data-size="16"], [data-size="14"]) .name {
+  -webkit-line-clamp: 3;
 }

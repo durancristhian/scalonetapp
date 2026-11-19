@@ -1,4 +1,4 @@
-import { ERROR_MESSAGES } from "../utils/error-messages.ts";
+import { ERROR_MESSAGES, getTooLargeMessage } from "../utils/error-messages.ts";
 import { MAX_MATCH_NAME_LENGTH } from "../utils/match-name.ts";
 import { z } from "zod";
 
@@ -8,7 +8,9 @@ export const MATCH_SCHEMA = z
       .string()
       .trim()
       .min(1, { message: ERROR_MESSAGES.required })
-      .max(MAX_MATCH_NAME_LENGTH, { message: ERROR_MESSAGES.too_large }),
+      .max(MAX_MATCH_NAME_LENGTH, {
+        message: getTooLargeMessage(MAX_MATCH_NAME_LENGTH),
+      }),
   })
   .strict();
 

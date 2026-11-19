@@ -38,18 +38,6 @@ describe("match form", () => {
     await act(async () => pending.resolve());
     await waitFor(() => expect(save()).toBeEnabled());
   });
-  it("should reject an overlong name when the input is validated", async () => {
-    const submit = vi.fn();
-    const user = userEvent.setup();
-    render(<MatchForm onSubmit={submit} />);
-    await user.type(
-      screen.getByLabelText("Nombre del partido"),
-      "x".repeat(41),
-    );
-    await user.click(screen.getByText("Nombre del partido"));
-    expect(save()).toBeDisabled();
-    expect(submit).not.toHaveBeenCalled();
-  });
   it("should display refreshed values without submitting when props change", async () => {
     const submit = vi.fn();
     const view = render(
@@ -218,3 +206,22 @@ describe("player form", () => {
     expect(screen.getByRole("radio", { name: "8" })).toBeChecked();
   });
 });
+
+it.each([
+  ["Nombre del partido", MatchForm],
+  ["Nombre", PlayerForm],
+])(
+  "explains why saving is disabled while the %s is too long",
+  async (label, Form) => {
+    const submit = vi.fn();
+    const user = userEvent.setup();
+    render(<Form onSubmit={submit} />);
+    const input = screen.getByLabelText(label, { exact: true });
+    await user.type(input, "x".repeat(41));
+    expect(save()).toBeDisabled();
+    expect(input).toHaveAccessibleDescription("40 caracteres máximo.");
+    await user.type(input, "{Backspace}");
+    expect(save()).toBeEnabled();
+    expect(submit).not.toHaveBeenCalled();
+  },
+);

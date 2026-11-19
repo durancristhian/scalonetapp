@@ -3,6 +3,7 @@ import type { Team } from "@/types/team";
 import type { ColorPaletteId } from "@/utils/color-palettes";
 import type { ImageExportOptions } from "@/utils/image-export-options";
 import type { ImageExportPlayerRole } from "@/utils/image-export-player-roles";
+import { getExportNameSize } from "./export-name-size";
 import { PlayerRoleBadges } from "./player-role-badges";
 import styles from "./export-player-cell.module.css";
 
@@ -39,7 +40,14 @@ export function ExportPlayerCell({ player, options, palette, roles }: Props) {
           />
         </div>
       ) : null}
-      <div className={styles.label} data-export-player-label>
+      <div
+        className={styles.label}
+        data-export-player-label
+        data-size={getExportNameSize(
+          player.name,
+          showAvatar ? 0 : roles.length,
+        )}
+      >
         {!showAvatar ? (
           <PlayerRoleBadges roles={roles} placement="inline" />
         ) : null}

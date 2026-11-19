@@ -74,6 +74,7 @@ const FeedbackForm: FC<FeedbackFormProps> = ({ afterSubmit }) => {
   const { successAlert, errorAlert } = useAlerts();
   const submit = useDialogSubmission();
   const form = useForm<FeedbackSchema>({
+    mode: "onChange",
     defaultValues: {
       message: "",
     },

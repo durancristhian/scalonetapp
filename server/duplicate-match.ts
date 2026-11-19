@@ -8,7 +8,6 @@ import {
 } from "@/utils/player-limits";
 import prisma from "@/utils/prisma";
 import { getSavedTeamsError } from "@/utils/team-validation";
-import { format } from "date-fns";
 import { lockMatchOwner } from "@/server/lock-match-owner";
 
 function readTeams(serialized: string, playerIds: number[]): BaseTeam[] {
@@ -58,12 +57,10 @@ export async function duplicateMatch(
     if (matches.length >= getMaxMatchesPerUser()) {
       return { ok: false, code: "match_limit" };
     }
-    const names = new Set(matches.map((match) => match.name));
-    const timestamp = format(new Date(), "t");
-    let name = getDuplicatedMatchName(source.name, timestamp);
-    for (let attempt = 1; names.has(name); attempt++) {
-      name = getDuplicatedMatchName(source.name, `${timestamp}-${attempt}`);
-    }
+    const name = getDuplicatedMatchName(
+      source.name,
+      matches.map((match) => match.name),
+    );
 
     const teams = readTeams(
       source.teams,
