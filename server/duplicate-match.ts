@@ -10,6 +10,7 @@ import prisma from "@/utils/prisma";
 import { getSavedTeamsError } from "@/utils/team-validation";
 import { format } from "date-fns";
 import { lockMatchOwner } from "@/server/lock-match-owner";
+import { isRepeatedName } from "@/utils/repeated-names";
 
 function readTeams(serialized: string, playerIds: number[]): BaseTeam[] {
   try {
@@ -58,10 +59,10 @@ export async function duplicateMatch(
     if (matches.length >= getMaxMatchesPerUser()) {
       return { ok: false, code: "match_limit" };
     }
-    const names = new Set(matches.map((match) => match.name));
+    const names = matches.map((match) => match.name);
     const timestamp = format(new Date(), "t");
     let name = getDuplicatedMatchName(source.name, timestamp);
-    for (let attempt = 1; names.has(name); attempt++) {
+    for (let attempt = 1; isRepeatedName(name, names); attempt++) {
       name = getDuplicatedMatchName(source.name, `${timestamp}-${attempt}`);
     }
 

@@ -2,6 +2,10 @@ import type { PlayerSchema } from "@/schemas/player";
 import prisma from "../../utils/prisma.ts";
 import { ERROR_MESSAGES } from "../../utils/error-messages.ts";
 import { getPlayerAdditionError } from "../../utils/player-limits.ts";
+import {
+  findRepeatedNames,
+  isRepeatedName,
+} from "../../utils/repeated-names.ts";
 import { removePlayerFromSavedTeams } from "../../utils/remove-player-from-saved-teams.ts";
 import type { Player, Prisma } from "@prisma/client";
 import { ExpectedActionError } from "../expected-action-error.ts";
@@ -46,16 +50,21 @@ async function addPlayersAtomically<T>(
       if (!matches.length)
         throw new ExpectedActionError(ERROR_MESSAGES.not_found);
 
-      const count = await transaction.player.count({ where: { matchId } });
-      const limitError = getPlayerAdditionError(count, players.length);
+      const existing = await transaction.player.findMany({
+        where: { matchId },
+        select: { name: true },
+      });
+      const limitError = getPlayerAdditionError(
+        existing.length,
+        players.length,
+      );
       if (limitError) throw new ExpectedActionError(limitError);
 
-      const names = players.map((player) => player.name);
-      const existing = await transaction.player.findFirst({
-        where: { matchId, name: { in: names } },
-        select: { id: true },
-      });
-      if (new Set(names).size !== names.length || existing) {
+      const repeated = findRepeatedNames(
+        players.map((player) => player.name),
+        existing.map((player) => player.name),
+      );
+      if (repeated.length) {
         throw new ExpectedActionError(ERROR_MESSAGES.match_players_repeated);
       }
       return insert(transaction);
@@ -104,14 +113,21 @@ export const editPlayerQuery: (
   return prisma.$transaction(async (transaction) => {
     const player = await transaction.player.findFirst({
       where: { id, match: { userId } },
-      select: { matchId: true },
+      select: { matchId: true, name: true },
     });
     if (!player) throw new ExpectedActionError(ERROR_MESSAGES.not_found);
     await transaction.$queryRaw`SELECT "id" FROM "Match" WHERE "id" = ${player.matchId} AND "userId" = ${userId} FOR UPDATE`;
-    const repeated = await transaction.player.findFirst({
-      where: { matchId: player.matchId, name: data.name, id: { not: id } },
+    const others = await transaction.player.findMany({
+      where: { matchId: player.matchId, id: { not: id } },
+      select: { name: true },
     });
-    if (repeated)
+    if (
+      !isRepeatedName(data.name, [player.name]) &&
+      isRepeatedName(
+        data.name,
+        others.map((other) => other.name),
+      )
+    )
       throw new ExpectedActionError(ERROR_MESSAGES.match_player_repeated);
     return transaction.player.update({
       where: { id, match: { userId } },
