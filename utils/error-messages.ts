@@ -6,7 +6,6 @@ export const ERROR_MESSAGES = {
   not_found: "No encontrado.",
   required: "Campo requerido.",
   server_error: "Ocurrió un error.",
-  too_large: "40 caracteres máximo.",
   unauthorized: "No autorizado.",
 
   match_add_error:
@@ -41,3 +40,6 @@ export const ERROR_MESSAGES = {
   player_multiple_add_error:
     "Ocurrió un error al crear los jugadores. Por favor, intentá nuevamente.",
 };
+
+export const getTooLargeMessage = (max: number): string =>
+  `${max} caracteres máximo.`;
