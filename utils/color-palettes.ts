@@ -1,4 +1,4 @@
-export const COLOR_PALETTES = [
+const COLOR_PALETTES = [
   {
     id: "synthetic-forest",
     label: "Earthy Forest Hues",
@@ -24,23 +24,13 @@ export const COLOR_PALETTES = [
 
 export type ColorPaletteId = (typeof COLOR_PALETTES)[number]["id"];
 export const DEFAULT_COLOR_PALETTE: ColorPaletteId = "synthetic-forest";
-export const ARTWORK_BACKGROUND = "#FFFFFF";
 
-export function isColorPaletteId(value: unknown): value is ColorPaletteId {
+function isColorPaletteId(value: unknown): value is ColorPaletteId {
   return COLOR_PALETTES.some(({ id }) => id === value);
 }
 
 export function getColorPalette(id: ColorPaletteId = DEFAULT_COLOR_PALETTE) {
   return COLOR_PALETTES.find((palette) => palette.id === id)!;
-}
-
-export function getArtworkStyle(id: ColorPaletteId = DEFAULT_COLOR_PALETTE) {
-  const { roles } = getColorPalette(id);
-  return {
-    backgroundColor: ARTWORK_BACKGROUND,
-    "--pattern-primary": roles[0],
-    "--pattern-secondary": roles[1],
-  };
 }
 
 export function parseColorPalette(

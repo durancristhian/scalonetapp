@@ -5,7 +5,7 @@ import {
 } from "./image-export-backgrounds.ts";
 import { type ImageExportOptions } from "./image-export-options.ts";
 
-export const IMAGE_EXPORT_WEATHER_URLS = {
+const IMAGE_EXPORT_WEATHER_URLS = {
   rain: "/images/export-backgrounds/rain.svg",
   snow: "/images/export-backgrounds/snow.svg",
 } as const;

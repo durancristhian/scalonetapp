@@ -1,7 +1,7 @@
 import { ERROR_MESSAGES, getTooLargeMessage } from "@/utils/error-messages";
 import { z } from "zod";
 
-export const MAX_FEEDBACK_LENGTH = 1024;
+const MAX_FEEDBACK_LENGTH = 1024;
 
 export const FEEDBACK_SCHEMA = z.object({
   message: z
