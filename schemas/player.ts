@@ -6,7 +6,7 @@ import {
   MAX_PLAYER_LEVEL,
 } from "@/utils/player-options";
 
-export const MAX_PLAYER_NAME_LENGTH = 40;
+const MAX_PLAYER_NAME_LENGTH = 40;
 
 export const PLAYER_SCHEMA = z.object({
   name: z

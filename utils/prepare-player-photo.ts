@@ -9,7 +9,7 @@ const RASTER_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 export const PLAYER_PHOTO_ACCEPT =
   "image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif";
-export const PLAYER_PHOTO_SELECTION_ERROR =
+const PLAYER_PHOTO_SELECTION_ERROR =
   "Seleccioná una foto JPG, PNG, WebP o HEIC de hasta 50 MB.";
 const CONVERSION_ERROR = "No pudimos preparar esta foto HEIC. Probá con otra.";
 const UNREADABLE_ERROR =

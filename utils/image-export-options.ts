@@ -44,9 +44,7 @@ export const DEFAULT_IMAGE_EXPORT_OPTIONS: Readonly<ImageExportOptions> = {
 export const IMAGE_EXPORT_WIDTH = 1280;
 export const IMAGE_EXPORT_STORAGE_KEY = "scaloneta:image-export:v1";
 
-export function isImageExportOptions(
-  value: unknown,
-): value is ImageExportOptions {
+function isImageExportOptions(value: unknown): value is ImageExportOptions {
   if (!value || typeof value !== "object") return false;
   const options = value as Record<string, unknown>;
   return (
